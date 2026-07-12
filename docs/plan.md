@@ -18,24 +18,24 @@ Player can start a new game, clear a small biome, unlock double-jump, and backtr
 
 ## Day-by-Day Plan
 
-1. Day 1: Project bootstrap, display/stretch setup, folder taxonomy.
-2. Day 1.1: Add typechecking gate and run it before moving into Day 2 feature work.
-3. Day 1.2: Add linting and formatting gate and run it before moving into Day 2 feature work.
-4. Day 1.3: Add test gate and run it before moving into Day 2 feature work.
-5. Day 1.4: Configure VS Code Godot tooling (extensions and workspace settings).
-6. Day 2: Input map (keyboard and gamepad), collision matrix, naming standards.
-7. Day 3: Locomotion and jump feel tuning (coyote and buffer), baseline animation linking.
-8. Day 4: State graph plus hurt/death foundations.
-9. Day 5: Melee attack windows and hit feedback events.
-10. Day 6: Ranged projectile system and cooldown/resource rules.
-11. Day 7: Camera dead zone, look-ahead, room clamps, and polish pass.
-12. Day 8: 3-5 room biome blockout with layered TileMaps.
-13. Day 9: Room transitions with persistent runtime state.
-14. Day 10: Double-jump unlock event and gated-route revalidation.
-15. Day 11: Enemy archetype and encounter balancing.
-16. Day 12: Checkpoint/respawn, unlock persistence, and minimal HUD.
-17. Day 13: Audio bus and VFX/UI feedback polish.
-18. Day 14: QA pass, controller parity, desktop export smoke test, and backlog for the next milestone.
+1. Project bootstrap, display/stretch setup, folder taxonomy.
+   1. Add typechecking gate and run it before moving into Day 2 feature work.
+   2. Add linting and formatting gate and run it before moving into Day 2 feature work.
+   3. Add test gate and run it before moving into Day 2 feature work.
+   4. Configure VS Code Godot tooling (extensions and workspace settings).
+2. Input map (keyboard and gamepad), collision matrix, naming standards.
+3. Locomotion and jump feel tuning (coyote and buffer), baseline animation linking.
+4. State graph plus hurt/death foundations.
+5. Melee attack windows and hit feedback events.
+6. Ranged projectile system and cooldown/resource rules.
+7. Camera dead zone, look-ahead, room clamps, and polish pass.
+8. 3-5 room biome blockout with layered TileMaps.
+9. Room transitions with persistent runtime state.
+10. Double-jump unlock event and gated-route revalidation.
+11. Enemy archetype and encounter balancing.
+12. Checkpoint/respawn, unlock persistence, and minimal HUD.
+13. Audio bus and VFX/UI feedback polish.
+14. QA pass, controller parity, desktop export smoke test, and backlog for the next milestone.
 
 ## Verification Gate
 
