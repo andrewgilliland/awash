@@ -7,6 +7,7 @@ var _failures: int = 0
 func _init() -> void:
 	_run_test("Player scene loads", _test_player_scene_loads)
 	_run_test("Player defaults sane", _test_player_default_values)
+	_run_test("Player ranged defaults sane", _test_player_ranged_defaults)
 
 	if _failures > 0:
 		push_error("%d test(s) failed" % _failures)
@@ -54,5 +55,24 @@ func _test_player_default_values() -> bool:
 	is_valid = is_valid and player.get("move_speed") > 0.0
 	is_valid = is_valid and player.get("jump_velocity") < 0.0
 	is_valid = is_valid and player.get("has_double_jump") == false
+	player.queue_free()
+	return is_valid
+
+
+func _test_player_ranged_defaults() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	var is_valid := true
+	is_valid = is_valid and player.get("projectile_scene") != null
+	is_valid = is_valid and player.get("ranged_cooldown_seconds") > 0.0
+	is_valid = is_valid and player.get("max_ranged_resource") >= 1.0
+	is_valid = is_valid and player.get("ranged_cost") > 0.0
+	is_valid = is_valid and player.get("ranged_regen_per_second") > 0.0
 	player.queue_free()
 	return is_valid

@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_3h4r8"]
+[ext_resource type="PackedScene" path="res://scenes/player/player_projectile.tscn" id="2_hjhxw"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2x6a2"]
 radius = 6.0
@@ -13,6 +14,7 @@ size = Vector2(14, 12)
 collision_layer = 2
 collision_mask = 1
 script = ExtResource("1_3h4r8")
+projectile_scene = ExtResource("2_hjhxw")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -10)

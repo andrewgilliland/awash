@@ -43,6 +43,16 @@ enum AttackPhase {
 @export var melee_recovery_seconds: float = 0.16
 @export var melee_damage: int = 1
 @export var melee_knockback: Vector2 = Vector2(120.0, -45.0)
+@export var projectile_scene: PackedScene
+@export var projectile_spawn_offset: Vector2 = Vector2(18.0, -10.0)
+@export var projectile_speed: float = 420.0
+@export var projectile_lifetime_seconds: float = 1.1
+@export var projectile_damage: int = 1
+@export var projectile_knockback: Vector2 = Vector2(95.0, -25.0)
+@export var ranged_cooldown_seconds: float = 0.32
+@export var max_ranged_resource: float = 3.0
+@export var ranged_cost: float = 1.0
+@export var ranged_regen_per_second: float = 1.25
 
 var _input_direction: float = 0.0
 var _coyote_timer: float = 0.0
@@ -58,6 +68,8 @@ var _attack_phase: AttackPhase = AttackPhase.NONE
 var _attack_phase_timer: float = 0.0
 var _attack_hit_targets: Dictionary = {}
 var _attack_base_position: Vector2 = Vector2.ZERO
+var _ranged_cooldown_timer: float = 0.0
+var _ranged_resource: float = 0.0
 
 @onready var _body_visual: Polygon2D = $Body
 @onready var _attack_area: Area2D = $AttackArea
@@ -66,6 +78,7 @@ var _attack_base_position: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	_current_health = max_health
+	_ranged_resource = max_ranged_resource
 	_attack_base_position = _attack_area.position
 	_set_attack_hitbox_enabled(false)
 	if not _attack_area.body_entered.is_connected(_on_attack_area_body_entered):
@@ -89,6 +102,7 @@ func _physics_process(delta: float) -> void:
 
 		_apply_vertical_movement(delta)
 		_handle_attack_press()
+		_handle_ranged_press()
 		_tick_attack_phase(delta)
 		_handle_jump_press()
 		_try_consume_buffered_jump()
@@ -185,6 +199,14 @@ func _tick_state_timers(delta: float) -> void:
 	_hurt_timer = maxf(0.0, _hurt_timer - delta)
 	_invulnerable_timer = maxf(0.0, _invulnerable_timer - delta)
 	_death_timer = maxf(0.0, _death_timer - delta)
+	_ranged_cooldown_timer = maxf(0.0, _ranged_cooldown_timer - delta)
+
+	if max_ranged_resource > 0.0:
+		_ranged_resource = minf(
+			max_ranged_resource, _ranged_resource + ranged_regen_per_second * delta
+		)
+	else:
+		_ranged_resource = 0.0
 
 	if _state == PlayerState.HURT and _hurt_timer <= 0.0:
 		_update_state_from_motion()
@@ -263,6 +285,74 @@ func _handle_attack_press() -> void:
 		return
 
 	_begin_attack()
+
+
+func _handle_ranged_press() -> void:
+	if not Input.is_action_just_pressed("ranged_attack"):
+		return
+
+	_try_fire_projectile()
+
+
+func _try_fire_projectile() -> void:
+	if _state == PlayerState.DEAD or _state == PlayerState.HURT:
+		return
+
+	if projectile_scene == null:
+		return
+
+	if _ranged_cooldown_timer > 0.0:
+		emit_signal("feedback_event_requested", "ranged_cooldown_blocked")
+		return
+
+	if _ranged_resource < ranged_cost:
+		emit_signal("feedback_event_requested", "ranged_resource_empty")
+		return
+
+	var projectile := projectile_scene.instantiate() as Node2D
+	if projectile == null:
+		return
+
+	var scene_root := get_tree().current_scene
+	if scene_root == null:
+		projectile.queue_free()
+		return
+
+	projectile.global_position = (
+		global_position
+		+ Vector2(projectile_spawn_offset.x * _facing_sign, projectile_spawn_offset.y)
+	)
+
+	if projectile.has_method("initialize"):
+		projectile.call("initialize", _facing_sign, self)
+
+	_try_set_projectile_property(projectile, "speed", projectile_speed)
+	_try_set_projectile_property(projectile, "lifetime_seconds", projectile_lifetime_seconds)
+	_try_set_projectile_property(projectile, "damage", projectile_damage)
+	_try_set_projectile_property(projectile, "knockback", projectile_knockback)
+
+	scene_root.add_child(projectile)
+
+	_ranged_resource = maxf(0.0, _ranged_resource - ranged_cost)
+	_ranged_cooldown_timer = ranged_cooldown_seconds
+	emit_signal("feedback_event_requested", "ranged_fire")
+
+
+func _try_set_projectile_property(
+	projectile: Object, property_name: StringName, value: Variant
+) -> void:
+	for property_data in projectile.get_property_list():
+		if property_data.has("name") and property_data["name"] == property_name:
+			projectile.set(property_name, value)
+			return
+
+
+func get_ranged_resource() -> float:
+	return _ranged_resource
+
+
+func get_ranged_cooldown_remaining() -> float:
+	return _ranged_cooldown_timer
 
 
 func _begin_attack() -> void:
