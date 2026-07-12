@@ -15,6 +15,7 @@ Player can start a new game, clear a small biome, unlock double-jump, and backtr
 - Runtime keyboard and gamepad input bootstrap added.
 - Starter player controller added with coyote time and jump buffering.
 - Optional double-jump toggle added in player script.
+- Player spritesheet integration added with runtime background cleanup and animation playback wiring.
 
 ## Steps
 
@@ -25,6 +26,11 @@ Player can start a new game, clear a small biome, unlock double-jump, and backtr
    4. Configure VS Code Godot tooling (extensions and workspace settings).
 2. Input map (keyboard and gamepad), collision matrix, naming standards.
 3. Locomotion and jump feel tuning (coyote and buffer), baseline animation linking.
+   1. Tune ground acceleration, air acceleration, and friction for tighter left-right control.
+   2. Tune jump arc values, including jump velocity, fall cap, and jump-release gravity.
+   3. Clean up animation-state transitions for idle, run, jump, fall, and attack overlap.
+   4. Recheck sprite footing and visual offset while moving, jumping, and landing.
+   5. Add or expand movement-focused tests to protect feel-critical controller behavior.
 4. State graph plus hurt/death foundations.
 5. Melee attack windows and hit feedback events.
 6. Ranged projectile system and cooldown/resource rules.

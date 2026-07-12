@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cd7y8g7l5y8wn"]
 
 [ext_resource type="PackedScene" path="res://scenes/world/world_biome_01.tscn" id="1_jyhp4"]
-[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_t2u6f"]
+[ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="2_t2u6f"]
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="3_gtf0b"]
 
 [node name="Main" type="Node2D"]
