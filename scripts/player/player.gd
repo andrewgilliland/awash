@@ -14,6 +14,7 @@ enum PlayerState {
 	ATTACK,
 	CROUCH,
 	GUARD,
+	CHARGE,
 	HURT,
 	DEAD,
 }
@@ -85,6 +86,7 @@ const PLAYER_SPRITE_SHEET := preload("res://assets/sprites/player_1.png")
 @export var attack_animation_fps: float = 14.0
 @export var guard_animation_fps: float = 1.0
 @export var guard_from_attack_frame_index: int = 0
+@export var charge_from_attack_frame_index: int = 2
 @export var hurt_animation_fps: float = 10.0
 @export var death_animation_fps: float = 7.0
 @export var sprite_background_key_color: Color = Color(1.0, 1.0, 1.0, 1.0)
@@ -220,6 +222,14 @@ func _build_default_sprite_frames(image: Image) -> SpriteFrames:
 		guard_animation_fps,
 		false
 	)
+	_copy_single_frame_animation(
+		sprite_frames,
+		&"charge",
+		&"attack",
+		charge_from_attack_frame_index,
+		guard_animation_fps,
+		false
+	)
 	_add_animation_regions(
 		sprite_frames,
 		&"hurt",
@@ -243,6 +253,7 @@ func _build_default_sprite_frames(image: Image) -> SpriteFrames:
 	_ensure_animation_exists(sprite_frames, &"attack", &"idle")
 	_ensure_animation_exists(sprite_frames, &"crouch", &"idle")
 	_ensure_animation_exists(sprite_frames, &"guard", &"crouch")
+	_ensure_animation_exists(sprite_frames, &"charge", &"guard")
 	_ensure_animation_exists(sprite_frames, &"hurt", &"idle")
 	_ensure_animation_exists(sprite_frames, &"death", &"hurt")
 
@@ -453,6 +464,8 @@ func _get_desired_animation_name() -> StringName:
 			animation_name = &"crouch"
 		PlayerState.GUARD:
 			animation_name = &"guard"
+		PlayerState.CHARGE:
+			animation_name = &"charge"
 		PlayerState.HURT:
 			animation_name = &"hurt"
 		PlayerState.DEAD:
@@ -471,19 +484,21 @@ func _physics_process(delta: float) -> void:
 		if _state == PlayerState.HURT:
 			_process_hurt_state(delta)
 		elif _state == PlayerState.ATTACK:
-			_process_attack_state(delta)
-		elif _state == PlayerState.GUARD:
+			_apply_horizontal_movement(delta * attack_movement_multiplier)
+		elif _state == PlayerState.GUARD or _state == PlayerState.CHARGE:
 			_process_guard_state(delta)
 		elif _state == PlayerState.CROUCH:
-			_process_crouch_state(delta)
+			_apply_horizontal_movement(delta * crouch_movement_multiplier)
 		else:
 			_apply_horizontal_movement(delta)
 
 		_apply_vertical_movement(delta)
 		_handle_attack_press()
-		_handle_ranged_press()
+		if Input.is_action_just_pressed("ranged_attack"):
+			_try_fire_projectile()
 		_tick_attack_phase(delta)
-		_handle_jump_press()
+		if Input.is_action_just_pressed("jump"):
+			_jump_buffer_timer = jump_buffer_seconds
 		_try_consume_buffered_jump()
 		_apply_jump_release_gravity(delta)
 		_update_facing()
@@ -526,16 +541,11 @@ func _apply_vertical_movement(delta: float) -> void:
 	_jump_buffer_timer = maxf(0.0, _jump_buffer_timer - delta)
 
 
-func _handle_jump_press() -> void:
-	if Input.is_action_just_pressed("jump"):
-		_jump_buffer_timer = jump_buffer_seconds
-
-
 func _try_consume_buffered_jump() -> void:
 	if _jump_buffer_timer <= 0.0:
 		return
 
-	if _can_ground_or_coyote_jump():
+	if is_on_floor() or _coyote_timer > 0.0:
 		_do_jump()
 		_coyote_timer = 0.0
 		_jump_buffer_timer = 0.0
@@ -545,10 +555,6 @@ func _try_consume_buffered_jump() -> void:
 		_air_jumps_used += 1
 		_do_jump()
 		_jump_buffer_timer = 0.0
-
-
-func _can_ground_or_coyote_jump() -> bool:
-	return is_on_floor() or _coyote_timer > 0.0
 
 
 func _do_jump() -> void:
@@ -674,14 +680,6 @@ func _process_hurt_state(delta: float) -> void:
 	_end_attack()
 
 
-func _process_attack_state(delta: float) -> void:
-	_apply_horizontal_movement(delta * attack_movement_multiplier)
-
-
-func _process_crouch_state(delta: float) -> void:
-	_apply_horizontal_movement(delta * crouch_movement_multiplier)
-
-
 func _process_guard_state(delta: float) -> void:
 	_run_active = false
 	velocity.x = move_toward(velocity.x, 0.0, friction * 1.4 * delta)
@@ -704,6 +702,12 @@ func _update_state_from_motion() -> void:
 	if _state == PlayerState.HURT and _hurt_timer > 0.0:
 		return
 
+	var holding_charge := _state == PlayerState.CHARGE and is_on_floor()
+	holding_charge = holding_charge and Input.is_action_pressed("melee_attack")
+	holding_charge = holding_charge and not _is_guard_requested()
+	if holding_charge:
+		return
+
 	if not is_on_floor():
 		if velocity.y <= -jump_to_fall_velocity_threshold:
 			_set_state(PlayerState.JUMP)
@@ -711,13 +715,9 @@ func _update_state_from_motion() -> void:
 			_set_state(PlayerState.FALL)
 		return
 
-	if _is_guard_requested():
-		_set_state(PlayerState.GUARD)
-		return
-
-	if _is_crouch_requested():
+	if _is_guard_requested() or _is_crouch_requested():
 		_run_active = false
-		_set_state(PlayerState.CROUCH)
+		_set_state(PlayerState.GUARD if _is_guard_requested() else PlayerState.CROUCH)
 		return
 
 	var horizontal_speed := absf(velocity.x)
@@ -752,27 +752,25 @@ func _update_facing() -> void:
 
 
 func _handle_attack_press() -> void:
-	if not Input.is_action_just_pressed("melee_attack"):
-		return
-
 	if _state == PlayerState.DEAD or _state == PlayerState.HURT or _state == PlayerState.GUARD:
 		return
 
 	if _attack_phase != AttackPhase.NONE:
 		return
 
-	_begin_attack()
-
-
-func _handle_ranged_press() -> void:
-	if not Input.is_action_just_pressed("ranged_attack"):
+	if Input.is_action_pressed("melee_attack"):
+		if is_on_floor():
+			_set_state(PlayerState.CHARGE)
 		return
 
-	_try_fire_projectile()
+	if _state == PlayerState.CHARGE:
+		_begin_attack()
 
 
 func _try_fire_projectile() -> void:
-	if _state == PlayerState.DEAD or _state == PlayerState.HURT or _state == PlayerState.GUARD:
+	var blocked_state := _state == PlayerState.DEAD or _state == PlayerState.HURT
+	blocked_state = blocked_state or _state == PlayerState.GUARD or _state == PlayerState.CHARGE
+	if blocked_state:
 		return
 
 	if projectile_scene == null:
@@ -795,9 +793,9 @@ func _try_fire_projectile() -> void:
 		projectile.queue_free()
 		return
 
-	projectile.global_position = (
-		global_position
-		+ Vector2(projectile_spawn_offset.x * _facing_sign, projectile_spawn_offset.y)
+	projectile.global_position = global_position
+	projectile.global_position += Vector2(
+		projectile_spawn_offset.x * _facing_sign, projectile_spawn_offset.y
 	)
 
 	if projectile.has_method("initialize"):

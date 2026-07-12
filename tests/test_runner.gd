@@ -14,6 +14,7 @@ func _init() -> void:
 	_run_test("Biome room api sane", _test_biome_room_api_sane)
 	_run_test("Player defaults sane", _test_player_default_values)
 	_run_test("Player movement tuning sane", _test_player_movement_tuning_defaults)
+	_run_test("Player guard and charge sprites differ", _test_player_guard_charge_sprites_differ)
 	_run_test("Player ranged defaults sane", _test_player_ranged_defaults)
 	_run_test("Player camera defaults sane", _test_player_camera_defaults)
 	_run_test("Runtime state defaults sane", _test_runtime_state_defaults_sane)
@@ -188,6 +189,37 @@ func _test_player_movement_tuning_defaults() -> bool:
 	is_valid = is_valid and jump_to_fall_threshold >= 0.0
 	is_valid = is_valid and player.get("attack_movement_multiplier") > 0.0
 	is_valid = is_valid and player.get("attack_movement_multiplier") <= 1.0
+	player.queue_free()
+	return is_valid
+
+
+func _test_player_guard_charge_sprites_differ() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	var guard_index := int(player.get("guard_from_attack_frame_index"))
+	var charge_index := int(player.get("charge_from_attack_frame_index"))
+	var image := player.call("_create_runtime_sprite_sheet_image") as Image
+	var sprite_frames := player.call("_build_default_sprite_frames", image) as SpriteFrames
+	var is_valid := guard_index == 0
+	is_valid = is_valid and charge_index == 2
+	is_valid = is_valid and sprite_frames != null
+	is_valid = is_valid and sprite_frames.has_animation(&"guard")
+	is_valid = is_valid and sprite_frames.has_animation(&"charge")
+	is_valid = is_valid and sprite_frames.get_frame_count(&"guard") > 0
+	is_valid = is_valid and sprite_frames.get_frame_count(&"charge") > 0
+
+	if is_valid:
+		var guard_texture := sprite_frames.get_frame_texture(&"guard", 0)
+		var charge_texture := sprite_frames.get_frame_texture(&"charge", 0)
+		is_valid = is_valid and guard_texture != null and charge_texture != null
+		is_valid = is_valid and guard_texture != charge_texture
+
 	player.queue_free()
 	return is_valid
 
