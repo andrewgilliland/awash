@@ -13,7 +13,8 @@ Awash is a new 2D metroidvania-style action RPG prototype built in Godot 4.4.
 - Step 5 setup is in place: melee attack windows, hitbox, and hit feedback events.
 - Step 6 setup is in place: ranged projectile firing with cooldown and regenerating resource rules.
 - Step 7 setup is in place: camera dead zone, movement look-ahead, and room clamp limits.
-- Step 8 setup is in place: 4-room biome graybox blockout with layered TileMaps.
+- Step 8 setup is in place: expanded biome blockout with layered TileMaps.
+- Step 9 setup is in place: room transitions and persistent runtime room state.
 
 ## Run
 1. Open `awash` in Godot 4.4.
@@ -43,6 +44,6 @@ Awash is a new 2D metroidvania-style action RPG prototype built in Godot 4.4.
 - See `docs/step-2-standards.md` for input action names, collision matrix, and naming conventions.
 
 ## Next Implementation Targets
-1. Add room transitions and persistent progression flags.
-2. Implement the first double-jump unlock event and gated route.
-3. Add first enemy archetype integration for mixed melee/ranged encounters.
+1. Implement the first double-jump unlock event and gated route.
+2. Add first enemy archetype integration for mixed melee/ranged encounters.
+3. Add checkpoint/respawn and unlock persistence into a minimal HUD loop.

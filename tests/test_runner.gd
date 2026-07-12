@@ -2,15 +2,20 @@ extends SceneTree
 
 const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
 const BIOME_SCENE_PATH := "res://scenes/world/world_biome_01.tscn"
+const MAIN_SCENE_PATH := "res://scenes/main.tscn"
+const RUNTIME_STATE_SCRIPT_PATH := "res://scripts/core/runtime_state.gd"
 var _failures: int = 0
 
 
 func _init() -> void:
 	_run_test("Player scene loads", _test_player_scene_loads)
+	_run_test("Main scene loads", _test_main_scene_loads)
 	_run_test("Biome scene loads", _test_biome_scene_loads)
+	_run_test("Biome room api sane", _test_biome_room_api_sane)
 	_run_test("Player defaults sane", _test_player_default_values)
 	_run_test("Player ranged defaults sane", _test_player_ranged_defaults)
 	_run_test("Player camera defaults sane", _test_player_camera_defaults)
+	_run_test("Runtime state defaults sane", _test_runtime_state_defaults_sane)
 
 	if _failures > 0:
 		push_error("%d test(s) failed" % _failures)
@@ -60,6 +65,51 @@ func _test_biome_scene_loads() -> bool:
 
 	instance.queue_free()
 	return has_background and has_ground and has_foreground and has_spawn
+
+
+func _test_main_scene_loads() -> bool:
+	var packed_scene := load(MAIN_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var instance := packed_scene.instantiate()
+	if instance == null:
+		return false
+
+	var has_player := instance.get_node_or_null("Player") != null
+	var has_world := instance.get_node_or_null("WorldBiome01") != null
+	instance.queue_free()
+	return has_player and has_world
+
+
+func _test_biome_room_api_sane() -> bool:
+	var packed_scene := load(BIOME_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var biome := packed_scene.instantiate()
+	if biome == null:
+		return false
+
+	var is_valid := true
+	is_valid = is_valid and biome.has_method("get_room_count")
+	is_valid = is_valid and biome.has_method("get_room_bounds")
+	is_valid = is_valid and biome.has_method("get_adjacent_room_id")
+	is_valid = is_valid and biome.has_method("get_room_spawn_position")
+
+	if is_valid:
+		var room_count := biome.call("get_room_count") as int
+		var room_1_bounds := biome.call("get_room_bounds", &"room_1") as Rect2
+		var room_2_id := biome.call("get_adjacent_room_id", &"room_1", 1) as StringName
+		var room_1_spawn := biome.call("get_room_spawn_position", &"room_1", &"center") as Vector2
+
+		is_valid = is_valid and room_count >= 1
+		is_valid = is_valid and room_1_bounds.size.x > 0.0
+		is_valid = is_valid and room_2_id != StringName("")
+		is_valid = is_valid and room_1_spawn.y > 0.0
+
+	biome.queue_free()
+	return is_valid
 
 
 func _test_player_default_values() -> bool:
@@ -118,4 +168,19 @@ func _test_player_camera_defaults() -> bool:
 	is_valid = is_valid and room_bounds.size.x > 0.0
 	is_valid = is_valid and room_bounds.size.y > 0.0
 	player.queue_free()
+	return is_valid
+
+
+func _test_runtime_state_defaults_sane() -> bool:
+	var runtime_state_script := load(RUNTIME_STATE_SCRIPT_PATH) as GDScript
+	if runtime_state_script == null:
+		return false
+
+	var runtime_state := runtime_state_script.new() as Node
+	if runtime_state == null:
+		return false
+
+	var is_valid := true
+	is_valid = is_valid and runtime_state.get("current_room_id") == StringName("room_1")
+	is_valid = is_valid and runtime_state.call("has_visited_room", &"room_1")
 	return is_valid

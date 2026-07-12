@@ -5,6 +5,9 @@ const ROOM_COUNT: int = 8
 const ROOM_WIDTH_TILES: int = 16
 const MAP_HEIGHT_TILES: int = 16
 const FLOOR_Y: int = 14
+const WORLD_ORIGIN_X: float = -232.0
+const WORLD_ORIGIN_Y: float = 0.0
+const ROOM_SPAWN_Y: float = 180.0
 
 const ATLAS_BG := Vector2i(0, 0)
 const ATLAS_GROUND := Vector2i(1, 0)
@@ -121,3 +124,60 @@ func _fill_rect(
 	for y in range(from_y, to_y + 1):
 		for x in range(from_x, to_x + 1):
 			layer.set_cell(Vector2i(x, y), source_id, atlas_coords)
+
+
+func get_room_count() -> int:
+	return ROOM_COUNT
+
+
+func get_room_id_from_index(index: int) -> StringName:
+	if index < 0 or index >= ROOM_COUNT:
+		return StringName("")
+	return StringName("room_%d" % (index + 1))
+
+
+func get_room_index(room_id: StringName) -> int:
+	var room_name := String(room_id)
+	if not room_name.begins_with("room_"):
+		return -1
+
+	var suffix := room_name.trim_prefix("room_")
+	if not suffix.is_valid_int():
+		return -1
+
+	var index := int(suffix) - 1
+	if index < 0 or index >= ROOM_COUNT:
+		return -1
+	return index
+
+
+func get_room_bounds(room_id: StringName) -> Rect2:
+	var index := get_room_index(room_id)
+	if index < 0:
+		index = 0
+
+	var room_width := float(ROOM_WIDTH_TILES * TILE_SIZE)
+	var room_height := float(MAP_HEIGHT_TILES * TILE_SIZE)
+	var left := WORLD_ORIGIN_X + room_width * index
+	return Rect2(left, WORLD_ORIGIN_Y, room_width, room_height)
+
+
+func get_adjacent_room_id(room_id: StringName, direction: int) -> StringName:
+	var index := get_room_index(room_id)
+	if index < 0:
+		return StringName("")
+
+	var next_index := index + direction
+	return get_room_id_from_index(next_index)
+
+
+func get_room_spawn_position(room_id: StringName, entry_side: StringName = &"center") -> Vector2:
+	var bounds := get_room_bounds(room_id)
+	var spawn_x := bounds.position.x + bounds.size.x * 0.5
+
+	if entry_side == &"left":
+		spawn_x = bounds.position.x + 26.0
+	elif entry_side == &"right":
+		spawn_x = bounds.position.x + bounds.size.x - 26.0
+
+	return Vector2(spawn_x, ROOM_SPAWN_Y)
