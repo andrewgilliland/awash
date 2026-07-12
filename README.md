@@ -26,6 +26,7 @@ Awash is a new 2D metroidvania-style action RPG prototype built in Godot 4.4.
 ## Quality Gates
 - Typecheck: `./scripts/quality/typecheck.sh`
 - Lint/Format check: `./scripts/quality/lint.sh`
+- Tests: `./scripts/quality/test.sh`
 
 ## Next Implementation Targets
 1. Add player state machine with locomotion + combat branches.
