@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+cd "$PROJECT_ROOT"
+
+echo "[pre-commit] Running typecheck gate"
+./scripts/quality/typecheck.sh
+
+echo "[pre-commit] Running lint gate"
+./scripts/quality/lint.sh
+
+echo "[pre-commit] Running test gate"
+./scripts/quality/test.sh
+
+echo "[pre-commit] All quality gates passed"
