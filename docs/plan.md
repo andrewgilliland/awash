@@ -16,19 +16,20 @@ Player can start a new game, clear a small biome, unlock double-jump, and backtr
 ## Day-by-Day Plan
 1. Day 1: Project bootstrap, display/stretch setup, folder taxonomy.
 2. Day 1.1: Add typechecking gate and run it before moving into Day 2 feature work.
-3. Day 2: Input map (keyboard and gamepad), collision matrix, naming standards.
-4. Day 3: Locomotion and jump feel tuning (coyote and buffer), baseline animation linking.
-5. Day 4: State graph plus hurt/death foundations.
-6. Day 5: Melee attack windows and hit feedback events.
-7. Day 6: Ranged projectile system and cooldown/resource rules.
-8. Day 7: Camera dead zone, look-ahead, room clamps, and polish pass.
-9. Day 8: 3-5 room biome blockout with layered TileMaps.
-10. Day 9: Room transitions with persistent runtime state.
-11. Day 10: Double-jump unlock event and gated-route revalidation.
-12. Day 11: Enemy archetype and encounter balancing.
-13. Day 12: Checkpoint/respawn, unlock persistence, and minimal HUD.
-14. Day 13: Audio bus and VFX/UI feedback polish.
-15. Day 14: QA pass, controller parity, desktop export smoke test, and backlog for the next milestone.
+3. Day 1.2: Add linting and formatting gate and run it before moving into Day 2 feature work.
+4. Day 2: Input map (keyboard and gamepad), collision matrix, naming standards.
+5. Day 3: Locomotion and jump feel tuning (coyote and buffer), baseline animation linking.
+6. Day 4: State graph plus hurt/death foundations.
+7. Day 5: Melee attack windows and hit feedback events.
+8. Day 6: Ranged projectile system and cooldown/resource rules.
+9. Day 7: Camera dead zone, look-ahead, room clamps, and polish pass.
+10. Day 8: 3-5 room biome blockout with layered TileMaps.
+11. Day 9: Room transitions with persistent runtime state.
+12. Day 10: Double-jump unlock event and gated-route revalidation.
+13. Day 11: Enemy archetype and encounter balancing.
+14. Day 12: Checkpoint/respawn, unlock persistence, and minimal HUD.
+15. Day 13: Audio bus and VFX/UI feedback polish.
+16. Day 14: QA pass, controller parity, desktop export smoke test, and backlog for the next milestone.
 
 ## Verification Gate
 1. Keyboard and controller parity passes.
