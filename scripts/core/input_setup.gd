@@ -1,5 +1,6 @@
 extends Node
 
+
 # Keyboard + gamepad bootstrap so the project works immediately on first open.
 func _ready() -> void:
 	_register_inputs()

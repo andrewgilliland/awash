@@ -1,5 +1,6 @@
 extends SceneTree
 
+const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
 var _failures: int = 0
 
 
@@ -26,7 +27,7 @@ func _run_test(name: String, test_callable: Callable) -> void:
 
 
 func _test_player_scene_loads() -> bool:
-	var packed_scene := load("res://scenes/player/player.tscn") as PackedScene
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
 	if packed_scene == null:
 		return false
 
@@ -40,7 +41,7 @@ func _test_player_scene_loads() -> bool:
 
 
 func _test_player_default_values() -> bool:
-	var packed_scene := load("res://scenes/player/player.tscn") as PackedScene
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
 	if packed_scene == null:
 		return false
 
