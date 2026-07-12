@@ -53,6 +53,13 @@ enum AttackPhase {
 @export var max_ranged_resource: float = 3.0
 @export var ranged_cost: float = 1.0
 @export var ranged_regen_per_second: float = 1.25
+@export var camera_drag_margin_horizontal: float = 0.14
+@export var camera_drag_margin_top: float = 0.2
+@export var camera_drag_margin_bottom: float = 0.28
+@export var camera_look_ahead_distance: float = 36.0
+@export var camera_look_ahead_vertical: float = 20.0
+@export var camera_look_ahead_lerp_speed: float = 8.0
+@export var camera_room_bounds: Rect2 = Rect2(-232.0, 0.0, 1024.0, 270.0)
 
 var _input_direction: float = 0.0
 var _coyote_timer: float = 0.0
@@ -74,12 +81,14 @@ var _ranged_resource: float = 0.0
 @onready var _body_visual: Polygon2D = $Body
 @onready var _attack_area: Area2D = $AttackArea
 @onready var _attack_shape: CollisionShape2D = $AttackArea/CollisionShape2D
+@onready var _camera: Camera2D = $Camera2D
 
 
 func _ready() -> void:
 	_current_health = max_health
 	_ranged_resource = max_ranged_resource
 	_attack_base_position = _attack_area.position
+	_configure_camera_behavior()
 	_set_attack_hitbox_enabled(false)
 	if not _attack_area.body_entered.is_connected(_on_attack_area_body_entered):
 		_attack_area.body_entered.connect(_on_attack_area_body_entered)
@@ -108,6 +117,7 @@ func _physics_process(delta: float) -> void:
 		_try_consume_buffered_jump()
 		_apply_jump_release_gravity(delta)
 		_update_facing()
+		_update_camera_look_ahead(delta)
 
 	move_and_slide()
 	_update_state_from_motion()
@@ -353,6 +363,60 @@ func get_ranged_resource() -> float:
 
 func get_ranged_cooldown_remaining() -> float:
 	return _ranged_cooldown_timer
+
+
+func set_camera_room_bounds(bounds: Rect2) -> void:
+	camera_room_bounds = bounds
+	_apply_camera_room_clamps()
+
+
+func _configure_camera_behavior() -> void:
+	if _camera == null:
+		return
+
+	_camera.drag_horizontal_enabled = true
+	_camera.drag_vertical_enabled = true
+	_camera.drag_left_margin = camera_drag_margin_horizontal
+	_camera.drag_right_margin = camera_drag_margin_horizontal
+	_camera.drag_top_margin = camera_drag_margin_top
+	_camera.drag_bottom_margin = camera_drag_margin_bottom
+	_apply_camera_room_clamps()
+
+
+func _apply_camera_room_clamps() -> void:
+	if _camera == null:
+		return
+
+	var min_point := camera_room_bounds.position
+	var max_point := camera_room_bounds.position + camera_room_bounds.size
+	_camera.limit_left = int(round(min_point.x))
+	_camera.limit_top = int(round(min_point.y))
+	_camera.limit_right = int(round(max_point.x))
+	_camera.limit_bottom = int(round(max_point.y))
+
+
+func _update_camera_look_ahead(delta: float) -> void:
+	if _camera == null:
+		return
+
+	var horizontal_target := 0.0
+	if absf(_input_direction) > 0.01:
+		horizontal_target = _facing_sign * camera_look_ahead_distance
+	elif absf(velocity.x) > 20.0:
+		horizontal_target = signf(velocity.x) * (camera_look_ahead_distance * 0.5)
+
+	var vertical_target := 0.0
+	if velocity.y > 45.0:
+		vertical_target = camera_look_ahead_vertical
+	elif velocity.y < -45.0:
+		vertical_target = -camera_look_ahead_vertical * 0.45
+
+	_camera.offset.x = lerpf(
+		_camera.offset.x, horizontal_target, camera_look_ahead_lerp_speed * delta
+	)
+	_camera.offset.y = lerpf(
+		_camera.offset.y, vertical_target, camera_look_ahead_lerp_speed * delta
+	)
 
 
 func _begin_attack() -> void:
