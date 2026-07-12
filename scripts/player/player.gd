@@ -22,6 +22,8 @@ enum AttackPhase {
 	RECOVERY,
 }
 
+const PLAYER_SPRITE_SHEET := preload("res://assets/sprites/player_1.png")
+
 @export var move_speed: float = 145.0
 @export var acceleration: float = 950.0
 @export var air_acceleration: float = 720.0
@@ -60,6 +62,16 @@ enum AttackPhase {
 @export var camera_look_ahead_vertical: float = 20.0
 @export var camera_look_ahead_lerp_speed: float = 8.0
 @export var camera_room_bounds: Rect2 = Rect2(-232.0, 0.0, 2048.0, 270.0)
+@export var animation_frame_size: Vector2i = Vector2i(128, 128)
+@export var sprite_visual_offset: Vector2 = Vector2(0.0, -58.0)
+@export var idle_animation_fps: float = 8.0
+@export var run_animation_fps: float = 11.0
+@export var air_animation_fps: float = 8.0
+@export var attack_animation_fps: float = 14.0
+@export var hurt_animation_fps: float = 10.0
+@export var death_animation_fps: float = 7.0
+@export var sprite_background_key_color: Color = Color(1.0, 1.0, 1.0, 1.0)
+@export_range(0.0, 1.0, 0.01) var sprite_background_key_tolerance: float = 0.03
 
 var _input_direction: float = 0.0
 var _coyote_timer: float = 0.0
@@ -79,6 +91,7 @@ var _ranged_cooldown_timer: float = 0.0
 var _ranged_resource: float = 0.0
 
 @onready var _body_visual: Polygon2D = $Body
+@onready var _sprite_visual: AnimatedSprite2D = $AnimatedSprite2D
 @onready var _attack_area: Area2D = $AttackArea
 @onready var _attack_shape: CollisionShape2D = $AttackArea/CollisionShape2D
 @onready var _camera: Camera2D = $Camera2D
@@ -88,12 +101,294 @@ func _ready() -> void:
 	_current_health = max_health
 	_ranged_resource = max_ranged_resource
 	_attack_base_position = _attack_area.position
+	_setup_sprite_visual()
 	_configure_camera_behavior()
 	_set_attack_hitbox_enabled(false)
 	if not _attack_area.body_entered.is_connected(_on_attack_area_body_entered):
 		_attack_area.body_entered.connect(_on_attack_area_body_entered)
 	if not _attack_area.area_entered.is_connected(_on_attack_area_area_entered):
 		_attack_area.area_entered.connect(_on_attack_area_area_entered)
+
+
+func _setup_sprite_visual() -> void:
+	if _sprite_visual == null:
+		return
+
+	if PLAYER_SPRITE_SHEET == null:
+		return
+
+	_sprite_visual.position = sprite_visual_offset
+	_sprite_visual.sprite_frames = _build_default_sprite_frames(
+		_create_runtime_sprite_sheet_image()
+	)
+	_sprite_visual.animation = &"idle"
+	_sprite_visual.play()
+
+	if _body_visual != null:
+		_body_visual.visible = false
+
+
+func _create_runtime_sprite_sheet_image() -> Image:
+	var image := PLAYER_SPRITE_SHEET.get_image()
+	if image == null:
+		return Image.create(1, 1, false, Image.FORMAT_RGBA8)
+
+	image.convert(Image.FORMAT_RGBA8)
+
+	for y in range(image.get_height()):
+		for x in range(image.get_width()):
+			var pixel := image.get_pixel(x, y)
+			if _is_background_pixel(pixel):
+				image.set_pixel(x, y, Color(pixel.r, pixel.g, pixel.b, 0.0))
+
+	return image
+
+
+func _is_background_pixel(pixel: Color) -> bool:
+	if pixel.a <= 0.0:
+		return false
+
+	return (
+		absf(pixel.r - sprite_background_key_color.r) <= sprite_background_key_tolerance
+		and absf(pixel.g - sprite_background_key_color.g) <= sprite_background_key_tolerance
+		and absf(pixel.b - sprite_background_key_color.b) <= sprite_background_key_tolerance
+	)
+
+
+func _build_default_sprite_frames(image: Image) -> SpriteFrames:
+	var sprite_frames := SpriteFrames.new()
+	var sheet_rows := _extract_sheet_rows(image)
+
+	_add_animation_regions(
+		sprite_frames, &"idle", _get_row_regions(sheet_rows, 0), idle_animation_fps, true, image
+	)
+	_add_animation_regions(
+		sprite_frames, &"run", _get_row_regions(sheet_rows, 1), run_animation_fps, true, image
+	)
+	_add_animation_regions(
+		sprite_frames,
+		&"jump_up",
+		_get_regions_by_indices(sheet_rows, 2, [1, 2]),
+		air_animation_fps,
+		true,
+		image
+	)
+	_add_animation_regions(
+		sprite_frames,
+		&"jump_down",
+		_get_regions_by_indices(sheet_rows, 2, [2, 3]),
+		air_animation_fps,
+		true,
+		image
+	)
+	_add_animation_regions(
+		sprite_frames,
+		&"attack",
+		_get_row_regions(sheet_rows, 3),
+		attack_animation_fps,
+		false,
+		image
+	)
+	_add_animation_regions(
+		sprite_frames,
+		&"hurt",
+		_get_regions_by_indices(sheet_rows, 5, [0, 1]),
+		hurt_animation_fps,
+		false,
+		image
+	)
+	_add_animation_regions(
+		sprite_frames,
+		&"death",
+		_get_regions_by_indices(sheet_rows, 5, [4, 5]),
+		death_animation_fps,
+		false,
+		image
+	)
+
+	_ensure_animation_exists(sprite_frames, &"jump_up", &"idle")
+	_ensure_animation_exists(sprite_frames, &"jump_down", &"jump_up")
+	_ensure_animation_exists(sprite_frames, &"attack", &"idle")
+	_ensure_animation_exists(sprite_frames, &"hurt", &"idle")
+	_ensure_animation_exists(sprite_frames, &"death", &"hurt")
+
+	return sprite_frames
+
+
+func _extract_sheet_rows(image: Image) -> Array:
+	var row_bands: Array = []
+	var band_start := -1
+
+	for y in range(image.get_height()):
+		var occupied := false
+		for x in range(image.get_width()):
+			if image.get_pixel(x, y).a > 0.0:
+				occupied = true
+				break
+
+		if occupied and band_start < 0:
+			band_start = y
+		elif not occupied and band_start >= 0:
+			row_bands.append(Vector2i(band_start, y - 1))
+			band_start = -1
+
+	if band_start >= 0:
+		row_bands.append(Vector2i(band_start, image.get_height() - 1))
+
+	var sheet_rows: Array = []
+	for row_band in row_bands:
+		sheet_rows.append(_extract_row_regions(image, row_band.x, row_band.y))
+
+	return sheet_rows
+
+
+func _extract_row_regions(image: Image, top: int, bottom: int) -> Array:
+	var column_bands: Array = []
+	var band_start := -1
+
+	for x in range(image.get_width()):
+		var occupied := false
+		for y in range(top, bottom + 1):
+			if image.get_pixel(x, y).a > 0.0:
+				occupied = true
+				break
+
+		if occupied and band_start < 0:
+			band_start = x
+		elif not occupied and band_start >= 0:
+			column_bands.append(Vector2i(band_start, x - 1))
+			band_start = -1
+
+	if band_start >= 0:
+		column_bands.append(Vector2i(band_start, image.get_width() - 1))
+
+	var regions: Array = []
+	for column_band in column_bands:
+		regions.append(_trim_region(image, column_band.x, column_band.y, top, bottom))
+
+	return regions
+
+
+func _trim_region(image: Image, left: int, right: int, top: int, bottom: int) -> Rect2i:
+	var min_x := right
+	var min_y := bottom
+	var max_x := left
+	var max_y := top
+
+	for y in range(top, bottom + 1):
+		for x in range(left, right + 1):
+			if image.get_pixel(x, y).a <= 0.0:
+				continue
+
+			min_x = mini(min_x, x)
+			min_y = mini(min_y, y)
+			max_x = maxi(max_x, x)
+			max_y = maxi(max_y, y)
+
+	return Rect2i(min_x, min_y, (max_x - min_x) + 1, (max_y - min_y) + 1)
+
+
+func _get_row_regions(sheet_rows: Array, row_index: int) -> Array:
+	if row_index < 0 or row_index >= sheet_rows.size():
+		return []
+
+	return sheet_rows[row_index]
+
+
+func _get_regions_by_indices(sheet_rows: Array, row_index: int, indices: Array) -> Array:
+	var selected_regions: Array = []
+	if row_index < 0 or row_index >= sheet_rows.size():
+		return selected_regions
+
+	var row_regions: Array = sheet_rows[row_index]
+	for index in indices:
+		if index >= 0 and index < row_regions.size():
+			selected_regions.append(row_regions[index])
+
+	return selected_regions
+
+
+func _add_animation_regions(
+	sprite_frames: SpriteFrames,
+	animation_name: StringName,
+	regions: Array,
+	fps: float,
+	looped: bool,
+	image: Image
+) -> void:
+	if regions.is_empty():
+		return
+
+	if not sprite_frames.has_animation(animation_name):
+		sprite_frames.add_animation(animation_name)
+
+	sprite_frames.set_animation_speed(animation_name, maxf(0.1, fps))
+	sprite_frames.set_animation_loop(animation_name, looped)
+
+	for region in regions:
+		sprite_frames.add_frame(animation_name, _create_aligned_frame_texture(image, region))
+
+
+func _ensure_animation_exists(
+	sprite_frames: SpriteFrames, animation_name: StringName, fallback_name: StringName
+) -> void:
+	if sprite_frames.has_animation(animation_name):
+		return
+
+	if not sprite_frames.has_animation(fallback_name):
+		return
+
+	sprite_frames.add_animation(animation_name)
+	sprite_frames.set_animation_speed(
+		animation_name, sprite_frames.get_animation_speed(fallback_name)
+	)
+	sprite_frames.set_animation_loop(
+		animation_name, sprite_frames.get_animation_loop(fallback_name)
+	)
+
+	for frame_index in range(sprite_frames.get_frame_count(fallback_name)):
+		sprite_frames.add_frame(
+			animation_name,
+			sprite_frames.get_frame_texture(fallback_name, frame_index),
+			sprite_frames.get_frame_duration(fallback_name, frame_index)
+		)
+
+
+func _create_aligned_frame_texture(image: Image, region: Rect2i) -> Texture2D:
+	var frame_image := Image.create(
+		animation_frame_size.x, animation_frame_size.y, false, Image.FORMAT_RGBA8
+	)
+	frame_image.fill(Color(0.0, 0.0, 0.0, 0.0))
+
+	var cropped_image := image.get_region(region)
+	cropped_image.convert(Image.FORMAT_RGBA8)
+	var destination := Vector2i(
+		maxi(0, int((animation_frame_size.x - region.size.x) / 2)),
+		maxi(0, animation_frame_size.y - region.size.y)
+	)
+	frame_image.blit_rect(cropped_image, Rect2i(Vector2i.ZERO, region.size), destination)
+
+	return ImageTexture.create_from_image(frame_image)
+
+
+func _get_desired_animation_name() -> StringName:
+	var animation_name: StringName = &"idle"
+
+	match _state:
+		PlayerState.RUN:
+			animation_name = &"run"
+		PlayerState.JUMP:
+			animation_name = &"jump_up"
+		PlayerState.FALL:
+			animation_name = &"jump_down"
+		PlayerState.ATTACK:
+			animation_name = &"attack"
+		PlayerState.HURT:
+			animation_name = &"hurt"
+		PlayerState.DEAD:
+			animation_name = &"death"
+
+	return animation_name
 
 
 func _physics_process(delta: float) -> void:
@@ -513,6 +808,22 @@ func _register_melee_hit(target: Node) -> void:
 
 
 func _update_visual_state(delta: float) -> void:
+	if _sprite_visual != null and _sprite_visual.sprite_frames != null:
+		var desired_animation := _get_desired_animation_name()
+		var is_one_shot := (
+			desired_animation == &"attack"
+			or desired_animation == &"hurt"
+			or desired_animation == &"death"
+		)
+
+		if _sprite_visual.animation != desired_animation:
+			_sprite_visual.play(desired_animation)
+		elif not _sprite_visual.is_playing() and not is_one_shot:
+			_sprite_visual.play(desired_animation)
+
+		_sprite_visual.flip_h = _facing_sign < 0.0
+		return
+
 	if _body_visual == null:
 		return
 

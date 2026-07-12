@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=5 format=3 uid="uid://bsmxp4op6cc6e"]
 
-[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_3h4r8"]
+[ext_resource type="Script" uid="uid://o4osibv7x85f" path="res://scripts/player/player.gd" id="1_3h4r8"]
 [ext_resource type="PackedScene" path="res://scenes/player/player_projectile.tscn" id="2_hjhxw"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2x6a2"]
@@ -12,7 +12,6 @@ size = Vector2(14, 12)
 
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 2
-collision_mask = 1
 script = ExtResource("1_3h4r8")
 projectile_scene = ExtResource("2_hjhxw")
 
@@ -25,9 +24,11 @@ position = Vector2(0, -10)
 color = Color(0.164706, 0.741176, 0.756863, 1)
 polygon = PackedVector2Array(-7, -11, 7, -11, 7, 11, -7, 11)
 
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -10)
+
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, -36)
-current = true
 position_smoothing_enabled = true
 position_smoothing_speed = 6.0
 
