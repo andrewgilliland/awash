@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/world_room_01.tscn" id="1_jyhp4"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_t2u6f"]
+
+[node name="Main" type="Node2D"]
+
+[node name="WorldRoom01" parent="." instance=ExtResource("1_jyhp4")]
+
+[node name="Player" parent="." instance=ExtResource("2_t2u6f")]
+position = Vector2(90, 180)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HelpLabel" type="Label" parent="CanvasLayer"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 414.0
+offset_bottom = 33.0
+text = "Arrows/WASD move, Space/A jump, X/Xbox-X melee, V/Xbox-B ranged"
