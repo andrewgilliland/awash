@@ -1,9 +1,9 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/world_biome_01.gd" id="1_8yj6f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
-size = Vector2(1024, 64)
+size = Vector2(2048, 64)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_r1"]
 size = Vector2(96, 16)
@@ -23,6 +23,18 @@ size = Vector2(80, 16)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_r4"]
 size = Vector2(112, 16)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r5a"]
+size = Vector2(96, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r6a"]
+size = Vector2(128, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r7a"]
+size = Vector2(112, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r8a"]
+size = Vector2(144, 16)
+
 [node name="WorldBiome01" type="Node2D"]
 script = ExtResource("1_8yj6f")
 
@@ -40,7 +52,7 @@ position = Vector2(-232, 0)
 [node name="Collision" type="Node2D" parent="."]
 
 [node name="Floor" type="StaticBody2D" parent="Collision"]
-position = Vector2(280, 240)
+position = Vector2(792, 240)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/Floor"]
 shape = SubResource("RectangleShape2D_floor")
@@ -80,6 +92,30 @@ position = Vector2(848, 176)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/Room4Platform"]
 shape = SubResource("RectangleShape2D_r4")
+
+[node name="Room5Platform" type="StaticBody2D" parent="Collision"]
+position = Vector2(1072, 160)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/Room5Platform"]
+shape = SubResource("RectangleShape2D_r5a")
+
+[node name="Room6Platform" type="StaticBody2D" parent="Collision"]
+position = Vector2(1240, 144)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/Room6Platform"]
+shape = SubResource("RectangleShape2D_r6a")
+
+[node name="Room7Platform" type="StaticBody2D" parent="Collision"]
+position = Vector2(1480, 160)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/Room7Platform"]
+shape = SubResource("RectangleShape2D_r7a")
+
+[node name="Room8Platform" type="StaticBody2D" parent="Collision"]
+position = Vector2(1704, 176)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/Room8Platform"]
+shape = SubResource("RectangleShape2D_r8a")
 
 [node name="Spawn" type="Marker2D" parent="."]
 position = Vector2(90, 180)

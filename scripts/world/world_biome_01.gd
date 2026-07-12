@@ -1,7 +1,7 @@
 extends Node2D
 
 const TILE_SIZE: int = 16
-const ROOM_COUNT: int = 4
+const ROOM_COUNT: int = 8
 const ROOM_WIDTH_TILES: int = 16
 const MAP_HEIGHT_TILES: int = 16
 const FLOOR_Y: int = 14
@@ -91,6 +91,22 @@ func _paint_layers(source_id: int) -> void:
 	# Room 4 platforms + gate-style ledge for upcoming ability progression.
 	_fill_rect(_ground_layer, source_id, ATLAS_GROUND, 52, 58, 11, 11)
 	_fill_rect(_foreground_layer, source_id, ATLAS_FOREGROUND, 60, 62, 10, 10)
+
+	# Room 5 vertical climb path.
+	_fill_rect(_ground_layer, source_id, ATLAS_GROUND, 68, 73, 10, 10)
+	_fill_rect(_ground_layer, source_id, ATLAS_GROUND, 74, 78, 7, 7)
+
+	# Room 6 long finish platform.
+	_fill_rect(_ground_layer, source_id, ATLAS_GROUND, 84, 92, 9, 9)
+	_fill_rect(_foreground_layer, source_id, ATLAS_FOREGROUND, 93, 94, 8, 12)
+
+	# Room 7 staggered route.
+	_fill_rect(_ground_layer, source_id, ATLAS_GROUND, 100, 106, 10, 10)
+	_fill_rect(_ground_layer, source_id, ATLAS_GROUND, 108, 111, 7, 7)
+
+	# Room 8 final wide shelf.
+	_fill_rect(_ground_layer, source_id, ATLAS_GROUND, 116, 124, 11, 11)
+	_fill_rect(_foreground_layer, source_id, ATLAS_FOREGROUND, 125, 127, 8, 12)
 
 
 func _fill_rect(

@@ -59,7 +59,7 @@ enum AttackPhase {
 @export var camera_look_ahead_distance: float = 36.0
 @export var camera_look_ahead_vertical: float = 20.0
 @export var camera_look_ahead_lerp_speed: float = 8.0
-@export var camera_room_bounds: Rect2 = Rect2(-232.0, 0.0, 1024.0, 270.0)
+@export var camera_room_bounds: Rect2 = Rect2(-232.0, 0.0, 2048.0, 270.0)
 
 var _input_direction: float = 0.0
 var _coyote_timer: float = 0.0
