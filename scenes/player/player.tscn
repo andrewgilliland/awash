@@ -1,10 +1,13 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_3h4r8"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2x6a2"]
 radius = 6.0
 height = 20.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack"]
+size = Vector2(14, 12)
 
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 2
@@ -25,3 +28,13 @@ position = Vector2(0, -36)
 current = true
 position_smoothing_enabled = true
 position_smoothing_speed = 6.0
+
+[node name="AttackArea" type="Area2D" parent="."]
+position = Vector2(14, -10)
+collision_layer = 4
+collision_mask = 24
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+shape = SubResource("RectangleShape2D_attack")
+disabled = true

@@ -1,12 +1,25 @@
 extends CharacterBody2D
 
+signal attack_window_started
+signal attack_window_ended
+signal melee_hit_confirmed(target: Node)
+signal feedback_event_requested(event_name: String)
+
 enum PlayerState {
 	IDLE,
 	RUN,
 	JUMP,
 	FALL,
+	ATTACK,
 	HURT,
 	DEAD,
+}
+
+enum AttackPhase {
+	NONE,
+	STARTUP,
+	ACTIVE,
+	RECOVERY,
 }
 
 @export var move_speed: float = 145.0
@@ -25,6 +38,11 @@ enum PlayerState {
 @export var invulnerable_seconds: float = 0.7
 @export var death_lock_seconds: float = 0.9
 @export var reload_scene_on_death: bool = false
+@export var melee_startup_seconds: float = 0.06
+@export var melee_active_seconds: float = 0.08
+@export var melee_recovery_seconds: float = 0.16
+@export var melee_damage: int = 1
+@export var melee_knockback: Vector2 = Vector2(120.0, -45.0)
 
 var _input_direction: float = 0.0
 var _coyote_timer: float = 0.0
@@ -36,12 +54,24 @@ var _state: PlayerState = PlayerState.IDLE
 var _hurt_timer: float = 0.0
 var _invulnerable_timer: float = 0.0
 var _death_timer: float = 0.0
+var _attack_phase: AttackPhase = AttackPhase.NONE
+var _attack_phase_timer: float = 0.0
+var _attack_hit_targets: Dictionary = {}
+var _attack_base_position: Vector2 = Vector2.ZERO
 
 @onready var _body_visual: Polygon2D = $Body
+@onready var _attack_area: Area2D = $AttackArea
+@onready var _attack_shape: CollisionShape2D = $AttackArea/CollisionShape2D
 
 
 func _ready() -> void:
 	_current_health = max_health
+	_attack_base_position = _attack_area.position
+	_set_attack_hitbox_enabled(false)
+	if not _attack_area.body_entered.is_connected(_on_attack_area_body_entered):
+		_attack_area.body_entered.connect(_on_attack_area_body_entered)
+	if not _attack_area.area_entered.is_connected(_on_attack_area_area_entered):
+		_attack_area.area_entered.connect(_on_attack_area_area_entered)
 
 
 func _physics_process(delta: float) -> void:
@@ -52,10 +82,14 @@ func _physics_process(delta: float) -> void:
 	else:
 		if _state == PlayerState.HURT:
 			_process_hurt_state(delta)
+		elif _state == PlayerState.ATTACK:
+			_process_attack_state(delta)
 		else:
 			_apply_horizontal_movement(delta)
 
 		_apply_vertical_movement(delta)
+		_handle_attack_press()
+		_tick_attack_phase(delta)
 		_handle_jump_press()
 		_try_consume_buffered_jump()
 		_apply_jump_release_gravity(delta)
@@ -116,7 +150,7 @@ func _can_ground_or_coyote_jump() -> bool:
 
 func _do_jump() -> void:
 	velocity.y = jump_velocity
-	if _state != PlayerState.HURT and _state != PlayerState.DEAD:
+	if _state != PlayerState.HURT and _state != PlayerState.DEAD and _state != PlayerState.ATTACK:
 		_set_state(PlayerState.JUMP)
 
 
@@ -143,6 +177,7 @@ func take_damage(amount: int = 1, knockback: Vector2 = Vector2.ZERO) -> void:
 
 func _enter_death_state() -> void:
 	_death_timer = death_lock_seconds
+	_end_attack()
 	_set_state(PlayerState.DEAD)
 
 
@@ -160,6 +195,11 @@ func _tick_state_timers(delta: float) -> void:
 
 func _process_hurt_state(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, 0.0, friction * 0.65 * delta)
+	_end_attack()
+
+
+func _process_attack_state(delta: float) -> void:
+	_apply_horizontal_movement(delta * 0.35)
 
 
 func _process_dead_state(delta: float) -> void:
@@ -171,6 +211,9 @@ func _process_dead_state(delta: float) -> void:
 
 func _update_state_from_motion() -> void:
 	if _state == PlayerState.DEAD:
+		return
+
+	if _state == PlayerState.ATTACK and _attack_phase != AttackPhase.NONE:
 		return
 
 	if _state == PlayerState.HURT and _hurt_timer > 0.0:
@@ -206,6 +249,113 @@ func _apply_jump_release_gravity(delta: float) -> void:
 func _update_facing() -> void:
 	if absf(_input_direction) > 0.01:
 		_facing_sign = signf(_input_direction)
+	_update_attack_hitbox_orientation()
+
+
+func _handle_attack_press() -> void:
+	if not Input.is_action_just_pressed("melee_attack"):
+		return
+
+	if _state == PlayerState.DEAD or _state == PlayerState.HURT:
+		return
+
+	if _attack_phase != AttackPhase.NONE:
+		return
+
+	_begin_attack()
+
+
+func _begin_attack() -> void:
+	_set_state(PlayerState.ATTACK)
+	_attack_phase = AttackPhase.STARTUP
+	_attack_phase_timer = melee_startup_seconds
+	_attack_hit_targets.clear()
+	_set_attack_hitbox_enabled(false)
+	emit_signal("feedback_event_requested", "melee_startup")
+
+
+func _tick_attack_phase(delta: float) -> void:
+	if _attack_phase == AttackPhase.NONE:
+		return
+
+	_attack_phase_timer = maxf(0.0, _attack_phase_timer - delta)
+	if _attack_phase_timer > 0.0:
+		return
+
+	if _attack_phase == AttackPhase.STARTUP:
+		_attack_phase = AttackPhase.ACTIVE
+		_attack_phase_timer = melee_active_seconds
+		_attack_hit_targets.clear()
+		_set_attack_hitbox_enabled(true)
+		emit_signal("attack_window_started")
+		emit_signal("feedback_event_requested", "melee_active")
+		return
+
+	if _attack_phase == AttackPhase.ACTIVE:
+		_attack_phase = AttackPhase.RECOVERY
+		_attack_phase_timer = melee_recovery_seconds
+		_set_attack_hitbox_enabled(false)
+		emit_signal("attack_window_ended")
+		emit_signal("feedback_event_requested", "melee_recovery")
+		return
+
+	_end_attack()
+
+
+func _end_attack() -> void:
+	_attack_phase = AttackPhase.NONE
+	_attack_phase_timer = 0.0
+	_attack_hit_targets.clear()
+	_set_attack_hitbox_enabled(false)
+	if _state == PlayerState.ATTACK:
+		_update_state_from_motion()
+
+
+func _set_attack_hitbox_enabled(enabled: bool) -> void:
+	if _attack_shape != null:
+		_attack_shape.disabled = not enabled
+	if _attack_area != null:
+		_attack_area.monitoring = enabled
+
+
+func _update_attack_hitbox_orientation() -> void:
+	if _attack_area == null:
+		return
+
+	var direction := 1.0 if _facing_sign >= 0.0 else -1.0
+	_attack_area.position = Vector2(_attack_base_position.x * direction, _attack_base_position.y)
+
+
+func _on_attack_area_body_entered(body: Node2D) -> void:
+	_register_melee_hit(body)
+
+
+func _on_attack_area_area_entered(area: Area2D) -> void:
+	if area == null:
+		return
+
+	if area.get_parent() != null:
+		_register_melee_hit(area.get_parent())
+
+
+func _register_melee_hit(target: Node) -> void:
+	if target == null:
+		return
+
+	if _attack_phase != AttackPhase.ACTIVE:
+		return
+
+	if _attack_hit_targets.has(target):
+		return
+
+	_attack_hit_targets[target] = true
+
+	if target.has_method("take_damage"):
+		var knockback := Vector2(melee_knockback.x * _facing_sign, melee_knockback.y)
+		target.call("take_damage", melee_damage, knockback)
+
+	emit_signal("melee_hit_confirmed", target)
+	emit_signal("feedback_event_requested", "melee_hit_confirm")
 
 
 func _update_visual_state(delta: float) -> void:
@@ -229,6 +379,10 @@ func _update_visual_state(delta: float) -> void:
 	elif _state == PlayerState.FALL:
 		target_scale = Vector2(1.08, 0.92)
 		target_color = Color(0.113725, 0.631373, 0.662745, 1.0)
+	elif _state == PlayerState.ATTACK:
+		target_scale = Vector2(1.06, 0.94)
+		target_rotation = deg_to_rad(3.0) * _facing_sign
+		target_color = Color(0.956863, 0.807843, 0.337255, 1.0)
 	elif _state == PlayerState.RUN:
 		target_rotation = deg_to_rad(6.0) * _facing_sign
 		target_color = Color(0.227451, 0.831373, 0.847059, 1.0)
