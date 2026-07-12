@@ -1,0 +1,25 @@
+{
+  "files.associations": {
+    "*.gd": "gdscript",
+    "*.gdshader": "gdshader",
+    "*.gdshaderinc": "gdshader"
+  },
+  "[gdscript]": {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": false,
+    "editor.formatOnSave": true,
+    "editor.rulers": [
+      100
+    ]
+  },
+  "[gdshader]": {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": false
+  },
+  "editor.trimAutoWhitespace": true,
+  "editor.detectIndentation": false,
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "godotTools.editorPath.godot4": "/Users/andrewgilliland/.local/bin/godot"
+}
