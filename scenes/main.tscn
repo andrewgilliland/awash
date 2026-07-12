@@ -1,11 +1,11 @@
 [gd_scene load_steps=3 format=3 uid="uid://cd7y8g7l5y8wn"]
 
-[ext_resource type="PackedScene" path="res://scenes/world/world_room_01.tscn" id="1_jyhp4"]
+[ext_resource type="PackedScene" path="res://scenes/world/world_biome_01.tscn" id="1_jyhp4"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_t2u6f"]
 
 [node name="Main" type="Node2D"]
 
-[node name="WorldRoom01" parent="." instance=ExtResource("1_jyhp4")]
+[node name="WorldBiome01" parent="." instance=ExtResource("1_jyhp4")]
 
 [node name="Player" parent="." instance=ExtResource("2_t2u6f")]
 position = Vector2(90, 180)

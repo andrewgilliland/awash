@@ -1,11 +1,13 @@
 extends SceneTree
 
 const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
+const BIOME_SCENE_PATH := "res://scenes/world/world_biome_01.tscn"
 var _failures: int = 0
 
 
 func _init() -> void:
 	_run_test("Player scene loads", _test_player_scene_loads)
+	_run_test("Biome scene loads", _test_biome_scene_loads)
 	_run_test("Player defaults sane", _test_player_default_values)
 	_run_test("Player ranged defaults sane", _test_player_ranged_defaults)
 	_run_test("Player camera defaults sane", _test_player_camera_defaults)
@@ -40,6 +42,24 @@ func _test_player_scene_loads() -> bool:
 	var is_expected_type := instance is CharacterBody2D
 	instance.queue_free()
 	return is_expected_type
+
+
+func _test_biome_scene_loads() -> bool:
+	var packed_scene := load(BIOME_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var instance := packed_scene.instantiate() as Node2D
+	if instance == null:
+		return false
+
+	var has_background := instance.get_node_or_null("Tilemaps/BackgroundLayer") != null
+	var has_ground := instance.get_node_or_null("Tilemaps/GroundLayer") != null
+	var has_foreground := instance.get_node_or_null("Tilemaps/ForegroundLayer") != null
+	var has_spawn := instance.get_node_or_null("Spawn") != null
+
+	instance.queue_free()
+	return has_background and has_ground and has_foreground and has_spawn
 
 
 func _test_player_default_values() -> bool:

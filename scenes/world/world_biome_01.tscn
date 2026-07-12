@@ -1,0 +1,85 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/world_biome_01.gd" id="1_8yj6f"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(1024, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r1"]
+size = Vector2(96, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r2a"]
+size = Vector2(112, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r2b"]
+size = Vector2(96, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r3a"]
+size = Vector2(96, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r3b"]
+size = Vector2(80, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r4"]
+size = Vector2(112, 16)
+
+[node name="WorldBiome01" type="Node2D"]
+script = ExtResource("1_8yj6f")
+
+[node name="Tilemaps" type="Node2D" parent="."]
+
+[node name="BackgroundLayer" type="TileMapLayer" parent="Tilemaps"]
+position = Vector2(-232, 0)
+
+[node name="GroundLayer" type="TileMapLayer" parent="Tilemaps"]
+position = Vector2(-232, 0)
+
+[node name="ForegroundLayer" type="TileMapLayer" parent="Tilemaps"]
+position = Vector2(-232, 0)
+
+[node name="Collision" type="Node2D" parent="."]
+
+[node name="Floor" type="StaticBody2D" parent="Collision"]
+position = Vector2(280, 240)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/Floor"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="Room1Platform" type="StaticBody2D" parent="Collision"]
+position = Vector2(104, 176)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/Room1Platform"]
+shape = SubResource("RectangleShape2D_r1")
+
+[node name="Room2PlatformA" type="StaticBody2D" parent="Collision"]
+position = Vector2(336, 144)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/Room2PlatformA"]
+shape = SubResource("RectangleShape2D_r2a")
+
+[node name="Room2PlatformB" type="StaticBody2D" parent="Collision"]
+position = Vector2(392, 192)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/Room2PlatformB"]
+shape = SubResource("RectangleShape2D_r2b")
+
+[node name="Room3PlatformA" type="StaticBody2D" parent="Collision"]
+position = Vector2(600, 160)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/Room3PlatformA"]
+shape = SubResource("RectangleShape2D_r3a")
+
+[node name="Room3PlatformB" type="StaticBody2D" parent="Collision"]
+position = Vector2(664, 112)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/Room3PlatformB"]
+shape = SubResource("RectangleShape2D_r3b")
+
+[node name="Room4Platform" type="StaticBody2D" parent="Collision"]
+position = Vector2(848, 176)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/Room4Platform"]
+shape = SubResource("RectangleShape2D_r4")
+
+[node name="Spawn" type="Marker2D" parent="."]
+position = Vector2(90, 180)
