@@ -24,15 +24,17 @@ enum AttackPhase {
 
 const PLAYER_SPRITE_SHEET := preload("res://assets/sprites/player_1.png")
 
-@export var move_speed: float = 145.0
-@export var acceleration: float = 950.0
-@export var air_acceleration: float = 720.0
-@export var friction: float = 1100.0
-@export var jump_velocity: float = -315.0
-@export var max_fall_speed: float = 520.0
-@export var jump_release_gravity_multiplier: float = 1.6
-@export var coyote_time_seconds: float = 0.12
-@export var jump_buffer_seconds: float = 0.12
+@export var move_speed: float = 160.0
+@export var acceleration: float = 1200.0
+@export var air_acceleration: float = 800.0
+@export var friction: float = 1400.0
+@export var jump_velocity: float = -330.0
+@export var max_fall_speed: float = 560.0
+@export var jump_release_gravity_multiplier: float = 1.9
+@export var coyote_time_seconds: float = 0.14
+@export var jump_buffer_seconds: float = 0.14
+@export var run_state_speed_threshold: float = 20.0
+@export var jump_to_fall_velocity_threshold: float = 18.0
 @export var has_double_jump: bool = false
 @export var max_air_jumps: int = 1
 @export var max_health: int = 3
@@ -43,6 +45,7 @@ const PLAYER_SPRITE_SHEET := preload("res://assets/sprites/player_1.png")
 @export var melee_startup_seconds: float = 0.06
 @export var melee_active_seconds: float = 0.08
 @export var melee_recovery_seconds: float = 0.16
+@export var attack_movement_multiplier: float = 0.45
 @export var melee_damage: int = 1
 @export var melee_knockback: Vector2 = Vector2(120.0, -45.0)
 @export var projectile_scene: PackedScene
@@ -526,7 +529,7 @@ func _process_hurt_state(delta: float) -> void:
 
 
 func _process_attack_state(delta: float) -> void:
-	_apply_horizontal_movement(delta * 0.35)
+	_apply_horizontal_movement(delta * attack_movement_multiplier)
 
 
 func _process_dead_state(delta: float) -> void:
@@ -547,13 +550,17 @@ func _update_state_from_motion() -> void:
 		return
 
 	if not is_on_floor():
-		if velocity.y < 0.0:
+		if velocity.y <= -jump_to_fall_velocity_threshold:
 			_set_state(PlayerState.JUMP)
 		else:
 			_set_state(PlayerState.FALL)
 		return
 
-	if absf(velocity.x) > 8.0:
+	var horizontal_speed := absf(velocity.x)
+	if (
+		horizontal_speed >= run_state_speed_threshold
+		or (absf(_input_direction) > 0.2 and horizontal_speed > 2.0)
+	):
 		_set_state(PlayerState.RUN)
 	else:
 		_set_state(PlayerState.IDLE)
@@ -569,7 +576,7 @@ func _apply_jump_release_gravity(delta: float) -> void:
 	if is_on_floor():
 		return
 
-	if velocity.y < 0.0 and Input.is_action_just_released("jump"):
+	if velocity.y < 0.0 and not Input.is_action_pressed("jump"):
 		velocity.y += get_gravity().y * jump_release_gravity_multiplier * delta
 
 

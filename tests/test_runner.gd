@@ -13,6 +13,7 @@ func _init() -> void:
 	_run_test("Biome scene loads", _test_biome_scene_loads)
 	_run_test("Biome room api sane", _test_biome_room_api_sane)
 	_run_test("Player defaults sane", _test_player_default_values)
+	_run_test("Player movement tuning sane", _test_player_movement_tuning_defaults)
 	_run_test("Player ranged defaults sane", _test_player_ranged_defaults)
 	_run_test("Player camera defaults sane", _test_player_camera_defaults)
 	_run_test("Runtime state defaults sane", _test_runtime_state_defaults_sane)
@@ -145,6 +146,32 @@ func _test_player_ranged_defaults() -> bool:
 	is_valid = is_valid and player.get("max_ranged_resource") >= 1.0
 	is_valid = is_valid and player.get("ranged_cost") > 0.0
 	is_valid = is_valid and player.get("ranged_regen_per_second") > 0.0
+	player.queue_free()
+	return is_valid
+
+
+func _test_player_movement_tuning_defaults() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	var run_threshold := player.get("run_state_speed_threshold") as float
+	var jump_to_fall_threshold := player.get("jump_to_fall_velocity_threshold") as float
+	var is_valid := true
+	is_valid = is_valid and player.get("move_speed") >= 120.0
+	is_valid = is_valid and player.get("acceleration") > player.get("move_speed")
+	is_valid = is_valid and player.get("air_acceleration") > 0.0
+	is_valid = is_valid and player.get("friction") >= player.get("acceleration")
+	is_valid = is_valid and player.get("jump_release_gravity_multiplier") > 1.0
+	is_valid = is_valid and run_threshold > 0.0
+	is_valid = is_valid and run_threshold < player.get("move_speed")
+	is_valid = is_valid and jump_to_fall_threshold >= 0.0
+	is_valid = is_valid and player.get("attack_movement_multiplier") > 0.0
+	is_valid = is_valid and player.get("attack_movement_multiplier") <= 1.0
 	player.queue_free()
 	return is_valid
 
