@@ -16,7 +16,7 @@ Player can start a new game, clear a small biome, unlock double-jump, and backtr
 - Starter player controller added with coyote time and jump buffering.
 - Optional double-jump toggle added in player script.
 
-## Day-by-Day Plan
+## Steps
 
 1. Project bootstrap, display/stretch setup, folder taxonomy.
    1. Add typechecking gate and run it before moving into Day 2 feature work.

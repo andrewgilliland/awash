@@ -8,6 +8,7 @@ Awash is a new 2D metroidvania-style action RPG prototype built in Godot 4.4.
 - Player controller includes movement, coyote time, and jump buffering.
 - Double-jump support is coded and can be toggled by setting `has_double_jump = true` on the player.
 - Input bootstrap supports keyboard and gamepad defaults at runtime.
+- Step 2 setup is in place: collision layer names and standards documentation.
 
 ## Run
 1. Open `awash` in Godot 4.4.
@@ -32,6 +33,9 @@ Awash is a new 2D metroidvania-style action RPG prototype built in Godot 4.4.
 - Install hook: `./scripts/install_hooks.sh`
 - Hook path: `.githooks/pre-commit`
 - On each commit, runs: typecheck, lint/format check, tests
+
+## Step 2 Standards
+- See `docs/step-2-standards.md` for input action names, collision matrix, and naming conventions.
 
 ## Next Implementation Targets
 1. Add player state machine with locomotion + combat branches.

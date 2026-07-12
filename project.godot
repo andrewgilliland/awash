@@ -28,6 +28,18 @@ window/size/window_height_override=960
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[layer_names]
+
+2d_physics/layer_1="world"
+2d_physics/layer_2="player"
+2d_physics/layer_3="player_hitbox"
+2d_physics/layer_4="enemy"
+2d_physics/layer_5="enemy_hitbox"
+2d_physics/layer_6="projectile_player"
+2d_physics/layer_7="projectile_enemy"
+2d_physics/layer_8="trigger"
+2d_physics/layer_9="pickup"
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
