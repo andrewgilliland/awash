@@ -160,6 +160,7 @@ func _test_player_movement_tuning_defaults() -> bool:
 		return false
 
 	var run_threshold := player.get("run_state_speed_threshold") as float
+	var walk_threshold := player.get("walk_state_speed_threshold") as float
 	var jump_to_fall_threshold := player.get("jump_to_fall_velocity_threshold") as float
 	var is_valid := true
 	is_valid = is_valid and player.get("move_speed") >= 120.0
@@ -167,6 +168,21 @@ func _test_player_movement_tuning_defaults() -> bool:
 	is_valid = is_valid and player.get("air_acceleration") > 0.0
 	is_valid = is_valid and player.get("friction") >= player.get("acceleration")
 	is_valid = is_valid and player.get("jump_release_gravity_multiplier") > 1.0
+	is_valid = is_valid and player.get("crouch_action_name") == StringName("move_down")
+	is_valid = is_valid and player.get("guard_action_name") == StringName("guard")
+	is_valid = is_valid and player.get("walk_speed_multiplier") > 0.0
+	is_valid = is_valid and player.get("walk_speed_multiplier") <= 1.0
+	is_valid = is_valid and player.get("run_speed_multiplier") >= 1.0
+	is_valid = is_valid and player.get("run_speed_multiplier") <= 1.5
+	is_valid = is_valid and player.get("run_double_tap_window_seconds") > 0.0
+	is_valid = is_valid and player.get("crouch_movement_multiplier") > 0.0
+	is_valid = is_valid and player.get("crouch_movement_multiplier") < 1.0
+	is_valid = is_valid and player.get("guard_damage_multiplier") >= 0.0
+	is_valid = is_valid and player.get("guard_damage_multiplier") <= 1.0
+	is_valid = is_valid and player.get("guard_knockback_multiplier") >= 0.0
+	is_valid = is_valid and player.get("guard_knockback_multiplier") <= 1.0
+	is_valid = is_valid and walk_threshold > 0.0
+	is_valid = is_valid and walk_threshold < run_threshold
 	is_valid = is_valid and run_threshold > 0.0
 	is_valid = is_valid and run_threshold < player.get("move_speed")
 	is_valid = is_valid and jump_to_fall_threshold >= 0.0

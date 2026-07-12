@@ -7,10 +7,13 @@ signal feedback_event_requested(event_name: String)
 
 enum PlayerState {
 	IDLE,
+	WALK,
 	RUN,
 	JUMP,
 	FALL,
 	ATTACK,
+	CROUCH,
+	GUARD,
 	HURT,
 	DEAD,
 }
@@ -33,8 +36,17 @@ const PLAYER_SPRITE_SHEET := preload("res://assets/sprites/player_1.png")
 @export var jump_release_gravity_multiplier: float = 1.9
 @export var coyote_time_seconds: float = 0.14
 @export var jump_buffer_seconds: float = 0.14
+@export var crouch_action_name: StringName = &"move_down"
+@export var guard_action_name: StringName = &"guard"
+@export var walk_speed_multiplier: float = 0.62
+@export var run_speed_multiplier: float = 1.0
+@export var run_double_tap_window_seconds: float = 0.22
+@export var walk_state_speed_threshold: float = 6.0
 @export var run_state_speed_threshold: float = 20.0
 @export var jump_to_fall_velocity_threshold: float = 18.0
+@export var crouch_movement_multiplier: float = 0.28
+@export var guard_damage_multiplier: float = 0.35
+@export var guard_knockback_multiplier: float = 0.25
 @export var has_double_jump: bool = false
 @export var max_air_jumps: int = 1
 @export var max_health: int = 3
@@ -71,6 +83,8 @@ const PLAYER_SPRITE_SHEET := preload("res://assets/sprites/player_1.png")
 @export var run_animation_fps: float = 11.0
 @export var air_animation_fps: float = 8.0
 @export var attack_animation_fps: float = 14.0
+@export var guard_animation_fps: float = 1.0
+@export var guard_from_attack_frame_index: int = 0
 @export var hurt_animation_fps: float = 10.0
 @export var death_animation_fps: float = 7.0
 @export var sprite_background_key_color: Color = Color(1.0, 1.0, 1.0, 1.0)
@@ -92,6 +106,9 @@ var _attack_hit_targets: Dictionary = {}
 var _attack_base_position: Vector2 = Vector2.ZERO
 var _ranged_cooldown_timer: float = 0.0
 var _ranged_resource: float = 0.0
+var _run_active: bool = false
+var _run_tap_timer: float = 0.0
+var _last_run_tap_direction: float = 0.0
 
 @onready var _body_visual: Polygon2D = $Body
 @onready var _sprite_visual: AnimatedSprite2D = $AnimatedSprite2D
@@ -166,6 +183,9 @@ func _build_default_sprite_frames(image: Image) -> SpriteFrames:
 		sprite_frames, &"idle", _get_row_regions(sheet_rows, 0), idle_animation_fps, true, image
 	)
 	_add_animation_regions(
+		sprite_frames, &"walk", _get_row_regions(sheet_rows, 0), run_animation_fps, true, image
+	)
+	_add_animation_regions(
 		sprite_frames, &"run", _get_row_regions(sheet_rows, 1), run_animation_fps, true, image
 	)
 	_add_animation_regions(
@@ -192,6 +212,14 @@ func _build_default_sprite_frames(image: Image) -> SpriteFrames:
 		false,
 		image
 	)
+	_copy_single_frame_animation(
+		sprite_frames,
+		&"guard",
+		&"attack",
+		guard_from_attack_frame_index,
+		guard_animation_fps,
+		false
+	)
 	_add_animation_regions(
 		sprite_frames,
 		&"hurt",
@@ -211,7 +239,10 @@ func _build_default_sprite_frames(image: Image) -> SpriteFrames:
 
 	_ensure_animation_exists(sprite_frames, &"jump_up", &"idle")
 	_ensure_animation_exists(sprite_frames, &"jump_down", &"jump_up")
+	_ensure_animation_exists(sprite_frames, &"walk", &"idle")
 	_ensure_animation_exists(sprite_frames, &"attack", &"idle")
+	_ensure_animation_exists(sprite_frames, &"crouch", &"idle")
+	_ensure_animation_exists(sprite_frames, &"guard", &"crouch")
 	_ensure_animation_exists(sprite_frames, &"hurt", &"idle")
 	_ensure_animation_exists(sprite_frames, &"death", &"hurt")
 
@@ -357,6 +388,36 @@ func _ensure_animation_exists(
 		)
 
 
+func _copy_single_frame_animation(
+	sprite_frames: SpriteFrames,
+	target_animation_name: StringName,
+	source_animation_name: StringName,
+	source_frame_index: int,
+	fps: float,
+	looped: bool
+) -> void:
+	if not sprite_frames.has_animation(source_animation_name):
+		return
+
+	var source_count := sprite_frames.get_frame_count(source_animation_name)
+	if source_count <= 0:
+		return
+
+	if sprite_frames.has_animation(target_animation_name):
+		sprite_frames.remove_animation(target_animation_name)
+
+	sprite_frames.add_animation(target_animation_name)
+	sprite_frames.set_animation_speed(target_animation_name, maxf(0.1, fps))
+	sprite_frames.set_animation_loop(target_animation_name, looped)
+
+	var clamped_index := clampi(source_frame_index, 0, source_count - 1)
+	sprite_frames.add_frame(
+		target_animation_name,
+		sprite_frames.get_frame_texture(source_animation_name, clamped_index),
+		sprite_frames.get_frame_duration(source_animation_name, clamped_index)
+	)
+
+
 func _create_aligned_frame_texture(image: Image, region: Rect2i) -> Texture2D:
 	var frame_image := Image.create(
 		animation_frame_size.x, animation_frame_size.y, false, Image.FORMAT_RGBA8
@@ -378,6 +439,8 @@ func _get_desired_animation_name() -> StringName:
 	var animation_name: StringName = &"idle"
 
 	match _state:
+		PlayerState.WALK:
+			animation_name = &"walk"
 		PlayerState.RUN:
 			animation_name = &"run"
 		PlayerState.JUMP:
@@ -386,6 +449,10 @@ func _get_desired_animation_name() -> StringName:
 			animation_name = &"jump_down"
 		PlayerState.ATTACK:
 			animation_name = &"attack"
+		PlayerState.CROUCH:
+			animation_name = &"crouch"
+		PlayerState.GUARD:
+			animation_name = &"guard"
 		PlayerState.HURT:
 			animation_name = &"hurt"
 		PlayerState.DEAD:
@@ -396,6 +463,7 @@ func _get_desired_animation_name() -> StringName:
 
 func _physics_process(delta: float) -> void:
 	_tick_state_timers(delta)
+	_update_run_input_window(delta)
 
 	if _state == PlayerState.DEAD:
 		_process_dead_state(delta)
@@ -404,6 +472,10 @@ func _physics_process(delta: float) -> void:
 			_process_hurt_state(delta)
 		elif _state == PlayerState.ATTACK:
 			_process_attack_state(delta)
+		elif _state == PlayerState.GUARD:
+			_process_guard_state(delta)
+		elif _state == PlayerState.CROUCH:
+			_process_crouch_state(delta)
 		else:
 			_apply_horizontal_movement(delta)
 
@@ -424,7 +496,16 @@ func _physics_process(delta: float) -> void:
 
 func _apply_horizontal_movement(delta: float) -> void:
 	_input_direction = Input.get_axis("move_left", "move_right")
-	var target_speed := _input_direction * move_speed
+	var movement_multiplier := 1.0
+	if is_on_floor() and _is_crouch_requested() and not _is_guard_requested():
+		movement_multiplier = crouch_movement_multiplier
+
+	var speed_multiplier := walk_speed_multiplier
+	if _run_active:
+		speed_multiplier = run_speed_multiplier
+
+	var target_speed := _input_direction * move_speed * speed_multiplier * movement_multiplier
+
 	var acceleration_value := acceleration if is_on_floor() else air_acceleration
 
 	if absf(target_speed) > 0.01:
@@ -476,6 +557,62 @@ func _do_jump() -> void:
 		_set_state(PlayerState.JUMP)
 
 
+func _is_crouch_requested() -> bool:
+	if crouch_action_name == StringName(""):
+		return false
+
+	if not InputMap.has_action(crouch_action_name):
+		return false
+
+	return Input.is_action_pressed(crouch_action_name)
+
+
+func _is_guard_requested() -> bool:
+	if guard_action_name != StringName("") and InputMap.has_action(guard_action_name):
+		return Input.is_action_pressed(guard_action_name)
+
+	if InputMap.has_action(&"interact"):
+		return Input.is_action_pressed(&"interact")
+
+	return false
+
+
+func _register_run_tap(direction: float) -> void:
+	if direction == 0.0:
+		return
+
+	if _run_tap_timer > 0.0 and _last_run_tap_direction == direction:
+		_run_active = true
+		_run_tap_timer = 0.0
+		return
+
+	_last_run_tap_direction = direction
+	_run_tap_timer = run_double_tap_window_seconds
+
+
+func _update_run_input_window(delta: float) -> void:
+	if Input.is_action_just_pressed("move_left"):
+		_register_run_tap(-1.0)
+	if Input.is_action_just_pressed("move_right"):
+		_register_run_tap(1.0)
+
+	_run_tap_timer = maxf(0.0, _run_tap_timer - delta)
+	if _run_tap_timer <= 0.0 and not _run_active:
+		_last_run_tap_direction = 0.0
+
+	var directional_input := Input.get_axis("move_left", "move_right")
+	if absf(directional_input) <= 0.01:
+		_run_active = false
+		return
+
+	var input_sign := signf(directional_input)
+	if _run_active and input_sign != _last_run_tap_direction:
+		_run_active = false
+
+	if _is_crouch_requested() or _is_guard_requested():
+		_run_active = false
+
+
 func take_damage(amount: int = 1, knockback: Vector2 = Vector2.ZERO) -> void:
 	if amount <= 0:
 		return
@@ -483,11 +620,20 @@ func take_damage(amount: int = 1, knockback: Vector2 = Vector2.ZERO) -> void:
 	if _state == PlayerState.DEAD or _invulnerable_timer > 0.0:
 		return
 
-	_current_health = maxi(0, _current_health - amount)
+	var applied_amount := amount
+	var applied_knockback := knockback
+	if _state == PlayerState.GUARD and is_on_floor():
+		applied_amount = int(ceil(float(amount) * guard_damage_multiplier))
+		applied_knockback = knockback * guard_knockback_multiplier
+		if applied_amount <= 0:
+			emit_signal("feedback_event_requested", "guard_block")
+			return
+
+	_current_health = maxi(0, _current_health - applied_amount)
 	_invulnerable_timer = invulnerable_seconds
 
-	if knockback != Vector2.ZERO:
-		velocity = knockback
+	if applied_knockback != Vector2.ZERO:
+		velocity = applied_knockback
 
 	if _current_health <= 0:
 		_enter_death_state()
@@ -532,6 +678,15 @@ func _process_attack_state(delta: float) -> void:
 	_apply_horizontal_movement(delta * attack_movement_multiplier)
 
 
+func _process_crouch_state(delta: float) -> void:
+	_apply_horizontal_movement(delta * crouch_movement_multiplier)
+
+
+func _process_guard_state(delta: float) -> void:
+	_run_active = false
+	velocity.x = move_toward(velocity.x, 0.0, friction * 1.4 * delta)
+
+
 func _process_dead_state(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, 0.0, friction * delta)
 	if not is_on_floor():
@@ -556,12 +711,22 @@ func _update_state_from_motion() -> void:
 			_set_state(PlayerState.FALL)
 		return
 
+	if _is_guard_requested():
+		_set_state(PlayerState.GUARD)
+		return
+
+	if _is_crouch_requested():
+		_run_active = false
+		_set_state(PlayerState.CROUCH)
+		return
+
 	var horizontal_speed := absf(velocity.x)
-	if (
-		horizontal_speed >= run_state_speed_threshold
-		or (absf(_input_direction) > 0.2 and horizontal_speed > 2.0)
-	):
+	if _run_active and horizontal_speed >= run_state_speed_threshold:
 		_set_state(PlayerState.RUN)
+	elif horizontal_speed >= walk_state_speed_threshold:
+		_set_state(PlayerState.WALK)
+	elif absf(_input_direction) > 0.2 and horizontal_speed > 1.0:
+		_set_state(PlayerState.WALK)
 	else:
 		_set_state(PlayerState.IDLE)
 
@@ -590,7 +755,7 @@ func _handle_attack_press() -> void:
 	if not Input.is_action_just_pressed("melee_attack"):
 		return
 
-	if _state == PlayerState.DEAD or _state == PlayerState.HURT:
+	if _state == PlayerState.DEAD or _state == PlayerState.HURT or _state == PlayerState.GUARD:
 		return
 
 	if _attack_phase != AttackPhase.NONE:
@@ -607,7 +772,7 @@ func _handle_ranged_press() -> void:
 
 
 func _try_fire_projectile() -> void:
-	if _state == PlayerState.DEAD or _state == PlayerState.HURT:
+	if _state == PlayerState.DEAD or _state == PlayerState.HURT or _state == PlayerState.GUARD:
 		return
 
 	if projectile_scene == null:
@@ -814,7 +979,7 @@ func _register_melee_hit(target: Node) -> void:
 	emit_signal("feedback_event_requested", "melee_hit_confirm")
 
 
-func _update_visual_state(delta: float) -> void:
+func _update_visual_state(_delta: float) -> void:
 	if _sprite_visual != null and _sprite_visual.sprite_frames != null:
 		var desired_animation := _get_desired_animation_name()
 		var is_one_shot := (
@@ -831,34 +996,5 @@ func _update_visual_state(delta: float) -> void:
 		_sprite_visual.flip_h = _facing_sign < 0.0
 		return
 
-	if _body_visual == null:
-		return
-
-	var target_scale := Vector2(1.0, 1.0)
-	var target_rotation := 0.0
-	var target_color := Color(0.164706, 0.741176, 0.756863, 1.0)
-
-	if _state == PlayerState.DEAD:
-		target_scale = Vector2(1.06, 0.88)
-		target_rotation = deg_to_rad(90.0)
-		target_color = Color(0.45, 0.45, 0.45, 1.0)
-	elif _state == PlayerState.HURT:
-		target_scale = Vector2(1.08, 0.9)
-		target_color = Color(0.96, 0.45, 0.45, 1.0)
-	elif _state == PlayerState.JUMP:
-		target_scale = Vector2(0.92, 1.08)
-		target_color = Color(0.258824, 0.792157, 0.835294, 1.0)
-	elif _state == PlayerState.FALL:
-		target_scale = Vector2(1.08, 0.92)
-		target_color = Color(0.113725, 0.631373, 0.662745, 1.0)
-	elif _state == PlayerState.ATTACK:
-		target_scale = Vector2(1.06, 0.94)
-		target_rotation = deg_to_rad(3.0) * _facing_sign
-		target_color = Color(0.956863, 0.807843, 0.337255, 1.0)
-	elif _state == PlayerState.RUN:
-		target_rotation = deg_to_rad(6.0) * _facing_sign
-		target_color = Color(0.227451, 0.831373, 0.847059, 1.0)
-
-	_body_visual.scale = _body_visual.scale.lerp(target_scale, 12.0 * delta)
-	_body_visual.rotation = lerpf(_body_visual.rotation, target_rotation, 12.0 * delta)
-	_body_visual.color = _body_visual.color.lerp(target_color, 10.0 * delta)
+	if _body_visual != null:
+		_body_visual.visible = true

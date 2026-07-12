@@ -12,6 +12,7 @@ func _register_inputs() -> void:
 	_add_action_if_missing("move_up")
 	_add_action_if_missing("move_down")
 	_add_action_if_missing("jump")
+	_add_action_if_missing("guard")
 	_add_action_if_missing("melee_attack")
 	_add_action_if_missing("ranged_attack")
 	_add_action_if_missing("interact")
@@ -27,7 +28,7 @@ func _register_inputs() -> void:
 	_add_key("move_down", Key.KEY_DOWN)
 	_add_key("move_down", Key.KEY_S)
 	_add_key("jump", Key.KEY_SPACE)
-	_add_key("jump", Key.KEY_C)
+	_add_key("guard", Key.KEY_C)
 	_add_key("melee_attack", Key.KEY_X)
 	_add_key("ranged_attack", Key.KEY_V)
 	_add_key("interact", Key.KEY_E)
@@ -36,6 +37,7 @@ func _register_inputs() -> void:
 
 	# Xbox/PlayStation style defaults.
 	_add_button("jump", 0)
+	_add_button("guard", 4)
 	_add_button("melee_attack", 2)
 	_add_button("ranged_attack", 1)
 	_add_button("interact", 3)
