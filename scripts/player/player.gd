@@ -688,7 +688,7 @@ func _process_dead_state(delta: float) -> void:
 		velocity.y = minf(velocity.y, max_fall_speed)
 
 
-func _is_holding_charge() -> bool:
+func _should_stay_in_charge_state() -> bool:
 	return (
 		_state == PlayerState.CHARGE
 		and is_on_floor()
@@ -707,7 +707,7 @@ func _update_state_from_motion() -> void:
 	if _state == PlayerState.HURT and _hurt_timer > 0.0:
 		return
 
-	if _is_holding_charge():
+	if _should_stay_in_charge_state():
 		return
 
 	if not is_on_floor():
