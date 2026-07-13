@@ -38,6 +38,8 @@ The player behavior spec in [docs/specs/player-spec.md](docs/specs/player-spec.m
   - Player state machine relay stays wired.
   - Crouch sprite animates.
   - Walk animation uses walk fps.
+  - Sprite visual is scaled down.
+  - Attack animation uses larger frame size.
   - Guard and charge sprites differ.
   - Guard and charge animation mapping is correct.
   - Charge release starts the attack.

@@ -15,6 +15,7 @@ func build_default_sprite_frames(config: Dictionary) -> SpriteFrames:
 # Builds default sprite frames from image.
 func build_default_sprite_frames_from_image(image: Image, config: Dictionary) -> SpriteFrames:
 	var animation_frame_size := config["animation_frame_size"] as Vector2i
+	var attack_animation_frame_size := config["attack_animation_frame_size"] as Vector2i
 	var idle_animation_fps := float(config["idle_animation_fps"])
 	var walk_animation_fps := float(config["walk_animation_fps"])
 	var run_animation_fps := float(config["run_animation_fps"])
@@ -81,7 +82,7 @@ func build_default_sprite_frames_from_image(image: Image, config: Dictionary) ->
 		attack_animation_fps,
 		false,
 		image,
-		animation_frame_size
+		attack_animation_frame_size
 	)
 	_add_animation_regions(
 		sprite_frames,
@@ -95,7 +96,7 @@ func build_default_sprite_frames_from_image(image: Image, config: Dictionary) ->
 	_copy_single_frame_animation(
 		sprite_frames,
 		&"guard",
-		&"crouch",
+		&"attack",
 		guard_from_attack_frame_index,
 		guard_animation_fps,
 		false

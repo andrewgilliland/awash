@@ -83,9 +83,11 @@ const PLAYER_COMBAT_SCRIPT := preload("res://scripts/player/player_combat.gd")
 @export var camera_look_ahead_lerp_speed: float = 8.0
 @export var camera_room_bounds: Rect2 = Rect2(-232.0, 0.0, 2048.0, 270.0)
 @export var animation_frame_size: Vector2i = Vector2i(128, 128)
+@export var attack_animation_frame_size: Vector2i = Vector2i(192, 128)
 @export var sprite_visual_offset: Vector2 = Vector2(0.0, -58.0)
+@export var sprite_visual_scale: Vector2 = Vector2(0.75, 0.75)
 @export var idle_animation_fps: float = 8.0
-@export var walk_animation_fps: float = 4.0
+@export var walk_animation_fps: float = 8.0
 @export var run_animation_fps: float = 11.0
 @export var air_animation_fps: float = 8.0
 @export var attack_animation_fps: float = 14.0
@@ -151,6 +153,7 @@ func _setup_sprite_visual() -> void:
 		return
 
 	_sprite_visual.position = sprite_visual_offset
+	_sprite_visual.scale = sprite_visual_scale
 	_sprite_visual.sprite_frames = _sprite_factory.build_default_sprite_frames(
 		_sprite_factory_config()
 	)
@@ -178,8 +181,10 @@ func _sprite_factory_config() -> Dictionary:
 	return {
 		"sprite_sheet": PLAYER_SPRITE_SHEET,
 		"animation_frame_size": animation_frame_size,
+		"attack_animation_frame_size": attack_animation_frame_size,
 		"sprite_background_key_color": sprite_background_key_color,
 		"sprite_background_key_tolerance": sprite_background_key_tolerance,
+		"sprite_visual_scale": sprite_visual_scale,
 		"idle_animation_fps": idle_animation_fps,
 		"walk_animation_fps": walk_animation_fps,
 		"run_animation_fps": run_animation_fps,

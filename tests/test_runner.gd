@@ -42,6 +42,11 @@ func _init() -> void:
 	_run_test("Player guard and charge sprites differ", _test_player_guard_charge_sprites_differ)
 	_run_test("Player crouch sprite animates", _test_player_crouch_sprite_animates)
 	_run_test("Player walk animation uses walk fps", _test_player_walk_animation_uses_walk_fps)
+	_run_test("Player sprite visual is scaled down", _test_player_sprite_visual_is_scaled_down)
+	_run_test(
+		"Player attack animation uses larger frame size",
+		_test_player_attack_animation_uses_larger_frame_size
+	)
 	_run_test(
 		"Player guard and charge animations map correctly",
 		_test_player_guard_charge_animation_mapping
@@ -208,6 +213,24 @@ func _test_player_movement_tuning_defaults() -> bool:
 	is_valid = is_valid and player.get("guard_action_name") == StringName("guard")
 	is_valid = is_valid and player.get("walk_speed_multiplier") > 0.0
 	is_valid = is_valid and player.get("walk_speed_multiplier") <= 1.0
+	is_valid = is_valid and player.get("sprite_visual_scale") is Vector2
+	is_valid = is_valid and (player.get("sprite_visual_scale") as Vector2).x < 1.0
+	is_valid = is_valid and (player.get("sprite_visual_scale") as Vector2).y < 1.0
+	is_valid = is_valid and player.get("attack_animation_frame_size") is Vector2i
+	is_valid = (
+		is_valid
+		and (
+			(player.get("attack_animation_frame_size") as Vector2i).x
+			> player.get("animation_frame_size").x
+		)
+	)
+	is_valid = (
+		is_valid
+		and (
+			(player.get("attack_animation_frame_size") as Vector2i).y
+			== player.get("animation_frame_size").y
+		)
+	)
 	is_valid = is_valid and player.get("walk_animation_fps") > 0.0
 	is_valid = is_valid and player.get("run_speed_multiplier") >= 1.0
 	is_valid = is_valid and player.get("run_speed_multiplier") <= 1.5
@@ -582,6 +605,56 @@ func _test_player_walk_animation_uses_walk_fps() -> bool:
 	is_valid = (
 		is_valid and is_equal_approx(sprite_frames.get_animation_speed(&"walk"), expected_walk_fps)
 	)
+
+	player.queue_free()
+	return is_valid
+
+
+func _test_player_sprite_visual_is_scaled_down() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	player.call("_ready")
+
+	var sprite_visual := player.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	if sprite_visual == null:
+		player.queue_free()
+		return false
+
+	var expected_scale := player.get("sprite_visual_scale") as Vector2
+	var is_valid := expected_scale.x < 1.0 and expected_scale.y < 1.0
+	is_valid = is_valid and is_equal_approx(sprite_visual.scale.x, expected_scale.x)
+	is_valid = is_valid and is_equal_approx(sprite_visual.scale.y, expected_scale.y)
+
+	player.queue_free()
+	return is_valid
+
+
+func _test_player_attack_animation_uses_larger_frame_size() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	var image := player.call("_create_runtime_sprite_sheet_image") as Image
+	var sprite_frames := player.call("_build_default_sprite_frames", image) as SpriteFrames
+	var expected_size := player.get("attack_animation_frame_size") as Vector2i
+	var is_valid := sprite_frames != null
+	is_valid = is_valid and sprite_frames.has_animation(&"attack")
+
+	if is_valid:
+		var attack_texture := sprite_frames.get_frame_texture(&"attack", 0)
+		is_valid = is_valid and attack_texture != null
+		is_valid = is_valid and is_equal_approx(attack_texture.get_size().x, expected_size.x)
+		is_valid = is_valid and is_equal_approx(attack_texture.get_size().y, expected_size.y)
 
 	player.queue_free()
 	return is_valid
