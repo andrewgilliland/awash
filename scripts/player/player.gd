@@ -442,7 +442,7 @@ func _create_aligned_frame_texture(image: Image, region: Rect2i) -> Texture2D:
 	var cropped_image := image.get_region(region)
 	cropped_image.convert(Image.FORMAT_RGBA8)
 	var destination := Vector2i(
-		maxi(0, int((animation_frame_size.x - region.size.x) / 2)),
+		maxi(0, (animation_frame_size.x - region.size.x) >> 1),
 		maxi(0, animation_frame_size.y - region.size.y)
 	)
 	frame_image.blit_rect(cropped_image, Rect2i(Vector2i.ZERO, region.size), destination)
