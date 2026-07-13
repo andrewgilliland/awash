@@ -28,6 +28,8 @@ enum AttackPhase {
 }
 
 const PLAYER_SPRITE_SHEET := preload("res://assets/sprites/player_1.png")
+const PLAYER_SPRITE_FACTORY_SCRIPT := preload("res://scripts/player/player_sprite_factory.gd")
+const PLAYER_COMBAT_SCRIPT := preload("res://scripts/player/player_combat.gd")
 
 @export var move_speed: float = 160.0
 @export var acceleration: float = 1200.0
@@ -104,8 +106,6 @@ var _hurt_timer: float = 0.0
 var _invulnerable_timer: float = 0.0
 var _death_timer: float = 0.0
 var _attack_phase: AttackPhase = AttackPhase.NONE
-var _attack_phase_timer: float = 0.0
-var _attack_hit_targets: Dictionary = {}
 var _attack_base_position: Vector2 = Vector2.ZERO
 var _ranged_cooldown_timer: float = 0.0
 var _ranged_resource: float = 0.0
@@ -113,6 +113,8 @@ var _run_active: bool = false
 var _run_tap_timer: float = 0.0
 var _last_run_tap_direction: float = 0.0
 var _state_machine = preload("res://scripts/player/player_state_machine.gd").new()
+var _sprite_factory = PLAYER_SPRITE_FACTORY_SCRIPT.new()
+var _combat = PLAYER_COMBAT_SCRIPT.new()
 
 @onready var _body_visual: Polygon2D = $Body
 @onready var _sprite_visual: AnimatedSprite2D = $AnimatedSprite2D
@@ -127,9 +129,10 @@ func _ready() -> void:
 	_current_health = max_health
 	_ranged_resource = max_ranged_resource
 	_attack_base_position = _attack_area.position
+	_ensure_combat_setup()
 	_setup_sprite_visual()
 	_configure_camera_behavior()
-	_set_attack_hitbox_enabled(false)
+	_combat.set_attack_hitbox_enabled(false)
 	if not _attack_area.body_entered.is_connected(_on_attack_area_body_entered):
 		_attack_area.body_entered.connect(_on_attack_area_body_entered)
 	if not _attack_area.area_entered.is_connected(_on_attack_area_area_entered):
@@ -144,8 +147,8 @@ func _setup_sprite_visual() -> void:
 		return
 
 	_sprite_visual.position = sprite_visual_offset
-	_sprite_visual.sprite_frames = _build_default_sprite_frames(
-		_create_runtime_sprite_sheet_image()
+	_sprite_visual.sprite_frames = _sprite_factory.build_default_sprite_frames(
+		_sprite_factory_config()
 	)
 	_sprite_visual.animation = &"idle"
 	_sprite_visual.play()
@@ -155,299 +158,63 @@ func _setup_sprite_visual() -> void:
 
 
 func _create_runtime_sprite_sheet_image() -> Image:
-	var image := PLAYER_SPRITE_SHEET.get_image()
-	if image == null:
-		return Image.create(1, 1, false, Image.FORMAT_RGBA8)
-
-	image.convert(Image.FORMAT_RGBA8)
-
-	for y in range(image.get_height()):
-		for x in range(image.get_width()):
-			var pixel := image.get_pixel(x, y)
-			if _is_background_pixel(pixel):
-				image.set_pixel(x, y, Color(pixel.r, pixel.g, pixel.b, 0.0))
-
-	return image
-
-
-func _is_background_pixel(pixel: Color) -> bool:
-	if pixel.a <= 0.0:
-		return false
-
-	return (
-		absf(pixel.r - sprite_background_key_color.r) <= sprite_background_key_tolerance
-		and absf(pixel.g - sprite_background_key_color.g) <= sprite_background_key_tolerance
-		and absf(pixel.b - sprite_background_key_color.b) <= sprite_background_key_tolerance
+	return _sprite_factory.create_runtime_sprite_sheet_image(
+		PLAYER_SPRITE_SHEET, sprite_background_key_color, sprite_background_key_tolerance
 	)
 
 
 func _build_default_sprite_frames(image: Image) -> SpriteFrames:
-	var sprite_frames := SpriteFrames.new()
-	var sheet_rows := _extract_sheet_rows(image)
-
-	_add_animation_regions(
-		sprite_frames, &"idle", _get_row_regions(sheet_rows, 0), idle_animation_fps, true, image
-	)
-	_add_animation_regions(
-		sprite_frames, &"walk", _get_row_regions(sheet_rows, 0), run_animation_fps, true, image
-	)
-	_add_animation_regions(
-		sprite_frames, &"run", _get_row_regions(sheet_rows, 1), run_animation_fps, true, image
-	)
-	_add_animation_regions(
-		sprite_frames,
-		&"jump_up",
-		_get_regions_by_indices(sheet_rows, 2, [1, 2]),
-		air_animation_fps,
-		true,
-		image
-	)
-	_add_animation_regions(
-		sprite_frames,
-		&"jump_down",
-		_get_regions_by_indices(sheet_rows, 2, [2, 3]),
-		air_animation_fps,
-		true,
-		image
-	)
-	_add_animation_regions(
-		sprite_frames,
-		&"attack",
-		_get_row_regions(sheet_rows, 3),
-		attack_animation_fps,
-		false,
-		image
-	)
-	_copy_single_frame_animation(
-		sprite_frames,
-		&"guard",
-		&"attack",
-		guard_from_attack_frame_index,
-		guard_animation_fps,
-		false
-	)
-	_copy_single_frame_animation(
-		sprite_frames,
-		&"charge",
-		&"attack",
-		charge_from_attack_frame_index,
-		guard_animation_fps,
-		false
-	)
-	_add_animation_regions(
-		sprite_frames,
-		&"hurt",
-		_get_regions_by_indices(sheet_rows, 5, [0, 1]),
-		hurt_animation_fps,
-		false,
-		image
-	)
-	_add_animation_regions(
-		sprite_frames,
-		&"death",
-		_get_regions_by_indices(sheet_rows, 5, [4, 5]),
-		death_animation_fps,
-		false,
-		image
-	)
-
-	_ensure_animation_exists(sprite_frames, &"jump_up", &"idle")
-	_ensure_animation_exists(sprite_frames, &"jump_down", &"jump_up")
-	_ensure_animation_exists(sprite_frames, &"walk", &"idle")
-	_ensure_animation_exists(sprite_frames, &"attack", &"idle")
-	_ensure_animation_exists(sprite_frames, &"crouch", &"idle")
-	_ensure_animation_exists(sprite_frames, &"guard", &"crouch")
-	_ensure_animation_exists(sprite_frames, &"charge", &"guard")
-	_ensure_animation_exists(sprite_frames, &"hurt", &"idle")
-	_ensure_animation_exists(sprite_frames, &"death", &"hurt")
-
-	return sprite_frames
+	return _sprite_factory.build_default_sprite_frames_from_image(image, _sprite_factory_config())
 
 
-func _extract_sheet_rows(image: Image) -> Array:
-	var row_bands: Array = []
-	var band_start := -1
-
-	for y in range(image.get_height()):
-		var occupied := false
-		for x in range(image.get_width()):
-			if image.get_pixel(x, y).a > 0.0:
-				occupied = true
-				break
-
-		if occupied and band_start < 0:
-			band_start = y
-		elif not occupied and band_start >= 0:
-			row_bands.append(Vector2i(band_start, y - 1))
-			band_start = -1
-
-	if band_start >= 0:
-		row_bands.append(Vector2i(band_start, image.get_height() - 1))
-
-	var sheet_rows: Array = []
-	for row_band in row_bands:
-		sheet_rows.append(_extract_row_regions(image, row_band.x, row_band.y))
-
-	return sheet_rows
+func _sprite_factory_config() -> Dictionary:
+	return {
+		"sprite_sheet": PLAYER_SPRITE_SHEET,
+		"animation_frame_size": animation_frame_size,
+		"sprite_background_key_color": sprite_background_key_color,
+		"sprite_background_key_tolerance": sprite_background_key_tolerance,
+		"idle_animation_fps": idle_animation_fps,
+		"run_animation_fps": run_animation_fps,
+		"air_animation_fps": air_animation_fps,
+		"attack_animation_fps": attack_animation_fps,
+		"guard_animation_fps": guard_animation_fps,
+		"guard_from_attack_frame_index": guard_from_attack_frame_index,
+		"charge_from_attack_frame_index": charge_from_attack_frame_index,
+		"hurt_animation_fps": hurt_animation_fps,
+		"death_animation_fps": death_animation_fps,
+	}
 
 
-func _extract_row_regions(image: Image, top: int, bottom: int) -> Array:
-	var column_bands: Array = []
-	var band_start := -1
-
-	for x in range(image.get_width()):
-		var occupied := false
-		for y in range(top, bottom + 1):
-			if image.get_pixel(x, y).a > 0.0:
-				occupied = true
-				break
-
-		if occupied and band_start < 0:
-			band_start = x
-		elif not occupied and band_start >= 0:
-			column_bands.append(Vector2i(band_start, x - 1))
-			band_start = -1
-
-	if band_start >= 0:
-		column_bands.append(Vector2i(band_start, image.get_width() - 1))
-
-	var regions: Array = []
-	for column_band in column_bands:
-		regions.append(_trim_region(image, column_band.x, column_band.y, top, bottom))
-
-	return regions
+func _combat_state_values() -> Dictionary:
+	return {
+		&"idle": PlayerState.IDLE,
+		&"walk": PlayerState.WALK,
+		&"run": PlayerState.RUN,
+		&"jump": PlayerState.JUMP,
+		&"fall": PlayerState.FALL,
+		&"attack": PlayerState.ATTACK,
+		&"crouch": PlayerState.CROUCH,
+		&"guard": PlayerState.GUARD,
+		&"charge": PlayerState.CHARGE,
+		&"hurt": PlayerState.HURT,
+		&"dead": PlayerState.DEAD,
+	}
 
 
-func _trim_region(image: Image, left: int, right: int, top: int, bottom: int) -> Rect2i:
-	var min_x := right
-	var min_y := bottom
-	var max_x := left
-	var max_y := top
-
-	for y in range(top, bottom + 1):
-		for x in range(left, right + 1):
-			if image.get_pixel(x, y).a <= 0.0:
-				continue
-
-			min_x = mini(min_x, x)
-			min_y = mini(min_y, y)
-			max_x = maxi(max_x, x)
-			max_y = maxi(max_y, y)
-
-	return Rect2i(min_x, min_y, (max_x - min_x) + 1, (max_y - min_y) + 1)
+func _combat_phase_values() -> Dictionary:
+	return {
+		&"none": AttackPhase.NONE,
+		&"startup": AttackPhase.STARTUP,
+		&"active": AttackPhase.ACTIVE,
+		&"recovery": AttackPhase.RECOVERY,
+	}
 
 
-func _get_row_regions(sheet_rows: Array, row_index: int) -> Array:
-	if row_index < 0 or row_index >= sheet_rows.size():
-		return []
-
-	return sheet_rows[row_index]
-
-
-func _get_regions_by_indices(sheet_rows: Array, row_index: int, indices: Array) -> Array:
-	var selected_regions: Array = []
-	if row_index < 0 or row_index >= sheet_rows.size():
-		return selected_regions
-
-	var row_regions: Array = sheet_rows[row_index]
-	for index in indices:
-		if index >= 0 and index < row_regions.size():
-			selected_regions.append(row_regions[index])
-
-	return selected_regions
-
-
-func _add_animation_regions(
-	sprite_frames: SpriteFrames,
-	animation_name: StringName,
-	regions: Array,
-	fps: float,
-	looped: bool,
-	image: Image
-) -> void:
-	if regions.is_empty():
+func _ensure_combat_setup() -> void:
+	if _combat._player != null:
 		return
 
-	if not sprite_frames.has_animation(animation_name):
-		sprite_frames.add_animation(animation_name)
-
-	sprite_frames.set_animation_speed(animation_name, maxf(0.1, fps))
-	sprite_frames.set_animation_loop(animation_name, looped)
-
-	for region in regions:
-		sprite_frames.add_frame(animation_name, _create_aligned_frame_texture(image, region))
-
-
-func _ensure_animation_exists(
-	sprite_frames: SpriteFrames, animation_name: StringName, fallback_name: StringName
-) -> void:
-	if sprite_frames.has_animation(animation_name):
-		return
-
-	if not sprite_frames.has_animation(fallback_name):
-		return
-
-	sprite_frames.add_animation(animation_name)
-	sprite_frames.set_animation_speed(
-		animation_name, sprite_frames.get_animation_speed(fallback_name)
-	)
-	sprite_frames.set_animation_loop(
-		animation_name, sprite_frames.get_animation_loop(fallback_name)
-	)
-
-	for frame_index in range(sprite_frames.get_frame_count(fallback_name)):
-		sprite_frames.add_frame(
-			animation_name,
-			sprite_frames.get_frame_texture(fallback_name, frame_index),
-			sprite_frames.get_frame_duration(fallback_name, frame_index)
-		)
-
-
-func _copy_single_frame_animation(
-	sprite_frames: SpriteFrames,
-	target_animation_name: StringName,
-	source_animation_name: StringName,
-	source_frame_index: int,
-	fps: float,
-	looped: bool
-) -> void:
-	if not sprite_frames.has_animation(source_animation_name):
-		return
-
-	var source_count := sprite_frames.get_frame_count(source_animation_name)
-	if source_count <= 0:
-		return
-
-	if sprite_frames.has_animation(target_animation_name):
-		sprite_frames.remove_animation(target_animation_name)
-
-	sprite_frames.add_animation(target_animation_name)
-	sprite_frames.set_animation_speed(target_animation_name, maxf(0.1, fps))
-	sprite_frames.set_animation_loop(target_animation_name, looped)
-
-	var clamped_index := clampi(source_frame_index, 0, source_count - 1)
-	sprite_frames.add_frame(
-		target_animation_name,
-		sprite_frames.get_frame_texture(source_animation_name, clamped_index),
-		sprite_frames.get_frame_duration(source_animation_name, clamped_index)
-	)
-
-
-func _create_aligned_frame_texture(image: Image, region: Rect2i) -> Texture2D:
-	var frame_image := Image.create(
-		animation_frame_size.x, animation_frame_size.y, false, Image.FORMAT_RGBA8
-	)
-	frame_image.fill(Color(0.0, 0.0, 0.0, 0.0))
-
-	var cropped_image := image.get_region(region)
-	cropped_image.convert(Image.FORMAT_RGBA8)
-	var destination := Vector2i(
-		maxi(0, (animation_frame_size.x - region.size.x) >> 1),
-		maxi(0, animation_frame_size.y - region.size.y)
-	)
-	frame_image.blit_rect(cropped_image, Rect2i(Vector2i.ZERO, region.size), destination)
-
-	return ImageTexture.create_from_image(frame_image)
+	_combat.setup(self, _attack_area, _attack_shape, _combat_state_values(), _combat_phase_values())
 
 
 func _get_desired_animation_name() -> StringName:
@@ -499,10 +266,10 @@ func _physics_process(delta: float) -> void:
 				_apply_horizontal_movement(delta)
 
 		_apply_vertical_movement(delta)
-		_handle_attack_press()
+		_combat.handle_attack_press()
 		if Input.is_action_just_pressed("ranged_attack"):
-			_try_fire_projectile()
-		_tick_attack_phase(delta)
+			_combat.try_fire_projectile()
+		_combat.tick_attack_phase(delta)
 		if Input.is_action_just_pressed("jump"):
 			_jump_buffer_timer = jump_buffer_seconds
 		_try_consume_buffered_jump()
@@ -657,7 +424,7 @@ func take_damage(amount: int = 1, knockback: Vector2 = Vector2.ZERO) -> void:
 
 func _enter_death_state() -> void:
 	_death_timer = death_lock_seconds
-	_end_attack()
+	_combat.end_attack()
 	_set_state(PlayerState.DEAD)
 
 
@@ -683,7 +450,7 @@ func _tick_state_timers(delta: float) -> void:
 
 func _process_hurt_state(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, 0.0, friction * 0.65 * delta)
-	_end_attack()
+	_combat.end_attack()
 
 
 func _process_dead_state(delta: float) -> void:
@@ -739,6 +506,18 @@ func _set_state(next_state: PlayerState) -> void:
 	_state_machine.set_state_by_id(int(_state))
 
 
+func _emit_attack_window_started() -> void:
+	emit_signal("attack_window_started")
+
+
+func _emit_attack_window_ended() -> void:
+	emit_signal("attack_window_ended")
+
+
+func _emit_melee_hit_confirmed(target: Node) -> void:
+	emit_signal("melee_hit_confirmed", target)
+
+
 func _apply_jump_release_gravity(delta: float) -> void:
 	if is_on_floor():
 		return
@@ -747,81 +526,20 @@ func _apply_jump_release_gravity(delta: float) -> void:
 		velocity.y += get_gravity().y * jump_release_gravity_multiplier * delta
 
 
-func _update_facing() -> void:
-	if absf(_input_direction) > 0.01:
-		_facing_sign = signf(_input_direction)
-	_update_attack_hitbox_orientation()
-
-
 func _handle_attack_press() -> void:
-	if _state == PlayerState.DEAD or _state == PlayerState.HURT or _state == PlayerState.GUARD:
-		return
-
-	if _attack_phase != AttackPhase.NONE:
-		return
-
-	if Input.is_action_pressed("melee_attack"):
-		if is_on_floor():
-			_set_state(PlayerState.CHARGE)
-		return
-
-	if _state == PlayerState.CHARGE:
-		_begin_attack()
+	_ensure_combat_setup()
+	_combat.handle_attack_press()
 
 
 func _try_fire_projectile() -> void:
-	var blocked_state := _state == PlayerState.DEAD or _state == PlayerState.HURT
-	blocked_state = blocked_state or _state == PlayerState.GUARD or _state == PlayerState.CHARGE
-	if blocked_state:
-		return
-
-	if projectile_scene == null:
-		return
-
-	if _ranged_cooldown_timer > 0.0:
-		emit_signal("feedback_event_requested", "ranged_cooldown_blocked")
-		return
-
-	if _ranged_resource < ranged_cost:
-		emit_signal("feedback_event_requested", "ranged_resource_empty")
-		return
-
-	var projectile := projectile_scene.instantiate() as Node2D
-	if projectile == null:
-		return
-
-	var scene_root := get_tree().current_scene
-	if scene_root == null:
-		projectile.queue_free()
-		return
-
-	projectile.global_position = global_position
-	projectile.global_position += Vector2(
-		projectile_spawn_offset.x * _facing_sign, projectile_spawn_offset.y
-	)
-
-	if projectile.has_method("initialize"):
-		projectile.call("initialize", _facing_sign, self)
-
-	_try_set_projectile_property(projectile, "speed", projectile_speed)
-	_try_set_projectile_property(projectile, "lifetime_seconds", projectile_lifetime_seconds)
-	_try_set_projectile_property(projectile, "damage", projectile_damage)
-	_try_set_projectile_property(projectile, "knockback", projectile_knockback)
-
-	scene_root.add_child(projectile)
-
-	_ranged_resource = maxf(0.0, _ranged_resource - ranged_cost)
-	_ranged_cooldown_timer = ranged_cooldown_seconds
-	emit_signal("feedback_event_requested", "ranged_fire")
+	_ensure_combat_setup()
+	_combat.try_fire_projectile()
 
 
-func _try_set_projectile_property(
-	projectile: Object, property_name: StringName, value: Variant
-) -> void:
-	for property_data in projectile.get_property_list():
-		if property_data.has("name") and property_data["name"] == property_name:
-			projectile.set(property_name, value)
-			return
+func _update_facing() -> void:
+	if absf(_input_direction) > 0.01:
+		_facing_sign = signf(_input_direction)
+	_combat.update_attack_hitbox_orientation()
 
 
 func get_ranged_resource() -> float:
@@ -886,97 +604,12 @@ func _update_camera_look_ahead(delta: float) -> void:
 	)
 
 
-func _begin_attack() -> void:
-	_set_state(PlayerState.ATTACK)
-	_attack_phase = AttackPhase.STARTUP
-	_attack_phase_timer = melee_startup_seconds
-	_attack_hit_targets.clear()
-	_set_attack_hitbox_enabled(false)
-	emit_signal("feedback_event_requested", "melee_startup")
-
-
-func _tick_attack_phase(delta: float) -> void:
-	if _attack_phase == AttackPhase.NONE:
-		return
-
-	_attack_phase_timer = maxf(0.0, _attack_phase_timer - delta)
-	if _attack_phase_timer > 0.0:
-		return
-
-	if _attack_phase == AttackPhase.STARTUP:
-		_attack_phase = AttackPhase.ACTIVE
-		_attack_phase_timer = melee_active_seconds
-		_attack_hit_targets.clear()
-		_set_attack_hitbox_enabled(true)
-		emit_signal("attack_window_started")
-		emit_signal("feedback_event_requested", "melee_active")
-		return
-
-	if _attack_phase == AttackPhase.ACTIVE:
-		_attack_phase = AttackPhase.RECOVERY
-		_attack_phase_timer = melee_recovery_seconds
-		_set_attack_hitbox_enabled(false)
-		emit_signal("attack_window_ended")
-		emit_signal("feedback_event_requested", "melee_recovery")
-		return
-
-	_end_attack()
-
-
-func _end_attack() -> void:
-	_attack_phase = AttackPhase.NONE
-	_attack_phase_timer = 0.0
-	_attack_hit_targets.clear()
-	_set_attack_hitbox_enabled(false)
-	if _state == PlayerState.ATTACK:
-		_update_state_from_motion()
-
-
-func _set_attack_hitbox_enabled(enabled: bool) -> void:
-	if _attack_shape != null:
-		_attack_shape.disabled = not enabled
-	if _attack_area != null:
-		_attack_area.monitoring = enabled
-
-
-func _update_attack_hitbox_orientation() -> void:
-	if _attack_area == null:
-		return
-
-	var direction := 1.0 if _facing_sign >= 0.0 else -1.0
-	_attack_area.position = Vector2(_attack_base_position.x * direction, _attack_base_position.y)
-
-
 func _on_attack_area_body_entered(body: Node2D) -> void:
-	_register_melee_hit(body)
+	_combat.on_attack_area_body_entered(body)
 
 
 func _on_attack_area_area_entered(area: Area2D) -> void:
-	if area == null:
-		return
-
-	if area.get_parent() != null:
-		_register_melee_hit(area.get_parent())
-
-
-func _register_melee_hit(target: Node) -> void:
-	if target == null:
-		return
-
-	if _attack_phase != AttackPhase.ACTIVE:
-		return
-
-	if _attack_hit_targets.has(target):
-		return
-
-	_attack_hit_targets[target] = true
-
-	if target.has_method("take_damage"):
-		var knockback := Vector2(melee_knockback.x * _facing_sign, melee_knockback.y)
-		target.call("take_damage", melee_damage, knockback)
-
-	emit_signal("melee_hit_confirmed", target)
-	emit_signal("feedback_event_requested", "melee_hit_confirm")
+	_combat.on_attack_area_area_entered(area)
 
 
 func _update_visual_state(_delta: float) -> void:
