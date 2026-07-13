@@ -9,9 +9,56 @@ Awash includes a lightweight built-in headless test runner for smoke checks.
 ```
 
 ## What It Covers Now
+
 - Player scene loads correctly.
 - Player defaults are sane for initial movement tuning.
 
 ## Expand Later
+
 - Add physics behavior tests for jump buffering and coyote timing.
 - Add tests for combat action setup and progression flags.
+
+## Player Spec Coverage
+
+The player behavior spec in [docs/specs/player-spec.md](docs/specs/player-spec.md) is the source of truth for the current vertical slice.
+
+### Current Coverage
+
+- [awash/tests/test_runner.gd](awash/tests/test_runner.gd) already protects the current smoke surface:
+  - Player scene loads correctly.
+  - Player defaults stay sane.
+  - Movement tuning stays within expected bounds.
+  - Guard and charge sprites differ.
+  - Guard and charge animation mapping is correct.
+  - Charge release starts the attack.
+  - Blocked states prevent ranged fire.
+  - Ranged defaults stay sane.
+  - Camera defaults stay sane.
+
+### Next Tests To Add
+
+- Movement
+  - [ ] `_test_player_run_double_tap_activates_run`
+  - [ ] `_test_player_coyote_time_allows_jump`
+  - [ ] `_test_player_jump_buffer_fires_on_landing`
+  - [ ] `_test_player_crouch_blocks_run_and_guard_blocks_crouch`
+- Combat
+  - [ ] `_test_player_melee_attack_windows`
+  - [ ] `_test_player_melee_hits_each_target_once`
+  - [ ] `_test_player_guard_reduces_damage_and_knockback`
+  - [ ] `_test_player_ranged_cooldown_and_resource`
+- State
+  - [ ] `_test_player_state_machine_relay`
+  - [ ] `_test_player_hurt_locks_state_changes`
+  - [ ] `_test_player_death_cancels_attack_and_locks_state`
+- Visual
+  - [ ] `_test_player_runtime_sprite_sheet_keys_background`
+  - [ ] `_test_player_state_to_animation_mapping_covers_jump_fall_hurt_death`
+
+### File Ownership
+
+- [awash/scripts/core/input_setup.gd](awash/scripts/core/input_setup.gd) owns the control contract and default bindings.
+- [awash/scripts/player/player.gd](awash/scripts/player/player.gd) owns orchestration, state updates, and scene-facing behavior.
+- [awash/scripts/player/player_combat.gd](awash/scripts/player/player_combat.gd) owns attack windows, projectile firing, and combat hit rules.
+- [awash/scripts/player/player_sprite_factory.gd](awash/scripts/player/player_sprite_factory.gd) owns runtime sprite construction and animation frame setup.
+- [awash/scripts/player/player_state_machine.gd](awash/scripts/player/player_state_machine.gd) owns state storage and change notifications.

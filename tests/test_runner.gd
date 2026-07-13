@@ -21,6 +21,13 @@ func _init() -> void:
 	_run_test("Biome room api sane", _test_biome_room_api_sane)
 	_run_test("Player defaults sane", _test_player_default_values)
 	_run_test("Player movement tuning sane", _test_player_movement_tuning_defaults)
+	_run_test("Player run double tap activates run", _test_player_run_double_tap_activates_run)
+	_run_test(
+		"Player crouch and guard stop run input", _test_player_crouch_and_guard_stop_run_input
+	)
+	_run_test(
+		"Player jump buffer and coyote timing stay wired", _test_player_jump_buffer_and_coyote
+	)
 	_run_test("Player guard and charge sprites differ", _test_player_guard_charge_sprites_differ)
 	_run_test(
 		"Player guard and charge animations map correctly",
@@ -204,6 +211,100 @@ func _test_player_movement_tuning_defaults() -> bool:
 	is_valid = is_valid and jump_to_fall_threshold >= 0.0
 	is_valid = is_valid and player.get("attack_movement_multiplier") > 0.0
 	is_valid = is_valid and player.get("attack_movement_multiplier") <= 1.0
+	player.queue_free()
+	return is_valid
+
+
+func _test_player_run_double_tap_activates_run() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	var had_move_left := InputMap.has_action(&"move_left")
+	var had_move_right := InputMap.has_action(&"move_right")
+	if not had_move_left:
+		InputMap.add_action(&"move_left")
+	if not had_move_right:
+		InputMap.add_action(&"move_right")
+
+	player.set("_run_tap_timer", 0.0)
+	player.set("_last_run_tap_direction", 0.0)
+	player.call("_register_run_tap", 1.0)
+	var after_first_tap := bool(player.get("_run_active"))
+	player.set("_run_tap_timer", player.get("run_double_tap_window_seconds"))
+	player.call("_register_run_tap", 1.0)
+	var after_second_tap := bool(player.get("_run_active"))
+	if not had_move_left:
+		InputMap.erase_action(&"move_left")
+	if not had_move_right:
+		InputMap.erase_action(&"move_right")
+
+	player.queue_free()
+	return not after_first_tap and after_second_tap
+
+
+func _test_player_crouch_and_guard_stop_run_input() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	var had_crouch := InputMap.has_action(&"move_down")
+	var had_guard := InputMap.has_action(&"guard")
+	if not had_crouch:
+		InputMap.add_action(&"move_down")
+	if not had_guard:
+		InputMap.add_action(&"guard")
+	if not InputMap.has_action(&"move_left"):
+		InputMap.add_action(&"move_left")
+	if not InputMap.has_action(&"move_right"):
+		InputMap.add_action(&"move_right")
+
+	Input.action_release("move_down")
+	Input.action_release("guard")
+	Input.action_press("move_down")
+	player.set("_run_active", true)
+	player.call("_update_run_input_window", 0.0)
+	var run_active_after_crouch := bool(player.get("_run_active"))
+
+	Input.action_release("move_down")
+	Input.action_press("guard")
+	player.set("_run_active", true)
+	player.call("_update_run_input_window", 0.0)
+	var run_active_after_guard := bool(player.get("_run_active"))
+
+	Input.action_release("guard")
+	if not had_crouch:
+		InputMap.erase_action(&"move_down")
+	if not had_guard:
+		InputMap.erase_action(&"guard")
+
+	player.queue_free()
+	return not run_active_after_crouch and not run_active_after_guard
+
+
+func _test_player_jump_buffer_and_coyote() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	var jump_buffer_seconds := float(player.get("jump_buffer_seconds"))
+	var coyote_time_seconds := float(player.get("coyote_time_seconds"))
+	var is_valid := jump_buffer_seconds > 0.0 and coyote_time_seconds > 0.0
+	is_valid = is_valid and player.has_method("_try_consume_buffered_jump")
+	is_valid = is_valid and player.has_method("_do_jump")
+
 	player.queue_free()
 	return is_valid
 
