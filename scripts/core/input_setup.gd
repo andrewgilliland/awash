@@ -64,14 +64,14 @@ func _add_key(action_name: StringName, keycode: Key) -> void:
 
 func _add_button(action_name: StringName, button_index: int) -> void:
 	var event := InputEventJoypadButton.new()
-	event.button_index = button_index
+	event.button_index = button_index as JoyButton
 	if not InputMap.action_has_event(action_name, event):
 		InputMap.action_add_event(action_name, event)
 
 
 func _add_axis(action_name: StringName, axis: int, value: float) -> void:
 	var event := InputEventJoypadMotion.new()
-	event.axis = axis
+	event.axis = axis as JoyAxis
 	event.axis_value = value
 	if not InputMap.action_has_event(action_name, event):
 		InputMap.action_add_event(action_name, event)
