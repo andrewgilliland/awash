@@ -4,6 +4,13 @@ const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
 const BIOME_SCENE_PATH := "res://scenes/world/world_biome_01.tscn"
 const MAIN_SCENE_PATH := "res://scenes/main.tscn"
 const RUNTIME_STATE_SCRIPT_PATH := "res://scripts/core/runtime_state.gd"
+const PLAYER_STATE_ATTACK := 5
+const PLAYER_STATE_GUARD := 7
+const PLAYER_STATE_CHARGE := 8
+const PLAYER_STATE_HURT := 9
+const PLAYER_STATE_DEAD := 10
+const ATTACK_PHASE_NONE := 0
+const ATTACK_PHASE_STARTUP := 1
 var _failures: int = 0
 
 
@@ -15,6 +22,14 @@ func _init() -> void:
 	_run_test("Player defaults sane", _test_player_default_values)
 	_run_test("Player movement tuning sane", _test_player_movement_tuning_defaults)
 	_run_test("Player guard and charge sprites differ", _test_player_guard_charge_sprites_differ)
+	_run_test(
+		"Player guard and charge animations map correctly",
+		_test_player_guard_charge_animation_mapping
+	)
+	_run_test("Player charge release starts attack", _test_player_charge_release_starts_attack)
+	_run_test(
+		"Player blocked states prevent ranged fire", _test_player_blocked_states_prevent_ranged
+	)
 	_run_test("Player ranged defaults sane", _test_player_ranged_defaults)
 	_run_test("Player camera defaults sane", _test_player_camera_defaults)
 	_run_test("Runtime state defaults sane", _test_runtime_state_defaults_sane)
@@ -219,6 +234,81 @@ func _test_player_guard_charge_sprites_differ() -> bool:
 		var charge_texture := sprite_frames.get_frame_texture(&"charge", 0)
 		is_valid = is_valid and guard_texture != null and charge_texture != null
 		is_valid = is_valid and guard_texture != charge_texture
+
+	player.queue_free()
+	return is_valid
+
+
+func _test_player_guard_charge_animation_mapping() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	player.set("_state", PLAYER_STATE_GUARD)
+	var guard_animation := StringName(player.call("_get_desired_animation_name"))
+	player.set("_state", PLAYER_STATE_CHARGE)
+	var charge_animation := StringName(player.call("_get_desired_animation_name"))
+
+	player.queue_free()
+	return guard_animation == &"guard" and charge_animation == &"charge"
+
+
+func _test_player_charge_release_starts_attack() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	var had_melee_attack := InputMap.has_action(&"melee_attack")
+	if not had_melee_attack:
+		InputMap.add_action(&"melee_attack")
+
+	Input.action_release("melee_attack")
+	player.set("_state", PLAYER_STATE_CHARGE)
+	player.set("_attack_phase", ATTACK_PHASE_NONE)
+	player.call("_handle_attack_press")
+
+	var next_state := int(player.get("_state"))
+	var next_phase := int(player.get("_attack_phase"))
+
+	if not had_melee_attack:
+		InputMap.erase_action(&"melee_attack")
+
+	player.queue_free()
+	return next_state == PLAYER_STATE_ATTACK and next_phase == ATTACK_PHASE_STARTUP
+
+
+func _test_player_blocked_states_prevent_ranged() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	var blocked_states := [
+		PLAYER_STATE_GUARD,
+		PLAYER_STATE_CHARGE,
+		PLAYER_STATE_HURT,
+		PLAYER_STATE_DEAD,
+	]
+	var is_valid := true
+
+	for blocked_state in blocked_states:
+		player.set("_state", blocked_state)
+		player.set("_ranged_resource", 2.0)
+		player.set("_ranged_cooldown_timer", 0.0)
+		player.call("_try_fire_projectile")
+		is_valid = is_valid and is_equal_approx(player.get("_ranged_resource"), 2.0)
+		is_valid = is_valid and is_equal_approx(player.get("_ranged_cooldown_timer"), 0.0)
 
 	player.queue_free()
 	return is_valid
