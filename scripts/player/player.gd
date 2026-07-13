@@ -481,17 +481,18 @@ func _physics_process(delta: float) -> void:
 	if _state == PlayerState.DEAD:
 		_process_dead_state(delta)
 	else:
-		if _state == PlayerState.HURT:
-			_process_hurt_state(delta)
-		elif _state == PlayerState.ATTACK:
-			_apply_horizontal_movement(delta * attack_movement_multiplier)
-		elif _state == PlayerState.GUARD or _state == PlayerState.CHARGE:
-			_run_active = false
-			velocity.x = move_toward(velocity.x, 0.0, friction * 1.4 * delta)
-		elif _state == PlayerState.CROUCH:
-			_apply_horizontal_movement(delta * crouch_movement_multiplier)
-		else:
-			_apply_horizontal_movement(delta)
+		match _state:
+			PlayerState.HURT:
+				_process_hurt_state(delta)
+			PlayerState.ATTACK:
+				_apply_horizontal_movement(delta * attack_movement_multiplier)
+			PlayerState.GUARD, PlayerState.CHARGE:
+				_run_active = false
+				velocity.x = move_toward(velocity.x, 0.0, friction * 1.4 * delta)
+			PlayerState.CROUCH:
+				_apply_horizontal_movement(delta * crouch_movement_multiplier)
+			_:
+				_apply_horizontal_movement(delta)
 
 		_apply_vertical_movement(delta)
 		_handle_attack_press()
@@ -688,15 +689,6 @@ func _process_dead_state(delta: float) -> void:
 		velocity.y = minf(velocity.y, max_fall_speed)
 
 
-func _should_stay_in_charge_state() -> bool:
-	return (
-		_state == PlayerState.CHARGE
-		and is_on_floor()
-		and Input.is_action_pressed("melee_attack")
-		and not _is_guard_requested()
-	)
-
-
 func _update_state_from_motion() -> void:
 	if _state == PlayerState.DEAD:
 		return
@@ -707,7 +699,10 @@ func _update_state_from_motion() -> void:
 	if _state == PlayerState.HURT and _hurt_timer > 0.0:
 		return
 
-	if _should_stay_in_charge_state():
+	var holding_charge := _state == PlayerState.CHARGE and is_on_floor()
+	holding_charge = holding_charge and Input.is_action_pressed("melee_attack")
+	holding_charge = holding_charge and not _is_guard_requested()
+	if holding_charge:
 		return
 
 	if not is_on_floor():
