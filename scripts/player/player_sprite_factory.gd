@@ -16,6 +16,7 @@ func build_default_sprite_frames(config: Dictionary) -> SpriteFrames:
 func build_default_sprite_frames_from_image(image: Image, config: Dictionary) -> SpriteFrames:
 	var animation_frame_size := config["animation_frame_size"] as Vector2i
 	var idle_animation_fps := float(config["idle_animation_fps"])
+	var walk_animation_fps := float(config["walk_animation_fps"])
 	var run_animation_fps := float(config["run_animation_fps"])
 	var air_animation_fps := float(config["air_animation_fps"])
 	var attack_animation_fps := float(config["attack_animation_fps"])
@@ -41,7 +42,7 @@ func build_default_sprite_frames_from_image(image: Image, config: Dictionary) ->
 		sprite_frames,
 		&"walk",
 		_get_row_regions(sheet_rows, 0),
-		run_animation_fps,
+		walk_animation_fps,
 		true,
 		image,
 		animation_frame_size

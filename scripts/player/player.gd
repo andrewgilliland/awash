@@ -85,12 +85,13 @@ const PLAYER_COMBAT_SCRIPT := preload("res://scripts/player/player_combat.gd")
 @export var animation_frame_size: Vector2i = Vector2i(128, 128)
 @export var sprite_visual_offset: Vector2 = Vector2(0.0, -58.0)
 @export var idle_animation_fps: float = 8.0
+@export var walk_animation_fps: float = 4.0
 @export var run_animation_fps: float = 11.0
 @export var air_animation_fps: float = 8.0
 @export var attack_animation_fps: float = 14.0
 @export var guard_animation_fps: float = 1.0
 @export var guard_from_attack_frame_index: int = 0
-@export var charge_from_attack_frame_index: int = 2
+@export var charge_from_attack_frame_index: int = 5
 @export var hurt_animation_fps: float = 10.0
 @export var death_animation_fps: float = 7.0
 @export var sprite_background_key_color: Color = Color(1.0, 1.0, 1.0, 1.0)
@@ -180,6 +181,7 @@ func _sprite_factory_config() -> Dictionary:
 		"sprite_background_key_color": sprite_background_key_color,
 		"sprite_background_key_tolerance": sprite_background_key_tolerance,
 		"idle_animation_fps": idle_animation_fps,
+		"walk_animation_fps": walk_animation_fps,
 		"run_animation_fps": run_animation_fps,
 		"air_animation_fps": air_animation_fps,
 		"attack_animation_fps": attack_animation_fps,
