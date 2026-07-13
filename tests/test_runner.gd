@@ -31,6 +31,8 @@ func _init() -> void:
 	_run_test(
 		"Player jump buffer and coyote timing stay wired", _test_player_jump_buffer_and_coyote
 	)
+	_run_test("Player coyote time allows jump", _test_player_coyote_time_allows_jump)
+	_run_test("Player jump buffer fires on landing", _test_player_jump_buffer_fires_on_landing)
 	_run_test("Player melee attack windows advance correctly", _test_player_melee_attack_windows)
 	_run_test("Player state machine relay stays wired", _test_player_state_machine_relay)
 	_run_test("Player guard and charge sprites differ", _test_player_guard_charge_sprites_differ)
@@ -312,6 +314,58 @@ func _test_player_jump_buffer_and_coyote() -> bool:
 
 	player.queue_free()
 	return is_valid
+
+
+func _test_player_coyote_time_allows_jump() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	player.set("_state", 0)
+	player.set("_coyote_timer", player.get("coyote_time_seconds"))
+	player.set("_jump_buffer_timer", player.get("jump_buffer_seconds"))
+	player.call("_try_consume_buffered_jump")
+
+	var jump_velocity := float(player.get("jump_velocity"))
+	var next_velocity_y := float(player.velocity.y)
+	var helper: Object = player.get("_state_machine")
+	var next_state := StringName(helper.call("get_state"))
+
+	player.queue_free()
+	return is_equal_approx(next_velocity_y, jump_velocity) and next_state == &"jump"
+
+
+func _test_player_jump_buffer_fires_on_landing() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	player.set("_state", 0)
+	player.set("_coyote_timer", 0.0)
+	player.set("_jump_buffer_timer", player.get("jump_buffer_seconds"))
+
+	player.call("_try_consume_buffered_jump", true)
+
+	var jump_velocity := float(player.get("jump_velocity"))
+	var next_velocity_y := float(player.velocity.y)
+	var helper: Object = player.get("_state_machine")
+	var next_state := StringName(helper.call("get_state"))
+	var buffer_consumed := is_equal_approx(float(player.get("_jump_buffer_timer")), 0.0)
+
+	player.queue_free()
+	return (
+		buffer_consumed
+		and is_equal_approx(next_velocity_y, jump_velocity)
+		and next_state == &"jump"
+	)
 
 
 func _test_player_melee_attack_windows() -> bool:

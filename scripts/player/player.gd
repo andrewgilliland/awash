@@ -327,17 +327,18 @@ func _apply_vertical_movement(delta: float) -> void:
 
 
 # Attempts to consume buffered jump.
-func _try_consume_buffered_jump() -> void:
+func _try_consume_buffered_jump(is_grounded: bool = false) -> void:
 	if _jump_buffer_timer <= 0.0:
 		return
 
-	if is_on_floor() or _coyote_timer > 0.0:
+	var grounded := is_grounded or is_on_floor()
+	if grounded or _coyote_timer > 0.0:
 		_do_jump()
 		_coyote_timer = 0.0
 		_jump_buffer_timer = 0.0
 		return
 
-	if has_double_jump and _air_jumps_used < max_air_jumps and not is_on_floor():
+	if has_double_jump and _air_jumps_used < max_air_jumps and not grounded:
 		_air_jumps_used += 1
 		_do_jump()
 		_jump_buffer_timer = 0.0
