@@ -123,6 +123,7 @@ var _combat = PLAYER_COMBAT_SCRIPT.new()
 @onready var _camera: Camera2D = $Camera2D
 
 
+# Initializes runtime state and connects required signals.
 func _ready() -> void:
 	if not _state_machine.state_changed.is_connected(state_changed.emit):
 		_state_machine.state_changed.connect(state_changed.emit)
@@ -139,6 +140,7 @@ func _ready() -> void:
 		_attack_area.area_entered.connect(_on_attack_area_area_entered)
 
 
+# Sets up sprite visual.
 func _setup_sprite_visual() -> void:
 	if _sprite_visual == null:
 		return
@@ -157,16 +159,19 @@ func _setup_sprite_visual() -> void:
 		_body_visual.visible = false
 
 
+# Creates runtime sprite sheet image.
 func _create_runtime_sprite_sheet_image() -> Image:
 	return _sprite_factory.create_runtime_sprite_sheet_image(
 		PLAYER_SPRITE_SHEET, sprite_background_key_color, sprite_background_key_tolerance
 	)
 
 
+# Builds default sprite frames.
 func _build_default_sprite_frames(image: Image) -> SpriteFrames:
 	return _sprite_factory.build_default_sprite_frames_from_image(image, _sprite_factory_config())
 
 
+# Returns sprite-frame factory settings from current player tuning exports.
 func _sprite_factory_config() -> Dictionary:
 	return {
 		"sprite_sheet": PLAYER_SPRITE_SHEET,
@@ -185,6 +190,7 @@ func _sprite_factory_config() -> Dictionary:
 	}
 
 
+# Returns combat state-name mappings to PlayerState enum values.
 func _combat_state_values() -> Dictionary:
 	return {
 		&"idle": PlayerState.IDLE,
@@ -201,6 +207,7 @@ func _combat_state_values() -> Dictionary:
 	}
 
 
+# Returns combat phase-name mappings to AttackPhase enum values.
 func _combat_phase_values() -> Dictionary:
 	return {
 		&"none": AttackPhase.NONE,
@@ -210,6 +217,7 @@ func _combat_phase_values() -> Dictionary:
 	}
 
 
+# Ensures combat setup.
 func _ensure_combat_setup() -> void:
 	if _combat._player != null:
 		return
@@ -217,6 +225,7 @@ func _ensure_combat_setup() -> void:
 	_combat.setup(self, _attack_area, _attack_shape, _combat_state_values(), _combat_phase_values())
 
 
+# Returns desired animation name.
 func _get_desired_animation_name() -> StringName:
 	var animation_name: StringName = &"idle"
 
@@ -245,6 +254,7 @@ func _get_desired_animation_name() -> StringName:
 	return animation_name
 
 
+# Runs per-frame physics updates for movement, combat, and visuals.
 func _physics_process(delta: float) -> void:
 	_tick_state_timers(delta)
 	_update_run_input_window(delta)
@@ -282,6 +292,7 @@ func _physics_process(delta: float) -> void:
 	_update_visual_state(delta)
 
 
+# Applies horizontal movement.
 func _apply_horizontal_movement(delta: float) -> void:
 	_input_direction = Input.get_axis("move_left", "move_right")
 	var movement_multiplier := 1.0
@@ -302,6 +313,7 @@ func _apply_horizontal_movement(delta: float) -> void:
 		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
 
 
+# Applies vertical movement.
 func _apply_vertical_movement(delta: float) -> void:
 	if is_on_floor():
 		_coyote_timer = coyote_time_seconds
@@ -314,6 +326,7 @@ func _apply_vertical_movement(delta: float) -> void:
 	_jump_buffer_timer = maxf(0.0, _jump_buffer_timer - delta)
 
 
+# Attempts to consume buffered jump.
 func _try_consume_buffered_jump() -> void:
 	if _jump_buffer_timer <= 0.0:
 		return
@@ -330,12 +343,14 @@ func _try_consume_buffered_jump() -> void:
 		_jump_buffer_timer = 0.0
 
 
+# Applies jump velocity and transitions to jump state when allowed.
 func _do_jump() -> void:
 	velocity.y = jump_velocity
 	if _state != PlayerState.HURT and _state != PlayerState.DEAD and _state != PlayerState.ATTACK:
 		_set_state(PlayerState.JUMP)
 
 
+# Returns whether crouch requested is true.
 func _is_crouch_requested() -> bool:
 	if crouch_action_name == StringName(""):
 		return false
@@ -346,6 +361,7 @@ func _is_crouch_requested() -> bool:
 	return Input.is_action_pressed(crouch_action_name)
 
 
+# Returns whether guard requested is true.
 func _is_guard_requested() -> bool:
 	if guard_action_name != StringName("") and InputMap.has_action(guard_action_name):
 		return Input.is_action_pressed(guard_action_name)
@@ -356,6 +372,7 @@ func _is_guard_requested() -> bool:
 	return false
 
 
+# Registers run tap.
 func _register_run_tap(direction: float) -> void:
 	if direction == 0.0:
 		return
@@ -369,6 +386,7 @@ func _register_run_tap(direction: float) -> void:
 	_run_tap_timer = run_double_tap_window_seconds
 
 
+# Updates run input window.
 func _update_run_input_window(delta: float) -> void:
 	if Input.is_action_just_pressed("move_left"):
 		_register_run_tap(-1.0)
@@ -392,6 +410,7 @@ func _update_run_input_window(delta: float) -> void:
 		_run_active = false
 
 
+# Applies incoming damage, guard modifiers, knockback, and death transitions.
 func take_damage(amount: int = 1, knockback: Vector2 = Vector2.ZERO) -> void:
 	if amount <= 0:
 		return
@@ -422,12 +441,14 @@ func take_damage(amount: int = 1, knockback: Vector2 = Vector2.ZERO) -> void:
 	_set_state(PlayerState.HURT)
 
 
+# Starts death-state lock timing, cancels attacks, and transitions to dead state.
 func _enter_death_state() -> void:
 	_death_timer = death_lock_seconds
 	_combat.end_attack()
 	_set_state(PlayerState.DEAD)
 
 
+# Advances state timers over delta time.
 func _tick_state_timers(delta: float) -> void:
 	_hurt_timer = maxf(0.0, _hurt_timer - delta)
 	_invulnerable_timer = maxf(0.0, _invulnerable_timer - delta)
@@ -448,11 +469,13 @@ func _tick_state_timers(delta: float) -> void:
 		get_tree().reload_current_scene()
 
 
+# Processes hurt state.
 func _process_hurt_state(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, 0.0, friction * 0.65 * delta)
 	_combat.end_attack()
 
 
+# Processes dead state.
 func _process_dead_state(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, 0.0, friction * delta)
 	if not is_on_floor():
@@ -460,6 +483,7 @@ func _process_dead_state(delta: float) -> void:
 		velocity.y = minf(velocity.y, max_fall_speed)
 
 
+# Updates state from motion.
 func _update_state_from_motion() -> void:
 	if _state == PlayerState.DEAD:
 		return
@@ -499,6 +523,7 @@ func _update_state_from_motion() -> void:
 		_set_state(PlayerState.IDLE)
 
 
+# Sets state.
 func _set_state(next_state: PlayerState) -> void:
 	if _state == next_state:
 		return
@@ -506,18 +531,22 @@ func _set_state(next_state: PlayerState) -> void:
 	_state_machine.set_state_by_id(int(_state))
 
 
+# Emits attack window started.
 func _emit_attack_window_started() -> void:
 	emit_signal("attack_window_started")
 
 
+# Emits attack window ended.
 func _emit_attack_window_ended() -> void:
 	emit_signal("attack_window_ended")
 
 
+# Emits melee hit confirmed.
 func _emit_melee_hit_confirmed(target: Node) -> void:
 	emit_signal("melee_hit_confirmed", target)
 
 
+# Applies jump release gravity.
 func _apply_jump_release_gravity(delta: float) -> void:
 	if is_on_floor():
 		return
@@ -526,35 +555,42 @@ func _apply_jump_release_gravity(delta: float) -> void:
 		velocity.y += get_gravity().y * jump_release_gravity_multiplier * delta
 
 
+# Handles attack press.
 func _handle_attack_press() -> void:
 	_ensure_combat_setup()
 	_combat.handle_attack_press()
 
 
+# Attempts to fire projectile.
 func _try_fire_projectile() -> void:
 	_ensure_combat_setup()
 	_combat.try_fire_projectile()
 
 
+# Updates facing.
 func _update_facing() -> void:
 	if absf(_input_direction) > 0.01:
 		_facing_sign = signf(_input_direction)
 	_combat.update_attack_hitbox_orientation()
 
 
+# Returns ranged resource.
 func get_ranged_resource() -> float:
 	return _ranged_resource
 
 
+# Returns ranged cooldown remaining.
 func get_ranged_cooldown_remaining() -> float:
 	return _ranged_cooldown_timer
 
 
+# Sets camera room bounds.
 func set_camera_room_bounds(bounds: Rect2) -> void:
 	camera_room_bounds = bounds
 	_apply_camera_room_clamps()
 
 
+# Configures camera drag margins and reapplies room clamp limits.
 func _configure_camera_behavior() -> void:
 	if _camera == null:
 		return
@@ -568,6 +604,7 @@ func _configure_camera_behavior() -> void:
 	_apply_camera_room_clamps()
 
 
+# Applies camera room clamps.
 func _apply_camera_room_clamps() -> void:
 	if _camera == null:
 		return
@@ -580,6 +617,7 @@ func _apply_camera_room_clamps() -> void:
 	_camera.limit_bottom = int(round(max_point.y))
 
 
+# Updates camera look ahead.
 func _update_camera_look_ahead(delta: float) -> void:
 	if _camera == null:
 		return
@@ -604,14 +642,17 @@ func _update_camera_look_ahead(delta: float) -> void:
 	)
 
 
+# Handles attack area body entered.
 func _on_attack_area_body_entered(body: Node2D) -> void:
 	_combat.on_attack_area_body_entered(body)
 
 
+# Handles attack area area entered.
 func _on_attack_area_area_entered(area: Area2D) -> void:
 	_combat.on_attack_area_area_entered(area)
 
 
+# Updates visual state.
 func _update_visual_state(_delta: float) -> void:
 	if _sprite_visual != null and _sprite_visual.sprite_frames != null:
 		var desired_animation := _get_desired_animation_name()

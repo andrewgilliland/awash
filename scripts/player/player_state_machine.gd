@@ -18,10 +18,12 @@ var _state_names: Array[StringName] = [
 ]
 
 
+# Returns state.
 func get_state() -> StringName:
 	return _current_state
 
 
+# Sets state.
 func set_state(next_state: StringName) -> void:
 	if next_state == StringName("") or next_state == _current_state:
 		return
@@ -31,6 +33,7 @@ func set_state(next_state: StringName) -> void:
 	emit_signal("state_changed", previous_state, _current_state)
 
 
+# Sets state by id.
 func set_state_by_id(state_id: int) -> void:
 	if state_id < 0 or state_id >= _state_names.size():
 		set_state(&"idle")

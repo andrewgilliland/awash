@@ -1,6 +1,7 @@
 extends RefCounted
 
 
+# Builds default sprite frames.
 func build_default_sprite_frames(config: Dictionary) -> SpriteFrames:
 	var sprite_sheet := config["sprite_sheet"] as Texture2D
 	var image := _create_runtime_sprite_sheet_image(
@@ -11,6 +12,7 @@ func build_default_sprite_frames(config: Dictionary) -> SpriteFrames:
 	return build_default_sprite_frames_from_image(image, config)
 
 
+# Builds default sprite frames from image.
 func build_default_sprite_frames_from_image(image: Image, config: Dictionary) -> SpriteFrames:
 	var animation_frame_size := config["animation_frame_size"] as Vector2i
 	var idle_animation_fps := float(config["idle_animation_fps"])
@@ -127,12 +129,14 @@ func build_default_sprite_frames_from_image(image: Image, config: Dictionary) ->
 	return sprite_frames
 
 
+# Creates runtime sprite sheet image.
 func create_runtime_sprite_sheet_image(
 	sprite_sheet: Texture2D, key_color: Color, key_tolerance: float
 ) -> Image:
 	return _create_runtime_sprite_sheet_image(sprite_sheet, key_color, key_tolerance)
 
 
+# Creates runtime sprite sheet image.
 func _create_runtime_sprite_sheet_image(
 	sprite_sheet: Texture2D, key_color: Color, key_tolerance: float
 ) -> Image:
@@ -151,6 +155,7 @@ func _create_runtime_sprite_sheet_image(
 	return image
 
 
+# Returns whether background pixel is true.
 func _is_background_pixel(pixel: Color, key_color: Color, key_tolerance: float) -> bool:
 	if pixel.a <= 0.0:
 		return false
@@ -162,6 +167,7 @@ func _is_background_pixel(pixel: Color, key_color: Color, key_tolerance: float) 
 	)
 
 
+# Extracts sheet rows.
 func _extract_sheet_rows(image: Image) -> Array:
 	var row_bands: Array = []
 	var band_start := -1
@@ -189,6 +195,7 @@ func _extract_sheet_rows(image: Image) -> Array:
 	return sheet_rows
 
 
+# Extracts row regions.
 func _extract_row_regions(image: Image, top: int, bottom: int) -> Array:
 	var column_bands: Array = []
 	var band_start := -1
@@ -216,6 +223,7 @@ func _extract_row_regions(image: Image, top: int, bottom: int) -> Array:
 	return regions
 
 
+# Trims transparent bounds from a candidate frame region.
 func _trim_region(image: Image, left: int, right: int, top: int, bottom: int) -> Rect2i:
 	var min_x := right
 	var min_y := bottom
@@ -235,6 +243,7 @@ func _trim_region(image: Image, left: int, right: int, top: int, bottom: int) ->
 	return Rect2i(min_x, min_y, (max_x - min_x) + 1, (max_y - min_y) + 1)
 
 
+# Returns row regions.
 func _get_row_regions(sheet_rows: Array, row_index: int) -> Array:
 	if row_index < 0 or row_index >= sheet_rows.size():
 		return []
@@ -242,6 +251,7 @@ func _get_row_regions(sheet_rows: Array, row_index: int) -> Array:
 	return sheet_rows[row_index]
 
 
+# Returns regions by indices.
 func _get_regions_by_indices(sheet_rows: Array, row_index: int, indices: Array) -> Array:
 	var selected_regions: Array = []
 	if row_index < 0 or row_index >= sheet_rows.size():
@@ -255,6 +265,7 @@ func _get_regions_by_indices(sheet_rows: Array, row_index: int, indices: Array) 
 	return selected_regions
 
 
+# Adds aligned frame textures for each source region into an animation track.
 func _add_animation_regions(
 	sprite_frames: SpriteFrames,
 	animation_name: StringName,
@@ -279,6 +290,7 @@ func _add_animation_regions(
 		)
 
 
+# Ensures animation exists.
 func _ensure_animation_exists(
 	sprite_frames: SpriteFrames, animation_name: StringName, fallback_name: StringName
 ) -> void:
@@ -304,6 +316,7 @@ func _ensure_animation_exists(
 		)
 
 
+# Copies single frame animation.
 func _copy_single_frame_animation(
 	sprite_frames: SpriteFrames,
 	target_animation_name: StringName,
@@ -334,6 +347,7 @@ func _copy_single_frame_animation(
 	)
 
 
+# Creates aligned frame texture.
 func _create_aligned_frame_texture(
 	image: Image, region: Rect2i, animation_frame_size: Vector2i
 ) -> Texture2D:

@@ -9,6 +9,7 @@ var _attack_phase_timer: float = 0.0
 var _attack_hit_targets: Dictionary = {}
 
 
+# Sets up runtime dependencies.
 func setup(
 	player: CharacterBody2D,
 	attack_area: Area2D,
@@ -25,6 +26,7 @@ func setup(
 	_attack_hit_targets.clear()
 
 
+# Sets attack hitbox enabled.
 func set_attack_hitbox_enabled(enabled: bool) -> void:
 	if _attack_shape != null:
 		_attack_shape.disabled = not enabled
@@ -32,6 +34,7 @@ func set_attack_hitbox_enabled(enabled: bool) -> void:
 		_attack_area.monitoring = enabled
 
 
+# Updates attack hitbox orientation.
 func update_attack_hitbox_orientation() -> void:
 	if _attack_area == null:
 		return
@@ -42,6 +45,7 @@ func update_attack_hitbox_orientation() -> void:
 	)
 
 
+# Handles attack press.
 func handle_attack_press() -> void:
 	if _player._state == _state(&"dead"):
 		return
@@ -62,6 +66,7 @@ func handle_attack_press() -> void:
 		_begin_attack()
 
 
+# Attempts to fire projectile.
 func try_fire_projectile() -> void:
 	var blocked_state: bool = _player._state == _state(&"dead") or _player._state == _state(&"hurt")
 	blocked_state = blocked_state or _player._state == _state(&"guard")
@@ -111,6 +116,7 @@ func try_fire_projectile() -> void:
 	_player.emit_signal("feedback_event_requested", "ranged_fire")
 
 
+# Advances attack phase over delta time.
 func tick_attack_phase(delta: float) -> void:
 	if _player._attack_phase == _phase(&"none"):
 		return
@@ -139,6 +145,7 @@ func tick_attack_phase(delta: float) -> void:
 	end_attack()
 
 
+# Ends attack.
 func end_attack() -> void:
 	_player._attack_phase = _phase(&"none")
 	_attack_phase_timer = 0.0
@@ -148,10 +155,12 @@ func end_attack() -> void:
 		_player._update_state_from_motion()
 
 
+# Handles attack area body entered.
 func on_attack_area_body_entered(body: Node2D) -> void:
 	_register_melee_hit(body)
 
 
+# Handles attack area area entered.
 func on_attack_area_area_entered(area: Area2D) -> void:
 	if area == null:
 		return
@@ -160,6 +169,7 @@ func on_attack_area_area_entered(area: Area2D) -> void:
 		_register_melee_hit(area.get_parent())
 
 
+# Begins attack.
 func _begin_attack() -> void:
 	_player._set_state(_state(&"attack"))
 	_player._attack_phase = _phase(&"startup")
@@ -169,6 +179,7 @@ func _begin_attack() -> void:
 	_player.emit_signal("feedback_event_requested", "melee_startup")
 
 
+# Registers melee hit.
 func _register_melee_hit(target: Node) -> void:
 	if target == null:
 		return
@@ -191,6 +202,7 @@ func _register_melee_hit(target: Node) -> void:
 	_player.emit_signal("feedback_event_requested", "melee_hit_confirm")
 
 
+# Attempts to set projectile property.
 func _try_set_projectile_property(
 	projectile: Object, property_name: StringName, value: Variant
 ) -> void:
@@ -200,9 +212,11 @@ func _try_set_projectile_property(
 			return
 
 
+# Looks up a combat state enum value by its canonical name key.
 func _state(key: StringName) -> int:
 	return int(_state_values[key])
 
 
+# Looks up a combat phase enum value by its canonical name key.
 func _phase(key: StringName) -> int:
 	return int(_phase_values[key])
