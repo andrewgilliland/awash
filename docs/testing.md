@@ -33,6 +33,7 @@ The player behavior spec in [docs/specs/player-spec.md](docs/specs/player-spec.m
   - Jump buffer and coyote timing stay wired.
   - Coyote time allows jump.
   - Jump buffer fires on landing.
+  - Crouch blocks run and guard blocks crouch.
   - Melee attack windows advance correctly.
   - Player state machine relay stays wired.
   - Guard and charge sprites differ.
@@ -45,7 +46,6 @@ The player behavior spec in [docs/specs/player-spec.md](docs/specs/player-spec.m
 ### Next Tests To Add
 
 - Movement
-  - [ ] `_test_player_crouch_blocks_run_and_guard_blocks_crouch`
 - Combat
   - [ ] `_test_player_melee_hits_each_target_once`
   - [ ] `_test_player_guard_reduces_damage_and_knockback`

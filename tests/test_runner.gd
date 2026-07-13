@@ -33,6 +33,10 @@ func _init() -> void:
 	)
 	_run_test("Player coyote time allows jump", _test_player_coyote_time_allows_jump)
 	_run_test("Player jump buffer fires on landing", _test_player_jump_buffer_fires_on_landing)
+	_run_test(
+		"Player crouch blocks run and guard blocks crouch",
+		_test_player_crouch_blocks_run_and_guard_blocks_crouch
+	)
 	_run_test("Player melee attack windows advance correctly", _test_player_melee_attack_windows)
 	_run_test("Player state machine relay stays wired", _test_player_state_machine_relay)
 	_run_test("Player guard and charge sprites differ", _test_player_guard_charge_sprites_differ)
@@ -365,6 +369,65 @@ func _test_player_jump_buffer_fires_on_landing() -> bool:
 		buffer_consumed
 		and is_equal_approx(next_velocity_y, jump_velocity)
 		and next_state == &"jump"
+	)
+
+
+func _test_player_crouch_blocks_run_and_guard_blocks_crouch() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	var had_move_down := InputMap.has_action(&"move_down")
+	var had_guard := InputMap.has_action(&"guard")
+	if not had_move_down:
+		InputMap.add_action(&"move_down")
+	if not had_guard:
+		InputMap.add_action(&"guard")
+
+	Input.action_release("move_down")
+	Input.action_release("guard")
+
+	Input.action_press("move_down")
+	player.set("_run_active", true)
+	player.set("_state", 0)
+	player.call("_update_state_from_motion", true)
+	var crouch_state := int(player.get("_state"))
+	var crouch_run_active := bool(player.get("_run_active"))
+
+	Input.action_release("move_down")
+	Input.action_press("guard")
+	player.set("_run_active", true)
+	player.set("_state", 0)
+	player.call("_update_state_from_motion", true)
+	var guard_state := int(player.get("_state"))
+	var guard_run_active := bool(player.get("_run_active"))
+
+	Input.action_release("guard")
+	Input.action_press("move_down")
+	Input.action_press("guard")
+	player.set("_run_active", true)
+	player.set("_state", 0)
+	player.call("_update_state_from_motion", true)
+	var both_state := int(player.get("_state"))
+
+	Input.action_release("move_down")
+	Input.action_release("guard")
+	if not had_move_down:
+		InputMap.erase_action(&"move_down")
+	if not had_guard:
+		InputMap.erase_action(&"guard")
+
+	player.queue_free()
+	return (
+		crouch_state == 6
+		and not crouch_run_active
+		and guard_state == 7
+		and not guard_run_active
+		and both_state == 7
 	)
 
 

@@ -485,7 +485,7 @@ func _process_dead_state(delta: float) -> void:
 
 
 # Updates state from motion.
-func _update_state_from_motion() -> void:
+func _update_state_from_motion(is_grounded: bool = false) -> void:
 	if _state == PlayerState.DEAD:
 		return
 
@@ -501,7 +501,8 @@ func _update_state_from_motion() -> void:
 	if holding_charge:
 		return
 
-	if not is_on_floor():
+	var grounded := is_grounded or is_on_floor()
+	if not grounded:
 		if velocity.y <= -jump_to_fall_velocity_threshold:
 			_set_state(PlayerState.JUMP)
 		else:
