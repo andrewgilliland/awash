@@ -520,7 +520,7 @@ func _test_player_guard_charge_sprites_differ() -> bool:
 	var image := player.call("_create_runtime_sprite_sheet_image") as Image
 	var sprite_frames := player.call("_build_default_sprite_frames", image) as SpriteFrames
 	var is_valid := guard_index == 0
-	is_valid = is_valid and charge_index == 2
+	is_valid = is_valid and charge_index == 5
 	is_valid = is_valid and sprite_frames != null
 	is_valid = is_valid and sprite_frames.has_animation(&"guard")
 	is_valid = is_valid and sprite_frames.has_animation(&"charge")
