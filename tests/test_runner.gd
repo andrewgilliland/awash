@@ -40,6 +40,7 @@ func _init() -> void:
 	_run_test("Player melee attack windows advance correctly", _test_player_melee_attack_windows)
 	_run_test("Player state machine relay stays wired", _test_player_state_machine_relay)
 	_run_test("Player guard and charge sprites differ", _test_player_guard_charge_sprites_differ)
+	_run_test("Player crouch sprite animates", _test_player_crouch_sprite_animates)
 	_run_test(
 		"Player guard and charge animations map correctly",
 		_test_player_guard_charge_animation_mapping
@@ -211,6 +212,7 @@ func _test_player_movement_tuning_defaults() -> bool:
 	is_valid = is_valid and player.get("run_double_tap_window_seconds") > 0.0
 	is_valid = is_valid and player.get("crouch_movement_multiplier") > 0.0
 	is_valid = is_valid and player.get("crouch_movement_multiplier") < 1.0
+	is_valid = is_valid and player.get("crouch_animation_fps") > 0.0
 	is_valid = is_valid and player.get("guard_damage_multiplier") >= 0.0
 	is_valid = is_valid and player.get("guard_damage_multiplier") <= 1.0
 	is_valid = is_valid and player.get("guard_knockback_multiplier") >= 0.0
@@ -530,6 +532,32 @@ func _test_player_guard_charge_sprites_differ() -> bool:
 		var charge_texture := sprite_frames.get_frame_texture(&"charge", 0)
 		is_valid = is_valid and guard_texture != null and charge_texture != null
 		is_valid = is_valid and guard_texture != charge_texture
+
+	player.queue_free()
+	return is_valid
+
+
+func _test_player_crouch_sprite_animates() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	var image := player.call("_create_runtime_sprite_sheet_image") as Image
+	var sprite_frames := player.call("_build_default_sprite_frames", image) as SpriteFrames
+	var is_valid := sprite_frames != null
+	is_valid = is_valid and sprite_frames.has_animation(&"crouch")
+	is_valid = is_valid and sprite_frames.get_frame_count(&"crouch") == 2
+	is_valid = is_valid and not sprite_frames.get_animation_loop(&"crouch")
+
+	if is_valid:
+		var crouch_texture_0 := sprite_frames.get_frame_texture(&"crouch", 0)
+		var crouch_texture_1 := sprite_frames.get_frame_texture(&"crouch", 1)
+		is_valid = is_valid and crouch_texture_0 != null and crouch_texture_1 != null
+		is_valid = is_valid and crouch_texture_0 != crouch_texture_1
 
 	player.queue_free()
 	return is_valid

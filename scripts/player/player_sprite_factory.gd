@@ -19,6 +19,7 @@ func build_default_sprite_frames_from_image(image: Image, config: Dictionary) ->
 	var run_animation_fps := float(config["run_animation_fps"])
 	var air_animation_fps := float(config["air_animation_fps"])
 	var attack_animation_fps := float(config["attack_animation_fps"])
+	var crouch_animation_fps := float(config["crouch_animation_fps"])
 	var guard_animation_fps := float(config["guard_animation_fps"])
 	var guard_from_attack_frame_index := int(config["guard_from_attack_frame_index"])
 	var charge_from_attack_frame_index := int(config["charge_from_attack_frame_index"])
@@ -81,10 +82,19 @@ func build_default_sprite_frames_from_image(image: Image, config: Dictionary) ->
 		image,
 		animation_frame_size
 	)
+	_add_animation_regions(
+		sprite_frames,
+		&"crouch",
+		_get_regions_by_indices(sheet_rows, 5, [1, 0]),
+		crouch_animation_fps,
+		false,
+		image,
+		animation_frame_size
+	)
 	_copy_single_frame_animation(
 		sprite_frames,
 		&"guard",
-		&"attack",
+		&"crouch",
 		guard_from_attack_frame_index,
 		guard_animation_fps,
 		false

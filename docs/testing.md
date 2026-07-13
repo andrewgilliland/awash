@@ -36,6 +36,7 @@ The player behavior spec in [docs/specs/player-spec.md](docs/specs/player-spec.m
   - Crouch blocks run and guard blocks crouch.
   - Melee attack windows advance correctly.
   - Player state machine relay stays wired.
+  - Crouch sprite animates.
   - Guard and charge sprites differ.
   - Guard and charge animation mapping is correct.
   - Charge release starts the attack.

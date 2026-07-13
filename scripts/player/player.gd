@@ -49,6 +49,7 @@ const PLAYER_COMBAT_SCRIPT := preload("res://scripts/player/player_combat.gd")
 @export var run_state_speed_threshold: float = 20.0
 @export var jump_to_fall_velocity_threshold: float = 18.0
 @export var crouch_movement_multiplier: float = 0.28
+@export var crouch_animation_fps: float = 10.0
 @export var guard_damage_multiplier: float = 0.35
 @export var guard_knockback_multiplier: float = 0.25
 @export var has_double_jump: bool = false
@@ -182,6 +183,7 @@ func _sprite_factory_config() -> Dictionary:
 		"run_animation_fps": run_animation_fps,
 		"air_animation_fps": air_animation_fps,
 		"attack_animation_fps": attack_animation_fps,
+		"crouch_animation_fps": crouch_animation_fps,
 		"guard_animation_fps": guard_animation_fps,
 		"guard_from_attack_frame_index": guard_from_attack_frame_index,
 		"charge_from_attack_frame_index": charge_from_attack_frame_index,
@@ -660,6 +662,7 @@ func _update_visual_state(_delta: float) -> void:
 		var desired_animation := _get_desired_animation_name()
 		var is_one_shot := (
 			desired_animation == &"attack"
+			or desired_animation == &"crouch"
 			or desired_animation == &"hurt"
 			or desired_animation == &"death"
 		)
