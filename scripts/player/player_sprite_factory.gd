@@ -31,7 +31,7 @@ func build_default_sprite_frames_from_image(image: Image, config: Dictionary) ->
 	_add_animation_regions(
 		sprite_frames,
 		&"idle",
-		_get_row_regions(sheet_rows, 0),
+		_get_regions_by_indices(sheet_rows, 0, [0]),
 		idle_animation_fps,
 		true,
 		image,
