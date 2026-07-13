@@ -28,6 +28,11 @@ The player behavior spec in [docs/specs/player-spec.md](docs/specs/player-spec.m
   - Player scene loads correctly.
   - Player defaults stay sane.
   - Movement tuning stays within expected bounds.
+  - Run double-tap input activates run.
+  - Crouch and guard cancel run input.
+  - Jump buffer and coyote timing stay wired.
+  - Melee attack windows advance correctly.
+  - Player state machine relay stays wired.
   - Guard and charge sprites differ.
   - Guard and charge animation mapping is correct.
   - Charge release starts the attack.
@@ -38,17 +43,14 @@ The player behavior spec in [docs/specs/player-spec.md](docs/specs/player-spec.m
 ### Next Tests To Add
 
 - Movement
-  - [ ] `_test_player_run_double_tap_activates_run`
   - [ ] `_test_player_coyote_time_allows_jump`
   - [ ] `_test_player_jump_buffer_fires_on_landing`
   - [ ] `_test_player_crouch_blocks_run_and_guard_blocks_crouch`
 - Combat
-  - [ ] `_test_player_melee_attack_windows`
   - [ ] `_test_player_melee_hits_each_target_once`
   - [ ] `_test_player_guard_reduces_damage_and_knockback`
   - [ ] `_test_player_ranged_cooldown_and_resource`
 - State
-  - [ ] `_test_player_state_machine_relay`
   - [ ] `_test_player_hurt_locks_state_changes`
   - [ ] `_test_player_death_cancels_attack_and_locks_state`
 - Visual

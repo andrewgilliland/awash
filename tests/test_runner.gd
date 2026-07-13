@@ -5,12 +5,15 @@ const BIOME_SCENE_PATH := "res://scenes/world/world_biome_01.tscn"
 const MAIN_SCENE_PATH := "res://scenes/main.tscn"
 const RUNTIME_STATE_SCRIPT_PATH := "res://scripts/core/runtime_state.gd"
 const PLAYER_STATE_ATTACK := 5
+const PLAYER_STATE_RUN := 2
 const PLAYER_STATE_GUARD := 7
 const PLAYER_STATE_CHARGE := 8
 const PLAYER_STATE_HURT := 9
 const PLAYER_STATE_DEAD := 10
 const ATTACK_PHASE_NONE := 0
 const ATTACK_PHASE_STARTUP := 1
+const ATTACK_PHASE_ACTIVE := 2
+const ATTACK_PHASE_RECOVERY := 3
 var _failures: int = 0
 
 
@@ -28,6 +31,8 @@ func _init() -> void:
 	_run_test(
 		"Player jump buffer and coyote timing stay wired", _test_player_jump_buffer_and_coyote
 	)
+	_run_test("Player melee attack windows advance correctly", _test_player_melee_attack_windows)
+	_run_test("Player state machine relay stays wired", _test_player_state_machine_relay)
 	_run_test("Player guard and charge sprites differ", _test_player_guard_charge_sprites_differ)
 	_run_test(
 		"Player guard and charge animations map correctly",
@@ -307,6 +312,79 @@ func _test_player_jump_buffer_and_coyote() -> bool:
 
 	player.queue_free()
 	return is_valid
+
+
+func _test_player_melee_attack_windows() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	var had_melee_attack := InputMap.has_action(&"melee_attack")
+	if not had_melee_attack:
+		InputMap.add_action(&"melee_attack")
+
+	var attack_started_count := [0]
+	var attack_ended_count := [0]
+	player.attack_window_started.connect(func() -> void: attack_started_count[0] += 1)
+	player.attack_window_ended.connect(func() -> void: attack_ended_count[0] += 1)
+
+	Input.action_release("melee_attack")
+	player.set("_state", PLAYER_STATE_CHARGE)
+	player.set("_attack_phase", ATTACK_PHASE_NONE)
+	player.call("_handle_attack_press")
+	var combat: Object = player.get("_combat")
+	combat.call("tick_attack_phase", player.get("melee_startup_seconds"))
+	var active_phase := int(player.get("_attack_phase"))
+	combat.call("tick_attack_phase", player.get("melee_active_seconds"))
+	var recovery_phase := int(player.get("_attack_phase"))
+	combat.call("tick_attack_phase", player.get("melee_recovery_seconds"))
+	var finished_phase := int(player.get("_attack_phase"))
+
+	if not had_melee_attack:
+		InputMap.erase_action(&"melee_attack")
+
+	player.queue_free()
+	return (
+		attack_started_count[0] == 1
+		and attack_ended_count[0] == 1
+		and active_phase == ATTACK_PHASE_ACTIVE
+		and recovery_phase == ATTACK_PHASE_RECOVERY
+		and finished_phase == ATTACK_PHASE_NONE
+	)
+
+
+func _test_player_state_machine_relay() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var player := packed_scene.instantiate()
+	if player == null:
+		return false
+
+	get_root().add_child(player)
+	player.call("_ready")
+
+	var helper: Object = player.get("_state_machine")
+
+	var relay_connected: bool = helper.state_changed.is_connected(player.state_changed.emit)
+	var relay_states: Array[StringName] = [StringName(""), StringName("")]
+	player.state_changed.connect(
+		func(previous_state: StringName, next_state: StringName) -> void:
+			relay_states[0] = previous_state
+			relay_states[1] = next_state
+	)
+
+	helper.call("set_state_by_id", PLAYER_STATE_RUN)
+	var helper_state := StringName(helper.call("get_state"))
+	var relay_fired := relay_states[0] == &"idle" and relay_states[1] == &"run"
+
+	player.queue_free()
+	return relay_connected and helper_state == &"run" and relay_fired
 
 
 func _test_player_guard_charge_sprites_differ() -> bool:
