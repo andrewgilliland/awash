@@ -4,6 +4,7 @@ signal attack_window_started
 signal attack_window_ended
 signal melee_hit_confirmed(target: Node)
 signal feedback_event_requested(event_name: String)
+signal state_changed(previous_state: StringName, next_state: StringName)
 
 enum PlayerState {
 	IDLE,
@@ -111,6 +112,7 @@ var _ranged_resource: float = 0.0
 var _run_active: bool = false
 var _run_tap_timer: float = 0.0
 var _last_run_tap_direction: float = 0.0
+var _state_machine = preload("res://scripts/player/player_state_machine.gd").new()
 
 @onready var _body_visual: Polygon2D = $Body
 @onready var _sprite_visual: AnimatedSprite2D = $AnimatedSprite2D
@@ -120,6 +122,8 @@ var _last_run_tap_direction: float = 0.0
 
 
 func _ready() -> void:
+	if not _state_machine.state_changed.is_connected(state_changed.emit):
+		_state_machine.state_changed.connect(state_changed.emit)
 	_current_health = max_health
 	_ranged_resource = max_ranged_resource
 	_attack_base_position = _attack_area.position
@@ -732,6 +736,7 @@ func _set_state(next_state: PlayerState) -> void:
 	if _state == next_state:
 		return
 	_state = next_state
+	_state_machine.set_state_by_id(int(_state))
 
 
 func _apply_jump_release_gravity(delta: float) -> void:
