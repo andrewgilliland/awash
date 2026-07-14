@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bsmxp4op6cc6e"]
 
 [ext_resource type="Script" uid="uid://o4osibv7x85f" path="res://scripts/player/player.gd" id="1_3h4r8"]
-[ext_resource type="PackedScene" path="res://scenes/player/player_projectile.tscn" id="2_hjhxw"]
+[ext_resource type="PackedScene" uid="uid://bvecq7rtg76pf" path="res://scenes/player/player_projectile.tscn" id="2_hjhxw"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2x6a2"]
 radius = 6.0
