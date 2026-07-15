@@ -2,10 +2,13 @@
 
 Awash includes a lightweight built-in headless test runner for smoke checks.
 
+It also includes a deterministic headless playtest runner for scenario-level validation.
+
 ## Run
 
 ```bash
 ./scripts/quality/test.sh
+./scripts/quality/playtest.sh
 ```
 
 ## What It Covers Now
@@ -17,6 +20,11 @@ Awash includes a lightweight built-in headless test runner for smoke checks.
 
 - Add physics behavior tests for jump buffering and coyote timing.
 - Add tests for combat action setup and progression flags.
+
+## Playtest Coverage
+
+- [tests/playtest_runner.gd](tests/playtest_runner.gd) runs deterministic scenario checks over the integrated main scene.
+- Current scenario validates room-transition behavior and spawn positioning across room boundaries.
 
 ## Player Spec Coverage
 
