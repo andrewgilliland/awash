@@ -66,7 +66,7 @@ const PLAYER_COMBAT_SCRIPT := preload("res://scripts/player/player_combat.gd")
 @export var melee_damage: int = 1
 @export var melee_knockback: Vector2 = Vector2(120.0, -45.0)
 @export var projectile_scene: PackedScene
-@export var projectile_spawn_offset: Vector2 = Vector2(18.0, -10.0)
+@export var projectile_spawn_offset: Vector2 = Vector2(18.0, -58.0)
 @export var projectile_speed: float = 420.0
 @export var projectile_lifetime_seconds: float = 1.1
 @export var projectile_damage: int = 1
