@@ -13,10 +13,3 @@ script = ExtResource("3_gtf0b")
 position = Vector2(90, 180)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="HelpLabel" type="Label" parent="CanvasLayer"]
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 414.0
-offset_bottom = 33.0
-text = "Arrows/WASD move, Space/A jump, X/Xbox-X melee, V/Xbox-B ranged"
