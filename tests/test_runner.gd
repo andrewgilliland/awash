@@ -769,4 +769,5 @@ func _test_runtime_state_defaults_sane() -> bool:
 	var is_valid := true
 	is_valid = is_valid and runtime_state.get("current_room_id") == StringName("room_1")
 	is_valid = is_valid and runtime_state.call("has_visited_room", &"room_1")
+	runtime_state.free()
 	return is_valid
