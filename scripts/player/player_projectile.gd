@@ -7,16 +7,20 @@ signal projectile_hit(target: Node)
 @export var damage: int = 1
 @export var knockback: Vector2 = Vector2(95.0, -25.0)
 @export var spin_speed_degrees: float = 720.0
+@export var gravity_acceleration: float = 150.0
+@export var initial_vertical_velocity: float = -80.0
 
 var _direction: float = 1.0
 var _time_left: float = 0.0
 var _has_resolved_hit: bool = false
+var _vertical_velocity: float = 0.0
 
 @onready var _visual: Node2D = $Visual as Node2D
 
 
 func _ready() -> void:
 	_time_left = lifetime_seconds
+	_vertical_velocity = initial_vertical_velocity
 	if not body_entered.is_connected(_on_body_entered):
 		body_entered.connect(_on_body_entered)
 	if not area_entered.is_connected(_on_area_entered):
@@ -32,9 +36,10 @@ func _physics_process(delta: float) -> void:
 		queue_free()
 		return
 
-	global_position += Vector2(speed * _direction * delta, 0.0)
+	_vertical_velocity += gravity_acceleration * delta
+	global_position += Vector2(speed * _direction * delta, _vertical_velocity * delta)
 	if _visual != null:
-		_visual.rotation -= deg_to_rad(spin_speed_degrees) * delta * _direction
+		_visual.rotation += deg_to_rad(spin_speed_degrees) * delta * _direction
 
 
 func initialize(direction_sign: float, source: Node = null) -> void:
