@@ -620,12 +620,26 @@ func _apply_camera_room_clamps() -> void:
 	if _camera == null:
 		return
 
-	var min_point := camera_room_bounds.position
-	var max_point := camera_room_bounds.position + camera_room_bounds.size
+	var effective_bounds := _get_effective_camera_room_bounds(camera_room_bounds)
+	var min_point := effective_bounds.position
+	var max_point := effective_bounds.position + effective_bounds.size
 	_camera.limit_left = int(round(min_point.x))
 	_camera.limit_top = int(round(min_point.y))
 	_camera.limit_right = int(round(max_point.x))
 	_camera.limit_bottom = int(round(max_point.y))
+
+
+func _get_effective_camera_room_bounds(bounds: Rect2) -> Rect2:
+	if _camera == null:
+		return bounds
+
+	var viewport_size := get_viewport_rect().size * _camera.zoom
+	var effective_size := Vector2(
+		maxf(bounds.size.x, viewport_size.x), maxf(bounds.size.y, viewport_size.y)
+	)
+	var center_point := bounds.position + bounds.size * 0.5
+	var top_left := center_point - effective_size * 0.5
+	return Rect2(top_left, effective_size)
 
 
 # Updates camera look ahead.
