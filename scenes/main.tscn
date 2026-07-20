@@ -2,7 +2,6 @@
 
 [ext_resource type="PackedScene" uid="uid://k1nd4lxje524" path="res://scenes/world/world_biome_01.tscn" id="1_jyhp4"]
 [ext_resource type="Texture2D" uid="uid://du6mkgrrsfpcr" path="res://assets/sprites/alucard_sprite_sheet.png" id="2_jyhfs"]
-[ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="2_t2u6f"]
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="3_gtf0b"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tbgi4"]
@@ -37,23 +36,33 @@ animations = [{
 "texture": SubResource("AtlasTexture_tipki")
 }],
 "loop": true,
-"name": &"default",
+"name": &"idle",
 "speed": 5.0
 }]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sugp2"]
+radius = 7.0
+height = 34.0
 
 [node name="Main" type="Node2D"]
 script = ExtResource("3_gtf0b")
 
-[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
-position = Vector2(90, 180)
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterBody2D"]
-sprite_frames = SubResource("SpriteFrames_85g3d")
-
 [node name="WorldBiome01" parent="." instance=ExtResource("1_jyhp4")]
 position = Vector2(-82, -3)
 
-[node name="Player" parent="." instance=ExtResource("2_t2u6f")]
-position = Vector2(167, 160)
-
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(142, 164)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
+sprite_frames = SubResource("SpriteFrames_85g3d")
+animation = &"idle"
+autoplay = "idle"
+frame_progress = 0.804235
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+position = Vector2(-1, 4)
+shape = SubResource("CapsuleShape2D_sugp2")
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
