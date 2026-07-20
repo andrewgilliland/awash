@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://cd7y8g7l5y8wn"]
+[gd_scene load_steps=28 format=3 uid="uid://cd7y8g7l5y8wn"]
 
 [ext_resource type="PackedScene" uid="uid://k1nd4lxje524" path="res://scenes/world/world_biome_01.tscn" id="1_jyhp4"]
 [ext_resource type="Texture2D" uid="uid://du6mkgrrsfpcr" path="res://assets/sprites/alucard_sprite_sheet.png" id="2_jyhfs"]
@@ -69,6 +69,22 @@ region = Rect2(474, 192, 46, 48)
 atlas = ExtResource("2_jyhfs")
 region = Rect2(530, 192, 46, 48)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_gqmmt"]
+atlas = ExtResource("2_jyhfs")
+region = Rect2(589, 189, 48, 51)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yc10j"]
+atlas = ExtResource("2_jyhfs")
+region = Rect2(649, 189, 48, 51)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jscy8"]
+atlas = ExtResource("2_jyhfs")
+region = Rect2(709, 189, 48, 51)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pm3ni"]
+atlas = ExtResource("2_jyhfs")
+region = Rect2(769, 189, 48, 51)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_85g3d"]
 animations = [{
 "frames": [{
@@ -124,6 +140,18 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0ld40")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gqmmt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yc10j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jscy8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pm3ni")
 }],
 "loop": true,
 "name": &"walk_1",
@@ -182,7 +210,7 @@ script = ExtResource("3_jyhfs")
 sprite_frames = SubResource("SpriteFrames_85g3d")
 animation = &"walk_1"
 autoplay = "idle"
-frame_progress = 0.238865
+frame_progress = 0.111996
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 position = Vector2(-1, 4)
