@@ -40,6 +40,15 @@ Awash is a new 2D metroidvania-style action RPG prototype built in Godot 4.4.
 - Hook path: `.githooks/pre-commit`
 - On each commit, runs: typecheck, lint/format check, tests
 
+## Sprite Chroma Key Utility
+- Script: `scripts/tools/chroma_key_sprite.py`
+- Purpose: Convert a keyed background color in a PNG sprite sheet to transparency.
+- Requirements: `Pillow` in your active Python environment.
+- In-place (auto-detect key color from border):
+	`python scripts/tools/chroma_key_sprite.py --input assets/sprites/alucard_sprite_sheet.png --auto-key --tolerance 8 --in-place`
+- Save to a new output file (explicit key color):
+	`python scripts/tools/chroma_key_sprite.py --input assets/sprites/alucard_sprite_sheet.png --output assets/sprites/alucard_sprite_sheet.transparent.png --key-color 104,120,136 --tolerance 8`
+
 ## Step 2 Standards
 - See `docs/step-2-standards.md` for input action names, collision matrix, and naming conventions.
 

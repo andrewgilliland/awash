@@ -1,15 +1,59 @@
-[gd_scene load_steps=4 format=3 uid="uid://cd7y8g7l5y8wn"]
+[gd_scene load_steps=10 format=3 uid="uid://cd7y8g7l5y8wn"]
 
 [ext_resource type="PackedScene" uid="uid://k1nd4lxje524" path="res://scenes/world/world_biome_01.tscn" id="1_jyhp4"]
+[ext_resource type="Texture2D" uid="uid://du6mkgrrsfpcr" path="res://assets/sprites/alucard_sprite_sheet.png" id="2_jyhfs"]
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="2_t2u6f"]
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="3_gtf0b"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tbgi4"]
+atlas = ExtResource("2_jyhfs")
+region = Rect2(17, 10, 25, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tefeu"]
+atlas = ExtResource("2_jyhfs")
+region = Rect2(49, 10, 25, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o6xl0"]
+atlas = ExtResource("2_jyhfs")
+region = Rect2(81, 10, 25, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tipki"]
+atlas = ExtResource("2_jyhfs")
+region = Rect2(113, 10, 25, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_85g3d"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tbgi4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tefeu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o6xl0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tipki")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("3_gtf0b")
 
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+position = Vector2(90, 180)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterBody2D"]
+sprite_frames = SubResource("SpriteFrames_85g3d")
+
 [node name="WorldBiome01" parent="." instance=ExtResource("1_jyhp4")]
+position = Vector2(-82, -3)
 
 [node name="Player" parent="." instance=ExtResource("2_t2u6f")]
-position = Vector2(90, 180)
+position = Vector2(167, 160)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
