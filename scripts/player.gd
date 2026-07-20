@@ -24,6 +24,17 @@ func _physics_process(delta: float) -> void:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 
 	if _animated_sprite != null and _animated_sprite.sprite_frames != null:
+		if (
+			Input.is_action_just_pressed("melee_attack")
+			and _animated_sprite.sprite_frames.has_animation(&"attack_1")
+		):
+			_animated_sprite.play(&"attack_1")
+
+		if _animated_sprite.animation == &"attack_1" and _animated_sprite.is_playing():
+			velocity.x = 0.0
+			move_and_slide()
+			return
+
 		if direction:
 			_animated_sprite.flip_h = direction < 0.0
 
