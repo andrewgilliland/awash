@@ -1,15 +1,14 @@
 extends Node2D
 
 const TILE_SIZE: int = 16
-const ROOM_WIDTH_TILES: int = 16
 const DEFAULT_MAP_HEIGHT_TILES: int = 16
 const WORLD_ORIGIN_X: float = -232.0
 const WORLD_ORIGIN_Y: float = 0.0
-const FALLBACK_ROOM_SPAWN_Y: float = 96.0
+const FALLBACK_WORLD_SPAWN_Y: float = 96.0
 const SOURCE_SCENE_PATH := "res://scenes/world/mega_world_tilemap_source.tscn"
 
-var _room_count: int = 8
 var _map_height_tiles: int = DEFAULT_MAP_HEIGHT_TILES
+var _world_bounds: Rect2 = Rect2()
 
 @onready var _background_layer: TileMapLayer = $Tilemaps/BackgroundLayer
 @onready var _ground_layer: TileMapLayer = $Tilemaps/GroundLayer
@@ -58,7 +57,12 @@ func _import_source_tilemap() -> void:
 
 	var used_rect := source_tile_map.get_used_rect()
 	if used_rect.size.x > 0:
-		_room_count = maxi(2, int(ceili(float(used_rect.size.x) / float(ROOM_WIDTH_TILES))))
+		_world_bounds = Rect2(
+			WORLD_ORIGIN_X + float(used_rect.position.x * TILE_SIZE),
+			WORLD_ORIGIN_Y + float(used_rect.position.y * TILE_SIZE),
+			float(used_rect.size.x * TILE_SIZE),
+			float(used_rect.size.y * TILE_SIZE)
+		)
 	if used_rect.size.y > 0:
 		_map_height_tiles = maxi(DEFAULT_MAP_HEIGHT_TILES, used_rect.size.y)
 
@@ -89,67 +93,22 @@ func _clear_legacy_collisions() -> void:
 		child.queue_free()
 
 
-func get_room_count() -> int:
-	return _room_count
+func get_world_bounds() -> Rect2:
+	return _world_bounds
 
 
-func get_room_id_from_index(index: int) -> StringName:
-	if index < 0 or index >= _room_count:
-		return StringName("")
-	return StringName("room_%d" % (index + 1))
+func get_spawn_position() -> Vector2:
+	if _world_bounds == Rect2():
+		return Vector2(0.0, FALLBACK_WORLD_SPAWN_Y)
 
-
-func get_room_index(room_id: StringName) -> int:
-	var room_name := String(room_id)
-	if not room_name.begins_with("room_"):
-		return -1
-
-	var suffix := room_name.trim_prefix("room_")
-	if not suffix.is_valid_int():
-		return -1
-
-	var index := int(suffix) - 1
-	if index < 0 or index >= _room_count:
-		return -1
-	return index
-
-
-func get_room_bounds(room_id: StringName) -> Rect2:
-	var index := get_room_index(room_id)
-	if index < 0:
-		index = 0
-
-	var room_width := float(ROOM_WIDTH_TILES * TILE_SIZE)
-	var room_height := float(_map_height_tiles * TILE_SIZE)
-	var left := WORLD_ORIGIN_X + room_width * index
-	return Rect2(left, WORLD_ORIGIN_Y, room_width, room_height)
-
-
-func get_adjacent_room_id(room_id: StringName, direction: int) -> StringName:
-	var index := get_room_index(room_id)
-	if index < 0:
-		return StringName("")
-
-	var next_index := index + direction
-	return get_room_id_from_index(next_index)
-
-
-func get_room_spawn_position(room_id: StringName, entry_side: StringName = &"center") -> Vector2:
-	var bounds := get_room_bounds(room_id)
-	var spawn_x := bounds.position.x + bounds.size.x * 0.5
-
-	if entry_side == &"left":
-		spawn_x = bounds.position.x + 26.0
-	elif entry_side == &"right":
-		spawn_x = bounds.position.x + bounds.size.x - 26.0
-
+	var spawn_x := _world_bounds.position.x + _world_bounds.size.x * 0.5
 	var spawn_y := _find_spawn_y_for_world_x(spawn_x)
 	return Vector2(spawn_x, spawn_y)
 
 
 func _find_spawn_y_for_world_x(world_x: float) -> float:
 	if _ground_layer == null:
-		return FALLBACK_ROOM_SPAWN_Y
+		return FALLBACK_WORLD_SPAWN_Y
 
 	var local_center_x := int(floor((world_x - _ground_layer.position.x) / float(TILE_SIZE)))
 	var best_cell_y := -INF
@@ -160,7 +119,7 @@ func _find_spawn_y_for_world_x(world_x: float) -> float:
 			best_cell_y = maxf(best_cell_y, float(column_y))
 
 	if best_cell_y == -INF:
-		return FALLBACK_ROOM_SPAWN_Y
+		return FALLBACK_WORLD_SPAWN_Y
 
 	var floor_top_world_y := _ground_layer.position.y + best_cell_y * TILE_SIZE
 	# Keep the player slightly above the floor to avoid immediate clipping.

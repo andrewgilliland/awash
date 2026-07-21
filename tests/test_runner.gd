@@ -21,7 +21,7 @@ func _init() -> void:
 	_run_test("Player scene loads", _test_player_scene_loads)
 	_run_test("Main scene loads", _test_main_scene_loads)
 	_run_test("Biome scene loads", _test_biome_scene_loads)
-	_run_test("Biome room api sane", _test_biome_room_api_sane)
+	_run_test("Biome world api sane", _test_biome_world_api_sane)
 	_run_test("Player defaults sane", _test_player_default_values)
 	_run_test("Player movement tuning sane", _test_player_movement_tuning_defaults)
 	_run_test("Player run double tap activates run", _test_player_run_double_tap_activates_run)
@@ -124,7 +124,7 @@ func _test_main_scene_loads() -> bool:
 	return has_player and has_world
 
 
-func _test_biome_room_api_sane() -> bool:
+func _test_biome_world_api_sane() -> bool:
 	var packed_scene := load(BIOME_SCENE_PATH) as PackedScene
 	if packed_scene == null:
 		return false
@@ -133,22 +133,19 @@ func _test_biome_room_api_sane() -> bool:
 	if biome == null:
 		return false
 
+	biome.call("_ready")
+
 	var is_valid := true
-	is_valid = is_valid and biome.has_method("get_room_count")
-	is_valid = is_valid and biome.has_method("get_room_bounds")
-	is_valid = is_valid and biome.has_method("get_adjacent_room_id")
-	is_valid = is_valid and biome.has_method("get_room_spawn_position")
+	is_valid = is_valid and biome.has_method("get_world_bounds")
+	is_valid = is_valid and biome.has_method("get_spawn_position")
 
 	if is_valid:
-		var room_count := biome.call("get_room_count") as int
-		var room_1_bounds := biome.call("get_room_bounds", &"room_1") as Rect2
-		var room_2_id := biome.call("get_adjacent_room_id", &"room_1", 1) as StringName
-		var room_1_spawn := biome.call("get_room_spawn_position", &"room_1", &"center") as Vector2
+		var world_bounds := biome.call("get_world_bounds") as Rect2
+		var spawn_position := biome.call("get_spawn_position") as Vector2
 
-		is_valid = is_valid and room_count >= 1
-		is_valid = is_valid and room_1_bounds.size.x > 0.0
-		is_valid = is_valid and room_2_id != StringName("")
-		is_valid = is_valid and room_1_spawn.y > 0.0
+		is_valid = is_valid and world_bounds.size.x > 0.0
+		is_valid = is_valid and world_bounds.size.y > 0.0
+		is_valid = is_valid and spawn_position.y > 0.0
 
 	biome.queue_free()
 	return is_valid
