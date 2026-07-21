@@ -1,6 +1,6 @@
 extends Node2D
 
-@onready var _world: Node2D = $WorldBiome01
+@onready var _world: Node = _resolve_world_node()
 @onready var _player: CharacterBody2D = $Player
 
 
@@ -36,3 +36,11 @@ func _save_runtime_player_position() -> void:
 
 func _get_runtime_state() -> Node:
 	return get_node_or_null("/root/RuntimeState")
+
+
+func _resolve_world_node() -> Node:
+	var world_node := get_node_or_null("WorldBiome01")
+	if world_node != null:
+		return world_node
+
+	return get_node_or_null("TileMapLayer")

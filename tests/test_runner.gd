@@ -120,6 +120,7 @@ func _test_main_scene_loads() -> bool:
 
 	var has_player := instance.get_node_or_null("Player") != null
 	var has_world := instance.get_node_or_null("WorldBiome01") != null
+	has_world = has_world or instance.get_node_or_null("TileMapLayer") != null
 	instance.queue_free()
 	return has_player and has_world
 
