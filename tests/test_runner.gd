@@ -1,7 +1,6 @@
 extends SceneTree
 
 const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
-const BIOME_SCENE_PATH := "res://scenes/world/world_biome_01.tscn"
 const MAIN_SCENE_PATH := "res://scenes/main.tscn"
 const RUNTIME_STATE_SCRIPT_PATH := "res://scripts/core/runtime_state.gd"
 const PLAYER_STATE_ATTACK := 5
@@ -20,8 +19,6 @@ var _failures: int = 0
 func _init() -> void:
 	_run_test("Player scene loads", _test_player_scene_loads)
 	_run_test("Main scene loads", _test_main_scene_loads)
-	_run_test("Biome scene loads", _test_biome_scene_loads)
-	_run_test("Biome world api sane", _test_biome_world_api_sane)
 	_run_test("Player defaults sane", _test_player_default_values)
 	_run_test("Player movement tuning sane", _test_player_movement_tuning_defaults)
 	_run_test("Player run double tap activates run", _test_player_run_double_tap_activates_run)
@@ -91,24 +88,6 @@ func _test_player_scene_loads() -> bool:
 	return is_expected_type
 
 
-func _test_biome_scene_loads() -> bool:
-	var packed_scene := load(BIOME_SCENE_PATH) as PackedScene
-	if packed_scene == null:
-		return false
-
-	var instance := packed_scene.instantiate() as Node2D
-	if instance == null:
-		return false
-
-	var has_background := instance.get_node_or_null("Tilemaps/BackgroundLayer") != null
-	var has_ground := instance.get_node_or_null("Tilemaps/GroundLayer") != null
-	var has_foreground := instance.get_node_or_null("Tilemaps/ForegroundLayer") != null
-	var has_spawn := instance.get_node_or_null("Spawn") != null
-
-	instance.queue_free()
-	return has_background and has_ground and has_foreground and has_spawn
-
-
 func _test_main_scene_loads() -> bool:
 	var packed_scene := load(MAIN_SCENE_PATH) as PackedScene
 	if packed_scene == null:
@@ -119,37 +98,17 @@ func _test_main_scene_loads() -> bool:
 		return false
 
 	var has_player := instance.get_node_or_null("Player") != null
-	var has_world := instance.get_node_or_null("WorldBiome01") != null
-	has_world = has_world or instance.get_node_or_null("TileMapLayer") != null
+	var has_world := _find_world_tile_layer(instance) != null
 	instance.queue_free()
 	return has_player and has_world
 
 
-func _test_biome_world_api_sane() -> bool:
-	var packed_scene := load(BIOME_SCENE_PATH) as PackedScene
-	if packed_scene == null:
-		return false
+func _find_world_tile_layer(node: Node) -> TileMapLayer:
+	for child in node.get_children():
+		if child is TileMapLayer:
+			return child as TileMapLayer
 
-	var biome := packed_scene.instantiate()
-	if biome == null:
-		return false
-
-	biome.call("_ready")
-
-	var is_valid := true
-	is_valid = is_valid and biome.has_method("get_world_bounds")
-	is_valid = is_valid and biome.has_method("get_spawn_position")
-
-	if is_valid:
-		var world_bounds := biome.call("get_world_bounds") as Rect2
-		var spawn_position := biome.call("get_spawn_position") as Vector2
-
-		is_valid = is_valid and world_bounds.size.x > 0.0
-		is_valid = is_valid and world_bounds.size.y > 0.0
-		is_valid = is_valid and spawn_position.y > 0.0
-
-	biome.queue_free()
-	return is_valid
+	return null
 
 
 func _test_player_default_values() -> bool:

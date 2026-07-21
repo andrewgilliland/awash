@@ -35,12 +35,15 @@ func _save_runtime_player_position() -> void:
 
 
 func _get_runtime_state() -> Node:
+	if not is_inside_tree():
+		return null
+
 	return get_node_or_null("/root/RuntimeState")
 
 
 func _resolve_world_node() -> Node:
-	var world_node := get_node_or_null("WorldBiome01")
-	if world_node != null:
-		return world_node
+	for child in get_children():
+		if child is TileMapLayer:
+			return child
 
-	return get_node_or_null("TileMapLayer")
+	return null

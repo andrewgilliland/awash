@@ -1,12 +1,12 @@
 extends SceneTree
 
-const BIOME_SCENE_PATH := "res://scenes/world/world_biome_01.tscn"
+const MAIN_SCENE_PATH := "res://scenes/main.tscn"
 
 var _failures: int = 0
 
 
 func _init() -> void:
-	_run_playtest("Biome world spawn contract is deterministic", _playtest_biome_world_spawn)
+	_run_playtest("Main scene spawn stays deterministic", _playtest_main_scene_spawn)
 
 	if _failures > 0:
 		push_error("%d playtest(s) failed" % _failures)
@@ -26,23 +26,32 @@ func _run_playtest(name: String, playtest_callable: Callable) -> void:
 		push_error("FAIL: %s" % name)
 
 
-func _playtest_biome_world_spawn() -> bool:
-	var packed_scene := load(BIOME_SCENE_PATH) as PackedScene
+func _playtest_main_scene_spawn() -> bool:
+	var packed_scene := load(MAIN_SCENE_PATH) as PackedScene
 	if packed_scene == null:
 		return false
 
-	var biome := packed_scene.instantiate() as Node2D
-	if biome == null:
+	var main_scene := packed_scene.instantiate() as Node2D
+	if main_scene == null:
 		return false
 
-	biome.call("_ready")
-	var world_bounds := biome.call("get_world_bounds") as Rect2
-	var spawn_position := biome.call("get_spawn_position") as Vector2
+	main_scene.call("_ready")
+	var player := main_scene.get_node_or_null("Player") as CharacterBody2D
+	var world_layer := _find_world_tile_layer(main_scene)
+	var is_valid := player != null and world_layer != null
 
-	var world_contract_ok := world_bounds.size.x > 0.0 and world_bounds.size.y > 0.0
-	world_contract_ok = world_contract_ok and spawn_position.x > world_bounds.position.x
-	world_contract_ok = world_contract_ok and spawn_position.x < world_bounds.end.x
-	world_contract_ok = world_contract_ok and spawn_position.y > 0.0
+	if is_valid:
+		is_valid = is_valid and player.global_position != Vector2.ZERO
+		is_valid = is_valid and world_layer.tile_set != null
+		is_valid = is_valid and world_layer.get_used_cells().size() > 0
 
-	biome.free()
-	return world_contract_ok
+	main_scene.free()
+	return is_valid
+
+
+func _find_world_tile_layer(node: Node) -> TileMapLayer:
+	for child in node.get_children():
+		if child is TileMapLayer:
+			return child as TileMapLayer
+
+	return null
