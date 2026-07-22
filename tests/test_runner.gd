@@ -2,6 +2,7 @@ extends SceneTree
 
 const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
 const MAIN_SCENE_PATH := "res://scenes/main.tscn"
+const PAUSE_MENU_SCENE_PATH := "res://scenes/ui/pause_menu.tscn"
 const RUNTIME_STATE_SCRIPT_PATH := "res://scripts/core/runtime_state.gd"
 const PLAYER_STATE_ATTACK := 5
 const PLAYER_STATE_RUN := 2
@@ -19,6 +20,7 @@ var _failures: int = 0
 func _init() -> void:
 	_run_test("Player scene loads", _test_player_scene_loads)
 	_run_test("Main scene loads", _test_main_scene_loads)
+	_run_test("Pause menu scene loads", _test_pause_menu_scene_loads)
 	_run_test("Player defaults sane", _test_player_default_values)
 	_run_test("Player movement tuning sane", _test_player_movement_tuning_defaults)
 	_run_test("Player run double tap activates run", _test_player_run_double_tap_activates_run)
@@ -97,10 +99,29 @@ func _test_main_scene_loads() -> bool:
 	if instance == null:
 		return false
 
+	instance.call("_ready")
+
 	var has_player := instance.get_node_or_null("Player") != null
+	var has_pause_menu := instance.get_node_or_null("CanvasLayer/PauseMenu") != null
 	var has_world := _find_world_tile_layer(instance) != null
 	instance.queue_free()
-	return has_player and has_world
+	return has_player and has_world and has_pause_menu
+
+
+func _test_pause_menu_scene_loads() -> bool:
+	var packed_scene := load(PAUSE_MENU_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var instance := packed_scene.instantiate()
+	if instance == null:
+		return false
+
+	var has_menu_panel := instance.get_node_or_null("CenterContainer/MenuPanel") != null
+	var has_toggle_method := instance.has_method("toggle_pause")
+
+	instance.queue_free()
+	return has_menu_panel and has_toggle_method
 
 
 func _find_world_tile_layer(node: Node) -> TileMapLayer:

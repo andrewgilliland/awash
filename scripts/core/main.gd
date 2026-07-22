@@ -1,10 +1,14 @@
 extends Node2D
 
+const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
+
 @onready var _world: Node = _resolve_world_node()
 @onready var _player: CharacterBody2D = $Player
+@onready var _canvas_layer: CanvasLayer = $CanvasLayer
 
 
 func _ready() -> void:
+	_ensure_pause_menu()
 	if _world == null or _player == null:
 		return
 
@@ -47,3 +51,15 @@ func _resolve_world_node() -> Node:
 			return child
 
 	return null
+
+
+func _ensure_pause_menu() -> void:
+	if _canvas_layer == null:
+		return
+
+	if _canvas_layer.get_node_or_null("PauseMenu") != null:
+		return
+
+	var pause_menu := PAUSE_MENU_SCENE.instantiate()
+	pause_menu.name = "PauseMenu"
+	_canvas_layer.add_child(pause_menu)
