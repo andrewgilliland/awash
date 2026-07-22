@@ -632,6 +632,8 @@ func _apply_camera_room_clamps() -> void:
 func _get_effective_camera_room_bounds(bounds: Rect2) -> Rect2:
 	if _camera == null:
 		return bounds
+	if not is_inside_tree():
+		return bounds
 
 	var viewport_size := get_viewport_rect().size * _camera.zoom
 	var effective_size := Vector2(
