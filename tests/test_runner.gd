@@ -118,10 +118,41 @@ func _test_pause_menu_scene_loads() -> bool:
 		return false
 
 	var has_menu_panel := instance.get_node_or_null("CenterContainer/MenuPanel") != null
+	var has_stats_button := (
+		instance.get_node_or_null(
+			"CenterContainer/MenuPanel/MarginContainer/VBoxContainer/MenuButtons/StatsButton"
+		)
+		!= null
+	)
+	var has_equipment_button := (
+		instance.get_node_or_null(
+			"CenterContainer/MenuPanel/MarginContainer/VBoxContainer/MenuButtons/EquipmentButton"
+		)
+		!= null
+	)
+	var has_map_button := (
+		instance.get_node_or_null(
+			"CenterContainer/MenuPanel/MarginContainer/VBoxContainer/MenuButtons/MapButton"
+		)
+		!= null
+	)
+	var has_content_root := (
+		instance.get_node_or_null(
+			"CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"
+		)
+		!= null
+	)
 	var has_toggle_method := instance.has_method("toggle_pause")
 
 	instance.queue_free()
-	return has_menu_panel and has_toggle_method
+	return (
+		has_menu_panel
+		and has_stats_button
+		and has_equipment_button
+		and has_map_button
+		and has_content_root
+		and has_toggle_method
+	)
 
 
 func _find_world_tile_layer(node: Node) -> TileMapLayer:

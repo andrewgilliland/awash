@@ -20,7 +20,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="MenuPanel" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(320, 180)
+custom_minimum_size = Vector2(420, 280)
 visible = false
 
 [node name="MarginContainer" type="MarginContainer" parent="CenterContainer/MenuPanel"]
@@ -33,6 +33,116 @@ theme_override_constants/margin_bottom = 24
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer"]
 layout_mode = 2
 alignment = 1
+
+[node name="MenuButtons" type="HBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="StatsButton" type="Button" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/MenuButtons"]
+layout_mode = 2
+text = "Stats"
+
+[node name="EquipmentButton" type="Button" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/MenuButtons"]
+layout_mode = 2
+text = "Equipment"
+
+[node name="MapButton" type="Button" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/MenuButtons"]
+layout_mode = 2
+text = "Map"
+
+[node name="ContentRoot" type="Control" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 132)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HomePanel" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/HomePanel"]
+layout_mode = 2
+text = "Select a menu"
+horizontal_alignment = 1
+
+[node name="StatsPanel" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/StatsPanel"]
+layout_mode = 2
+text = "Stats"
+horizontal_alignment = 1
+
+[node name="Body" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/StatsPanel"]
+layout_mode = 2
+text = "No stats yet"
+horizontal_alignment = 1
+
+[node name="BackButton" type="Button" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/StatsPanel"]
+layout_mode = 2
+text = "Back"
+
+[node name="EquipmentPanel" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel"]
+layout_mode = 2
+text = "Equipment"
+horizontal_alignment = 1
+
+[node name="Body" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel"]
+layout_mode = 2
+text = "No equipment slots yet"
+horizontal_alignment = 1
+
+[node name="BackButton" type="Button" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel"]
+layout_mode = 2
+text = "Back"
+
+[node name="MapPanel" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/MapPanel"]
+layout_mode = 2
+text = "Map"
+horizontal_alignment = 1
+
+[node name="Body" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/MapPanel"]
+layout_mode = 2
+text = "Map view coming soon"
+horizontal_alignment = 1
+
+[node name="BackButton" type="Button" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/MapPanel"]
+layout_mode = 2
+text = "Back"
+
+[node name="Divider" type="HSeparator" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
 
 [node name="ResumeButton" type="Button" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
