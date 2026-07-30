@@ -163,6 +163,17 @@ func _find_world_tile_layer(node: Node) -> TileMapLayer:
 	return null
 
 
+func _build_player_sprite_frames(player: Node) -> SpriteFrames:
+	var sprite_factory: Object = player.get("_sprite_factory")
+	var config := player.call("_sprite_factory_config") as Dictionary
+	return sprite_factory.call("build_default_sprite_frames", config) as SpriteFrames
+
+
+func _get_player_combat(player: Node) -> Object:
+	player.call("_ensure_combat_setup")
+	return player.get("_combat")
+
+
 func _test_player_default_values() -> bool:
 	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
 	if packed_scene == null:
@@ -488,8 +499,8 @@ func _test_player_melee_attack_windows() -> bool:
 	Input.action_release("melee_attack")
 	player.set("_state", PLAYER_STATE_CHARGE)
 	player.set("_attack_phase", ATTACK_PHASE_NONE)
-	player.call("_handle_attack_press")
-	var combat: Object = player.get("_combat")
+	var combat := _get_player_combat(player)
+	combat.call("handle_attack_press")
 	combat.call("tick_attack_phase", player.get("melee_startup_seconds"))
 	var active_phase := int(player.get("_attack_phase"))
 	combat.call("tick_attack_phase", player.get("melee_active_seconds"))
@@ -551,8 +562,7 @@ func _test_player_guard_charge_sprites_differ() -> bool:
 
 	var guard_index := int(player.get("guard_from_attack_frame_index"))
 	var charge_index := int(player.get("charge_from_attack_frame_index"))
-	var image := player.call("_create_runtime_sprite_sheet_image") as Image
-	var sprite_frames := player.call("_build_default_sprite_frames", image) as SpriteFrames
+	var sprite_frames := _build_player_sprite_frames(player)
 	var is_valid := guard_index == 0
 	is_valid = is_valid and charge_index == 5
 	is_valid = is_valid and sprite_frames != null
@@ -580,8 +590,7 @@ func _test_player_crouch_sprite_animates() -> bool:
 	if player == null:
 		return false
 
-	var image := player.call("_create_runtime_sprite_sheet_image") as Image
-	var sprite_frames := player.call("_build_default_sprite_frames", image) as SpriteFrames
+	var sprite_frames := _build_player_sprite_frames(player)
 	var is_valid := sprite_frames != null
 	is_valid = is_valid and sprite_frames.has_animation(&"crouch")
 	is_valid = is_valid and sprite_frames.get_frame_count(&"crouch") == 2
@@ -606,8 +615,7 @@ func _test_player_walk_animation_uses_walk_fps() -> bool:
 	if player == null:
 		return false
 
-	var image := player.call("_create_runtime_sprite_sheet_image") as Image
-	var sprite_frames := player.call("_build_default_sprite_frames", image) as SpriteFrames
+	var sprite_frames := _build_player_sprite_frames(player)
 	var expected_walk_fps := float(player.get("walk_animation_fps"))
 	var is_valid := sprite_frames != null
 	is_valid = is_valid and sprite_frames.has_animation(&"walk")
@@ -653,8 +661,7 @@ func _test_player_attack_animation_uses_larger_frame_size() -> bool:
 	if player == null:
 		return false
 
-	var image := player.call("_create_runtime_sprite_sheet_image") as Image
-	var sprite_frames := player.call("_build_default_sprite_frames", image) as SpriteFrames
+	var sprite_frames := _build_player_sprite_frames(player)
 	var expected_size := player.get("attack_animation_frame_size") as Vector2i
 	var is_valid := sprite_frames != null
 	is_valid = is_valid and sprite_frames.has_animation(&"attack")
@@ -703,7 +710,8 @@ func _test_player_charge_release_starts_attack() -> bool:
 	Input.action_release("melee_attack")
 	player.set("_state", PLAYER_STATE_CHARGE)
 	player.set("_attack_phase", ATTACK_PHASE_NONE)
-	player.call("_handle_attack_press")
+	var combat := _get_player_combat(player)
+	combat.call("handle_attack_press")
 
 	var next_state := int(player.get("_state"))
 	var next_phase := int(player.get("_attack_phase"))
@@ -730,13 +738,14 @@ func _test_player_blocked_states_prevent_ranged() -> bool:
 		PLAYER_STATE_HURT,
 		PLAYER_STATE_DEAD,
 	]
+	var combat := _get_player_combat(player)
 	var is_valid := true
 
 	for blocked_state in blocked_states:
 		player.set("_state", blocked_state)
 		player.set("_ranged_resource", 2.0)
 		player.set("_ranged_cooldown_timer", 0.0)
-		player.call("_try_fire_projectile")
+		combat.call("try_fire_projectile")
 		is_valid = is_valid and is_equal_approx(player.get("_ranged_resource"), 2.0)
 		is_valid = is_valid and is_equal_approx(player.get("_ranged_cooldown_timer"), 0.0)
 

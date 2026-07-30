@@ -164,18 +164,6 @@ func _setup_sprite_visual() -> void:
 		_body_visual.visible = false
 
 
-# Creates runtime sprite sheet image.
-func _create_runtime_sprite_sheet_image() -> Image:
-	return _sprite_factory.create_runtime_sprite_sheet_image(
-		PLAYER_SPRITE_SHEET, sprite_background_key_color, sprite_background_key_tolerance
-	)
-
-
-# Builds default sprite frames.
-func _build_default_sprite_frames(image: Image) -> SpriteFrames:
-	return _sprite_factory.build_default_sprite_frames_from_image(image, _sprite_factory_config())
-
-
 # Returns sprite-frame factory settings from current player tuning exports.
 func _sprite_factory_config() -> Dictionary:
 	return {
@@ -564,18 +552,6 @@ func _apply_jump_release_gravity(delta: float) -> void:
 
 	if velocity.y < 0.0 and not Input.is_action_pressed("jump"):
 		velocity.y += get_gravity().y * jump_release_gravity_multiplier * delta
-
-
-# Handles attack press.
-func _handle_attack_press() -> void:
-	_ensure_combat_setup()
-	_combat.handle_attack_press()
-
-
-# Attempts to fire projectile.
-func _try_fire_projectile() -> void:
-	_ensure_combat_setup()
-	_combat.try_fire_projectile()
 
 
 # Updates facing.
