@@ -638,7 +638,7 @@ func _test_player_sprite_visual_is_scaled_down() -> bool:
 
 	player.call("_ready")
 
-	var sprite_visual := player.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	var sprite_visual := player.get_node_or_null("VisualRoot/AnimatedSprite2D") as AnimatedSprite2D
 	if sprite_visual == null:
 		player.queue_free()
 		return false

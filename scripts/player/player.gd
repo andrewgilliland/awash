@@ -85,6 +85,7 @@ const PLAYER_COMBAT_SCRIPT := preload("res://scripts/player/player_combat.gd")
 @export var animation_frame_size: Vector2i = Vector2i(128, 128)
 @export var attack_animation_frame_size: Vector2i = Vector2i(192, 128)
 @export var sprite_visual_offset: Vector2 = Vector2(0.0, -58.0)
+@export var animation_visual_offsets: Dictionary = {}
 @export var sprite_visual_scale: Vector2 = Vector2(0.75, 0.75)
 @export var idle_animation_fps: float = 8.0
 @export var walk_animation_fps: float = 8.0
@@ -121,7 +122,8 @@ var _sprite_factory = PLAYER_SPRITE_FACTORY_SCRIPT.new()
 var _combat = PLAYER_COMBAT_SCRIPT.new()
 
 @onready var _body_visual: Polygon2D = $Body
-@onready var _sprite_visual: AnimatedSprite2D = $AnimatedSprite2D
+@onready var _visual_root: Node2D = $VisualRoot
+@onready var _sprite_visual: AnimatedSprite2D = $VisualRoot/AnimatedSprite2D
 @onready var _attack_area: Area2D = $AttackArea
 @onready var _attack_shape: CollisionShape2D = $AttackArea/CollisionShape2D
 @onready var _camera: Camera2D = $Camera2D
@@ -152,13 +154,15 @@ func _setup_sprite_visual() -> void:
 	if PLAYER_SPRITE_SHEET == null:
 		return
 
-	_sprite_visual.position = sprite_visual_offset
+	if _visual_root != null:
+		_visual_root.position = sprite_visual_offset
 	_sprite_visual.scale = sprite_visual_scale
 	_sprite_visual.sprite_frames = _sprite_factory.build_default_sprite_frames(
 		_sprite_factory_config()
 	)
 	_sprite_visual.animation = &"idle"
 	_sprite_visual.play()
+	_apply_visual_offset(&"idle")
 
 	if _body_visual != null:
 		_body_visual.visible = false
@@ -672,7 +676,43 @@ func _update_visual_state(_delta: float) -> void:
 			_sprite_visual.play(desired_animation)
 
 		_sprite_visual.flip_h = _facing_sign < 0.0
+		_apply_visual_offset(desired_animation)
 		return
 
 	if _body_visual != null:
 		_body_visual.visible = true
+
+
+func _apply_visual_offset(animation_name: StringName) -> void:
+	if _visual_root == null:
+		return
+
+	_visual_root.position = sprite_visual_offset + _get_animation_visual_offset(animation_name)
+
+
+func _get_animation_visual_offset(animation_name: StringName) -> Vector2:
+	if _sprite_visual == null:
+		return Vector2.ZERO
+
+	var animation_key := String(animation_name)
+	if not animation_visual_offsets.has(animation_key):
+		return Vector2.ZERO
+
+	var existing: Variant = animation_visual_offsets[animation_key]
+	if existing is Vector2:
+		return existing
+
+	if existing is Dictionary:
+		var frame_offsets := existing as Dictionary
+		var frame_index := _sprite_visual.frame
+		if frame_offsets.has(frame_index):
+			var frame_value: Variant = frame_offsets[frame_index]
+			if frame_value is Vector2:
+				return frame_value
+
+		if frame_offsets.has("default"):
+			var fallback: Variant = frame_offsets["default"]
+			if fallback is Vector2:
+				return fallback
+
+	return Vector2.ZERO

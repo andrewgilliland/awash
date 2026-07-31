@@ -24,8 +24,9 @@ position = Vector2(0, -10)
 color = Color(0.164706, 0.741176, 0.756863, 1)
 polygon = PackedVector2Array(-7, -11, 7, -11, 7, 11, -7, 11)
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -10)
+[node name="VisualRoot" type="Node2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VisualRoot"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, -36)
