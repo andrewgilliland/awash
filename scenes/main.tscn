@@ -1413,7 +1413,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_o6xl0")
 }, {
-"duration": 1.01,
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_85g3d")
 }],
 "loop": true,
@@ -2216,7 +2216,7 @@ script = ExtResource("3_jyhfs")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
 sprite_frames = SubResource("SpriteFrames_85g3d")
-animation = &"walk_1"
+animation = &"attack_1"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]

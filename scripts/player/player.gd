@@ -85,7 +85,12 @@ const PLAYER_COMBAT_SCRIPT := preload("res://scripts/player/player_combat.gd")
 @export var animation_frame_size: Vector2i = Vector2i(128, 128)
 @export var attack_animation_frame_size: Vector2i = Vector2i(192, 128)
 @export var sprite_visual_offset: Vector2 = Vector2(0.0, -58.0)
-@export var animation_visual_offsets: Dictionary = {}
+@export var animation_visual_offsets: Dictionary = {
+	"attack":
+	{
+		1: Vector2(0.0, -120.0),
+	},
+}
 @export var sprite_visual_scale: Vector2 = Vector2(0.75, 0.75)
 @export var idle_animation_fps: float = 8.0
 @export var walk_animation_fps: float = 8.0
@@ -695,10 +700,15 @@ func _get_animation_visual_offset(animation_name: StringName) -> Vector2:
 		return Vector2.ZERO
 
 	var animation_key := String(animation_name)
-	if not animation_visual_offsets.has(animation_key):
-		return Vector2.ZERO
+	var offset_key := animation_key
+	if not animation_visual_offsets.has(offset_key):
+		var legacy_key := "%s_1" % animation_key
+		if animation_visual_offsets.has(legacy_key):
+			offset_key = legacy_key
+		else:
+			return Vector2.ZERO
 
-	var existing: Variant = animation_visual_offsets[animation_key]
+	var existing: Variant = animation_visual_offsets[offset_key]
 	if existing is Vector2:
 		return existing
 
