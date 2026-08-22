@@ -2,14 +2,14 @@
 
 ## Region-by-Region Progression (Metroidvania Flow)
 
-1. Waking Coast (start) -> Tidefen Village hub.
-2. Branch A: Low Canopy Jungle -> Smuggler Inlet and Pirate Fort (first dungeon).
-3. Branch B: Emberroot Village -> Underroot Cave System (unlock: double jump).
-4. Return pass: backtrack to Jungle shrine locks and elevated canopy routes.
-5. Midgame ring: High Canopy Jungle -> Observatory Ridge -> Glassmire Village.
-6. Tower path: Stormwatch Tower (unlock: arcane seal key).
-7. Endgame ring: Ironwake Village -> Castle Approach -> Blackreef Castle.
-8. Final descent: Book vault beneath Blackreef.
+1. Waking Coast: Waking Coast (start) -> Tidefen Village hub.
+2. Low Canopy Jungle: Low Canopy Jungle -> Smuggler Inlet and Pirate Fort.
+3. Underroot: Emberroot Village -> Underroot Cave System -> Relic Chamber (unlock: double jump).
+4. High Canopy: backtrack to Jungle shrine locks -> High Canopy Jungle -> Canopy Shaft -> Observatory Ridge.
+5. Northern Reaches: North Shoals -> Floating Causeway -> Glassmire Village.
+6. Stormwatch Tower: tower path (unlock: arcane seal key).
+7. Blackreef Approach: Ironwake Village -> Castle Approach.
+8. Blackreef Castle: Blackreef Castle -> Book Vault.
 
 ## Metroidvania Layout Rules
 

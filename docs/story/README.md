@@ -16,6 +16,7 @@ A dark elf hero wakes on the shore of a forbidden island with no memory of who h
 - Moral pressure: stopping the Book may require sacrifice.
 
 ## Story Docs Index
+- Main story and chapter outline: [story.md](story.md)
 - Island flow and map layout: [island-regions.md](island-regions.md)
 - Structure catalog and enhancement ideas: [structures.md](structures.md)
 
@@ -29,6 +30,16 @@ A dark elf hero wakes on the shore of a forbidden island with no memory of who h
 - Young, brilliant, and impatient wizard.
 - Seeks the Book of All to transcend all limits.
 - Believes total knowledge can impose permanent order.
+
+### The Assassin
+- Helped conceal the expedition's purpose and stood aside when Ilyr betrayed Vael.
+- Becomes Vael's wary informant after realizing what Ilyr intends to do with the Book.
+- Chooses to help stop Ilyr without expecting Vael's trust or forgiveness.
+
+### The Barbarian
+- Remains loyal to Ilyr and pursues Vael across the island as a recurring rival.
+- Values strength and loyalty, making him slow to accept evidence of Ilyr's treachery.
+- Turns against Ilyr only after that loyalty is repaid with disposability.
 
 ## Primary Artifact
 ### The Book of All
