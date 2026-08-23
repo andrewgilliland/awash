@@ -4,8 +4,8 @@
 A dark elf hero wakes on the shore of a forbidden island with no memory of who he is or why he arrived. Across four villages, dense jungles, ruins, and arcane strongholds, he races a young wizard to find the Book of All, a tome said to grant complete knowledge, including dark arcane arts.
 
 ## Core Premise
-- Hero: Vael (working name), a dark elf survivor with erased memories.
-- Antagonist: Ilyr Voss (working name), an ambitious wizard chasing absolute knowledge.
+- Hero: [Vael](../characters/vael.md) (working name), a dark elf survivor with erased memories.
+- Antagonist: [Ilyr Voss](../characters/ilyr-voss.md) (working name), an ambitious wizard chasing absolute knowledge.
 - Primary conflict: memory, identity, and power.
 - World state: the island is ancient, fractured, and full of sealed knowledge sites.
 
@@ -17,29 +17,16 @@ A dark elf hero wakes on the shore of a forbidden island with no memory of who h
 
 ## Story Docs Index
 - Main story and chapter outline: [story.md](story.md)
+- Character catalog: [characters](../characters/README.md)
 - Island setting, flow, and region catalog: [setting](../setting/README.md)
 - Structure catalog and enhancement ideas: [structures.md](structures.md)
 
 ## Main Cast
-### Vael (Hero)
-- Dark elf, wakes at the coast with no memory.
-- Skilled in melee and ranged combat by instinct.
-- Haunted by recovered fragments suggesting a past connection to the island's seals.
 
-### Ilyr Voss (Antagonist)
-- Young, brilliant, and impatient wizard.
-- Seeks the Book of All to transcend all limits.
-- Believes total knowledge can impose permanent order.
-
-### The Assassin
-- Helped conceal the expedition's purpose and stood aside when Ilyr betrayed Vael.
-- Becomes Vael's wary informant after realizing what Ilyr intends to do with the Book.
-- Chooses to help stop Ilyr without expecting Vael's trust or forgiveness.
-
-### The Barbarian
-- Remains loyal to Ilyr and pursues Vael across the island as a recurring rival.
-- Values strength and loyalty, making him slow to accept evidence of Ilyr's treachery.
-- Turns against Ilyr only after that loyalty is repaid with disposability.
+- [Vael](../characters/vael.md): Protagonist
+- [Ilyr Voss](../characters/ilyr-voss.md): Antagonist
+- [The Assassin](../characters/assassin.md): Conflicted ally
+- [The Barbarian](../characters/barbarian.md): Rival
 
 ## Primary Artifact
 ### The Book of All

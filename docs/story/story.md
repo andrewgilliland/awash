@@ -1,5 +1,7 @@
 # Main Story Draft
 
+Character profiles: [Vael](../characters/vael.md), [Ilyr Voss](../characters/ilyr-voss.md), [The Assassin](../characters/assassin.md), and [The Barbarian](../characters/barbarian.md).
+
 ## Premise
 
 A dark elf rogue wakes alone on a desolate beach with no memory of his name, his past, or how he arrived.
