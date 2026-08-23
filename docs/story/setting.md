@@ -22,31 +22,36 @@
 
 ## Spoke Areas
 
-- **Tidefen Village**: Weathered stilt houses, shell-strung walkways, and blue lanterns cluster above calm tidal pools.
-- **Shrinekeeper Camp**: Mossy canvas shelters and herb racks circle a restored stone shrine beneath the Low Canopy.
-- **Emberroot Village**: Basalt homes and open forges glow red around mineral vents rising from the dark earth.
-- **Canopy Refuge**: Small wooden platforms and leaf-roofed huts hang quietly among immense roots above the jungle floor.
-- **Glassmire Village**: Narrow homes with mirrored shutters stand on pale boardwalks crossing still, reflective wetlands.
-- **Stormglass Refuge**: A sheltered observatory annex of dark glass and copper overlooks rain suspended around Stormwatch Tower.
-- **Ironwake Village**: Reinforced stone barracks, supply yards, and iron gates form a compact settlement beneath the castle road.
-- **Warden's Rest**: A sealed cloister of white stone, cold gold lamps, and intact oath banners lies hidden within Blackreef.
+- **Tidefen Village**
+      - **Visual:** Weathered stilt houses, shell-strung walkways, and blue lanterns cluster above calm tidal pools.
+      - **Shop:** Supply Shop.
+- **Shrinekeeper Camp**
+      - **Visual:** Mossy canvas shelters and herb racks circle a restored stone shrine beneath the Low Canopy.
+      - **Shop:** Supply Shop.
+- **Emberroot Village**
+      - **Visual:** Basalt homes and open forges glow red around mineral vents rising from the dark earth.
+      - **Shop:** Smith.
+- **Canopy Refuge**
+      - **Visual:** Small wooden platforms and leaf-roofed huts hang quietly among immense roots above the jungle floor.
+      - **Shop:** Supply Shop.
+- **Glassmire Village**
+      - **Visual:** Narrow homes with mirrored shutters stand on pale boardwalks crossing still, reflective wetlands.
+      - **Shop:** Mystic.
+- **Stormglass Refuge**
+      - **Visual:** A sheltered observatory annex of dark glass and copper overlooks rain suspended around Stormwatch Tower.
+      - **Shop:** Mystic.
+- **Ironwake Village**
+      - **Visual:** Reinforced stone barracks, supply yards, and iron gates form a compact settlement beneath the castle road.
+      - **Shop:** Smith.
+- **Warden's Rest**
+      - **Visual:** A sealed cloister of white stone, cold gold lamps, and intact oath banners lies hidden within Blackreef.
+      - **Shop:** None.
 
 ## Shops
 
 - **Supply Shop**: Sells healing items, ammunition, antidotes, and other basic consumables.
 - **Smith**: Sells and upgrades weapons, armor, and combat equipment.
 - **Mystic**: Sells relics, arcane consumables, and memory-related services.
-
-### Spoke Assignments
-
-- **Tidefen Village**: Supply Shop.
-- **Shrinekeeper Camp**: Supply Shop.
-- **Emberroot Village**: Smith.
-- **Canopy Refuge**: Supply Shop.
-- **Glassmire Village**: Mystic.
-- **Stormglass Refuge**: Mystic.
-- **Ironwake Village**: Smith.
-- **Warden's Rest**: No shop.
 
 ## Metroidvania Cartography-Style ASCII Map
 
