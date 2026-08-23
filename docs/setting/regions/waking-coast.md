@@ -5,10 +5,16 @@ chapter: 1
 safe_spoke: tidefen-village.md
 npcs: []
 shops: []
+enemies:
+  [
+    ../../enemies/wraith.md,
+    ../../enemies/scavenger.md,
+    ../../enemies/storm-wisp.md,
+  ]
+bosses: [../../enemies/nameless-warden.md]
 key_areas:
   - Black Surf
   - Oath-stone shore
-enemy_roster: ../../enemies/README.md#waking-coast
 ---
 
 ## Description

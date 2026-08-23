@@ -5,11 +5,17 @@ chapter: 7
 safe_spoke: ironwake-village.md
 npcs: []
 shops: []
+enemies:
+  [
+    ../../enemies/mercenary.md,
+    ../../enemies/fallen-warden.md,
+    ../../enemies/lockbreaker.md,
+  ]
+bosses: [../../enemies/warden-marshal.md]
 key_areas:
   - Castle Approach
   - Battlements
   - Processional roads
-enemy_roster: ../../enemies/README.md#blackreef-approach
 ---
 
 ## Description

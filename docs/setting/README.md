@@ -26,9 +26,9 @@ Eidolon is an isolated, fractured island of black shores, dense jungles, suspend
 
 ## Region File Schema
 
-- Major-region files use `type: region` and store `name`, `chapter`, `safe_spoke`, `npcs`, `shops`, `key_areas`, progression gates or unlocks, and `enemy_roster`.
-- Safe-spoke files use `type: spoke` and store `name`, `parent_region`, `enemies`, `npcs`, `shops`, and `visual`.
-- `npcs` and `shops` are always arrays, including when empty.
+- Major-region files use `type: region` and store `name`, `chapter`, `safe_spoke`, `enemies`, `bosses`, `npcs`, `shops`, `key_areas`, and progression gates or unlocks.
+- Safe-spoke files use `type: spoke` and store `name`, `parent_region`, `enemies`, `bosses`, `npcs`, `shops`, and `visual`.
+- `enemies`, `bosses`, `npcs`, and `shops` are arrays, including when empty.
 
 ## Region Index
 

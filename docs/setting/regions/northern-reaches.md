@@ -5,10 +5,12 @@ chapter: 5
 safe_spoke: glassmire-village.md
 npcs: []
 shops: []
+enemies:
+  [../../enemies/crawler.md, ../../enemies/gale.md, ../../enemies/drifter.md]
+bosses: [../../enemies/beacon-keeper.md]
 key_areas:
   - North Shoals
   - Floating Causeway
-enemy_roster: ../../enemies/README.md#northern-reaches
 ---
 
 ## Description

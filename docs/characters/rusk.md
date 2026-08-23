@@ -3,6 +3,7 @@ name: Rusk
 working_name: false
 type: character
 role: rival
+race: Human
 first_chapter: 2
 status: alive
 description: A powerful barbarian who values strength and loyalty and serves as Ilyr's recurring enforcer.

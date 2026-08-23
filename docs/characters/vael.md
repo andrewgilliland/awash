@@ -3,7 +3,7 @@ name: Vael
 working_name: true
 type: character
 role: protagonist
-species: Dark elf
+race: Dark Elf
 first_chapter: 1
 status: alive
 description: A dark elf rogue whose erased identity contrasts with his intact instincts for survival, melee combat, and ranged combat.

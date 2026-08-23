@@ -5,12 +5,14 @@ chapter: 4
 safe_spoke: canopy-refuge.md
 npcs: []
 shops: []
+enemies:
+  [../../enemies/hunter.md, ../../enemies/courier.md, ../../enemies/anchor.md]
+bosses: [../../enemies/observatory-sentinel.md]
 key_areas:
   - High Canopy Jungle
   - Canopy Shaft
   - Observatory Ridge
 gate: Double jump
-enemy_roster: ../../enemies/README.md#high-canopy
 ---
 
 ## Description

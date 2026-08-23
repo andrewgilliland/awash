@@ -3,6 +3,7 @@ name: Mara Venn
 working_name: false
 type: character
 role: guide
+race: Human
 occupation: Salvager and mapkeeper
 first_chapter: 1
 status: alive

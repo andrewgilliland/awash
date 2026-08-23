@@ -5,12 +5,14 @@ chapter: 6
 safe_spoke: stormglass-refuge.md
 npcs: []
 shops: []
+enemies:
+  [../../enemies/wardbreaker.md, ../../enemies/husk.md, ../../enemies/thrall.md]
+bosses: [../../enemies/rusk.md]
 key_areas:
   - Weather engines
   - Ritual laboratory
   - Tower summit
 unlock: Arcane key
-enemy_roster: ../../enemies/README.md#stormwatch-tower
 ---
 
 ## Description

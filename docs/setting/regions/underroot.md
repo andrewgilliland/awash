@@ -5,11 +5,13 @@ chapter: 3
 safe_spoke: emberroot-village.md
 npcs: []
 shops: []
+enemies:
+  [../../enemies/sentinel.md, ../../enemies/echo.md, ../../enemies/burrower.md]
+bosses: [../../enemies/relic-guardian.md]
 key_areas:
   - Underroot Cave System
   - Relic Chamber
 unlock: Double jump
-enemy_roster: ../../enemies/README.md#underroot
 ---
 
 ## Description

@@ -3,6 +3,7 @@ name: Ilyr Voss
 working_name: true
 type: character
 role: antagonist
+race: Human
 first_chapter: 1
 status: alive
 description: A young, brilliant, and impatient wizard who believes knowledge can overcome every limit.

@@ -3,6 +3,7 @@ name: Mira
 working_name: false
 type: character
 role: conflicted_ally
+race: Human
 first_chapter: 3
 status: alive
 description: A guarded and pragmatic assassin whose fear of Ilyr's ambition gradually outweighs her loyalty to the expedition.

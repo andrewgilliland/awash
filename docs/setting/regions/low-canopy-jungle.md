@@ -5,11 +5,17 @@ chapter: 2
 safe_spoke: shrinekeeper-camp.md
 npcs: []
 shops: []
+enemies:
+  [
+    ../../enemies/stalker.md,
+    ../../enemies/spore-beast.md,
+    ../../enemies/pirate.md,
+  ]
+bosses: [../../enemies/rusk.md]
 key_areas:
   - Medicine terraces
   - Smuggler Inlet
   - Pirate Fort
-enemy_roster: ../../enemies/README.md#low-canopy-jungle
 ---
 
 ## Description

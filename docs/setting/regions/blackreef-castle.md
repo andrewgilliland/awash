@@ -5,11 +5,13 @@ chapter: 8
 safe_spoke: wardens-rest.md
 npcs: []
 shops: []
+enemies:
+  [../../enemies/keeper.md, ../../enemies/leech.md, ../../enemies/shade.md]
+bosses: [../../enemies/ilyr-voss.md]
 key_areas:
   - Doctrine halls
   - Inner circles
   - Book Vault
-enemy_roster: ../../enemies/README.md#blackreef-castle
 ---
 
 ## Description
