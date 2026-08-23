@@ -18,12 +18,12 @@ Across ancient regions, safe settlements, and arcane strongholds, Vael races the
 
 - [Vael](../characters/vael.md): Protagonist
 - [Ilyr Voss](../characters/ilyr-voss.md): Antagonist
-- [The Assassin](../characters/assassin.md): Conflicted ally
+- [Mira](../characters/mira.md): Conflicted ally
 - [Rusk](../characters/rusk.md): Rival
 
 ## Hidden Truth
 
-Before the game, Ilyr hired Vael to steal the Book of All and brought the Assassin and Rusk on the voyage. The Assassin helped conceal the expedition's purpose, while Rusk remained Ilyr's loyal enforcer.
+Before the game, Ilyr hired Vael to steal the Book of All and brought Mira and Rusk on the voyage. Mira helped conceal the expedition's purpose, while Rusk remained Ilyr's loyal enforcer.
 
 Vael secretly planned to deliver the Book to another buyer. After copying Vael's plan and discovering the intended double-cross, Ilyr struck him with a powerful spell and cast him into the storm-dark sea. Believing Vael dead, the expedition continued to the island.
 
