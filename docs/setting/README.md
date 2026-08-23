@@ -39,11 +39,15 @@
 | [Blackreef Approach](regions/blackreef-approach.md) | [Ironwake Village](regions/ironwake-village.md)   |
 | [Blackreef Castle](regions/blackreef-castle.md)     | [Warden's Rest](regions/wardens-rest.md)          |
 
+## Item Catalog
+
+Item categories are defined in the [item catalog](../items/README.md).
+
 ## Shop Types
 
-- **Supply Shop**: Sells healing items, ammunition, antidotes, and other basic consumables.
-- **Smith**: Sells and upgrades weapons, armor, and combat equipment.
-- **Mystic**: Sells relics, arcane consumables, and memory-related services.
+- **Supply Shop**: Sells [Supplies](../items/README.md#supplies).
+- **Smith**: Sells [Equipment](../items/README.md#equipment).
+- **Mystic**: Sells [Relics](../items/README.md#relics).
 
 ## World Map
 
