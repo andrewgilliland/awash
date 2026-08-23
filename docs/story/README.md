@@ -31,7 +31,7 @@ Vael survived, drifted to shore, and woke with his memory erased.
 
 ## Opening: Ashore Without a Name
 
-Vael scavenges the shoreline, recovers [Blacktide](../items/equipment/weapons/blacktide.md) from the wreckage, and follows signs of the expedition inland. The opening establishes isolation, disorientation, and mistrust while teaching survival, movement, combat, and traversal.
+[Mara Venn](../characters/mara-venn.md) finds Vael and [Blacktide](../items/equipment/weapons/blacktide.md) among the shoreline wreckage and guides him toward Tidefen Village. The opening establishes isolation, disorientation, and mistrust while teaching survival, movement, combat, and traversal.
 
 ## Amnesia As Progression
 
