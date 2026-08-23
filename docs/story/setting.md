@@ -2,22 +2,34 @@
 
 ## Region-by-Region Progression (Metroidvania Flow)
 
-1. Waking Coast: Waking Coast (start) -> Tidefen Village hub.
-2. Low Canopy Jungle: Low Canopy Jungle -> Smuggler Inlet and Pirate Fort.
-3. Underroot: Emberroot Village -> Underroot Cave System -> Relic Chamber (unlock: double jump).
-4. High Canopy: backtrack to Jungle shrine locks -> High Canopy Jungle -> Canopy Shaft -> Observatory Ridge.
-5. Northern Reaches: North Shoals -> Floating Causeway -> Glassmire Village.
-6. Stormwatch Tower: tower path (unlock: arcane seal key).
-7. Blackreef Approach: Ironwake Village -> Castle Approach.
-8. Blackreef Castle: Blackreef Castle -> Book Vault.
+1. Waking Coast: Waking Coast (start) -> Tidefen Village safe spoke.
+2. Low Canopy Jungle: Low Canopy Jungle -> Shrinekeeper Camp safe spoke -> Smuggler Inlet and Pirate Fort.
+3. Underroot: Emberroot Village safe spoke -> Underroot Cave System -> Relic Chamber (unlock: double jump).
+4. High Canopy: backtrack to Jungle shrine locks -> High Canopy Jungle -> Canopy Refuge safe spoke -> Canopy Shaft -> Observatory Ridge.
+5. Northern Reaches: North Shoals -> Floating Causeway -> Glassmire Village safe spoke.
+6. Stormwatch Tower: Stormglass Refuge safe spoke -> Stormwatch Tower (unlock: arcane seal key).
+7. Blackreef Approach: Ironwake Village safe spoke -> Castle Approach.
+8. Blackreef Castle: Blackreef Castle -> Warden's Rest safe spoke -> Book Vault.
 
 ## Metroidvania Layout Rules
 
-- Villages are safe hubs connected by dangerous spoke regions.
+- Each major region has one smaller safe spoke with no enemy encounters.
+- Safe spokes may contain NPCs, rest points, vendors, or story interactions.
 - Every major branch must loop back to at least one earlier hub.
 - Ability unlocks open at least two old gates, not just one new path.
 - Vertical lanes (caves/canopy/tower) should reconnect to horizontal lanes (villages/coast/fort).
 - Endgame areas should be reachable from multiple late-game hubs.
+
+## Spoke Areas
+
+- **Tidefen Village**: Weathered stilt houses, shell-strung walkways, and blue lanterns cluster above calm tidal pools.
+- **Shrinekeeper Camp**: Mossy canvas shelters and herb racks circle a restored stone shrine beneath the Low Canopy.
+- **Emberroot Village**: Basalt homes and open forges glow red around mineral vents rising from the dark earth.
+- **Canopy Refuge**: Small wooden platforms and leaf-roofed huts hang quietly among immense roots above the jungle floor.
+- **Glassmire Village**: Narrow homes with mirrored shutters stand on pale boardwalks crossing still, reflective wetlands.
+- **Stormglass Refuge**: A sheltered observatory annex of dark glass and copper overlooks rain suspended around Stormwatch Tower.
+- **Ironwake Village**: Reinforced stone barracks, supply yards, and iron gates form a compact settlement beneath the castle road.
+- **Warden's Rest**: A sealed cloister of white stone, cold gold lamps, and intact oath banners lies hidden within Blackreef.
 
 ## Metroidvania Cartography-Style ASCII Map
 
@@ -26,16 +38,18 @@
 
   [NORTH SHOALS]--------------------------[FLOATING CAUSEWAY]-------------------+
         |                                         |                             |
-  [OBSERVATORY RIDGE]====[HIGH CANOPY JUNGLE]====[GLASSMIRE VILLAGE V3]        |
-        |                    ||     [DJ-2]              |                       |
-        |                    ||                          +====[STORMWATCH TOWER]-+-[AK]
+  [OBSERVATORY RIDGE]====[HIGH CANOPY JUNGLE]====[CANOPY REFUGE]====[GLASSMIRE VILLAGE V3]
+        |                    ||     [DJ-2]                                  |
+        |                    ||                          [STORMGLASS REFUGE]==[STORMWATCH TOWER]-+-[AK]
         |                    ||                                           |      |
   [CANOPY SHAFT]==============+====================[CASTLE APPROACH]=======+      |
         |                                                ||                       |
         |                                                ||                 [BLACKREEF]
-  [LOW CANOPY JUNGLE]====[SMUGGLER INLET/PIRATE FORT]====++====[IRONWAKE V4]   |
+  [LOW CANOPY JUNGLE]====[SHRINEKEEPER CAMP]====[SMUGGLER INLET/PIRATE FORT]====++====[IRONWAKE V4]
         ||                         ||          (LIFT)                             |
-        ||                         ||                                             [BOOK VAULT]
+        ||                         ||                                        [WARDEN'S REST]
+        ||                         ||                                             |
+        ||                         ||                                        [BOOK VAULT]
   [TIDEFEN V1]======================++=============================================+
         |
   [WAKING COAST]
