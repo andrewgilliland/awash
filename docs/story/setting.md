@@ -56,116 +56,40 @@
 - [AK]: arcane key gate from Stormwatch Tower
 - LIFT: one-way shortcut loop that reconnects a dungeon branch to a hub
 
+## Enemy Catalog
+
+Regional enemies and bosses are listed in the [enemy catalog](../enemies/README.md).
+
 ## Region Descriptions
 
 ### Waking Coast
 
 Once the ceremonial landing site for wardens sworn to protect forbidden knowledge, the Waking Coast is where all oaths began. During the Memory Tempests, the tide carried shattered oath-stones back to shore, and each storm stripped names from their carvings. The fisher-families of nearby Tidefen abandoned deep water after seeing lights beneath the waves and became practical salvagers and mapmakers, preserving identity through memory-knot rituals and strict bell curfews. Vael's survival of the black surf marks him as oathbound blood, while Ilyr's scouts buying old charts makes his arrival seem like either fate or a dangerous omen.
 
-#### Enemies
-
-- **Wraith**: A spectral oathkeeper that phases through attacks until its exposed oath-stone anchor is struck.
-- **Scavenger**: An amphibious pack hunter that darts through shallows and drags prey toward coastal hazards.
-- **Storm Wisp**: A volatile memory echo that rides sea winds and releases short arcs of lightning when approached.
-
-#### Boss
-
-- **Nameless Warden**: A guardian stripped of its identity by the Memory Tempests, testing Vael with shield counters and oath-stone shockwaves before allowing passage to Tidefen.
-
 ### Low Canopy Jungle
 
 The Low Canopy was once a medicine garden maintained by shrine keepers, but roots swallowed its terraces after the wardens fell and alchemical runoff transformed its wildlife into territorial packs. Beneath the vines, broken reliefs show the Book of All being carried inland under guard. The jungle descends to Smuggler Inlet, a former warden supply harbor where contraband moves during thunder squalls when memory echoes are weakest, and to a naval watchtower claimed by corsairs and remade as the Pirate Fort. Its crews sell relics, prisoners, and false maps while guarding rumors of a service tunnel to Blackreef, and Ilyr secured their aid by trading arcane protection for access to those deep vault routes.
-
-#### Enemies
-
-- **Stalker**: An altered jungle predator that leaps between platforms and marks landing zones with grasping roots.
-- **Spore Beast**: A swollen garden beast that vents toxic spores when struck, forcing Vael to keep changing position.
-- **Pirate**: A pirate skirmisher who alternates cutlass rushes with bombs thrown from guarded ledges.
-
-#### Boss
-
-- **The Barbarian**: Ilyr's relentless enforcer uses armored charges, heavy guard breaks, and ground-shaking blows before Vael forces him to retreat.
 
 ### Underroot
 
 Underroot begins at Emberroot, a settlement built on mineral-hot ground around forges that once produced ceremonial warden tools. Its proud smith clans disagree over whether the island should be resealed or conquered, but their respect for proven strength gives Vael a path into the caves below. Underground rivers carved these oldest foundations before wardens covered them in script, turning their deepest chambers into resonators that replay the memories of anyone passing through. At their heart, a Relic Chamber once trained initiates to move through low-gravity currents; sealed after a failed levitation rite collapsed a hall, it now grants its double-jump sigil only to someone seeking power for a purpose beyond possession.
 
-#### Enemies
-
-- **Sentinel**: A stone construct that travels between inscribed walls and seals portions of the arena with warding lines.
-- **Echo**: A memory remnant that repeats Vael's previous attack after a delay, punishing predictable rhythms.
-- **Burrower**: A plated cave beast that tunnels beneath the floor and erupts in showers of falling stone.
-
-#### Boss
-
-- **Relic Guardian**: The chamber's ancient keeper changes its defenses in response to aggression, testing Vael's intent before awakening the double-jump sigil.
-
 ### High Canopy
 
 The High Canopy formed above collapsed ruins as a suspended world of roots, stone bridges, blind predators, and old warden zipline anchors. Scout clans once used it as a silent courier highway between villages, reached through Canopy Shaft, a ruined watch elevator and relic checkpoint whose walls record those who failed its climb. The route ends at Observatory Ridge, where astronomer-priests tracked celestial tides that influence memory erosion and predicted the island's catastrophe before leaders seeking the Book ignored them. Its surviving instruments can still align hidden paths across the island, but every activation broadcasts a signal that draws hostile arcane entities.
-
-#### Enemies
-
-- **Hunter**: A blind predator that tracks noise, dives from overhead, and grapples anyone who remains still too long.
-- **Courier**: A spectral scout that races along old zipline routes and drops traps onto lower platforms.
-- **Anchor**: An arcane parasite that tethers Vael to floating ruins and restricts his aerial movement until destroyed.
-
-#### Boss
-
-- **Observatory Sentinel**: A many-limbed celestial construct that rotates platforms and gravity fields while guarding the instruments the assassin helps Vael align.
 
 ### Northern Reaches
 
 The Northern Reaches begin at the windswept cliffs and tidal shelves of North Shoals, where one ancient beacon still flashes on storm nights without a known operator. Beyond it, a Floating Causeway built with anti-gravity anchors once carried relics above hostile ground, but the island's fracture left its drifting spans open only in brief traversal windows; restoring it is both a breakthrough and a declaration visible to every faction. The route reaches Glassmire, a scholar refuge built around mirrored wetlands whose people preserve history in layered chants that resist written corruption and memory loss. Its elders hold the strongest surviving account of Vael's oathbound past and reveal it only after his actions prove that the timing and their trust are aligned.
 
-#### Enemies
-
-- **Crawler**: A shelled tidal predator that hides beneath flooded ground and attacks as the water recedes.
-- **Gale**: A wind spirit that creates directional gusts capable of pushing Vael from exposed platforms.
-- **Drifter**: A floating construct vulnerable only during brief alignment windows between its anti-gravity anchors.
-
-#### Boss
-
-- **Beacon Keeper**: The last automated keeper of North Shoals commands lightning rods and sweeping beacon rays, releasing the causeway controls when defeated.
-
 ### Stormwatch Tower
 
 Originally a weather and ward control spire, the tower became an arcane laboratory after traditional wardens died out. Ilyr chose it as his operational base because it amplifies ritual precision and can project lock-breaking frequencies across the island. The arcane key obtained here is less a key than a tuning pattern that destabilizes old seal geometry.
-
-#### Enemies
-
-- **Wardbreaker**: An Ilyr-trained mage who destabilizes platforms and defensive wards with interruptible arcane pulses.
-- **Husk**: A weather engine given motion, storing lightning from nearby hazards before discharging it across the floor.
-- **Thrall**: A bound soldier who strengthens nearby enemies through chants that can be broken with sustained pressure.
-
-#### Boss
-
-- **The Barbarian**: Empowered by Stormwatch's engines, Ilyr's enforcer adds lightning trails and arcane armor to his earlier attacks until Vael defeats but spares him.
 
 ### Blackreef Approach
 
 The Blackreef Approach begins at Ironwake, a military logistics camp hardened into a disciplined frontier stronghold whose people value duty over myth. Standing closest to the castle threat, they are prepared to burn their own district rather than let dark arcane forces spill west. Beyond the village, old battlements and processional roads once welcomed sworn guardians into the final sanctum; now traps, failed constructs, and rival strike teams contest a route deliberately designed to exhaust intruders before they reach the inner gates.
 
-#### Enemies
-
-- **Mercenary**: A hired soldier who advances behind a shield and calls ranged support when allowed to hold ground.
-- **Fallen Warden**: A broken initiate whose unstable oath releases disorienting memory bursts whenever its guard is shattered.
-- **Lockbreaker**: One of Ilyr's siege constructs, firing seal-breaking beams that also awaken dormant castle traps.
-
-#### Boss
-
-- **Warden Marshal**: An ancient defender that treats every army as an invader, commanding battlement traps and spectral formations amid Ilyr's siege.
-
 ### Blackreef Castle
 
 Blackreef Castle was never a royal home; it is a prison-temple built to contain knowledge judged too dangerous for any age. Its outer halls preserve sanctioned doctrine while its inner circles hide forbidden praxis and weaponized memory rites, testing the motives of anyone seeking the Book rather than strength alone. Beneath them lies the Book Vault, the final lock in the island's seal network, where layered oaths demand both bloodline resonance and cognitive endurance. The vault does not merely reveal knowledge: it reflects each seeker's deepest justification and magnifies it.
-
-#### Enemies
-
-- **Keeper**: A prison-temple enforcer that creates silence fields where Vael cannot use ranged abilities.
-- **Leech**: A parasitic echo that steals one of Vael's recent actions and turns it against him until interrupted.
-- **Shade**: A manifestation of forbidden technique that imitates Vael's combat style with stronger but clearly telegraphed attacks.
-
-#### Boss
-
-- **Ilyr Voss**: The expedition's architect combines ritual spell sequences, weaponized memories, and shifting vault seals in his final attempt to claim the Book of All.
