@@ -17,7 +17,7 @@ A dark elf hero wakes on the shore of a forbidden island with no memory of who h
 
 ## Story Docs Index
 - Main story and chapter outline: [story.md](story.md)
-- Island setting, flow, and map layout: [setting.md](setting.md)
+- Island setting, flow, and region catalog: [setting](../setting/README.md)
 - Structure catalog and enhancement ideas: [structures.md](structures.md)
 
 ## Main Cast

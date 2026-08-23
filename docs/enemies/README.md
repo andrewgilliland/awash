@@ -1,6 +1,6 @@
 # Enemy List
 
-Enemies and bosses are grouped by the regions defined in [setting.md](../story/setting.md).
+Enemies and bosses are grouped by the regions defined in the [setting catalog](../setting/README.md).
 
 Each linked file stores the entity's `name`, `type`, `category`, `size`, `movement`, and regional `encounters` in YAML frontmatter. An encounter contains its region-specific combat description and visual description.
 
