@@ -64,9 +64,9 @@ Once the ceremonial landing site for wardens sworn to protect forbidden knowledg
 
 #### Enemies
 
-- **Oath Wraith**: A spectral oathkeeper that phases through attacks until its exposed oath-stone anchor is struck.
-- **Tide Scavenger**: An amphibious pack hunter that darts through shallows and drags prey toward coastal hazards.
-- **Storm-Drift Wisp**: A volatile memory echo that rides sea winds and releases short arcs of lightning when approached.
+- **Wraith**: A spectral oathkeeper that phases through attacks until its exposed oath-stone anchor is struck.
+- **Scavenger**: An amphibious pack hunter that darts through shallows and drags prey toward coastal hazards.
+- **Storm Wisp**: A volatile memory echo that rides sea winds and releases short arcs of lightning when approached.
 
 #### Boss
 
@@ -78,9 +78,9 @@ The Low Canopy was once a medicine garden maintained by shrine keepers, but root
 
 #### Enemies
 
-- **Terrace Stalker**: An altered jungle predator that leaps between platforms and marks landing zones with grasping roots.
-- **Alchemical Sporeback**: A swollen garden beast that vents toxic spores when struck, forcing Vael to keep changing position.
-- **Fort Corsair**: A pirate skirmisher who alternates cutlass rushes with bombs thrown from guarded ledges.
+- **Stalker**: An altered jungle predator that leaps between platforms and marks landing zones with grasping roots.
+- **Spore Beast**: A swollen garden beast that vents toxic spores when struck, forcing Vael to keep changing position.
+- **Pirate**: A pirate skirmisher who alternates cutlass rushes with bombs thrown from guarded ledges.
 
 #### Boss
 
@@ -92,9 +92,9 @@ Underroot begins at Emberroot, a settlement built on mineral-hot ground around f
 
 #### Enemies
 
-- **Scriptbound Sentinel**: A stone construct that travels between inscribed walls and seals portions of the arena with warding lines.
-- **Echo Shade**: A memory remnant that repeats Vael's previous attack after a delay, punishing predictable rhythms.
-- **Bedrock Burrower**: A plated cave beast that tunnels beneath the floor and erupts in showers of falling stone.
+- **Sentinel**: A stone construct that travels between inscribed walls and seals portions of the arena with warding lines.
+- **Echo**: A memory remnant that repeats Vael's previous attack after a delay, punishing predictable rhythms.
+- **Burrower**: A plated cave beast that tunnels beneath the floor and erupts in showers of falling stone.
 
 #### Boss
 
@@ -106,9 +106,9 @@ The High Canopy formed above collapsed ruins as a suspended world of roots, ston
 
 #### Enemies
 
-- **Perch Stalker**: A blind predator that tracks noise, dives from overhead, and grapples anyone who remains still too long.
-- **Courier Remnant**: A spectral scout that races along old zipline routes and drops traps onto lower platforms.
-- **Anchor Wisp**: An arcane parasite that tethers Vael to floating ruins and restricts his aerial movement until destroyed.
+- **Hunter**: A blind predator that tracks noise, dives from overhead, and grapples anyone who remains still too long.
+- **Courier**: A spectral scout that races along old zipline routes and drops traps onto lower platforms.
+- **Anchor**: An arcane parasite that tethers Vael to floating ruins and restricts his aerial movement until destroyed.
 
 #### Boss
 
@@ -120,9 +120,9 @@ The Northern Reaches begin at the windswept cliffs and tidal shelves of North Sh
 
 #### Enemies
 
-- **Shoal Crawler**: A shelled tidal predator that hides beneath flooded ground and attacks as the water recedes.
-- **Gale Wisp**: A wind spirit that creates directional gusts capable of pushing Vael from exposed platforms.
-- **Causeway Sentinel**: A floating construct vulnerable only during brief alignment windows between its anti-gravity anchors.
+- **Crawler**: A shelled tidal predator that hides beneath flooded ground and attacks as the water recedes.
+- **Gale**: A wind spirit that creates directional gusts capable of pushing Vael from exposed platforms.
+- **Drifter**: A floating construct vulnerable only during brief alignment windows between its anti-gravity anchors.
 
 #### Boss
 
@@ -134,9 +134,9 @@ Originally a weather and ward control spire, the tower became an arcane laborato
 
 #### Enemies
 
-- **Wardbreaker Adept**: An Ilyr-trained mage who destabilizes platforms and defensive wards with interruptible arcane pulses.
-- **Storm Husk**: A weather engine given motion, storing lightning from nearby hazards before discharging it across the floor.
-- **Ritual Thrall**: A bound soldier who strengthens nearby enemies through chants that can be broken with sustained pressure.
+- **Wardbreaker**: An Ilyr-trained mage who destabilizes platforms and defensive wards with interruptible arcane pulses.
+- **Husk**: A weather engine given motion, storing lightning from nearby hazards before discharging it across the floor.
+- **Thrall**: A bound soldier who strengthens nearby enemies through chants that can be broken with sustained pressure.
 
 #### Boss
 
@@ -148,9 +148,9 @@ The Blackreef Approach begins at Ironwake, a military logistics camp hardened in
 
 #### Enemies
 
-- **Siege Mercenary**: A hired soldier who advances behind a shield and calls ranged support when allowed to hold ground.
-- **Failed Warden**: A broken initiate whose unstable oath releases disorienting memory bursts whenever its guard is shattered.
-- **Lockbreaker Engine**: One of Ilyr's siege constructs, firing seal-breaking beams that also awaken dormant castle traps.
+- **Mercenary**: A hired soldier who advances behind a shield and calls ranged support when allowed to hold ground.
+- **Fallen Warden**: A broken initiate whose unstable oath releases disorienting memory bursts whenever its guard is shattered.
+- **Lockbreaker**: One of Ilyr's siege constructs, firing seal-breaking beams that also awaken dormant castle traps.
 
 #### Boss
 
@@ -162,9 +162,9 @@ Blackreef Castle was never a royal home; it is a prison-temple built to contain 
 
 #### Enemies
 
-- **Doctrine Keeper**: A prison-temple enforcer that creates silence fields where Vael cannot use ranged abilities.
-- **Memory Leech**: A parasitic echo that steals one of Vael's recent actions and turns it against him until interrupted.
-- **Praxis Shade**: A manifestation of forbidden technique that imitates Vael's combat style with stronger but clearly telegraphed attacks.
+- **Keeper**: A prison-temple enforcer that creates silence fields where Vael cannot use ranged abilities.
+- **Leech**: A parasitic echo that steals one of Vael's recent actions and turns it against him until interrupted.
+- **Shade**: A manifestation of forbidden technique that imitates Vael's combat style with stronger but clearly telegraphed attacks.
 
 #### Boss
 
