@@ -1,6 +1,7 @@
 ---
 name: Lockbreaker
 type: enemy
+category: Construct
 size: Large
 encounters:
   - region: Blackreef Approach

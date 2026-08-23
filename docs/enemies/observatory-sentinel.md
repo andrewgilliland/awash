@@ -1,6 +1,7 @@
 ---
 name: Observatory Sentinel
 type: boss
+category: Construct
 size: Colossal
 encounters:
   - region: High Canopy

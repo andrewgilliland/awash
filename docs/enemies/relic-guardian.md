@@ -1,6 +1,7 @@
 ---
 name: Relic Guardian
 type: boss
+category: Construct
 size: Large
 encounters:
   - region: Underroot

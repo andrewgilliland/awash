@@ -2,7 +2,16 @@
 
 Enemies and bosses are grouped by the regions defined in [setting.md](../story/setting.md).
 
-Each linked file stores the entity's `name`, `type`, `size`, and regional `encounters` in YAML frontmatter. An encounter contains its region-specific combat description and visual description.
+Each linked file stores the entity's `name`, `type`, `category`, `size`, and regional `encounters` in YAML frontmatter. An encounter contains its region-specific combat description and visual description.
+
+## Categories
+
+- **Humanoid**: A living or physically embodied person.
+- **Beast**: An animal or animal-like creature.
+- **Spirit**: A ghost, memory remnant, or oathbound soul.
+- **Construct**: An artificial guardian, machine, or animated object.
+- **Elemental**: A being formed primarily from natural or magical energy.
+- **Aberration**: An unnatural organism or arcane parasite that does not fit another class.
 
 ## Size Classes
 

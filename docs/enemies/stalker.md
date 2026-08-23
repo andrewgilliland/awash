@@ -1,6 +1,7 @@
 ---
 name: Stalker
 type: enemy
+category: Beast
 size: Medium
 encounters:
   - region: Low Canopy Jungle

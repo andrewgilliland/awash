@@ -1,6 +1,7 @@
 ---
 name: Spore Beast
 type: enemy
+category: Beast
 size: Large
 encounters:
   - region: Low Canopy Jungle

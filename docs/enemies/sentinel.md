@@ -1,6 +1,7 @@
 ---
 name: Sentinel
 type: enemy
+category: Construct
 size: Large
 encounters:
   - region: Underroot

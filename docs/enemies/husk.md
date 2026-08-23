@@ -1,6 +1,7 @@
 ---
 name: Husk
 type: enemy
+category: Construct
 size: Large
 encounters:
   - region: Stormwatch Tower

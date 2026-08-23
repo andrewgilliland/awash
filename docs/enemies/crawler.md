@@ -1,6 +1,7 @@
 ---
 name: Crawler
 type: enemy
+category: Beast
 size: Medium
 encounters:
   - region: Northern Reaches

@@ -1,6 +1,7 @@
 ---
 name: The Barbarian
 type: boss
+category: Humanoid
 size: Large
 encounters:
   - region: Low Canopy Jungle

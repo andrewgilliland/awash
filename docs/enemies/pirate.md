@@ -1,6 +1,7 @@
 ---
 name: Pirate
 type: enemy
+category: Humanoid
 size: Medium
 encounters:
   - region: Low Canopy Jungle

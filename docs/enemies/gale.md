@@ -1,6 +1,7 @@
 ---
 name: Gale
 type: enemy
+category: Elemental
 size: Large
 encounters:
   - region: Northern Reaches

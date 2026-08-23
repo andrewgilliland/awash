@@ -1,6 +1,7 @@
 ---
 name: Ilyr Voss
 type: boss
+category: Humanoid
 size: Medium
 encounters:
   - region: Blackreef Castle

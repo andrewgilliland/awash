@@ -1,6 +1,7 @@
 ---
 name: Echo
 type: enemy
+category: Spirit
 size: Medium
 encounters:
   - region: Underroot

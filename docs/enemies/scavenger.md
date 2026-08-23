@@ -1,6 +1,7 @@
 ---
 name: Scavenger
 type: enemy
+category: Beast
 size: Medium
 encounters:
   - region: Waking Coast

@@ -1,6 +1,7 @@
 ---
 name: Warden Marshal
 type: boss
+category: Spirit
 size: Large
 encounters:
   - region: Blackreef Approach

@@ -1,6 +1,7 @@
 ---
 name: Nameless Warden
 type: boss
+category: Spirit
 size: Large
 encounters:
   - region: Waking Coast

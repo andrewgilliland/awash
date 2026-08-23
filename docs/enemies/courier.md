@@ -1,6 +1,7 @@
 ---
 name: Courier
 type: enemy
+category: Spirit
 size: Medium
 encounters:
   - region: High Canopy

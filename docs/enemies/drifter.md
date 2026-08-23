@@ -1,6 +1,7 @@
 ---
 name: Drifter
 type: enemy
+category: Construct
 size: Medium
 encounters:
   - region: Northern Reaches

@@ -1,6 +1,7 @@
 ---
 name: Storm Wisp
 type: enemy
+category: Elemental
 size: Small
 encounters:
   - region: Waking Coast

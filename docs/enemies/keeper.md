@@ -1,6 +1,7 @@
 ---
 name: Keeper
 type: enemy
+category: Humanoid
 size: Medium
 encounters:
   - region: Blackreef Castle

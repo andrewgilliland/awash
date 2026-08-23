@@ -1,6 +1,7 @@
 ---
 name: Hunter
 type: enemy
+category: Beast
 size: Medium
 encounters:
   - region: High Canopy

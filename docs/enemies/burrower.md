@@ -1,6 +1,7 @@
 ---
 name: Burrower
 type: enemy
+category: Beast
 size: Large
 encounters:
   - region: Underroot

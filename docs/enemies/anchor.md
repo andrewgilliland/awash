@@ -1,6 +1,7 @@
 ---
 name: Anchor
 type: enemy
+category: Aberration
 size: Small
 encounters:
   - region: High Canopy

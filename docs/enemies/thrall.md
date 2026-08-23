@@ -1,6 +1,7 @@
 ---
 name: Thrall
 type: enemy
+category: Humanoid
 size: Medium
 encounters:
   - region: Stormwatch Tower

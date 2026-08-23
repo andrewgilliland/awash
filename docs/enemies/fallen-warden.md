@@ -1,6 +1,7 @@
 ---
 name: Fallen Warden
 type: enemy
+category: Spirit
 size: Medium
 encounters:
   - region: Blackreef Approach

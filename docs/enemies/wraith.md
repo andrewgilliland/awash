@@ -1,6 +1,7 @@
 ---
 name: Wraith
 type: enemy
+category: Spirit
 size: Medium
 encounters:
   - region: Waking Coast

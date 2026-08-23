@@ -1,6 +1,7 @@
 ---
 name: Beacon Keeper
 type: boss
+category: Construct
 size: Large
 encounters:
   - region: Northern Reaches

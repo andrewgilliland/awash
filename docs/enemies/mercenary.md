@@ -1,6 +1,7 @@
 ---
 name: Mercenary
 type: enemy
+category: Humanoid
 size: Medium
 encounters:
   - region: Blackreef Approach

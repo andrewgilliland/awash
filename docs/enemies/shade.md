@@ -1,6 +1,7 @@
 ---
 name: Shade
 type: enemy
+category: Spirit
 size: Medium
 encounters:
   - region: Blackreef Castle

@@ -1,6 +1,7 @@
 ---
 name: Leech
 type: enemy
+category: Aberration
 size: Small
 encounters:
   - region: Blackreef Castle
