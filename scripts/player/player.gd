@@ -27,7 +27,7 @@ enum AttackPhase {
 	RECOVERY,
 }
 
-const PLAYER_SPRITE_SHEET := preload("res://assets/sprites/player_1.png")
+const PLAYER_SPRITE_SHEET := preload("res://assets/sprites/vael_1.png")
 const PLAYER_SPRITE_FACTORY_SCRIPT := preload("res://scripts/player/player_sprite_factory.gd")
 const PLAYER_COMBAT_SCRIPT := preload("res://scripts/player/player_combat.gd")
 
