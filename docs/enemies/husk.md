@@ -3,6 +3,7 @@ name: Husk
 type: enemy
 category: Construct
 size: Large
+movement: Ground
 encounters:
   - region: Stormwatch Tower
     description: A weather engine given motion, storing lightning from nearby hazards before discharging it across the floor.

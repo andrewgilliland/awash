@@ -3,6 +3,7 @@ name: Leech
 type: enemy
 category: Aberration
 size: Small
+movement: Flying
 encounters:
   - region: Blackreef Castle
     description: A parasitic echo that steals one of Vael's recent actions and turns it against him until interrupted.

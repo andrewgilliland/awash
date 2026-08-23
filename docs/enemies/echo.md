@@ -3,6 +3,7 @@ name: Echo
 type: enemy
 category: Spirit
 size: Medium
+movement: Floating
 encounters:
   - region: Underroot
     description: A memory remnant that repeats Vael's previous attack after a delay, punishing predictable rhythms.

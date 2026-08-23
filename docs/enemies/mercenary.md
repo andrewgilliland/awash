@@ -3,6 +3,7 @@ name: Mercenary
 type: enemy
 category: Humanoid
 size: Medium
+movement: Ground
 encounters:
   - region: Blackreef Approach
     description: A hired soldier who advances behind a shield and calls ranged support when allowed to hold ground.

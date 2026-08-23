@@ -3,6 +3,7 @@ name: Storm Wisp
 type: enemy
 category: Elemental
 size: Small
+movement: Flying
 encounters:
   - region: Waking Coast
     description: A volatile memory echo that rides sea winds and releases short arcs of lightning when approached.

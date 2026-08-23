@@ -3,6 +3,7 @@ name: Crawler
 type: enemy
 category: Beast
 size: Medium
+movement: Amphibious
 encounters:
   - region: Northern Reaches
     description: A shelled tidal predator that hides beneath flooded ground and attacks as the water recedes.

@@ -3,6 +3,7 @@ name: Hunter
 type: enemy
 category: Beast
 size: Medium
+movement: Flying
 encounters:
   - region: High Canopy
     description: A blind predator that tracks noise, dives from overhead, and grapples anyone who remains still too long.

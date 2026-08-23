@@ -3,6 +3,7 @@ name: Courier
 type: enemy
 category: Spirit
 size: Medium
+movement: Flying
 encounters:
   - region: High Canopy
     description: A spectral scout that races along old zipline routes and drops traps onto lower platforms.

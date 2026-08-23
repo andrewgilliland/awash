@@ -3,6 +3,7 @@ name: Keeper
 type: enemy
 category: Humanoid
 size: Medium
+movement: Ground
 encounters:
   - region: Blackreef Castle
     description: A prison-temple enforcer that creates silence fields where Vael cannot use ranged abilities.

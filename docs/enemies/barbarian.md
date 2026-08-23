@@ -3,6 +3,7 @@ name: The Barbarian
 type: boss
 category: Humanoid
 size: Large
+movement: Ground
 encounters:
   - region: Low Canopy Jungle
     description: Ilyr's relentless enforcer uses armored charges, heavy guard breaks, and ground-shaking blows before Vael forces him to retreat.

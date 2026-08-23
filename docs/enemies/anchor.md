@@ -3,6 +3,7 @@ name: Anchor
 type: enemy
 category: Aberration
 size: Small
+movement: Floating
 encounters:
   - region: High Canopy
     description: An arcane parasite that tethers Vael to floating ruins and restricts his aerial movement until destroyed.

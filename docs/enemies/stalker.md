@@ -3,6 +3,7 @@ name: Stalker
 type: enemy
 category: Beast
 size: Medium
+movement: Ground
 encounters:
   - region: Low Canopy Jungle
     description: An altered jungle predator that leaps between platforms and marks landing zones with grasping roots.

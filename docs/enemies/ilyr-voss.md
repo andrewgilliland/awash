@@ -3,6 +3,7 @@ name: Ilyr Voss
 type: boss
 category: Humanoid
 size: Medium
+movement: Ground
 encounters:
   - region: Blackreef Castle
     description: The expedition's architect combines ritual spell sequences, weaponized memories, and shifting vault seals in his final attempt to claim the Book of All.

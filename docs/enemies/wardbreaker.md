@@ -3,6 +3,7 @@ name: Wardbreaker
 type: enemy
 category: Humanoid
 size: Medium
+movement: Ground
 encounters:
   - region: Stormwatch Tower
     description: An Ilyr-trained mage who destabilizes platforms and defensive wards with interruptible arcane pulses.

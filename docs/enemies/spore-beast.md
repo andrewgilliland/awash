@@ -3,6 +3,7 @@ name: Spore Beast
 type: enemy
 category: Beast
 size: Large
+movement: Ground
 encounters:
   - region: Low Canopy Jungle
     description: A swollen garden beast that vents toxic spores when struck, forcing Vael to keep changing position.

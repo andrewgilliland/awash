@@ -3,6 +3,7 @@ name: Lockbreaker
 type: enemy
 category: Construct
 size: Large
+movement: Ground
 encounters:
   - region: Blackreef Approach
     description: One of Ilyr's siege constructs, firing seal-breaking beams that also awaken dormant castle traps.

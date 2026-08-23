@@ -3,6 +3,7 @@ name: Warden Marshal
 type: boss
 category: Spirit
 size: Large
+movement: Ground
 encounters:
   - region: Blackreef Approach
     description: An ancient defender that treats every army as an invader, commanding battlement traps and spectral formations amid Ilyr's siege.

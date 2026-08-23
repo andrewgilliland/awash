@@ -2,7 +2,7 @@
 
 Enemies and bosses are grouped by the regions defined in [setting.md](../story/setting.md).
 
-Each linked file stores the entity's `name`, `type`, `category`, `size`, and regional `encounters` in YAML frontmatter. An encounter contains its region-specific combat description and visual description.
+Each linked file stores the entity's `name`, `type`, `category`, `size`, `movement`, and regional `encounters` in YAML frontmatter. An encounter contains its region-specific combat description and visual description.
 
 ## Categories
 
@@ -19,6 +19,14 @@ Each linked file stores the entity's `name`, `type`, `category`, `size`, and reg
 - **Medium**: Roughly comparable to Vael's height and combat footprint.
 - **Large**: Substantially larger than Vael and built around broad attacks.
 - **Colossal**: An arena-scale creature or construct that dominates the environment.
+
+## Movement Classes
+
+- **Ground**: Primarily walks, runs, or crawls across solid surfaces.
+- **Flying**: Moves freely through the air under its own power.
+- **Floating**: Hovers above surfaces with limited aerial movement.
+- **Burrowing**: Travels beneath terrain and emerges to attack.
+- **Amphibious**: Moves effectively through both water and on land.
 
 ## Waking Coast
 

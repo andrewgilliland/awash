@@ -3,6 +3,7 @@ name: Thrall
 type: enemy
 category: Humanoid
 size: Medium
+movement: Ground
 encounters:
   - region: Stormwatch Tower
     description: A bound soldier who strengthens nearby enemies through chants that can be broken with sustained pressure.

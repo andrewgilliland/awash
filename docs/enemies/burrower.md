@@ -3,6 +3,7 @@ name: Burrower
 type: enemy
 category: Beast
 size: Large
+movement: Burrowing
 encounters:
   - region: Underroot
     description: A plated cave beast that tunnels beneath the floor and erupts in showers of falling stone.

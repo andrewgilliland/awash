@@ -3,6 +3,7 @@ name: Fallen Warden
 type: enemy
 category: Spirit
 size: Medium
+movement: Ground
 encounters:
   - region: Blackreef Approach
     description: A broken initiate whose unstable oath releases disorienting memory bursts whenever its guard is shattered.
