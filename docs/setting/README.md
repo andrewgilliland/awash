@@ -46,7 +46,7 @@ Item categories are defined in the [item catalog](../items/README.md).
 ## Shop Types
 
 - **Supply Shop**: Sells [Supplies](../items/README.md#supplies).
-- **Smith**: Sells [Equipment](../items/README.md#equipment).
+- **Smith**: Upgrades [Blacktide](../items/equipment/weapons/blacktide.md)'s Attack and Special Attack.
 - **Mystic**: Sells [Relics](../items/README.md#relics).
 
 ## World Map
