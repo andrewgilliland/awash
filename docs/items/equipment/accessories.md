@@ -9,7 +9,7 @@ items:
   [
     accessories/quickdraw-clasp.md,
     accessories/ironroot-brooch.md,
-    accessories/glassmire-lens.md,
+    accessories/bracer.md,
     accessories/tidefen-knot.md,
     accessories/sporeward-locket.md,
     accessories/salvagers-coin.md,

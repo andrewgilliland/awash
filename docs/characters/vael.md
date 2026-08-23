@@ -11,4 +11,5 @@ backstory: Vael was a thief hired by Ilyr to steal the Book of All, but he secre
 equipment:
   - ../items/equipment/weapons/blacktide.md
   - ../items/equipment/armor/wayfarer-leathers.md
+  - ../items/supplies/ammunition/throwing-knives.md
 ---
