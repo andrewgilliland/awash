@@ -31,6 +31,23 @@
 - **Ironwake Village**: Reinforced stone barracks, supply yards, and iron gates form a compact settlement beneath the castle road.
 - **Warden's Rest**: A sealed cloister of white stone, cold gold lamps, and intact oath banners lies hidden within Blackreef.
 
+## Shops
+
+- **Supply Shop**: Sells healing items, ammunition, antidotes, and other basic consumables.
+- **Smith**: Sells and upgrades weapons, armor, and combat equipment.
+- **Mystic**: Sells relics, arcane consumables, and memory-related services.
+
+### Spoke Assignments
+
+- **Tidefen Village**: Supply Shop.
+- **Shrinekeeper Camp**: Supply Shop.
+- **Emberroot Village**: Smith.
+- **Canopy Refuge**: Supply Shop.
+- **Glassmire Village**: Mystic.
+- **Stormglass Refuge**: Mystic.
+- **Ironwake Village**: Smith.
+- **Warden's Rest**: No shop.
+
 ## Metroidvania Cartography-Style ASCII Map
 
 ```text
