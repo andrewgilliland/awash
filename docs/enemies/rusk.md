@@ -1,5 +1,5 @@
 ---
-name: The Barbarian
+name: Rusk
 type: boss
 category: Humanoid
 size: Large

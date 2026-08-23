@@ -50,7 +50,7 @@ Each linked file stores the entity's `name`, `type`, `category`, `size`, `moveme
 
 ### Boss
 
-- [The Barbarian](barbarian.md)
+- [Rusk](rusk.md)
 
 ## Underroot
 
@@ -98,7 +98,7 @@ Each linked file stores the entity's `name`, `type`, `category`, `size`, `moveme
 
 ### Boss
 
-- [The Barbarian](barbarian.md)
+- [Rusk](rusk.md)
 
 ## Blackreef Approach
 
