@@ -1,10 +1,16 @@
-# Blackreef Approach
+---
+name: Blackreef Approach
+type: major_region
+chapter: 7
+safe_spoke: ironwake-village.md
+key_areas:
+  - Castle Approach
+  - Battlements
+  - Processional roads
+enemy_roster: ../../enemies/README.md#blackreef-approach
+---
 
-- **Type:** Major region
-- **Chapter:** 7
-- **Safe Spoke:** [Ironwake Village](ironwake-village.md)
-- **Key Areas:** Castle Approach, battlements, processional roads
-- **Enemies:** [Blackreef Approach roster](../../enemies/README.md#blackreef-approach)
+# Blackreef Approach
 
 ## Description
 

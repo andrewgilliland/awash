@@ -1,11 +1,17 @@
-# Stormwatch Tower
+---
+name: Stormwatch Tower
+type: major_region
+chapter: 6
+safe_spoke: stormglass-refuge.md
+key_areas:
+  - Weather engines
+  - Ritual laboratory
+  - Tower summit
+unlock: Arcane key
+enemy_roster: ../../enemies/README.md#stormwatch-tower
+---
 
-- **Type:** Major region
-- **Chapter:** 6
-- **Safe Spoke:** [Stormglass Refuge](stormglass-refuge.md)
-- **Key Areas:** Weather engines, ritual laboratory, tower summit
-- **Unlock:** Arcane key
-- **Enemies:** [Stormwatch Tower roster](../../enemies/README.md#stormwatch-tower)
+# Stormwatch Tower
 
 ## Description
 

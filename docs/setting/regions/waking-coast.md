@@ -1,10 +1,15 @@
-# Waking Coast
+---
+name: Waking Coast
+type: major_region
+chapter: 1
+safe_spoke: tidefen-village.md
+key_areas:
+  - Black Surf
+  - Oath-stone shore
+enemy_roster: ../../enemies/README.md#waking-coast
+---
 
-- **Type:** Major region
-- **Chapter:** 1
-- **Safe Spoke:** [Tidefen Village](tidefen-village.md)
-- **Key Areas:** Black Surf, oath-stone shore
-- **Enemies:** [Waking Coast roster](../../enemies/README.md#waking-coast)
+# Waking Coast
 
 ## Description
 

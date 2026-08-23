@@ -20,6 +20,11 @@
 - Vertical lanes reconnect to horizontal lanes where possible.
 - Endgame areas are reachable from multiple late-game hubs.
 
+## Region File Schema
+
+- Major-region frontmatter stores `name`, `type`, `chapter`, `safe_spoke`, `key_areas`, progression gates or unlocks, and `enemy_roster`.
+- Safe-spoke frontmatter stores `name`, `type`, `parent_region`, `enemies`, `npcs`, `shop`, and `visual`.
+
 ## Region Index
 
 | Major Region                                        | Safe Spoke                                        |

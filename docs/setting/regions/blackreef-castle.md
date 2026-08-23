@@ -1,10 +1,16 @@
-# Blackreef Castle
+---
+name: Blackreef Castle
+type: major_region
+chapter: 8
+safe_spoke: wardens-rest.md
+key_areas:
+  - Doctrine halls
+  - Inner circles
+  - Book Vault
+enemy_roster: ../../enemies/README.md#blackreef-castle
+---
 
-- **Type:** Major region
-- **Chapter:** 8
-- **Safe Spoke:** [Warden's Rest](wardens-rest.md)
-- **Key Areas:** Doctrine halls, inner circles, Book Vault
-- **Enemies:** [Blackreef Castle roster](../../enemies/README.md#blackreef-castle)
+# Blackreef Castle
 
 ## Description
 

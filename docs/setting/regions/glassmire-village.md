@@ -1,8 +1,11 @@
-# Glassmire Village
+---
+name: Glassmire Village
+type: safe_spoke
+parent_region: northern-reaches.md
+enemies: []
+npcs: possible
+shop: Mystic
+visual: Narrow homes with mirrored shutters stand on pale boardwalks crossing still, reflective wetlands.
+---
 
-- **Type:** Safe spoke
-- **Parent Region:** [Northern Reaches](northern-reaches.md)
-- **Enemies:** None
-- **NPCs:** Possible
-- **Shop:** Mystic
-- **Visual:** Narrow homes with mirrored shutters stand on pale boardwalks crossing still, reflective wetlands.
+# Glassmire Village

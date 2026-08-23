@@ -1,11 +1,17 @@
-# High Canopy
+---
+name: High Canopy
+type: major_region
+chapter: 4
+safe_spoke: canopy-refuge.md
+key_areas:
+  - High Canopy Jungle
+  - Canopy Shaft
+  - Observatory Ridge
+gate: Double jump
+enemy_roster: ../../enemies/README.md#high-canopy
+---
 
-- **Type:** Major region
-- **Chapter:** 4
-- **Safe Spoke:** [Canopy Refuge](canopy-refuge.md)
-- **Key Areas:** High Canopy Jungle, Canopy Shaft, Observatory Ridge
-- **Gate:** Double jump
-- **Enemies:** [High Canopy roster](../../enemies/README.md#high-canopy)
+# High Canopy
 
 ## Description
 

@@ -1,10 +1,15 @@
-# Northern Reaches
+---
+name: Northern Reaches
+type: major_region
+chapter: 5
+safe_spoke: glassmire-village.md
+key_areas:
+  - North Shoals
+  - Floating Causeway
+enemy_roster: ../../enemies/README.md#northern-reaches
+---
 
-- **Type:** Major region
-- **Chapter:** 5
-- **Safe Spoke:** [Glassmire Village](glassmire-village.md)
-- **Key Areas:** North Shoals, Floating Causeway
-- **Enemies:** [Northern Reaches roster](../../enemies/README.md#northern-reaches)
+# Northern Reaches
 
 ## Description
 
