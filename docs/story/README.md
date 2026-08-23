@@ -10,6 +10,7 @@ A dark elf hero wakes on the shore of a forbidden island with no memory of who h
 - World state: the island is ancient, fractured, and full of sealed knowledge sites.
 
 ## Story Pillars
+- Identity through choice: [Vael's past explains him without deciding who he becomes](theme.md).
 - Memory as progression: traversal unlocks also restore identity fragments.
 - Knowledge as danger: power without restraint corrupts both hero and antagonist.
 - Place as narrative: every biome region reflects a past culture and current collapse.
@@ -17,6 +18,7 @@ A dark elf hero wakes on the shore of a forbidden island with no memory of who h
 
 ## Story Docs Index
 - Main story and chapter outline: [story.md](story.md)
+- Central theme and mirrored choices: [theme.md](theme.md)
 - Character catalog: [characters](../characters/README.md)
 - Island setting, flow, and region catalog: [setting](../setting/README.md)
 - Structure catalog and enhancement ideas: [structures.md](structures.md)
