@@ -2,6 +2,7 @@
 name: Mercenary
 type: enemy
 category: Humanoid
+race: Human
 size: Medium
 movement: Ground
 encounters:

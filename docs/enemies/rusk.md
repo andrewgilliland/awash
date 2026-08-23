@@ -2,6 +2,7 @@
 name: Rusk
 type: boss
 category: Humanoid
+race: Human
 size: Large
 movement: Ground
 encounters:

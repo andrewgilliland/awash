@@ -2,6 +2,7 @@
 name: Ilyr Voss
 type: boss
 category: Humanoid
+race: Human
 size: Medium
 movement: Ground
 encounters:
