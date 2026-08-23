@@ -1,10 +1,10 @@
 # Chapter Outline
 
-1. [Waking Coast](1.md)
-2. [Low Canopy Jungle](2.md)
-3. [Underroot](3.md)
-4. [High Canopy](4.md)
-5. [Northern Reaches](5.md)
-6. [Stormwatch Tower](6.md)
-7. [Blackreef Approach](7.md)
-8. [Blackreef Castle](8.md)
+1. [Awakening](1.md) - Waking Coast
+2. [Pursuit](2.md) - Low Canopy Jungle
+3. [Betrayal](3.md) - Underroot
+4. [Exposure](4.md) - High Canopy
+5. [Reckoning](5.md) - Northern Reaches
+6. [Ambition](6.md) - Stormwatch Tower
+7. [Loyalty](7.md) - Blackreef Approach
+8. [Choice](8.md) - Blackreef Castle
