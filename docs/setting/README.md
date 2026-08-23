@@ -91,4 +91,4 @@ Item categories are defined in the [item catalog](../items/README.md).
 ## Related Documents
 
 - [Enemy catalog](../enemies/README.md)
-- [Story outline](../story/story.md)
+- [Story outline](../story/README.md)
