@@ -21,7 +21,6 @@ A dark elf hero wakes on the shore of a forbidden island with no memory of who h
 - Central theme and mirrored choices: [theme.md](theme.md)
 - Character catalog: [characters](../characters/README.md)
 - Island setting, flow, and region catalog: [setting](../setting/README.md)
-- Structure catalog and enhancement ideas: [structures.md](structures.md)
 
 ## Main Cast
 
