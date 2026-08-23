@@ -12,4 +12,5 @@ encounters:
   - region: Stormwatch Tower
     description: Empowered by Stormwatch's engines, Ilyr's enforcer adds lightning trails and arcane armor to his earlier attacks until Vael defeats but spares him.
     visual: His scarred plate is fused with blue conduits, while stormlight crawls over his maul and raises his hair like a burning crown.
+inspiration: Final Fantasy Adventure — Jungle boss
 ---
