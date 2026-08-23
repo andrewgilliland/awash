@@ -1,16 +1,16 @@
 ---
 name: Low Canopy Jungle
-type: major_region
+type: region
 chapter: 2
 safe_spoke: shrinekeeper-camp.md
+npcs: []
+shops: []
 key_areas:
   - Medicine terraces
   - Smuggler Inlet
   - Pirate Fort
 enemy_roster: ../../enemies/README.md#low-canopy-jungle
 ---
-
-# Low Canopy Jungle
 
 ## Description
 

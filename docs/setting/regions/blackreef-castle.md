@@ -1,16 +1,16 @@
 ---
 name: Blackreef Castle
-type: major_region
+type: region
 chapter: 8
 safe_spoke: wardens-rest.md
+npcs: []
+shops: []
 key_areas:
   - Doctrine halls
   - Inner circles
   - Book Vault
 enemy_roster: ../../enemies/README.md#blackreef-castle
 ---
-
-# Blackreef Castle
 
 ## Description
 

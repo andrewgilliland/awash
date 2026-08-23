@@ -1,15 +1,15 @@
 ---
 name: Northern Reaches
-type: major_region
+type: region
 chapter: 5
 safe_spoke: glassmire-village.md
+npcs: []
+shops: []
 key_areas:
   - North Shoals
   - Floating Causeway
 enemy_roster: ../../enemies/README.md#northern-reaches
 ---
-
-# Northern Reaches
 
 ## Description
 

@@ -1,8 +1,10 @@
 ---
 name: High Canopy
-type: major_region
+type: region
 chapter: 4
 safe_spoke: canopy-refuge.md
+npcs: []
+shops: []
 key_areas:
   - High Canopy Jungle
   - Canopy Shaft
@@ -10,8 +12,6 @@ key_areas:
 gate: Double jump
 enemy_roster: ../../enemies/README.md#high-canopy
 ---
-
-# High Canopy
 
 ## Description
 

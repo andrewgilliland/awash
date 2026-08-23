@@ -1,11 +1,9 @@
 ---
 name: Ironwake Village
-type: safe_spoke
+type: spoke
 parent_region: blackreef-approach.md
 enemies: []
-npcs: possible
-shop: Smith
+npcs: []
+shops: [Smith]
 visual: Reinforced stone barracks, supply yards, and iron gates form a compact settlement beneath the castle road.
 ---
-
-# Ironwake Village

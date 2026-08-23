@@ -22,8 +22,9 @@
 
 ## Region File Schema
 
-- Major-region frontmatter stores `name`, `type`, `chapter`, `safe_spoke`, `key_areas`, progression gates or unlocks, and `enemy_roster`.
-- Safe-spoke frontmatter stores `name`, `type`, `parent_region`, `enemies`, `npcs`, `shop`, and `visual`.
+- Major-region files use `type: region` and store `name`, `chapter`, `safe_spoke`, `npcs`, `shops`, `key_areas`, progression gates or unlocks, and `enemy_roster`.
+- Safe-spoke files use `type: spoke` and store `name`, `parent_region`, `enemies`, `npcs`, `shops`, and `visual`.
+- `npcs` and `shops` are always arrays, including when empty.
 
 ## Region Index
 

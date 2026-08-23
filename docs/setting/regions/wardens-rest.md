@@ -1,11 +1,9 @@
 ---
 name: Warden's Rest
-type: safe_spoke
+type: spoke
 parent_region: blackreef-castle.md
 enemies: []
-npcs: possible
-shop: null
+npcs: []
+shops: []
 visual: A sealed cloister of white stone, cold gold lamps, and intact oath banners lies hidden within Blackreef.
 ---
-
-# Warden's Rest

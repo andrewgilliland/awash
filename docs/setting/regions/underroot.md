@@ -1,16 +1,16 @@
 ---
 name: Underroot
-type: major_region
+type: region
 chapter: 3
 safe_spoke: emberroot-village.md
+npcs: []
+shops: []
 key_areas:
   - Underroot Cave System
   - Relic Chamber
 unlock: Double jump
 enemy_roster: ../../enemies/README.md#underroot
 ---
-
-# Underroot
 
 ## Description
 

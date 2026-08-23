@@ -1,8 +1,10 @@
 ---
 name: Stormwatch Tower
-type: major_region
+type: region
 chapter: 6
 safe_spoke: stormglass-refuge.md
+npcs: []
+shops: []
 key_areas:
   - Weather engines
   - Ritual laboratory
@@ -10,8 +12,6 @@ key_areas:
 unlock: Arcane key
 enemy_roster: ../../enemies/README.md#stormwatch-tower
 ---
-
-# Stormwatch Tower
 
 ## Description
 
