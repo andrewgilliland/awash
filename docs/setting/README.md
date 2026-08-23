@@ -1,5 +1,9 @@
 # Setting
 
+## Eidolon
+
+Eidolon is an isolated, fractured island of black shores, dense jungles, suspended ruins, and ancient strongholds built around knowledge too dangerous to leave unguarded. Its scattered communities survive among the ruins while avoiding ancient dangers they no longer fully understand.
+
 ## Region Progression
 
 1. [Waking Coast](regions/waking-coast.md): Waking Coast (start) -> [Tidefen Village](regions/tidefen-village.md).
