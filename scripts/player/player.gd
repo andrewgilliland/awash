@@ -3,6 +3,7 @@ extends CharacterBody2D
 enum PlayerState {
 	IDLE,
 	WALK,
+	JUMP,
 	ATTACK,
 }
 
@@ -11,13 +12,16 @@ const SWORD_SPRITE_SHEET := preload("res://assets/sprites/weapons/sword_1.png")
 const FRAME_SIZE := Vector2i(16, 16)
 const IDLE_FRAMES: Array[int] = [0]
 const WALK_FRAMES: Array[int] = [0, 1]
+const JUMP_FRAMES: Array[int] = [2, 3, 4]
 const ATTACK_FRAMES: Array[int] = [5, 6]
 const SWORD_ATTACK_FRAMES: Array[int] = [0, 1]
 
 @export var move_speed: float = 80.0
 @export var acceleration: float = 600.0
 @export var friction: float = 800.0
+@export var jump_velocity: float = -260.0
 @export var walk_animation_fps: float = 8.0
+@export var jump_animation_fps: float = 8.0
 @export var attack_animation_fps: float = 10.0
 @export var sword_attack_frame_offsets: Array[Vector2] = [
 	Vector2(12.0, -12.0),
@@ -43,10 +47,18 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	_handle_jump_input()
 	_handle_attack_input()
 	_update_horizontal_movement(delta)
 	_apply_gravity(delta)
 	move_and_slide()
+	_update_locomotion_state()
+
+
+func _handle_jump_input() -> void:
+	if Input.is_action_just_pressed(&"jump") and is_on_floor():
+		velocity.y = jump_velocity
+		_set_state(PlayerState.JUMP)
 
 
 func _handle_attack_input() -> void:
@@ -62,9 +74,19 @@ func _update_horizontal_movement(delta: float) -> void:
 	elif direction != 0.0:
 		velocity.x = move_toward(velocity.x, direction * move_speed, acceleration * delta)
 		_update_facing(direction)
-		_set_state(PlayerState.WALK)
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
+
+
+func _update_locomotion_state() -> void:
+	if _state == PlayerState.ATTACK:
+		return
+
+	if not is_on_floor():
+		_set_state(PlayerState.JUMP)
+	elif Input.get_axis(&"move_left", &"move_right") != 0.0:
+		_set_state(PlayerState.WALK)
+	else:
 		_set_state(PlayerState.IDLE)
 
 
@@ -99,7 +121,7 @@ func _on_character_animation_finished() -> void:
 	if _state != PlayerState.ATTACK or _character_sprite.animation != &"attack":
 		return
 
-	_set_state(PlayerState.IDLE)
+	_set_state(PlayerState.IDLE if is_on_floor() else PlayerState.JUMP)
 
 
 func _set_state(next_state: PlayerState) -> void:
@@ -111,6 +133,9 @@ func _set_state(next_state: PlayerState) -> void:
 		PlayerState.WALK:
 			_sword_sprite.visible = false
 			_character_sprite.play(&"walk")
+		PlayerState.JUMP:
+			_sword_sprite.visible = false
+			_character_sprite.play(&"jump")
 		PlayerState.IDLE:
 			_sword_sprite.stop()
 			_sword_sprite.visible = false
@@ -128,6 +153,9 @@ func _build_character_sprite_frames() -> SpriteFrames:
 	_add_animation(sprite_frames, PLAYER_SPRITE_SHEET, &"idle", IDLE_FRAMES, 1.0, true)
 	_add_animation(
 		sprite_frames, PLAYER_SPRITE_SHEET, &"walk", WALK_FRAMES, walk_animation_fps, true
+	)
+	_add_animation(
+		sprite_frames, PLAYER_SPRITE_SHEET, &"jump", JUMP_FRAMES, jump_animation_fps, false
 	)
 	_add_animation(
 		sprite_frames, PLAYER_SPRITE_SHEET, &"attack", ATTACK_FRAMES, attack_animation_fps, false

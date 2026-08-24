@@ -8,11 +8,13 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 - `move_left`: move horizontally to the left.
 - `move_right`: move horizontally to the right.
+- `jump`: jump while grounded.
 
 ## Movement
 
 - Horizontal input accelerates the player toward the configured movement speed.
 - Releasing horizontal input applies friction until horizontal velocity reaches zero.
+- Pressing jump while grounded applies the configured upward jump velocity.
 - Gravity applies while the player is airborne.
 - The player faces the most recent horizontal movement direction.
 
@@ -20,6 +22,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 - `IDLE`: selected while there is no horizontal input.
 - `WALK`: selected while left or right input is held.
+- `JUMP`: selected while airborne.
 - `ATTACK`: selected when `melee_attack` is pressed and held until the animation finishes.
 
 ## Animation
@@ -28,6 +31,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - Frames use a 16x16 grid.
 - Idle uses frame 0.
 - Walk loops through frames 0 and 1.
+- Jump plays frames 2, 3, and 4 once and holds its final frame while airborne.
 - Attack uses player frames 5 and 6.
 - The attack displays sword frames 0 and 1 from `sword_1.png` at the same time.
 - Each sword frame uses its matching entry in `sword_attack_frame_offsets` and mirrors with facing.
@@ -35,4 +39,4 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 ## Out Of Scope
 
-All other player behavior, including jumping, running, damage, and projectiles, will be added separately.
+All other player behavior, including running, damage, and projectiles, will be added separately.

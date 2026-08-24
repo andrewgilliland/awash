@@ -9,6 +9,7 @@ var _failures: int = 0
 
 func _init() -> void:
 	_run_test("Player idle and walk frames load", _test_player_idle_and_walk_frames_load)
+	_run_test("Player jump frames load", _test_player_jump_frames_load)
 	_run_test("Player faces movement direction", _test_player_faces_movement_direction)
 	_run_test("Player attack displays offset sword", _test_player_attack_displays_offset_sword)
 	_run_test("Main scene loads", _test_main_scene_loads)
@@ -56,6 +57,32 @@ func _test_player_idle_and_walk_frames_load() -> bool:
 	valid = valid and _frame_region_is(sprite_frames, &"idle", 0, Rect2(0, 0, 16, 16))
 	valid = valid and _frame_region_is(sprite_frames, &"walk", 0, Rect2(0, 0, 16, 16))
 	valid = valid and _frame_region_is(sprite_frames, &"walk", 1, Rect2(16, 0, 16, 16))
+	instance.queue_free()
+	return valid
+
+
+func _test_player_jump_frames_load() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var instance := packed_scene.instantiate() as CharacterBody2D
+	if instance == null:
+		return false
+
+	root.add_child(instance)
+	instance.call("_ready")
+	var sprite := instance.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	var sprite_frames := sprite.sprite_frames
+
+	var valid := sprite_frames.get_frame_count(&"jump") == 3
+	valid = valid and not sprite_frames.get_animation_loop(&"jump")
+	valid = valid and _frame_region_is(sprite_frames, &"jump", 0, Rect2(32, 0, 16, 16))
+	valid = valid and _frame_region_is(sprite_frames, &"jump", 1, Rect2(48, 0, 16, 16))
+	valid = valid and _frame_region_is(sprite_frames, &"jump", 2, Rect2(64, 0, 16, 16))
+	instance.call("_set_state", 2)
+	valid = valid and sprite.animation == &"jump" and sprite.is_playing()
+
 	instance.queue_free()
 	return valid
 
@@ -126,7 +153,7 @@ func _test_player_attack_displays_offset_sword() -> bool:
 	valid = valid and sword_sprite.position == Vector2(-12.0, -22.0)
 
 	instance.call("_on_character_animation_finished")
-	valid = valid and not sword_sprite.visible and character_sprite.animation == &"idle"
+	valid = valid and not sword_sprite.visible and character_sprite.animation == &"jump"
 
 	instance.queue_free()
 	return valid
