@@ -9,6 +9,7 @@ var _failures: int = 0
 
 func _init() -> void:
 	_run_test("Player idle and walk frames load", _test_player_idle_and_walk_frames_load)
+	_run_test("Player faces movement direction", _test_player_faces_movement_direction)
 	_run_test("Main scene loads", _test_main_scene_loads)
 	_run_test("Pause menu scene loads", _test_pause_menu_scene_loads)
 	_run_test("Runtime state defaults sane", _test_runtime_state_defaults_sane)
@@ -56,6 +57,29 @@ func _test_player_idle_and_walk_frames_load() -> bool:
 	valid = valid and _frame_region_is(sprite_frames, &"walk", 1, Rect2(16, 0, 16, 16))
 	instance.queue_free()
 	return valid
+
+
+func _test_player_faces_movement_direction() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var instance := packed_scene.instantiate() as CharacterBody2D
+	if instance == null:
+		return false
+
+	root.add_child(instance)
+	instance.call("_ready")
+	var sprite := instance.get_node("AnimatedSprite2D") as AnimatedSprite2D
+
+	instance.call("_update_facing", 1.0)
+	var faces_right := sprite.flip_h
+
+	instance.call("_update_facing", -1.0)
+	var faces_left := not sprite.flip_h
+
+	instance.queue_free()
+	return faces_right and faces_left
 
 
 func _frame_region_is(

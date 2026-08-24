@@ -29,7 +29,7 @@ func _physics_process(delta: float) -> void:
 
 	if direction != 0.0:
 		velocity.x = move_toward(velocity.x, target_velocity, acceleration * delta)
-		_sprite.flip_h = direction < 0.0
+		_update_facing(direction)
 		_set_state(PlayerState.WALK)
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
@@ -39,6 +39,10 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 
 	move_and_slide()
+
+
+func _update_facing(direction: float) -> void:
+	_sprite.flip_h = direction > 0.0
 
 
 func _set_state(next_state: PlayerState) -> void:
