@@ -4,21 +4,11 @@ const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
 const MAIN_SCENE_PATH := "res://scenes/main.tscn"
 const PAUSE_MENU_SCENE_PATH := "res://scenes/ui/pause_menu.tscn"
 const RUNTIME_STATE_SCRIPT_PATH := "res://scripts/core/runtime_state.gd"
-const PLAYER_STATE_ATTACK := 5
-const PLAYER_STATE_RUN := 2
-const PLAYER_STATE_GUARD := 7
-const PLAYER_STATE_CHARGE := 8
-const PLAYER_STATE_HURT := 9
-const PLAYER_STATE_DEAD := 10
-const ATTACK_PHASE_NONE := 0
-const ATTACK_PHASE_STARTUP := 1
-const ATTACK_PHASE_ACTIVE := 2
-const ATTACK_PHASE_RECOVERY := 3
 var _failures: int = 0
 
 
 func _init() -> void:
-	_run_test("Player scene loads", _test_player_scene_loads)
+	_run_test("Player idle and walk frames load", _test_player_idle_and_walk_frames_load)
 	_run_test("Main scene loads", _test_main_scene_loads)
 	_run_test("Pause menu scene loads", _test_pause_menu_scene_loads)
 	_run_test("Runtime state defaults sane", _test_runtime_state_defaults_sane)
@@ -41,18 +31,44 @@ func _run_test(name: String, test_callable: Callable) -> void:
 		push_error("FAIL: %s" % name)
 
 
-func _test_player_scene_loads() -> bool:
+func _test_player_idle_and_walk_frames_load() -> bool:
 	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
 	if packed_scene == null:
 		return false
 
-	var instance := packed_scene.instantiate()
+	var instance := packed_scene.instantiate() as CharacterBody2D
 	if instance == null:
 		return false
 
-	var is_expected_type := instance is CharacterBody2D
+	root.add_child(instance)
+	instance.call("_ready")
+	var sprite := instance.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	if sprite == null or sprite.sprite_frames == null:
+		instance.queue_free()
+		return false
+
+	var sprite_frames := sprite.sprite_frames
+	var valid := sprite.animation == &"idle"
+	valid = valid and sprite_frames.get_frame_count(&"idle") == 1
+	valid = valid and sprite_frames.get_frame_count(&"walk") == 2
+	valid = valid and _frame_region_is(sprite_frames, &"idle", 0, Rect2(0, 0, 16, 16))
+	valid = valid and _frame_region_is(sprite_frames, &"walk", 0, Rect2(0, 0, 16, 16))
+	valid = valid and _frame_region_is(sprite_frames, &"walk", 1, Rect2(16, 0, 16, 16))
 	instance.queue_free()
-	return is_expected_type
+	return valid
+
+
+func _frame_region_is(
+	sprite_frames: SpriteFrames,
+	animation_name: StringName,
+	frame_index: int,
+	expected_region: Rect2
+) -> bool:
+	var frame_texture := sprite_frames.get_frame_texture(animation_name, frame_index)
+	if frame_texture is not AtlasTexture:
+		return false
+
+	return (frame_texture as AtlasTexture).region == expected_region
 
 
 func _test_main_scene_loads() -> bool:

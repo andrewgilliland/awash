@@ -1,44 +1,24 @@
-[gd_scene load_steps=5 format=3 uid="uid://bsmxp4op6cc6e"]
+[gd_scene load_steps=3 format=3 uid="uid://bsmxp4op6cc6e"]
 
 [ext_resource type="Script" uid="uid://o4osibv7x85f" path="res://scripts/player/player.gd" id="1_3h4r8"]
-[ext_resource type="PackedScene" uid="uid://bvecq7rtg76pf" path="res://scenes/player/player_projectile.tscn" id="2_hjhxw"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2x6a2"]
 radius = 6.0
 height = 20.0
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack"]
-size = Vector2(14, 12)
-
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 2
 script = ExtResource("1_3h4r8")
-projectile_scene = ExtResource("2_hjhxw")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -10)
 shape = SubResource("CapsuleShape2D_2x6a2")
 
-[node name="Body" type="Polygon2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -10)
-color = Color(0.164706, 0.741176, 0.756863, 1)
-polygon = PackedVector2Array(-7, -11, 7, -11, 7, 11, -7, 11)
-
-[node name="VisualRoot" type="Node2D" parent="."]
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VisualRoot"]
+texture_filter = 1
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, -36)
 position_smoothing_enabled = true
 position_smoothing_speed = 6.0
-
-[node name="AttackArea" type="Area2D" parent="."]
-position = Vector2(14, -10)
-collision_layer = 4
-collision_mask = 24
-monitoring = false
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
-shape = SubResource("RectangleShape2D_attack")
-disabled = true
