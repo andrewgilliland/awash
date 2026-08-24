@@ -18,6 +18,11 @@ shape = SubResource("CapsuleShape2D_2x6a2")
 position = Vector2(0, -10)
 texture_filter = 1
 
+[node name="SwordSprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(-8, -10)
+texture_filter = 1
+visible = false
+
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, -36)
 position_smoothing_enabled = true

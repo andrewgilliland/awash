@@ -20,6 +20,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 - `IDLE`: selected while there is no horizontal input.
 - `WALK`: selected while left or right input is held.
+- `ATTACK`: selected when `melee_attack` is pressed and held until the animation finishes.
 
 ## Animation
 
@@ -27,8 +28,11 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - Frames use a 16x16 grid.
 - Idle uses frame 0.
 - Walk loops through frames 0 and 1.
+- Attack uses player frames 5 and 6.
+- The attack displays sword frames 0 and 1 from `sword_1.png` at the same time.
+- The sword is offset forward by the configurable `sword_attack_offset` and mirrors with facing.
 - Sprite frames are constructed programmatically in `scripts/player/player.gd`.
 
 ## Out Of Scope
 
-All other player behavior, including jumping, running, combat, damage, and projectiles, will be added separately.
+All other player behavior, including jumping, running, damage, and projectiles, will be added separately.

@@ -10,6 +10,7 @@ var _failures: int = 0
 func _init() -> void:
 	_run_test("Player idle and walk frames load", _test_player_idle_and_walk_frames_load)
 	_run_test("Player faces movement direction", _test_player_faces_movement_direction)
+	_run_test("Player attack displays offset sword", _test_player_attack_displays_offset_sword)
 	_run_test("Main scene loads", _test_main_scene_loads)
 	_run_test("Pause menu scene loads", _test_pause_menu_scene_loads)
 	_run_test("Runtime state defaults sane", _test_runtime_state_defaults_sane)
@@ -80,6 +81,55 @@ func _test_player_faces_movement_direction() -> bool:
 
 	instance.queue_free()
 	return faces_right and faces_left
+
+
+func _test_player_attack_displays_offset_sword() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var instance := packed_scene.instantiate() as CharacterBody2D
+	if instance == null:
+		return false
+
+	root.add_child(instance)
+	instance.call("_ready")
+	var character_sprite := instance.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	var sword_sprite := instance.get_node("SwordSprite") as AnimatedSprite2D
+	var character_frames := character_sprite.sprite_frames
+	var sword_frames := sword_sprite.sprite_frames
+
+	var valid := character_frames.get_frame_count(&"attack") == 2
+	valid = valid and sword_frames.get_frame_count(&"attack") == 2
+	valid = valid and _frame_region_is(character_frames, &"attack", 0, Rect2(80, 0, 16, 16))
+	valid = valid and _frame_region_is(character_frames, &"attack", 1, Rect2(96, 0, 16, 16))
+	valid = valid and _frame_region_is(sword_frames, &"attack", 0, Rect2(0, 0, 16, 16))
+	valid = valid and _frame_region_is(sword_frames, &"attack", 1, Rect2(16, 0, 16, 16))
+
+	instance.call("_update_facing", 1.0)
+	instance.call("_start_attack")
+	valid = valid and character_sprite.animation == &"attack" and character_sprite.is_playing()
+	valid = valid and sword_sprite.visible and sword_sprite.animation == &"attack"
+	valid = valid and sword_sprite.is_playing() and sword_sprite.position == Vector2(12.0, -22.0)
+	valid = valid and character_sprite.flip_h and sword_sprite.flip_h
+
+	sword_sprite.frame = 1
+	instance.call("_update_sword_position")
+	valid = valid and sword_sprite.position == Vector2(16.0, -10.0)
+
+	instance.call("_update_facing", -1.0)
+	valid = valid and sword_sprite.position == Vector2(-16.0, -10.0)
+	valid = valid and not character_sprite.flip_h and not sword_sprite.flip_h
+
+	sword_sprite.frame = 0
+	instance.call("_update_sword_position")
+	valid = valid and sword_sprite.position == Vector2(-12.0, -22.0)
+
+	instance.call("_on_character_animation_finished")
+	valid = valid and not sword_sprite.visible and character_sprite.animation == &"idle"
+
+	instance.queue_free()
+	return valid
 
 
 func _frame_region_is(
