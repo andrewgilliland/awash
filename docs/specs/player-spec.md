@@ -30,7 +30,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - Walk loops through frames 0 and 1.
 - Attack uses player frames 5 and 6.
 - The attack displays sword frames 0 and 1 from `sword_1.png` at the same time.
-- The sword is offset forward by the configurable `sword_attack_offset` and mirrors with facing.
+- Each sword frame uses its matching entry in `sword_attack_frame_offsets` and mirrors with facing.
 - Sprite frames are constructed programmatically in `scripts/player/player.gd`.
 
 ## Out Of Scope
