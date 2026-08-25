@@ -9,6 +9,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - `move_left`: move horizontally to the left.
 - `move_right`: move horizontally to the right.
 - `jump`: jump while grounded.
+- `melee_attack`: hold to charge, release to attack.
 
 ## Movement
 
@@ -23,7 +24,8 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - `IDLE`: selected while there is no horizontal input.
 - `WALK`: selected while left or right input is held.
 - `JUMP`: selected while airborne.
-- `ATTACK`: selected when `melee_attack` is pressed and held until the animation finishes.
+- `CHARGE`: selected while `melee_attack` is held; movement continues, facing is locked, and sword charge pose is shown.
+- `ATTACK`: selected when `melee_attack` is released after charging and held until the animation finishes.
 
 ## Animation
 
@@ -33,6 +35,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - Walk loops through frames 0 and 1.
 - Jump plays frames 2, 3, and 4 once and holds its final frame while airborne.
 - Attack uses player frames 5 and 6.
+- Charge shows sword frame 1 from `sword_1.png` at `sword_charge_offset`, mirrored by facing.
 - The attack displays sword frames 0 and 1 from `sword_1.png` at the same time.
 - Each sword frame uses its matching entry in `sword_attack_frame_offsets` and mirrors with facing.
 - Sprite frames are constructed programmatically in `scripts/player/player.gd`.

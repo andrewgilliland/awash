@@ -4,6 +4,7 @@ enum PlayerState {
 	IDLE,
 	WALK,
 	JUMP,
+	CHARGE,
 	ATTACK,
 }
 
@@ -14,6 +15,7 @@ const IDLE_FRAMES: Array[int] = [0]
 const WALK_FRAMES: Array[int] = [0, 1]
 const JUMP_FRAMES: Array[int] = [2, 3, 4]
 const ATTACK_FRAMES: Array[int] = [5, 6]
+const SWORD_CHARGE_FRAMES: Array[int] = [1]
 const SWORD_ATTACK_FRAMES: Array[int] = [0, 1]
 
 @export var move_speed: float = 80.0
@@ -23,6 +25,7 @@ const SWORD_ATTACK_FRAMES: Array[int] = [0, 1]
 @export var walk_animation_fps: float = 8.0
 @export var jump_animation_fps: float = 8.0
 @export var attack_animation_fps: float = 10.0
+@export var sword_charge_offset: Vector2 = Vector2(12.0, -12.0)
 @export var sword_attack_frame_offsets: Array[Vector2] = [
 	Vector2(12.0, -12.0),
 	Vector2(16.0, 0.0),
@@ -62,24 +65,36 @@ func _handle_jump_input() -> void:
 
 
 func _handle_attack_input() -> void:
-	if Input.is_action_just_pressed(&"melee_attack") and _state != PlayerState.ATTACK:
+	if _state == PlayerState.ATTACK:
+		return
+
+	if Input.is_action_pressed(&"melee_attack"):
+		_set_state(PlayerState.CHARGE)
+	elif _state == PlayerState.CHARGE:
 		_start_attack()
 
 
 func _update_horizontal_movement(delta: float) -> void:
 	var direction := Input.get_axis(&"move_left", &"move_right")
+	_apply_horizontal_movement(direction, delta)
 
+
+func _apply_horizontal_movement(direction: float, delta: float) -> void:
 	if _state == PlayerState.ATTACK:
 		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
 	elif direction != 0.0:
 		velocity.x = move_toward(velocity.x, direction * move_speed, acceleration * delta)
-		_update_facing(direction)
+		if _state != PlayerState.CHARGE:
+			_update_facing(direction)
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
 
 
 func _update_locomotion_state() -> void:
 	if _state == PlayerState.ATTACK:
+		return
+
+	if _state == PlayerState.CHARGE and Input.is_action_pressed(&"melee_attack"):
 		return
 
 	if not is_on_floor():
@@ -103,6 +118,13 @@ func _update_facing(direction: float) -> void:
 
 
 func _update_sword_position() -> void:
+	if _state == PlayerState.CHARGE:
+		_sword_sprite.position = (
+			_character_sprite.position
+			+ Vector2(sword_charge_offset.x * _facing_direction, sword_charge_offset.y)
+		)
+		return
+
 	if sword_attack_frame_offsets.is_empty():
 		return
 
@@ -131,15 +153,22 @@ func _set_state(next_state: PlayerState) -> void:
 	_state = next_state
 	match _state:
 		PlayerState.WALK:
+			_sword_sprite.stop()
 			_sword_sprite.visible = false
 			_character_sprite.play(&"walk")
 		PlayerState.JUMP:
+			_sword_sprite.stop()
 			_sword_sprite.visible = false
 			_character_sprite.play(&"jump")
 		PlayerState.IDLE:
 			_sword_sprite.stop()
 			_sword_sprite.visible = false
 			_character_sprite.play(&"idle")
+		PlayerState.CHARGE:
+			_sword_sprite.visible = true
+			_sword_sprite.play(&"charge")
+			_character_sprite.play(&"idle")
+			_update_sword_position()
 		PlayerState.ATTACK:
 			_sword_sprite.visible = true
 			_character_sprite.play(&"attack")
@@ -166,6 +195,7 @@ func _build_character_sprite_frames() -> SpriteFrames:
 func _build_sword_sprite_frames() -> SpriteFrames:
 	var sprite_frames := SpriteFrames.new()
 	sprite_frames.remove_animation(&"default")
+	_add_animation(sprite_frames, SWORD_SPRITE_SHEET, &"charge", SWORD_CHARGE_FRAMES, 1.0, true)
 	_add_animation(
 		sprite_frames,
 		SWORD_SPRITE_SHEET,
