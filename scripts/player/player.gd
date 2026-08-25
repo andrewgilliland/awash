@@ -25,7 +25,7 @@ const SWORD_ATTACK_FRAMES: Array[int] = [0, 1]
 @export var walk_animation_fps: float = 8.0
 @export var jump_animation_fps: float = 8.0
 @export var attack_animation_fps: float = 10.0
-@export var sword_charge_offset: Vector2 = Vector2(16.0, 0.0)
+@export var sword_charge_offset: Vector2 = Vector2(11.0, 0.0)
 @export var sword_attack_frame_offsets: Array[Vector2] = [
 	Vector2(12.0, -12.0),
 	Vector2(16.0, 0.0),
