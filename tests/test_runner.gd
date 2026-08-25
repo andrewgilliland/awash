@@ -183,13 +183,18 @@ func _test_player_charge_locks_facing_and_shows_sword() -> bool:
 
 	instance.call("_update_facing", -1.0)
 	instance.call("_set_state", 3)
+	var charge_offset := instance.get("sword_charge_offset") as Vector2
+	var expected_charge_position := (
+		character_sprite.position + Vector2(charge_offset.x * -1.0, charge_offset.y)
+	)
 	valid = valid and sword_sprite.visible and sword_sprite.animation == &"charge"
 	valid = valid and character_sprite.animation == &"idle"
-	valid = valid and sword_sprite.position == Vector2(-12.0, -22.0)
+	valid = valid and sword_sprite.position == expected_charge_position
 
 	instance.call("_apply_horizontal_movement", 1.0, 0.2)
 
 	valid = valid and instance.velocity.x > 0.0
+	valid = valid and character_sprite.animation == &"walk"
 	valid = valid and not character_sprite.flip_h and not sword_sprite.flip_h
 
 	instance.call("_set_state", 0)

@@ -25,7 +25,7 @@ const SWORD_ATTACK_FRAMES: Array[int] = [0, 1]
 @export var walk_animation_fps: float = 8.0
 @export var jump_animation_fps: float = 8.0
 @export var attack_animation_fps: float = 10.0
-@export var sword_charge_offset: Vector2 = Vector2(12.0, -12.0)
+@export var sword_charge_offset: Vector2 = Vector2(16.0, 0.0)
 @export var sword_attack_frame_offsets: Array[Vector2] = [
 	Vector2(12.0, -12.0),
 	Vector2(16.0, 0.0),
@@ -80,6 +80,9 @@ func _update_horizontal_movement(delta: float) -> void:
 
 
 func _apply_horizontal_movement(direction: float, delta: float) -> void:
+	if _state == PlayerState.CHARGE:
+		_update_charge_character_animation(direction)
+
 	if _state == PlayerState.ATTACK:
 		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
 	elif direction != 0.0:
@@ -88,6 +91,13 @@ func _apply_horizontal_movement(direction: float, delta: float) -> void:
 			_update_facing(direction)
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
+
+
+func _update_charge_character_animation(direction: float) -> void:
+	if direction != 0.0 and _character_sprite.animation != &"walk":
+		_character_sprite.play(&"walk")
+	elif direction == 0.0 and _character_sprite.animation != &"idle":
+		_character_sprite.play(&"idle")
 
 
 func _update_locomotion_state() -> void:
