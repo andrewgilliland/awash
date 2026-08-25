@@ -22,10 +22,10 @@ RuntimeState="*res://scripts/core/runtime_state.gd"
 
 [display]
 
-window/size/viewport_width=426
-window/size/viewport_height=240
-window/size/window_width_override=1704
-window/size/window_height_override=960
+window/size/viewport_width=160
+window/size/viewport_height=144
+window/size/window_width_override=640
+window/size/window_height_override=576
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
