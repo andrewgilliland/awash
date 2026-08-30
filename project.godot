@@ -24,11 +24,10 @@ RuntimeState="*res://scripts/core/runtime_state.gd"
 
 window/size/viewport_width=160
 window/size/viewport_height=144
+window/size/resizable=false
 window/size/window_width_override=960
 window/size/window_height_override=864
-window/size/resizable=false
 window/stretch/mode="canvas_items"
-window/stretch/aspect="keep"
 
 [layer_names]
 
