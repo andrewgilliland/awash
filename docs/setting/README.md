@@ -6,6 +6,8 @@ Eidolon is an isolated, fractured island of black shores, dense jungles, suspend
 
 Runes are scattered across the island, embedded in shores, ruins, and deep caves alike; no one living knows how they got there or who carved them. Sages once traveled to Eidolon from distant lands to study the runes and tap into their latent power, crafting the magical artifacts and wards that still linger throughout the island's strongholds.
 
+No one can reach Eidolon or leave it without a rune and the knowledge to harness it. Ilyr Voss acquired one and mastered its power to bring his expedition to the island, and the corsair captain commanding the Pirate Fort holds another, using it to slip away from Eidolon and return at will. No other known character can access or leave the island.
+
 ## Region Progression
 
 1. [Waking Coast](regions/waking-coast.md): Waking Coast (start) -> [Tidefen Village](regions/tidefen-village.md).
