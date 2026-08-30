@@ -4,6 +4,8 @@
 
 Eidolon is an isolated, fractured island of black shores, dense jungles, suspended ruins, and ancient strongholds built around knowledge too dangerous to leave unguarded. Its scattered communities survive among the ruins while avoiding ancient dangers they no longer fully understand.
 
+Runes are scattered across the island, embedded in shores, ruins, and deep caves alike; no one living knows how they got there or who carved them. Sages once traveled to Eidolon from distant lands to study the runes and tap into their latent power, crafting the magical artifacts and wards that still linger throughout the island's strongholds.
+
 ## Region Progression
 
 1. [Waking Coast](regions/waking-coast.md): Waking Coast (start) -> [Tidefen Village](regions/tidefen-village.md).
