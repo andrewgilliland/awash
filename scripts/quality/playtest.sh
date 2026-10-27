@@ -3,6 +3,8 @@ set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 GODOT_BIN="${GODOT_BIN:-godot}"
+# shellcheck source=godot_timeout.sh
+source "$PROJECT_ROOT/scripts/quality/godot_timeout.sh"
 
 if [[ "$GODOT_BIN" == */* ]]; then
 	if [[ ! -x "$GODOT_BIN" ]]; then
@@ -16,6 +18,6 @@ elif ! command -v "$GODOT_BIN" >/dev/null 2>&1; then
 fi
 
 echo "Running deterministic headless playtests..."
-"$GODOT_BIN" --headless --path "$PROJECT_ROOT" --script res://tests/playtest_runner.gd
+run_godot --headless --path "$PROJECT_ROOT" --script res://tests/playtest_runner.gd
 
 echo "Playtest pass complete."
