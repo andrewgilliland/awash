@@ -4,6 +4,17 @@ set -euo pipefail
 PROJECT_ROOT="$(git rev-parse --show-toplevel)"
 cd "$PROJECT_ROOT"
 
+# Work happens on feature/ or fix/ branches cut from dev; detached HEAD (rebases) is allowed.
+branch="$(git symbolic-ref --short -q HEAD || true)"
+case "$branch" in
+	"" | feature/* | fix/*) ;;
+	*)
+		echo "[pre-commit] Commit on a feature/<name> or fix/<name> branch, not '$branch'."
+		echo "[pre-commit] git switch dev && git pull && git switch -c feature/<name>"
+		exit 1
+		;;
+esac
+
 echo "[pre-commit] Running typecheck gate"
 ./scripts/quality/typecheck.sh
 
