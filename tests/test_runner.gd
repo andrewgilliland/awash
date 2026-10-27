@@ -4,10 +4,17 @@ const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
 const MAIN_SCENE_PATH := "res://scenes/main.tscn"
 const PAUSE_MENU_SCENE_PATH := "res://scenes/ui/pause_menu.tscn"
 const RUNTIME_STATE_SCRIPT_PATH := "res://scripts/core/runtime_state.gd"
+const PlayerController := preload("res://scripts/player/player_controller.gd")
+const PlayerControllerTests := preload("res://tests/player_controller_tests.gd")
+const STEP_DELTA := 0.1
 var _failures: int = 0
 
 
 func _init() -> void:
+	var controller_tests := PlayerControllerTests.new()
+	for test in controller_tests.get_tests():
+		_run_test(test[0], test[1])
+
 	_run_test("Player idle and walk frames load", _test_player_idle_and_walk_frames_load)
 	_run_test("Player jump frames load", _test_player_jump_frames_load)
 	_run_test("Player faces movement direction", _test_player_faces_movement_direction)
@@ -78,13 +85,14 @@ func _test_player_jump_frames_load() -> bool:
 	instance.call("_ready")
 	var sprite := instance.get_node("AnimatedSprite2D") as AnimatedSprite2D
 	var sprite_frames := sprite.sprite_frames
+	var controller := instance.get("controller") as PlayerController
 
 	var valid := sprite_frames.get_frame_count(&"jump") == 3
 	valid = valid and not sprite_frames.get_animation_loop(&"jump")
 	valid = valid and _frame_region_is(sprite_frames, &"jump", 0, Rect2(32, 0, 16, 16))
 	valid = valid and _frame_region_is(sprite_frames, &"jump", 1, Rect2(48, 0, 16, 16))
 	valid = valid and _frame_region_is(sprite_frames, &"jump", 2, Rect2(64, 0, 16, 16))
-	instance.call("_set_state", 2)
+	_step_with(controller, {"jump_pressed": true})
 	valid = valid and sprite.animation == &"jump" and sprite.is_playing()
 
 	instance.queue_free()
@@ -103,11 +111,12 @@ func _test_player_faces_movement_direction() -> bool:
 	root.add_child(instance)
 	instance.call("_ready")
 	var sprite := instance.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	var controller := instance.get("controller") as PlayerController
 
-	instance.call("_update_facing", 1.0)
+	_step_with(controller, {"direction": 1.0})
 	var faces_right := sprite.flip_h
 
-	instance.call("_update_facing", -1.0)
+	_step_with(controller, {"direction": -1.0})
 	var faces_left := not sprite.flip_h
 
 	instance.queue_free()
@@ -129,6 +138,7 @@ func _test_player_attack_displays_offset_sword() -> bool:
 	var sword_sprite := instance.get_node("SwordSprite") as AnimatedSprite2D
 	var character_frames := character_sprite.sprite_frames
 	var sword_frames := sword_sprite.sprite_frames
+	var controller := instance.get("controller") as PlayerController
 
 	var valid := character_frames.get_frame_count(&"attack") == 2
 	valid = valid and sword_frames.get_frame_count(&"attack") == 2
@@ -137,26 +147,24 @@ func _test_player_attack_displays_offset_sword() -> bool:
 	valid = valid and _frame_region_is(sword_frames, &"attack", 0, Rect2(0, 0, 16, 16))
 	valid = valid and _frame_region_is(sword_frames, &"attack", 1, Rect2(16, 0, 16, 16))
 
-	instance.call("_update_facing", 1.0)
-	instance.call("_start_attack")
+	_attack_facing(controller, 1.0)
 	valid = valid and character_sprite.animation == &"attack" and character_sprite.is_playing()
 	valid = valid and sword_sprite.visible and sword_sprite.animation == &"attack"
 	valid = valid and sword_sprite.is_playing() and sword_sprite.position == Vector2(12.0, -22.0)
 	valid = valid and character_sprite.flip_h and sword_sprite.flip_h
 
 	sword_sprite.frame = 1
-	instance.call("_update_sword_position")
 	valid = valid and sword_sprite.position == Vector2(16.0, -10.0)
 
-	instance.call("_update_facing", -1.0)
-	valid = valid and sword_sprite.position == Vector2(-16.0, -10.0)
+	_step_with(controller, {"attack_finished": true})
+	_attack_facing(controller, -1.0)
+	valid = valid and sword_sprite.position == Vector2(-12.0, -22.0)
 	valid = valid and not character_sprite.flip_h and not sword_sprite.flip_h
 
-	sword_sprite.frame = 0
-	instance.call("_update_sword_position")
-	valid = valid and sword_sprite.position == Vector2(-12.0, -22.0)
+	sword_sprite.frame = 1
+	valid = valid and sword_sprite.position == Vector2(-16.0, -10.0)
 
-	instance.call("_on_character_animation_finished")
+	_step_with(controller, {"attack_finished": true, "on_floor": false})
 	valid = valid and not sword_sprite.visible and character_sprite.animation == &"jump"
 
 	instance.queue_free()
@@ -177,12 +185,13 @@ func _test_player_charge_locks_facing_and_shows_sword() -> bool:
 	var character_sprite := instance.get_node("AnimatedSprite2D") as AnimatedSprite2D
 	var sword_sprite := instance.get_node("SwordSprite") as AnimatedSprite2D
 	var sword_frames := sword_sprite.sprite_frames
+	var controller := instance.get("controller") as PlayerController
 
 	var valid := sword_frames.get_frame_count(&"charge") == 1
 	valid = valid and _frame_region_is(sword_frames, &"charge", 0, Rect2(16, 0, 16, 16))
 
-	instance.call("_update_facing", -1.0)
-	instance.call("_set_state", 3)
+	_step_with(controller, {"direction": -1.0})
+	_step_with(controller, {"melee_held": true})
 	var charge_offset := instance.get("sword_charge_offset") as Vector2
 	var expected_charge_position := (
 		character_sprite.position + Vector2(charge_offset.x * -1.0, charge_offset.y)
@@ -191,17 +200,32 @@ func _test_player_charge_locks_facing_and_shows_sword() -> bool:
 	valid = valid and character_sprite.animation == &"idle"
 	valid = valid and sword_sprite.position == expected_charge_position
 
-	instance.call("_apply_horizontal_movement", 1.0, 0.2)
-
-	valid = valid and instance.velocity.x > 0.0
+	_step_with(controller, {"melee_held": true, "direction": 1.0})
+	valid = valid and controller.velocity.x > 0.0
 	valid = valid and character_sprite.animation == &"walk"
 	valid = valid and not character_sprite.flip_h and not sword_sprite.flip_h
 
-	instance.call("_set_state", 0)
+	_step_with(controller, {})
+	_step_with(controller, {"attack_finished": true})
 	valid = valid and not sword_sprite.visible
 
 	instance.queue_free()
 	return valid
+
+
+func _attack_facing(controller: PlayerController, direction: float) -> void:
+	_step_with(controller, {"direction": direction})
+	_step_with(controller, {"melee_held": true})
+	_step_with(controller, {})
+
+
+# Steps the controller one frame with the given Frame fields; others keep their defaults.
+func _step_with(controller: PlayerController, fields: Dictionary) -> void:
+	var frame := PlayerController.Frame.new()
+	frame.velocity = controller.velocity
+	for field in fields:
+		frame.set(field, fields[field])
+	controller.step(frame, STEP_DELTA)
 
 
 func _frame_region_is(
