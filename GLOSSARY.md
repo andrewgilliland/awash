@@ -54,6 +54,28 @@ _Avoid_: Spawn point, start position, door
 An edge of a Room that leads to an Entry in another Room. Crossing it enters that Room in the Run and loads its scene.
 _Avoid_: Door, portal, transition, warp
 
+## Combat
+
+**Health**:
+How many more hits something can take, in whole points. Reaching 0 is defeat.
+_Avoid_: HP, hit points, life
+
+**Hitbox**:
+The part of an attack that strikes, such as the Player's sword or a Scavenger's spear. It only strikes while live.
+_Avoid_: Damage box, attack area
+
+**Hurtbox**:
+The part of a body that can be struck by a Hitbox.
+_Avoid_: Hitbox (for the struck side), body
+
+**Knockback**:
+The throw a landed hit gives the struck body, away from the Hitbox.
+_Avoid_: Recoil, push
+
+**Scavenger**:
+The Waking Coast's fish-man enemy: it patrols a tidal pool and lunges with a hooked spear after a wind-up.
+_Avoid_: Sahagin, fish-man (as a name)
+
 ## Menus
 
 **Pause menu**:

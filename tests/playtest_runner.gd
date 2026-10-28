@@ -12,6 +12,10 @@ const SCENARIO_ACTIONS: Array[StringName] = [
 	&"move_left", &"move_right", &"jump", &"melee_attack", &"pause"
 ]
 const SETTLE_FRAME_LIMIT := 120
+# The sand at the tidal pool's west edge, where the Scavenger can reach and be reached.
+const POOL_EDGE := Vector2(122, 96)
+const SCAVENGER_PATH := "Enemies/Scavenger"
+const MAX_SWINGS := 8
 
 var _failures: int = 0
 
@@ -29,6 +33,9 @@ func _init() -> void:
 	await _run_scenario("Player walks the Waking Coast sand", _scenario_walks_waking_coast_sand)
 	await _run_scenario("Player stops at the west edge", _scenario_stops_at_west_edge)
 	await _run_playtest_async("Player walks between the Waking Coast Rooms", _playtest_walks_rooms)
+	await _run_playtest_async("Sword defeats the Scavenger", _playtest_sword_defeats_scavenger)
+	await _run_playtest_async("Scavenger's lunge hurts the Player", _playtest_lunge_hurts_player)
+	await _run_playtest_async("Player defeat starts the Run over", _playtest_defeat_starts_over)
 
 	if _failures > 0:
 		push_error("%d playtest(s) failed" % _failures)
@@ -234,6 +241,98 @@ func _playtest_walks_rooms() -> bool:
 		current_scene.free()
 	await process_frame
 	return valid
+
+
+# Swings at the Scavenger from the pool's edge until it is gone. Its lunges may knock the
+# Player away, so each swing starts back at the edge, facing the pool.
+func _playtest_sword_defeats_scavenger() -> bool:
+	var player := await _enter_rune_shore()
+	var scavenger := current_scene.get_node_or_null(SCAVENGER_PATH) if player != null else null
+	var valid := scavenger != null
+	for swing in MAX_SWINGS:
+		if not valid or not is_instance_valid(scavenger):
+			break
+		await _face_pool_from_edge(player)
+		_press(&"melee_attack")
+		await _frames(3)
+		_release(&"melee_attack")
+		await _frames(30)
+	valid = (
+		valid and await _frames_until(func() -> bool: return not is_instance_valid(scavenger), 90)
+	)
+	await _leave_scene()
+	return valid
+
+
+# Stands still at the pool's edge until the Scavenger's lunge lands.
+func _playtest_lunge_hurts_player() -> bool:
+	var player := await _enter_rune_shore()
+	if player == null:
+		await _leave_scene()
+		return false
+	await _face_pool_from_edge(player)
+	var health = player.get("health")
+	var hurt := await _frames_until(func() -> bool: return health.current < health.maximum, 180)
+	await _frames(6)
+	var valid: bool = hurt and health.current == health.maximum - 1
+	valid = valid and player.global_position.x < POOL_EDGE.x
+	await _leave_scene()
+	return valid
+
+
+# One Health left at the pool's edge: the next lunge ends the Run, which starts over.
+func _playtest_defeat_starts_over() -> bool:
+	var player := await _enter_rune_shore()
+	if player == null:
+		await _leave_scene()
+		return false
+	var run := root.get_node("RunState")
+	await _face_pool_from_edge(player)
+	player.get("health").current = 1
+	var restarted := await _frames_until(
+		func() -> bool:
+			return current_scene != null and current_scene.scene_file_path == MAIN_SCENE_PATH,
+		240
+	)
+	var valid: bool = restarted and run.get("room_id") == &"waking_coast_1"
+	valid = valid and run.get("entry_id") == &"start"
+	valid = valid and not run.call("has_visited_room", &"waking_coast_2")
+	await _leave_scene()
+	return valid
+
+
+func _enter_rune_shore() -> CharacterBody2D:
+	var run := root.get_node_or_null("RunState")
+	if run == null:
+		return null
+	run.call("start_run")
+	run.call("enter_room", &"waking_coast_2", &"west")
+	change_scene_to_file(RUNE_SHORE_PATH)
+	var landed := await _frames_until(
+		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
+		SETTLE_FRAME_LIMIT
+	)
+	return _current_player() if landed else null
+
+
+func _face_pool_from_edge(player: CharacterBody2D) -> void:
+	_press(&"move_right")
+	await _frames(1)
+	_release(&"move_right")
+	player.global_position = POOL_EDGE
+	player.velocity = Vector2.ZERO
+	await _frames(2)
+
+
+func _leave_scene() -> void:
+	for action in SCENARIO_ACTIONS:
+		Input.action_release(action)
+	var run := root.get_node_or_null("RunState")
+	if run != null:
+		run.call("start_run")
+	if current_scene != null:
+		current_scene.free()
+	await process_frame
 
 
 # Lands in the current Room, then holds a direction until the scene becomes the given Room.

@@ -1,10 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://bsmxp4op6cc6e"]
+[gd_scene load_steps=8 format=3 uid="uid://bsmxp4op6cc6e"]
 
 [ext_resource type="Script" uid="uid://o4osibv7x85f" path="res://scripts/player/player.gd" id="1_3h4r8"]
+[ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
+[ext_resource type="Script" uid="uid://dk3355uvj2vwl" path="res://scripts/combat/hitbox.gd" id="3_hit"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2x6a2"]
 radius = 6.0
 height = 20.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt0"]
+size = Vector2(10, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sword"]
+size = Vector2(16, 20)
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 collision_layer = 2
@@ -27,3 +35,24 @@ visible = false
 position = Vector2(0, -36)
 position_smoothing_enabled = true
 position_smoothing_speed = 6.0
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+script = ExtResource("2_hurt")
+
+[node name="Shape" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -10)
+shape = SubResource("RectangleShape2D_hurt0")
+
+[node name="SwordHitbox" type="Area2D" parent="."]
+position = Vector2(-12, -8)
+collision_layer = 4
+collision_mask = 16
+monitoring = false
+monitorable = false
+script = ExtResource("3_hit")
+
+[node name="Shape" type="CollisionShape2D" parent="SwordHitbox"]
+shape = SubResource("RectangleShape2D_sword")
