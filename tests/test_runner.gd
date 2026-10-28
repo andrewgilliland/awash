@@ -3,11 +3,11 @@ extends SceneTree
 const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
 const MAIN_SCENE_PATH := "res://scenes/main.tscn"
 const PAUSE_MENU_SCENE_PATH := "res://scenes/ui/pause_menu.tscn"
-const RUNTIME_STATE_SCRIPT_PATH := "res://scripts/core/runtime_state.gd"
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const PlayerControllerTests := preload("res://tests/player_controller_tests.gd")
 const PlayerRigTests := preload("res://tests/player_rig_tests.gd")
+const RunStateTests := preload("res://tests/run_state_tests.gd")
 const STEP_DELTA := 0.1
 var _failures: int = 0
 
@@ -19,14 +19,17 @@ func _init() -> void:
 	var rig_tests := PlayerRigTests.new()
 	for test in rig_tests.get_tests():
 		_run_test(test[0], test[1])
+	var run_state_tests := RunStateTests.new()
+	for test in run_state_tests.get_tests():
+		_run_test(test[0], test[1])
 
 	_run_test("Player scene wires the rig", _test_player_scene_wires_rig)
 	_run_test("Player faces movement direction", _test_player_faces_movement_direction)
 	_run_test("Player sprites follow the controller", _test_player_sprites_follow_controller)
 	_run_test("Player body reads attack finished once", _test_player_reads_attack_finished_once)
 	_run_test("Main scene loads", _test_main_scene_loads)
+	_run_test("Player appears at the Run's Entry", _test_player_appears_at_entry)
 	_run_test("Pause menu scene loads", _test_pause_menu_scene_loads)
-	_run_test("Runtime state defaults sane", _test_runtime_state_defaults_sane)
 
 	if _failures > 0:
 		push_error("%d test(s) failed" % _failures)
@@ -182,9 +185,30 @@ func _test_main_scene_loads() -> bool:
 
 	var has_player := instance.get_node_or_null("Player") != null
 	var has_pause_menu := instance.get_node_or_null("CanvasLayer/PauseMenu") != null
-	var has_world := _find_world_tile_layer(instance) != null
+	var has_world := instance.get_node_or_null("WorldLayer") is TileMapLayer
 	instance.queue_free()
 	return has_player and has_world and has_pause_menu
+
+
+func _test_player_appears_at_entry() -> bool:
+	var packed_scene := load(MAIN_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var main_scene := packed_scene.instantiate() as Node2D
+	var player := main_scene.get_node_or_null("Player") as CharacterBody2D
+	var entry := main_scene.get_node_or_null("Entries/start") as Marker2D
+	if player == null or entry == null:
+		main_scene.free()
+		return false
+
+	# Moved off the Entry first, so only main.gd placing the Player can pass this.
+	player.position = entry.position + Vector2(100.0, 100.0)
+	root.add_child(main_scene)
+	main_scene.call("_ready")
+	var valid := player.global_position == entry.global_position
+	main_scene.queue_free()
+	return valid
 
 
 func _test_pause_menu_scene_loads() -> bool:
@@ -232,27 +256,3 @@ func _test_pause_menu_scene_loads() -> bool:
 		and has_content_root
 		and has_toggle_method
 	)
-
-
-func _find_world_tile_layer(node: Node) -> TileMapLayer:
-	for child in node.get_children():
-		if child is TileMapLayer:
-			return child as TileMapLayer
-
-	return null
-
-
-func _test_runtime_state_defaults_sane() -> bool:
-	var runtime_state_script := load(RUNTIME_STATE_SCRIPT_PATH) as GDScript
-	if runtime_state_script == null:
-		return false
-
-	var runtime_state := runtime_state_script.new() as Node
-	if runtime_state == null:
-		return false
-
-	var is_valid := true
-	is_valid = is_valid and runtime_state.get("current_room_id") == StringName("room_1")
-	is_valid = is_valid and runtime_state.call("has_visited_room", &"room_1")
-	runtime_state.free()
-	return is_valid

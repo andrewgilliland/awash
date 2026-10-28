@@ -1,56 +1,37 @@
 extends Node2D
 
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
+const RunStateScript := preload("res://scripts/core/run_state.gd")
 
-@onready var _world: Node = _resolve_world_node()
 @onready var _player: CharacterBody2D = $Player
+@onready var _entries: Node = $Entries
 @onready var _canvas_layer: CanvasLayer = $CanvasLayer
 
 
 func _ready() -> void:
 	_ensure_pause_menu()
-	if _world == null or _player == null:
+	_place_player_at_entry()
+
+
+# The Run says which Entry the Player came through; this Room says where it is.
+func _place_player_at_entry() -> void:
+	var run := _get_run()
+	var entry_id := run.entry_id if run != null else RunStateScript.DEFAULT_ENTRY_ID
+	var entry := _entries.get_node_or_null(NodePath(entry_id)) as Marker2D
+	if entry == null:
+		var room_id := run.room_id if run != null else RunStateScript.FIRST_ROOM_ID
+		push_error("Room '%s' has no Entry '%s'." % [room_id, entry_id])
 		return
 
-	var runtime_state := _get_runtime_state()
-	if runtime_state != null:
-		var last_position := runtime_state.get("last_player_position") as Vector2
-		if last_position != Vector2.ZERO:
-			_player.global_position = last_position
-			return
-
-	if _world.has_method("get_spawn_position"):
-		_player.global_position = _world.call("get_spawn_position")
-	elif _player.global_position == Vector2.ZERO:
-		_player.global_position = Vector2(0.0, 96.0)
+	_player.global_position = entry.global_position
 
 
-func _physics_process(_delta: float) -> void:
-	if _world == null or _player == null:
-		return
-
-	_save_runtime_player_position()
-
-
-func _save_runtime_player_position() -> void:
-	var runtime_state := _get_runtime_state()
-	if runtime_state != null and runtime_state.has_method("set_last_player_position"):
-		runtime_state.call("set_last_player_position", _player.global_position)
-
-
-func _get_runtime_state() -> Node:
+# Null outside the tree or without the autoload (headless tests), which reads as a new Run.
+func _get_run() -> RunStateScript:
 	if not is_inside_tree():
 		return null
 
-	return get_node_or_null("/root/RuntimeState")
-
-
-func _resolve_world_node() -> Node:
-	for child in get_children():
-		if child is TileMapLayer:
-			return child
-
-	return null
+	return get_node_or_null("/root/RunState") as RunStateScript
 
 
 func _ensure_pause_menu() -> void:

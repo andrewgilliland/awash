@@ -35,3 +35,17 @@ _Avoid_: Wind-up, hold
 **Attack**:
 The Player state from melee release until the swing finishes: facing is locked, jumping is not possible, and horizontal movement bleeds to a stop.
 _Avoid_: Swing, strike (as state names)
+
+## World
+
+**Run**:
+One playthrough from a new game. It remembers where the Player is in the world and what they have done.
+_Avoid_: Session, save, runtime state
+
+**Room**:
+One area of the world, loaded as a single scene.
+_Avoid_: Level, map, screen
+
+**Entry**:
+A named place in a Room where the Player appears on entering it. Each Room has a default Entry where a new Run begins.
+_Avoid_: Spawn point, start position, door
