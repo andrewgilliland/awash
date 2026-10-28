@@ -1,0 +1,6 @@
+# The quality gates and repo automation: changes here can let a red check pass.
+/.github/ @andrewgilliland
+/.githooks/ @andrewgilliland
+/scripts/quality/ @andrewgilliland
+/scripts/install_hooks.sh @andrewgilliland
+/REVIEW.md @andrewgilliland
