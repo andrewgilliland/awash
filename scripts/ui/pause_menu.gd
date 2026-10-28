@@ -1,27 +1,25 @@
 extends Control
 
+const HOME_PANEL := "HomePanel"
+
+# Each menu button's Panel, paired by name in _ready: <Name>Button opens <Name>Panel.
+var _panels: Dictionary = {}
+var _opener: Button
+
 @onready var _backdrop: ColorRect = $Backdrop
 @onready var _menu_panel: Control = $CenterContainer/MenuPanel
-@onready var _menu_root: VBoxContainer = $CenterContainer/MenuPanel/MarginContainer/VBoxContainer
-@onready var _menu_buttons: HBoxContainer = _menu_root.get_node("MenuButtons") as HBoxContainer
-@onready var _content_root: Control = _menu_root.get_node("ContentRoot") as Control
-@onready var _stats_button: Button = _menu_buttons.get_node("StatsButton") as Button
-@onready var _equipment_button: Button = _menu_buttons.get_node("EquipmentButton") as Button
-@onready var _map_button: Button = _menu_buttons.get_node("MapButton") as Button
-@onready var _home_panel: Control = _content_root.get_node("HomePanel") as Control
-@onready var _stats_panel: Control = _content_root.get_node("StatsPanel") as Control
-@onready var _equipment_panel: Control = _content_root.get_node("EquipmentPanel") as Control
-@onready var _map_panel: Control = _content_root.get_node("MapPanel") as Control
-@onready var _stats_back_button: Button = _stats_panel.get_node("BackButton") as Button
-@onready var _equipment_back_button: Button = _equipment_panel.get_node("BackButton") as Button
-@onready var _map_back_button: Button = _map_panel.get_node("BackButton") as Button
-@onready var _resume_button: Button = _menu_root.get_node("ResumeButton") as Button
-@onready var _quit_button: Button = _menu_root.get_node("QuitButton") as Button
+@onready var _menu_buttons: Container = %MenuButtons
+@onready var _content_root: Control = %ContentRoot
+@onready var _resume_button: Button = %ResumeButton
+@onready var _quit_button: Button = %QuitButton
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_connect_signals()
+	if _panels.is_empty():
+		_pair_panels()
+		_resume_button.pressed.connect(_on_resume_button_pressed)
+		_quit_button.pressed.connect(_on_quit_button_pressed)
 	_apply_pause_state(get_tree().paused)
 
 
@@ -35,23 +33,23 @@ func toggle_pause() -> void:
 	_apply_pause_state(not get_tree().paused)
 
 
-func _connect_signals() -> void:
-	if not _stats_button.pressed.is_connected(_on_stats_button_pressed):
-		_stats_button.pressed.connect(_on_stats_button_pressed)
-	if not _equipment_button.pressed.is_connected(_on_equipment_button_pressed):
-		_equipment_button.pressed.connect(_on_equipment_button_pressed)
-	if not _map_button.pressed.is_connected(_on_map_button_pressed):
-		_map_button.pressed.connect(_on_map_button_pressed)
-	if not _stats_back_button.pressed.is_connected(_on_back_pressed):
-		_stats_back_button.pressed.connect(_on_back_pressed)
-	if not _equipment_back_button.pressed.is_connected(_on_back_pressed):
-		_equipment_back_button.pressed.connect(_on_back_pressed)
-	if not _map_back_button.pressed.is_connected(_on_back_pressed):
-		_map_back_button.pressed.connect(_on_back_pressed)
-	if not _resume_button.pressed.is_connected(_on_resume_button_pressed):
-		_resume_button.pressed.connect(_on_resume_button_pressed)
-	if not _quit_button.pressed.is_connected(_on_quit_button_pressed):
-		_quit_button.pressed.connect(_on_quit_button_pressed)
+# A button without a matching Panel, or a Panel without a BackButton, is reported and disabled.
+func _pair_panels() -> void:
+	for button in _menu_buttons.get_children():
+		if button is not Button:
+			continue
+
+		var panel_name := button.name.trim_suffix("Button") + "Panel"
+		var panel := _content_root.get_node_or_null(panel_name) as Control
+		var back_button := panel.get_node_or_null("BackButton") as Button if panel != null else null
+		if back_button == null:
+			push_error("Pause menu: '%s' has no %s with a BackButton." % [button.name, panel_name])
+			button.disabled = true
+			continue
+
+		_panels[button] = panel
+		button.pressed.connect(_open_panel.bind(button))
+		back_button.pressed.connect(_show_home)
 
 
 func _apply_pause_state(is_paused: bool) -> void:
@@ -59,42 +57,34 @@ func _apply_pause_state(is_paused: bool) -> void:
 	_backdrop.visible = is_paused
 	_menu_panel.visible = is_paused
 	if is_paused:
+		_opener = null
 		_show_home()
-		_stats_button.grab_focus()
 
 
+func _open_panel(button: Button) -> void:
+	_opener = button
+	_show_only(_panels[button])
+	(_panels[button].get_node("BackButton") as Button).grab_focus()
+
+
+# Shows Home and focuses the button that opened the last Panel, or the first one on pause.
 func _show_home() -> void:
-	_home_panel.visible = true
-	_stats_panel.visible = false
-	_equipment_panel.visible = false
-	_map_panel.visible = false
+	_show_only(_content_root.get_node(HOME_PANEL))
+	var focus_target := _opener if _opener != null else _first_menu_button()
+	if focus_target != null:
+		focus_target.grab_focus()
 
 
-func _show_panel(panel_name: StringName) -> void:
-	_home_panel.visible = false
-	_stats_panel.visible = panel_name == &"stats"
-	_equipment_panel.visible = panel_name == &"equipment"
-	_map_panel.visible = panel_name == &"map"
+func _show_only(shown_panel: Control) -> void:
+	for panel in _content_root.get_children():
+		(panel as Control).visible = panel == shown_panel
 
 
-func _on_stats_button_pressed() -> void:
-	_show_panel(&"stats")
-	_stats_back_button.grab_focus()
-
-
-func _on_equipment_button_pressed() -> void:
-	_show_panel(&"equipment")
-	_equipment_back_button.grab_focus()
-
-
-func _on_map_button_pressed() -> void:
-	_show_panel(&"map")
-	_map_back_button.grab_focus()
-
-
-func _on_back_pressed() -> void:
-	_show_home()
-	_stats_button.grab_focus()
+func _first_menu_button() -> Button:
+	for button in _menu_buttons.get_children():
+		if button is Button and not button.disabled:
+			return button
+	return null
 
 
 func _on_resume_button_pressed() -> void:

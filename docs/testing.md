@@ -15,6 +15,7 @@ Awash includes lightweight headless test and deterministic playtest runners.
 - The Player rig follows each Animation rule, and its table is complete: a row for every state and one sword offset per sword frame (`tests/player_rig_tests.gd`).
 - The player scene wires the rig: its sprites follow controller state and facing, driven through the body's `controller`.
 - The integrated main scene loads with its player, world, and pause menu.
+- The Pause menu pauses on Home, opens each Panel from its button, returns Home on Back with focus on the opening button, resumes play, pairs every button with a Panel, and disables a button with no Panel (`tests/pause_menu_tests.gd`, run after one frame so the menu is in the tree).
 - The Run begins in `room_1` at its `start` Entry, enters Rooms at Entries, starts over, and ignores empty ids (`tests/run_state_tests.gd`).
 - The Player appears at the Run's Entry in the main scene.
 - The deterministic main-scene spawn puts the Player on the default Entry, over a `WorldLayer` with tiles.
@@ -27,4 +28,5 @@ Awash includes lightweight headless test and deterministic playtest runners.
 - `scripts/player/player.gd` owns input reading, gravity and collision movement.
 - `scenes/player/player.tscn` owns the player node structure and collision shape.
 - `scripts/core/run_state.gd` (the `RunState` autoload) owns the Run: the current Room, the Entry the Player came through, and visited Rooms.
+- `scripts/ui/pause_menu.gd` owns pausing and Panel switching; it pairs each `<Name>Button` in `%MenuButtons` with `<Name>Panel` in `%ContentRoot` by name, so a new Panel is a scene-only change.
 - `scripts/core/main.gd` places the Player at the Run's Entry, using the Room's `Entries` markers in `scenes/main.tscn`.
