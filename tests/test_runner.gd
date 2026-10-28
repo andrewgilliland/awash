@@ -4,6 +4,7 @@ const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
 const MAIN_SCENE_PATH := "res://scenes/main.tscn"
 const PAUSE_MENU_SCENE_PATH := "res://scenes/ui/pause_menu.tscn"
 const RUNTIME_STATE_SCRIPT_PATH := "res://scripts/core/runtime_state.gd"
+const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const PlayerControllerTests := preload("res://tests/player_controller_tests.gd")
 const PlayerRigTests := preload("res://tests/player_rig_tests.gd")
@@ -22,6 +23,7 @@ func _init() -> void:
 	_run_test("Player scene wires the rig", _test_player_scene_wires_rig)
 	_run_test("Player faces movement direction", _test_player_faces_movement_direction)
 	_run_test("Player sprites follow the controller", _test_player_sprites_follow_controller)
+	_run_test("Player body reads attack finished once", _test_player_reads_attack_finished_once)
 	_run_test("Main scene loads", _test_main_scene_loads)
 	_run_test("Pause menu scene loads", _test_pause_menu_scene_loads)
 	_run_test("Runtime state defaults sane", _test_runtime_state_defaults_sane)
@@ -127,6 +129,35 @@ func _test_player_sprites_follow_controller() -> bool:
 
 	instance.queue_free()
 	return valid
+
+
+func _test_player_reads_attack_finished_once() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var instance := packed_scene.instantiate() as CharacterBody2D
+	if instance == null:
+		return false
+
+	# Autoloads do not run under --script, so register the input actions _read_frame reads.
+	var input_setup := (load(INPUT_SETUP_SCRIPT_PATH) as GDScript).new() as Node
+	input_setup.call("_register_inputs")
+	input_setup.free()
+
+	root.add_child(instance)
+	instance.call("_ready")
+	var character_sprite := instance.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	var controller := instance.get("controller") as PlayerController
+
+	_step_with(controller, {"melee_held": true})
+	_step_with(controller, {})
+	character_sprite.animation_finished.emit()
+	var first := instance.call("_read_frame") as PlayerController.Frame
+	var second := instance.call("_read_frame") as PlayerController.Frame
+
+	instance.queue_free()
+	return first.attack_finished and not second.attack_finished
 
 
 # Steps the controller one frame with the given Frame fields; others keep their defaults.

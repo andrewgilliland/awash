@@ -30,6 +30,7 @@ func get_tests() -> Array:
 		["Rig shows each state's body animation", _test_shows_body_animation_per_state],
 		["Rig shows the charge pose by movement", _test_shows_charge_pose_by_movement],
 		["Rig keeps a held state's animation going", _test_keeps_held_state_animation],
+		["Rig restarts an animation when its state returns", _test_restarts_returning_state],
 		["Rig shows the sword only in charge and attack", _test_shows_sword_in_charge_attack],
 		["Rig mirrors body and sword by facing", _test_mirrors_by_facing],
 		["Rig places the sword per frame and facing", _test_places_sword_per_frame],
@@ -58,8 +59,15 @@ func _test_table_gives_offset_per_frame() -> bool:
 
 func _test_cuts_frames_from_sheet_row() -> bool:
 	var rigged := Rigged.new()
-	var valid := _frames_match(rigged.body.sprite_frames, PlayerRig.BODY_ANIMATIONS)
-	valid = valid and _frames_match(rigged.sword.sprite_frames, PlayerRig.SWORD_ANIMATIONS)
+	var valid := _frames_match(
+		rigged.body.sprite_frames, PlayerRig.BODY_ANIMATIONS, PlayerRig.BODY_SHEET
+	)
+	valid = (
+		valid
+		and _frames_match(
+			rigged.sword.sprite_frames, PlayerRig.SWORD_ANIMATIONS, PlayerRig.SWORD_SHEET
+		)
+	)
 	rigged.free_sprites()
 	return valid
 
@@ -98,6 +106,18 @@ func _test_keeps_held_state_animation() -> bool:
 	rigged.body.frame = 2
 	rigged.show(PlayerController.State.JUMP)
 	var valid := rigged.body.animation == &"jump" and rigged.body.frame == 2
+	rigged.free_sprites()
+	return valid
+
+
+func _test_restarts_returning_state() -> bool:
+	var rigged := Rigged.new()
+	rigged.show(PlayerController.State.JUMP)
+	rigged.body.frame = 2
+	rigged.show(PlayerController.State.IDLE)
+	rigged.show(PlayerController.State.JUMP)
+	var valid := rigged.body.animation == &"jump" and rigged.body.frame == 0
+	valid = valid and rigged.body.is_playing()
 	rigged.free_sprites()
 	return valid
 
@@ -168,7 +188,7 @@ func _sword_position(
 
 
 # Every declared frame is cut from cell `index` of the sheet's single row.
-func _frames_match(sprite_frames: SpriteFrames, animations: Dictionary) -> bool:
+func _frames_match(sprite_frames: SpriteFrames, animations: Dictionary, sheet: Texture2D) -> bool:
 	var valid := sprite_frames.get_animation_names().size() == animations.size()
 	for animation_name in animations:
 		var animation: Dictionary = animations[animation_name]
@@ -179,5 +199,6 @@ func _frames_match(sprite_frames: SpriteFrames, animations: Dictionary) -> bool:
 			var texture := sprite_frames.get_frame_texture(animation_name, i) as AtlasTexture
 			var size := Vector2(PlayerRig.FRAME_SIZE)
 			var region := Rect2(Vector2(animation.frames[i] * size.x, 0), size)
-			valid = valid and texture != null and texture.region == region
+			valid = valid and texture != null and texture.atlas == sheet
+			valid = valid and texture.region == region
 	return valid

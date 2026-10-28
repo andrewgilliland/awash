@@ -39,7 +39,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - While charging, the body shows `walk` when horizontal input is held and `idle` otherwise.
 - The sword shows only during `CHARGE` and `ATTACK`, with its own `charge` and `attack` animations.
 - Each sword frame sits at its declared offset from the body, and the body and sword mirror with facing.
-- An animation keeps playing while its state holds; it starts over only when the state changes.
+- A shown animation keeps playing, even across a state change that still shows it (Walk into a moving Charge); a newly shown animation starts from its first frame.
 
 ## Ownership
 
