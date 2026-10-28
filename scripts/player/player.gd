@@ -7,6 +7,7 @@ const PlayerController := preload("res://scripts/player/player_controller.gd")
 const PlayerRig := preload("res://scripts/player/player_rig.gd")
 const Health := preload("res://scripts/combat/health.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
+const PlayerSounds := preload("res://scripts/player/player_sounds.gd")
 const MAX_HEALTH := 5
 const INVULNERABLE_TIME := 1.0
 const BLINK_TIME := 0.08
@@ -25,6 +26,7 @@ var controller: PlayerController = PlayerController.new()
 # Read-only for callers.
 var health: Health = Health.new(MAX_HEALTH)
 var _rig: PlayerRig
+var _sounds: PlayerSounds
 var _attack_finished: bool = false
 var _knockback: Vector2 = Vector2.ZERO
 
@@ -32,6 +34,7 @@ var _knockback: Vector2 = Vector2.ZERO
 @onready var _sword_sprite: AnimatedSprite2D = $SwordSprite
 @onready var _hurtbox: Area2D = $Hurtbox
 @onready var _sword_hitbox: Hitbox = $SwordHitbox
+@onready var _sound_players: Node = $Sounds
 
 
 func _ready() -> void:
@@ -46,6 +49,11 @@ func _ready() -> void:
 	if _rig == null:
 		_rig = PlayerRig.new(_character_sprite, _sword_sprite)
 		_rig.attack_finished.connect(_on_rig_attack_finished)
+	if _sounds == null:
+		_sounds = PlayerSounds.new(_sound_players)
+		controller.state_changed.connect(_on_controller_state_changed)
+		controller.jumped.connect(_sounds.play.bind(PlayerSounds.JUMP))
+		_sword_hitbox.struck.connect(_on_sword_struck)
 	_on_controller_stepped()
 
 
@@ -92,7 +100,10 @@ func _on_hurtbox_hit(hitbox: Area2D) -> void:
 		away = -controller.facing
 	_knockback = Vector2(KNOCKBACK.x * away, KNOCKBACK.y)
 	if health.is_defeated():
+		_sounds.play(PlayerSounds.DEFEAT)
 		defeated.emit()
+	else:
+		_sounds.play(PlayerSounds.HURT)
 
 
 func _on_controller_stepped() -> void:
@@ -101,3 +112,13 @@ func _on_controller_stepped() -> void:
 	var attacking := controller.state == PlayerController.State.ATTACK
 	if _sword_hitbox.active != attacking:
 		_sword_hitbox.active = attacking
+
+
+func _on_controller_state_changed(
+	previous: PlayerController.State, next: PlayerController.State
+) -> void:
+	_sounds.play(PlayerSounds.for_state_change(previous, next, controller.time_in_state))
+
+
+func _on_sword_struck(_hurtbox: Area2D) -> void:
+	_sounds.play(PlayerSounds.HIT)

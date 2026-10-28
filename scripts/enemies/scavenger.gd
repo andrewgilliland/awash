@@ -3,6 +3,7 @@ extends CharacterBody2D
 const ScavengerBrain := preload("res://scripts/enemies/scavenger_brain.gd")
 const Health := preload("res://scripts/combat/health.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
+const ScavengerSounds := preload("res://scripts/enemies/scavenger_sounds.gd")
 const MAX_HEALTH := 3
 const INVULNERABLE_TIME := 0.3
 const DEFEAT_TIME := 0.6
@@ -38,10 +39,12 @@ var brain: ScavengerBrain = ScavengerBrain.new()
 var health: Health = Health.new(MAX_HEALTH)
 var _knocked_toward: float = 0.0
 var _defeat_left: float = DEFEAT_TIME
+var _sounds: ScavengerSounds
 
 @onready var _sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var _hurtbox: Area2D = $Hurtbox
 @onready var _spear: Hitbox = $SpearHitbox
+@onready var _sound_players: Node = $Sounds
 
 
 func _ready() -> void:
@@ -51,6 +54,8 @@ func _ready() -> void:
 		_sprite.sprite_frames = _build_sprite_frames()
 	if not _hurtbox.is_connected(&"hit", _on_hurtbox_hit):
 		_hurtbox.connect(&"hit", _on_hurtbox_hit)
+	if _sounds == null:
+		_sounds = ScavengerSounds.new(_sound_players)
 	_show()
 
 
@@ -63,7 +68,10 @@ func _physics_process(delta: float) -> void:
 			queue_free()
 		return
 
+	var previous := brain.state
 	brain.step(_read_frame(), delta)
+	if brain.state != previous:
+		_sounds.play(ScavengerSounds.for_state_change(previous, brain.state))
 	velocity.x = brain.velocity.x
 	if not is_on_floor():
 		velocity += get_gravity() * delta

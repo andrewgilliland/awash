@@ -2,6 +2,8 @@ extends RefCounted
 
 signal state_changed(previous: State, next: State)
 signal stepped
+# The jump impulse was applied this step: a real jump, not walking off a ledge.
+signal jumped
 
 enum State {
 	IDLE,
@@ -34,6 +36,9 @@ var state: State = State.IDLE
 var facing: float = -1.0
 var is_moving: bool = false
 var velocity: Vector2 = Vector2.ZERO
+# How long the Player has been in its current state; while state_changed is emitted, how
+# long it was in the state it just left.
+var time_in_state: float = 0.0
 var _stun_left: float = 0.0
 
 
@@ -57,6 +62,9 @@ func step(frame: Frame, delta: float) -> void:
 
 	if state != previous_state:
 		state_changed.emit(previous_state, state)
+		time_in_state = 0.0
+	else:
+		time_in_state += delta
 	stepped.emit()
 
 
@@ -69,6 +77,7 @@ func _step_in_control(frame: Frame, delta: float) -> void:
 
 	if state != State.ATTACK and frame.jump_pressed and on_floor:
 		velocity.y = jump_velocity
+		jumped.emit()
 		on_floor = false
 		state = State.JUMP
 

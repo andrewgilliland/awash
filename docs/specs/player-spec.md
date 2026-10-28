@@ -39,6 +39,15 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - At 0 Health the Player is defeated, and the Run starts over at the first Room's `start` Entry.
 - The sword's hitbox is live only during `ATTACK`, 12 pixels in front of the Player by facing; each hit costs an enemy 1 Health.
 
+## Sound
+
+- Sounds play on the `SFX` audio bus (`default_bus_layout.tres`), from `AudioStreamPlayer`s under the Player's `Sounds` node.
+- `jump` plays when the jump impulse is applied, not when the Player walks off a ledge or is knocked into the air.
+- `land` plays on returning to `IDLE` or `WALK` from `JUMP` after at least 0.08 seconds in the air, so appearing at an Entry lands quietly.
+- `swing` plays when `ATTACK` begins, and `hit` when the sword strikes a Hurtbox.
+- `hurt` plays when a hit lands, or `defeat` instead when it takes the last Health; the Room waits 0.7 seconds for it before starting the Run over.
+- The sounds are chiptune effects made by `scripts/tools/make_sfx.py` into `assets/audio/sfx/`; change them there and rerun it.
+
 ## Animation
 
 - The Player rig's table in `scripts/player/player_rig.gd` declares the sheets (`player_1.png` and `weapons/sword_1.png`, 16x16 cells in one row), each animation's frames, speed and looping, the per-frame sword offsets, and what each state shows.
@@ -56,6 +65,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - `scripts/player/player.gd` (the Player body) owns gravity, `move_and_slide` and reading `Input`, and hands each step's state, facing and movement to the rig. It owns the Player's Health, turns a hurtbox hit into the controller's knockback, keeps the sword hitbox live during `ATTACK`, and reports defeat.
 - `scripts/player/player_controller.gd` also owns knockback and the stun that follows a hit.
 - `scripts/core/main.gd` (the Room) starts the Run over when the Player is defeated.
+- `scripts/player/player_sounds.gd` (the Player sounds) owns which state changes make a sound and plays sounds by name; the Player body hands it the controller's state changes and jumps, the sword's strikes and its own hits.
 
 ## Out Of Scope
 

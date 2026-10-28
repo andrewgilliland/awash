@@ -3,6 +3,8 @@ extends Node2D
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const RunStateScript := preload("res://scripts/core/run_state.gd")
 const WorldMap := preload("res://scripts/core/world_map.gd")
+# Long enough for the defeat sound to finish before the Room is replaced.
+const DEFEAT_PAUSE := 0.7
 
 @onready var _player: CharacterBody2D = $Player
 @onready var _entries: Node = $Entries
@@ -16,8 +18,9 @@ func _ready() -> void:
 		_player.connect(&"defeated", _on_player_defeated)
 
 
-# A defeated Player starts the Run over in the first Room.
+# A defeated Player starts the Run over in the first Room, after a beat.
 func _on_player_defeated() -> void:
+	await get_tree().create_timer(DEFEAT_PAUSE).timeout
 	var run := _get_run()
 	if run != null:
 		run.start_run()
