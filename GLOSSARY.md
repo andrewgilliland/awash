@@ -13,8 +13,12 @@ The rules that decide the Player's state, facing and movement from one frame of 
 _Avoid_: Player brain, player motor, state machine
 
 **Player body**:
-The Player's physical presence in the world: collision, gravity, sliding along surfaces, and what is drawn on screen.
+The Player's physical presence in the world: collision, gravity and sliding along surfaces. It hands what to draw to the Player rig.
 _Avoid_: Player node, player scene
+
+**Player rig**:
+What is drawn for the Player in each Player state and Facing: the body and the sword.
+_Avoid_: Animator, sprite controller
 
 **Player state**:
 Exactly one of Idle, Walk, Jump, Charge or Attack at any moment.
