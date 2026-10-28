@@ -9,6 +9,7 @@ const PlayerRigTests := preload("res://tests/player_rig_tests.gd")
 const RunStateTests := preload("res://tests/run_state_tests.gd")
 const PauseMenuTests := preload("res://tests/pause_menu_tests.gd")
 const WakingCoastTilesetTests := preload("res://tests/waking_coast_tileset_tests.gd")
+const WakingCoastRoomTests := preload("res://tests/waking_coast_room_tests.gd")
 const STEP_DELTA := 0.1
 var _failures: int = 0
 
@@ -25,6 +26,9 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var tileset_tests := WakingCoastTilesetTests.new()
 	for test in tileset_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_tests := WakingCoastRoomTests.new()
+	for test in room_tests.get_tests():
 		_run_test(test[0], test[1])
 
 	_run_test("Player scene wires the rig", _test_player_scene_wires_rig)

@@ -1,6 +1,8 @@
 extends SceneTree
 
 const MAIN_SCENE_PATH := "res://scenes/main.tscn"
+const WAKING_COAST_PATH := "res://scenes/rooms/waking_coast_1.tscn"
+const WAKING_COAST_SAND_Y := 96.0
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const SCENARIO_ACTIONS: Array[StringName] = [
 	&"move_left", &"move_right", &"jump", &"melee_attack", &"pause"
@@ -20,6 +22,9 @@ func _init() -> void:
 	await _run_scenario("Player jumps and lands", _scenario_jumps_and_lands)
 	await _run_scenario("Player attack plays out", _scenario_attack_plays_out)
 	await _run_scenario("Pause freezes and resumes play", _scenario_pause_freezes_play)
+	await _run_room_scenario(
+		"Player walks the Waking Coast sand", WAKING_COAST_PATH, _scenario_walks_waking_coast_sand
+	)
 
 	if _failures > 0:
 		push_error("%d playtest(s) failed" % _failures)
@@ -65,7 +70,17 @@ func _playtest_main_scene_spawn() -> bool:
 
 # Plays one scenario on a fresh main scene once the Player has landed, then resets input and pause.
 func _run_scenario(name: String, scenario: Callable) -> void:
-	var main_scene := (load(MAIN_SCENE_PATH) as PackedScene).instantiate() as Node2D
+	await _run_room_scenario(name, MAIN_SCENE_PATH, scenario)
+
+
+# Plays one scenario on a fresh Room once the Player has landed, then resets input and pause.
+func _run_room_scenario(name: String, room_path: String, scenario: Callable) -> void:
+	var packed_scene := load(room_path) as PackedScene
+	if packed_scene == null:
+		_failures += 1
+		push_error("FAIL: %s (cannot load %s)" % [name, room_path])
+		return
+	var main_scene := packed_scene.instantiate() as Node2D
 	root.add_child(main_scene)
 	var player := main_scene.get_node("Player") as CharacterBody2D
 	var landed := await _frames_until(
@@ -151,6 +166,18 @@ func _scenario_pause_freezes_play(player: CharacterBody2D) -> bool:
 	await _frames(10)
 	valid = valid and not paused and not (menu_panel as Control).visible
 	valid = valid and player.global_position.x > paused_x
+	return valid
+
+
+func _scenario_walks_waking_coast_sand(player: CharacterBody2D) -> bool:
+	var valid := is_equal_approx(player.global_position.y, WAKING_COAST_SAND_Y)
+	var start_x := player.global_position.x
+	_press(&"move_right")
+	await _frames(30)
+	_release(&"move_right")
+	await _frames(2)
+	valid = valid and player.is_on_floor() and player.global_position.x > start_x + 20.0
+	valid = valid and is_equal_approx(player.global_position.y, WAKING_COAST_SAND_Y)
 	return valid
 
 
