@@ -37,21 +37,14 @@ func _playtest_main_scene_spawn() -> bool:
 
 	main_scene.call("_ready")
 	var player := main_scene.get_node_or_null("Player") as CharacterBody2D
-	var world_layer := _find_world_tile_layer(main_scene)
-	var is_valid := player != null and world_layer != null
+	var entry := main_scene.get_node_or_null("Entries/start") as Marker2D
+	var world_layer := main_scene.get_node_or_null("WorldLayer") as TileMapLayer
+	var is_valid := player != null and entry != null and world_layer != null
 
 	if is_valid:
-		is_valid = is_valid and player.global_position != Vector2.ZERO
+		is_valid = is_valid and player.global_position == entry.global_position
 		is_valid = is_valid and world_layer.tile_set != null
 		is_valid = is_valid and world_layer.get_used_cells().size() > 0
 
 	main_scene.free()
 	return is_valid
-
-
-func _find_world_tile_layer(node: Node) -> TileMapLayer:
-	for child in node.get_children():
-		if child is TileMapLayer:
-			return child as TileMapLayer
-
-	return null
