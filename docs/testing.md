@@ -28,6 +28,7 @@ Awash includes lightweight headless test and deterministic playtest runners.
 - The Player carries its six sounds on the `SFX` bus and plays them for a jump, a landing, a swing, a sword hit, being hurt and being defeated (`tests/player_sound_scene_tests.gd`).
 - The Scavenger growls on its wind-up, sounds its spear on the lunge, croaks when hurt and burbles when defeated, from any state, while recovering and patrolling stay quiet; it carries those four as positional sounds on the `SFX` bus and plays them as its brain changes state (`tests/scavenger_sounds_tests.gd`, `tests/scavenger_sound_scene_tests.gd`).
 - The start screen shows its animated logo and a blinking PRESS START, a start press opens the menu on START, moving between options ticks, palms frame its beach, and its theme loops on the `Music` bus (`tests/start_screen_tests.gd`); a playtest waits for the theme, presses START from a Run left in the rune shore, hears the theme fade, and arrives in a fresh Run at the first Room's start Entry.
+- The Music autoload plays a track on the `Music` bus, carries on when asked for the track already playing, switches tracks and stops; every Room's region has a looping theme, and a Room starts it when it is ready (`tests/music_tests.gd`); the walk-between-Rooms playtest checks that the Waking Coast theme plays on through the Exit without starting over.
 - The Run begins in `waking_coast_1` at its `start` Entry, enters Rooms at Entries, starts over, and ignores empty ids (`tests/run_state_tests.gd`).
 - The Player appears at the Run's Entry in the first Room.
 - The deterministic main-scene spawn puts the Player on the default Entry, over a `WorldLayer` with tiles.
@@ -44,6 +45,7 @@ Awash includes lightweight headless test and deterministic playtest runners.
 - `scripts/ui/pause_menu.gd` owns pausing and Panel switching; it pairs each `<Name>Button` in `%MenuButtons` with `<Name>Panel` in `%ContentRoot` by name, so a new Panel is a scene-only change.
 - `scripts/core/world_map.gd` owns where each Room sits on the Map and lays the Map out; `scripts/ui/map_view.gd` draws it from the Run and the Player's position.
 - `scripts/combat/health.gd` owns Health and invulnerability; `scripts/combat/hitbox.gd` and `scripts/combat/hurtbox.gd` connect a live Hitbox to the Hurtboxes it touches (`docs/specs/scavenger-spec.md` covers the Scavenger).
+- `scripts/core/music.gd` (the `Music` autoload) owns the region music: it outlives scene changes, so a Room asking for the theme already playing lets it play on. `WorldMap.REGION_MUSIC` names each region's theme, and the Room script asks for it. The themes are made by `scripts/tools/make_music.py`, where each song is a block of data.
 - `scripts/core/room_exit.gd` owns crossing an Exit: it enters the next Room in the Run and swaps to that Room's scene from the Map.
 - `assets/ui/awash_theme.tres` gives the menus the 5x7 pixel font (`assets/fonts/awash_pixel_5x7.png`, drawn in its `.aseprite`) and the game's palette.
 - `scripts/core/main.gd` places the Player at the Run's Entry, using the Room's `Entries` markers (a new Run starts in `scenes/rooms/waking_coast_1.tscn`).

@@ -18,6 +18,10 @@ const ROOMS := {
 		region = "Waking Coast",
 	},
 }
+# Each region's theme, played in its Rooms.
+const REGION_MUSIC := {
+	"Waking Coast": "res://assets/audio/music/waking_coast_theme.wav",
+}
 const SCREEN_SIZE := Vector2(160, 144)
 # One screen on the Map, keeping the screen's shape.
 const CELL_SIZE := Vector2(20, 18)
@@ -50,3 +54,9 @@ static func layout(
 
 static func _block(room: Dictionary, offset: Vector2) -> Rect2:
 	return Rect2(offset + Vector2(room.cell) * CELL_SIZE, Vector2(room.size) * CELL_SIZE)
+
+
+# The theme for a Room's region, or "" when it has none.
+static func music_for(room_id: StringName) -> String:
+	var room: Dictionary = ROOMS.get(room_id, {})
+	return REGION_MUSIC.get(room.get("region", ""), "")

@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 InputSetup="*res://scripts/core/input_setup.gd"
 RunState="*res://scripts/core/run_state.gd"
+Music="*res://scripts/core/music.gd"
 
 [display]
 

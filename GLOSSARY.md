@@ -54,6 +54,10 @@ _Avoid_: Spawn point, start position, door
 An edge of a Room that leads to an Entry in another Room. Crossing it enters that Room in the Run and loads its scene.
 _Avoid_: Door, portal, transition, warp
 
+**Region theme**:
+The music of a region, such as the Waking Coast's. It plays in each of the region's Rooms and carries on unbroken through Exits between them.
+_Avoid_: Level music, BGM, soundtrack
+
 ## Combat
 
 **Health**:

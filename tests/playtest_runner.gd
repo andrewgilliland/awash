@@ -229,7 +229,20 @@ func _playtest_walks_rooms() -> bool:
 	run.call("enter_room", &"waking_coast_1", &"east")
 	change_scene_to_file(FIRST_ROOM_PATH)
 
+	var music := root.get_node_or_null("Music")
+	var theme_path := "res://assets/audio/music/waking_coast_theme.wav"
+	var theme_playing := func() -> bool:
+		var current = music.call("current") if music != null else null
+		return current != null and current.resource_path == theme_path
+	await _frames_until(
+		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
+		SETTLE_FRAME_LIMIT
+	)
+	var starts_before: int = music.get("tracks_started") if music != null else -1
 	var valid := await _walk_until_scene(&"move_right", RUNE_SHORE_PATH)
+	# The coast theme plays on through the Exit rather than starting over.
+	var starts_after: int = music.get("tracks_started") if music != null else -2
+	valid = valid and theme_playing.call() and starts_after == starts_before
 	valid = valid and run.get("room_id") == &"waking_coast_2"
 	var player := _current_player()
 	valid = valid and player != null and player.global_position.x < 40.0

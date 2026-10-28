@@ -14,6 +14,7 @@ const DEFEAT_PAUSE := 0.7
 func _ready() -> void:
 	_ensure_pause_menu()
 	_place_player_at_entry()
+	_play_region_music()
 	if _player != null and not _player.is_connected(&"defeated", _on_player_defeated):
 		_player.connect(&"defeated", _on_player_defeated)
 
@@ -39,6 +40,18 @@ func _place_player_at_entry() -> void:
 		return
 
 	_player.global_position = entry.global_position
+
+
+# Asks the Music autoload for this Room's region theme; the same theme plays on unbroken.
+func _play_region_music() -> void:
+	if not is_inside_tree():
+		return
+	var music := get_node_or_null("/root/Music")
+	var run := _get_run()
+	var room_id := run.room_id if run != null else RunStateScript.FIRST_ROOM_ID
+	var theme := WorldMap.music_for(room_id)
+	if music != null and not theme.is_empty():
+		music.call("play", load(theme))
 
 
 # Null outside the tree or without the autoload (headless tests), which reads as a new Run.
