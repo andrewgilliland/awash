@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# main and dev change only through GitHub pull requests.
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+	case "$remote_ref" in
+		refs/heads/main | refs/heads/dev)
+			echo "[pre-push] ${remote_ref#refs/heads/} changes only through a GitHub pull request."
+			echo "[pre-push] Push a feature/<name> or fix/<name> branch and open a PR into dev."
+			exit 1
+			;;
+	esac
+done
