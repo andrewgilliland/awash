@@ -28,6 +28,14 @@ _Avoid_: Mode, action
 The horizontal direction the Player looks and strikes toward; left or right, never neutral.
 _Avoid_: Direction, orientation
 
+**Interact**:
+The button for using whatever the Player stands by: E, or Y / Triangle on a gamepad. It uses the nearest Interactable in reach, and does nothing while the Player is held still.
+_Avoid_: Action button, use, talk
+
+**Interactable**:
+Anything Interact can use, such as Mara. It reports being used and shows a bobbing arrow above itself while the Player is in reach; what using it does is up to its owner.
+_Avoid_: Usable, trigger, hotspot
+
 **Charge**:
 The Player state while melee is held: the sword is raised, movement continues, and facing is locked.
 _Avoid_: Wind-up, hold

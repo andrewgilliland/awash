@@ -40,7 +40,7 @@ Layer names are defined in `project.godot`.
 - The Player's Hurtbox and sword Hitbox use `player_hitbox`; the sword watches `enemy_hitbox`.
 - Enemy bodies use `enemy` and collide with `world`; their Hurtboxes and weapon Hitboxes use `enemy_hitbox`, and weapons watch `player_hitbox`.
 - Hitboxes are never monitorable and Hurtboxes never monitor, so two boxes on one layer never strike each other.
-- Room Exits use `trigger` and watch `player`.
+- Room Exits and Interactables use `trigger` and watch `player`.
 
 ### Expansion Rules
 
