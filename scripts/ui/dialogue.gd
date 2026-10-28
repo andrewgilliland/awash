@@ -3,7 +3,8 @@ extends RefCounted
 # One conversation: its lines, each typed out a character at a time.
 const CHARACTERS_PER_SECOND := 40.0
 
-# [speaker, text] pairs, in order.
+# [speaker, text] pairs, in order. A line may carry a cue third: something the scene does as
+# that line opens.
 var _lines: Array
 var _index: int = 0
 var _revealed: float = 0.0
@@ -40,6 +41,12 @@ func finished() -> bool:
 
 func speaker() -> String:
 	return "" if finished() else _lines[_index][0]
+
+
+func cue() -> StringName:
+	if finished() or _lines[_index].size() < 3:
+		return &""
+	return _lines[_index][2]
 
 
 func visible_text() -> String:

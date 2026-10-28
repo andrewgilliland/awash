@@ -201,10 +201,12 @@ func _scenario_walks_waking_coast_sand(player: CharacterBody2D) -> bool:
 # Walking off the screen's west edge would drop the Player out of the world.
 func _scenario_stops_at_west_edge(player: CharacterBody2D) -> bool:
 	_press(&"move_left")
-	await _frames(40)
+	await _frames(100)
 	_release(&"move_left")
 	await _frames(2)
+	# Walking from the middle of the beach reaches the wall, and stops there.
 	var valid := player.is_on_floor() and player.global_position.x >= 0.0
+	valid = valid and player.global_position.x < 12.0
 	valid = valid and _is_on_sand(player)
 	return valid
 
@@ -386,10 +388,13 @@ func _playtest_new_game_intro() -> bool:
 		await _leave_scene()
 		return false
 	valid = player.get("controls_locked") and _speaker() == "MARA"
-	valid = valid and mara.global_position.x - player.global_position.x < 32.0
+	valid = valid and absf(mara.global_position.x - player.global_position.x) < 32.0
 	valid = valid and await _read_through_dialogue()
 	await _frames(3)
 	valid = valid and not player.get("controls_locked") and not run.get("intro_pending")
+	# Mara has handed Blacktide over: it no longer stands in the sand.
+	var sword := current_scene.get_node_or_null("Blacktide") as CanvasItem
+	valid = valid and sword != null and not sword.visible
 	# Control is back: the Player walks.
 	var x := player.global_position.x
 	_press(&"move_right")

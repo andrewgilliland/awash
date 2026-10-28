@@ -26,10 +26,12 @@ func get_tests() -> Array:
 	return [
 		["Dialogue box shows a speaker's line and locks the Player", _test_box_shows_and_locks],
 		["Dialogue box closes after its last line", _test_box_closes],
+		["Dialogue box calls out each line's cue as it opens", _test_box_cues],
 		["Mara stands in the first Room, ready to talk", _test_mara_in_first_room],
 		["Mara is drawn from her sprite sheet", _test_mara_sprite],
 		["A fresh Run is not owed the intro", _test_start_run_clears_intro],
 		["Every line fits the dialogue box", _test_lines_fit_box],
+		["Mara hands Vael his sword once, mid-intro", _test_intro_hands_over_sword],
 	]
 
 
@@ -63,6 +65,19 @@ func _test_box_closes() -> bool:
 	return valid
 
 
+func _test_box_cues() -> bool:
+	var box := DIALOGUE_BOX.instantiate()
+	_root.add_child(box)
+	var cues := []
+	box.connect(&"cued", func(cue: StringName) -> void: cues.append(cue))
+	box.call("show_lines", [["MARA", "Hold.", &"first"], ["MARA", "Go."], ["MARA", "On.", &"last"]])
+	for i in 6:
+		box.call("advance")
+	var valid: bool = cues == [&"first", &"last"]
+	box.free()
+	return valid
+
+
 func _test_mara_in_first_room() -> bool:
 	var room := FIRST_ROOM.instantiate()
 	var mara := room.get_node_or_null("Mara") as Node2D
@@ -72,7 +87,6 @@ func _test_mara_in_first_room() -> bool:
 		valid = zone != null and zone.collision_layer == TRIGGER_LAYER
 		valid = valid and zone.collision_mask == PLAYER_LAYER
 		var start := room.get_node("Entries/start") as Marker2D
-		valid = valid and mara.position.x > start.position.x
 		valid = valid and mara.position.distance_to(start.position) < 40.0
 	room.free()
 	return valid
@@ -110,6 +124,13 @@ func _test_lines_fit_box() -> bool:
 			push_error("Too long for the dialogue box (%d rows): %s" % [rows, line[1]])
 			valid = false
 	return valid
+
+
+func _test_intro_hands_over_sword() -> bool:
+	var cued := IntroScript.LINES.filter(
+		func(line: Array) -> bool: return line.size() > 2 and line[2] == IntroScript.HAND_OVER
+	)
+	return cued.size() == 1 and cued[0][0] == "MARA"
 
 
 # Word-wraps text the way the box's label does, counting the rows it fills.

@@ -2,6 +2,8 @@ extends Control
 
 # The last line was read and the box closed.
 signal closed
+# A line carrying a cue just opened.
+signal cued(cue: StringName)
 
 const Dialogue := preload("res://scripts/ui/dialogue.gd")
 const PLAYER_GROUP := &"player"
@@ -28,6 +30,7 @@ func show_lines(lines: Array) -> void:
 	_set_player_locked(true)
 	visible = true
 	_refresh()
+	_call_out_cue()
 
 
 func is_open() -> bool:
@@ -37,11 +40,14 @@ func is_open() -> bool:
 func advance() -> void:
 	if dialogue == null:
 		return
+	var to_next_line := dialogue.line_shown()
 	dialogue.advance()
 	if dialogue.finished():
 		_close()
-	else:
-		_refresh()
+		return
+	_refresh()
+	if to_next_line:
+		_call_out_cue()
 
 
 func _process(delta: float) -> void:
@@ -66,6 +72,12 @@ func _refresh() -> void:
 	_speaker.text = dialogue.speaker()
 	_text.text = dialogue.visible_text()
 	_next.visible = dialogue.line_shown() and fmod(_blink_time, NEXT_BLINK * 2.0) < NEXT_BLINK
+
+
+func _call_out_cue() -> void:
+	var cue := dialogue.cue()
+	if cue != &"":
+		cued.emit(cue)
 
 
 func _close() -> void:

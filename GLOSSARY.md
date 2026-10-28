@@ -67,7 +67,7 @@ The music of a region, such as the Waking Coast's. It plays in each of the regio
 _Avoid_: Level music, BGM, soundtrack
 
 **Intro**:
-Chapter 1's opening on a new game from the start screen: Vael wakes in the surf by the wreck and Mara comes over to talk. A restarted Run skips it.
+Chapter 1's opening on a new game from the start screen: Vael wakes in the surf in the middle of the beach, and Mara comes in from the wreck, pulls his sword out of the sand and hands it to him as they talk. A restarted Run skips it.
 _Avoid_: Cutscene, prologue, tutorial
 
 ## Combat
