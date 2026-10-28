@@ -1,6 +1,9 @@
 extends SceneTree
 
 const MAIN_SCENE_PATH := "res://scenes/rooms/waking_coast_1.tscn"
+const RUNE_SHORE_PATH := "res://scenes/rooms/waking_coast_2.tscn"
+const CLIFF_TOP_Y := 64.0
+const TRANSITION_FRAME_LIMIT := 180
 const WAKING_COAST_SAND_Y := 96.0
 # Collision margins rest the Player a fraction of a pixel off the sand; falling through is far more.
 const ON_SAND_TOLERANCE := 0.5
@@ -25,6 +28,7 @@ func _init() -> void:
 	await _run_scenario("Pause freezes and resumes play", _scenario_pause_freezes_play)
 	await _run_scenario("Player walks the Waking Coast sand", _scenario_walks_waking_coast_sand)
 	await _run_scenario("Player stops at the west edge", _scenario_stops_at_west_edge)
+	await _run_playtest_async("Player walks between the Waking Coast Rooms", _playtest_walks_rooms)
 
 	if _failures > 0:
 		push_error("%d playtest(s) failed" % _failures)
@@ -190,6 +194,72 @@ func _scenario_stops_at_west_edge(player: CharacterBody2D) -> bool:
 	var valid := player.is_on_floor() and player.global_position.x >= 0.0
 	valid = valid and _is_on_sand(player)
 	return valid
+
+
+# Like _run_playtest, for playtests that wait on frames.
+func _run_playtest_async(name: String, playtest: Callable) -> void:
+	var result: bool = await playtest.call()
+	for action in SCENARIO_ACTIONS:
+		Input.action_release(action)
+	if result:
+		print("PASS: %s" % name)
+	else:
+		_failures += 1
+		push_error("FAIL: %s" % name)
+
+
+# Plays the real game flow: the Run starts on the first Room's cliff top, walks off its east
+# edge into the rune shore, then back west. Exits swap the current scene, as in the game.
+func _playtest_walks_rooms() -> bool:
+	var run := root.get_node_or_null("RunState")
+	if run == null:
+		return false
+	run.call("start_run")
+	run.call("enter_room", &"waking_coast_1", &"east")
+	change_scene_to_file(MAIN_SCENE_PATH)
+
+	var valid := await _walk_until_scene(&"move_right", RUNE_SHORE_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_2"
+	var player := _current_player()
+	valid = valid and player != null and player.global_position.x < 40.0
+	valid = valid and player != null and absf(player.global_position.y - CLIFF_TOP_Y) < 1.0
+
+	valid = valid and await _walk_until_scene(&"move_left", MAIN_SCENE_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_1"
+	player = _current_player()
+	valid = valid and player != null and player.global_position.x > 120.0
+
+	run.call("start_run")
+	if current_scene != null:
+		current_scene.free()
+	await process_frame
+	return valid
+
+
+# Lands in the current Room, then holds a direction until the scene becomes the given Room.
+func _walk_until_scene(action: StringName, scene_path: String) -> bool:
+	var landed := await _frames_until(
+		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
+		SETTLE_FRAME_LIMIT
+	)
+	_press(action)
+	var arrived := await _frames_until(
+		func() -> bool:
+			return current_scene != null and current_scene.scene_file_path == scene_path,
+		TRANSITION_FRAME_LIMIT
+	)
+	_release(action)
+	await _frames_until(
+		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
+		SETTLE_FRAME_LIMIT
+	)
+	return landed and arrived
+
+
+func _current_player() -> CharacterBody2D:
+	if current_scene == null:
+		return null
+	return current_scene.get_node_or_null("Player") as CharacterBody2D
 
 
 func _is_on_sand(player: CharacterBody2D) -> bool:

@@ -17,6 +17,8 @@ Awash includes lightweight headless test and deterministic playtest runners.
 - The integrated main scene loads with its player, world, and pause menu.
 - The Pause menu pauses on Home, opens each Panel from its button, returns Home on Back with focus on the opening button, resumes play, pairs every button with a Panel, disables a button with no Panel, fits the 160x144 screen, draws all text in the pixel font, and names the Room's region on the Map (`tests/pause_menu_tests.gd`, run after one frame so the menu is in the tree).
 - The Map centres the current Room, shows only visited Rooms, marks where the Player stands, and holds the Room every Run begins in (`tests/world_map_tests.gd`).
+- Every Room on the Map has a scene, every Exit leads to an Entry in a Room on the Map, and the two Waking Coast Rooms connect both ways (`tests/room_exit_tests.gd`).
+- The rune shore Room (`scenes/rooms/waking_coast_2.tscn`) is two screens wide, enters on the cliff top, scrolls its camera inside the Room, and walls its east edge until Tidefen exists (`tests/waking_coast_room_2_tests.gd`); a playtest walks from the first Room into the shore and back.
 - The Run begins in `waking_coast_1` at its `start` Entry, enters Rooms at Entries, starts over, and ignores empty ids (`tests/run_state_tests.gd`).
 - The Player appears at the Run's Entry in the main scene.
 - The deterministic main-scene spawn puts the Player on the default Entry, over a `WorldLayer` with tiles.
@@ -32,5 +34,6 @@ Awash includes lightweight headless test and deterministic playtest runners.
 - `scripts/core/run_state.gd` (the `RunState` autoload) owns the Run: the current Room, the Entry the Player came through, and visited Rooms.
 - `scripts/ui/pause_menu.gd` owns pausing and Panel switching; it pairs each `<Name>Button` in `%MenuButtons` with `<Name>Panel` in `%ContentRoot` by name, so a new Panel is a scene-only change.
 - `scripts/core/world_map.gd` owns where each Room sits on the Map and lays the Map out; `scripts/ui/map_view.gd` draws it from the Run and the Player's position.
+- `scripts/core/room_exit.gd` owns crossing an Exit: it enters the next Room in the Run and swaps to that Room's scene from the Map.
 - `assets/ui/awash_theme.tres` gives the menus the 5x7 pixel font (`assets/fonts/awash_pixel_5x7.png`, drawn in its `.aseprite`) and the game's palette.
 - `scripts/core/main.gd` places the Player at the Run's Entry, using the Room's `Entries` markers (the game starts in `scenes/rooms/waking_coast_1.tscn`).

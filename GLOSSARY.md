@@ -47,8 +47,12 @@ One area of the world, loaded as a single scene.
 _Avoid_: Level, map, screen
 
 **Entry**:
-A named place in a Room where the Player appears on entering it. Each Room has a default Entry where a new Run begins.
+A named place in a Room where the Player appears on entering it. A new Run begins at the first Room's `start` Entry.
 _Avoid_: Spawn point, start position, door
+
+**Exit**:
+An edge of a Room that leads to an Entry in another Room. Crossing it enters that Room in the Run and loads its scene.
+_Avoid_: Door, portal, transition, warp
 
 ## Menus
 
