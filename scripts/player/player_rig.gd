@@ -7,6 +7,7 @@ const PlayerController := preload("res://scripts/player/player_controller.gd")
 # The Player's declared look. Frame numbers index one row of FRAME_SIZE cells on each sheet;
 # sword offsets are per frame, from the body sprite, for a Player facing right.
 const FRAME_SIZE := Vector2i(16, 16)
+const BLINK_ALPHA := 0.25
 const BODY_SHEET := preload("res://assets/sprites/player_1.png")
 const SWORD_SHEET := preload("res://assets/sprites/weapons/sword_1.png")
 const BODY_ANIMATIONS := {
@@ -67,6 +68,13 @@ func show(state: PlayerController.State, facing: float, is_moving: bool) -> void
 	_body.flip_h = facing > 0.0
 	_sword.flip_h = _body.flip_h
 	_place_sword()
+
+
+# Fades the Player out on the off beat of an invulnerable blink.
+func show_blink(lit: bool) -> void:
+	var alpha := 1.0 if lit else BLINK_ALPHA
+	_body.self_modulate.a = alpha
+	_sword.self_modulate.a = alpha
 
 
 func _show_sword(animation_name: StringName) -> void:

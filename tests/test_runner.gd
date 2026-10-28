@@ -13,6 +13,9 @@ const WakingCoastRoomTests := preload("res://tests/waking_coast_room_tests.gd")
 const WorldMapTests := preload("res://tests/world_map_tests.gd")
 const WakingCoastRoom2Tests := preload("res://tests/waking_coast_room_2_tests.gd")
 const RoomExitTests := preload("res://tests/room_exit_tests.gd")
+const HealthTests := preload("res://tests/health_tests.gd")
+const ScavengerBrainTests := preload("res://tests/scavenger_brain_tests.gd")
+const CombatSceneTests := preload("res://tests/combat_scene_tests.gd")
 const STEP_DELTA := 0.1
 var _failures: int = 0
 
@@ -42,6 +45,12 @@ func _init() -> void:
 	var room_exit_tests := RoomExitTests.new()
 	for test in room_exit_tests.get_tests():
 		_run_test(test[0], test[1])
+	var health_tests := HealthTests.new()
+	for test in health_tests.get_tests():
+		_run_test(test[0], test[1])
+	var scavenger_brain_tests := ScavengerBrainTests.new()
+	for test in scavenger_brain_tests.get_tests():
+		_run_test(test[0], test[1])
 
 	_run_test("Player scene wires the rig", _test_player_scene_wires_rig)
 	_run_test("Player faces movement direction", _test_player_faces_movement_direction)
@@ -56,6 +65,9 @@ func _init() -> void:
 	await process_frame
 	var pause_menu_tests := PauseMenuTests.new(root)
 	for test in pause_menu_tests.get_tests():
+		_run_test(test[0], test[1])
+	var combat_scene_tests := CombatSceneTests.new(root)
+	for test in combat_scene_tests.get_tests():
 		_run_test(test[0], test[1])
 
 	if _failures > 0:

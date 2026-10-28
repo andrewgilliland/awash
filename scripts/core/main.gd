@@ -2,6 +2,7 @@ extends Node2D
 
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const RunStateScript := preload("res://scripts/core/run_state.gd")
+const WorldMap := preload("res://scripts/core/world_map.gd")
 
 @onready var _player: CharacterBody2D = $Player
 @onready var _entries: Node = $Entries
@@ -11,6 +12,17 @@ const RunStateScript := preload("res://scripts/core/run_state.gd")
 func _ready() -> void:
 	_ensure_pause_menu()
 	_place_player_at_entry()
+	if _player != null and not _player.is_connected(&"defeated", _on_player_defeated):
+		_player.connect(&"defeated", _on_player_defeated)
+
+
+# A defeated Player starts the Run over in the first Room.
+func _on_player_defeated() -> void:
+	var run := _get_run()
+	if run != null:
+		run.start_run()
+	var first_room: Dictionary = WorldMap.ROOMS[RunStateScript.FIRST_ROOM_ID]
+	get_tree().change_scene_to_file.call_deferred(first_room.scene)
 
 
 # The Run says which Entry the Player came through; this Room says where it is.
