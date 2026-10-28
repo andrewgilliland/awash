@@ -6,7 +6,7 @@ This file provides guidance for coding agents working in this repository.
 
 - Name: Awash
 - Engine: Godot 4.4
-- Main scene: `res://scenes/main.tscn`
+- Main scene: `res://scenes/rooms/waking_coast_1.tscn` (the first Room)
 - Current language: GDScript
 
 ## Goals For Agents
@@ -61,7 +61,7 @@ This file provides guidance for coding agents working in this repository.
 - For pause/menu changes, verify at minimum:
   - `./scripts/quality/lint.sh`
   - `./scripts/quality/test.sh`
-- Run `./scripts/quality/playtest.sh` for behavior-sensitive changes in `main.tscn` or runtime flow.
+- Run `./scripts/quality/playtest.sh` for behavior-sensitive changes in a Room under `scenes/` or runtime flow.
 
 ## Branching And Pull Requests
 

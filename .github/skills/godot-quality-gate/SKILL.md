@@ -39,7 +39,7 @@ Run commands from the repository root:
 
 Run playtest when changes touch runtime behavior or flow-sensitive content, especially:
 
-- `scenes/main.tscn`
+- `scenes/main.tscn` and Rooms under `scenes/rooms/`
 - `scripts/core/main.gd`
 - player movement/combat/state logic in `scripts/player/`
 - pause/menu runtime flow in `scenes/ui/` or `scripts/ui/`

@@ -30,4 +30,4 @@ Awash includes lightweight headless test and deterministic playtest runners.
 - `scenes/player/player.tscn` owns the player node structure and collision shape.
 - `scripts/core/run_state.gd` (the `RunState` autoload) owns the Run: the current Room, the Entry the Player came through, and visited Rooms.
 - `scripts/ui/pause_menu.gd` owns pausing and Panel switching; it pairs each `<Name>Button` in `%MenuButtons` with `<Name>Panel` in `%ContentRoot` by name, so a new Panel is a scene-only change.
-- `scripts/core/main.gd` places the Player at the Run's Entry, using the Room's `Entries` markers in `scenes/main.tscn`.
+- `scripts/core/main.gd` places the Player at the Run's Entry, using the Room's `Entries` markers (the game starts in `scenes/rooms/waking_coast_1.tscn`).
