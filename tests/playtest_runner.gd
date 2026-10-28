@@ -1,8 +1,9 @@
 extends SceneTree
 
-const MAIN_SCENE_PATH := "res://scenes/main.tscn"
-const WAKING_COAST_PATH := "res://scenes/rooms/waking_coast_1.tscn"
+const MAIN_SCENE_PATH := "res://scenes/rooms/waking_coast_1.tscn"
 const WAKING_COAST_SAND_Y := 96.0
+# Collision margins rest the Player a fraction of a pixel off the sand; falling through is far more.
+const ON_SAND_TOLERANCE := 0.5
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const SCENARIO_ACTIONS: Array[StringName] = [
 	&"move_left", &"move_right", &"jump", &"melee_attack", &"pause"
@@ -22,9 +23,8 @@ func _init() -> void:
 	await _run_scenario("Player jumps and lands", _scenario_jumps_and_lands)
 	await _run_scenario("Player attack plays out", _scenario_attack_plays_out)
 	await _run_scenario("Pause freezes and resumes play", _scenario_pause_freezes_play)
-	await _run_room_scenario(
-		"Player walks the Waking Coast sand", WAKING_COAST_PATH, _scenario_walks_waking_coast_sand
-	)
+	await _run_scenario("Player walks the Waking Coast sand", _scenario_walks_waking_coast_sand)
+	await _run_scenario("Player stops at the west edge", _scenario_stops_at_west_edge)
 
 	if _failures > 0:
 		push_error("%d playtest(s) failed" % _failures)
@@ -56,7 +56,7 @@ func _playtest_main_scene_spawn() -> bool:
 	main_scene.call("_ready")
 	var player := main_scene.get_node_or_null("Player") as CharacterBody2D
 	var entry := main_scene.get_node_or_null("Entries/start") as Marker2D
-	var world_layer := main_scene.get_node_or_null("WorldLayer") as TileMapLayer
+	var world_layer := main_scene.get_node_or_null("Terrain") as TileMapLayer
 	var is_valid := player != null and entry != null and world_layer != null
 
 	if is_valid:
@@ -170,15 +170,30 @@ func _scenario_pause_freezes_play(player: CharacterBody2D) -> bool:
 
 
 func _scenario_walks_waking_coast_sand(player: CharacterBody2D) -> bool:
-	var valid := is_equal_approx(player.global_position.y, WAKING_COAST_SAND_Y)
+	var valid := _is_on_sand(player)
 	var start_x := player.global_position.x
 	_press(&"move_right")
 	await _frames(30)
 	_release(&"move_right")
 	await _frames(2)
 	valid = valid and player.is_on_floor() and player.global_position.x > start_x + 20.0
-	valid = valid and is_equal_approx(player.global_position.y, WAKING_COAST_SAND_Y)
+	valid = valid and _is_on_sand(player)
 	return valid
+
+
+# Walking off the screen's west edge would drop the Player out of the world.
+func _scenario_stops_at_west_edge(player: CharacterBody2D) -> bool:
+	_press(&"move_left")
+	await _frames(40)
+	_release(&"move_left")
+	await _frames(2)
+	var valid := player.is_on_floor() and player.global_position.x >= 0.0
+	valid = valid and _is_on_sand(player)
+	return valid
+
+
+func _is_on_sand(player: CharacterBody2D) -> bool:
+	return absf(player.global_position.y - WAKING_COAST_SAND_Y) < ON_SAND_TOLERANCE
 
 
 # Presses and releases an action across one frame, like a quick key tap.

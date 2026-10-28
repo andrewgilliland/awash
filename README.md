@@ -18,8 +18,8 @@ Awash is a new 2D metroidvania-style action RPG prototype built in Godot 4.4.
 
 ## Run
 1. Open `awash` in Godot 4.4.
-2. Run the main scene at `res://scenes/main.tscn`.
-3. Move and jump around the graybox room.
+2. Run the main scene at `res://scenes/rooms/waking_coast_1.tscn`.
+3. Move and jump around the first Waking Coast Room.
 
 ## Controls
 - Move: Arrow keys / WASD / Left stick

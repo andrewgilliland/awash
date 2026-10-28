@@ -1,7 +1,7 @@
 extends SceneTree
 
 const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
-const MAIN_SCENE_PATH := "res://scenes/main.tscn"
+const MAIN_SCENE_PATH := "res://scenes/rooms/waking_coast_1.tscn"
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const PlayerControllerTests := preload("res://tests/player_controller_tests.gd")
@@ -35,6 +35,7 @@ func _init() -> void:
 	_run_test("Player faces movement direction", _test_player_faces_movement_direction)
 	_run_test("Player sprites follow the controller", _test_player_sprites_follow_controller)
 	_run_test("Player body reads attack finished once", _test_player_reads_attack_finished_once)
+	_run_test("Game starts in the Waking Coast", _test_game_starts_in_waking_coast)
 	_run_test("Main scene loads", _test_main_scene_loads)
 	_run_test("Player appears at the Run's Entry", _test_player_appears_at_entry)
 
@@ -185,6 +186,10 @@ func _step_with(controller: PlayerController, fields: Dictionary) -> void:
 	controller.step(frame, STEP_DELTA)
 
 
+func _test_game_starts_in_waking_coast() -> bool:
+	return ProjectSettings.get_setting("application/run/main_scene") == MAIN_SCENE_PATH
+
+
 func _test_main_scene_loads() -> bool:
 	var packed_scene := load(MAIN_SCENE_PATH) as PackedScene
 	if packed_scene == null:
@@ -198,7 +203,7 @@ func _test_main_scene_loads() -> bool:
 
 	var has_player := instance.get_node_or_null("Player") != null
 	var has_pause_menu := instance.get_node_or_null("CanvasLayer/PauseMenu") != null
-	var has_world := instance.get_node_or_null("WorldLayer") is TileMapLayer
+	var has_world := instance.get_node_or_null("Terrain") is TileMapLayer
 	instance.queue_free()
 	return has_player and has_world and has_pause_menu
 
