@@ -119,6 +119,9 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     ),
     # Defeated: it burbles and sinks back into the pool.
     "scavenger_defeat": lambda: mix(bubbles(6, 0.05, 180, 520, seed=6), noise(0.3, 1800, 200, seed=7)),
+    # Menus: a soft tick as the focus moves, and a rising chime when the game starts.
+    "ui_move": lambda: sweep(0.04, 880, 820, duty=0.25),
+    "ui_start": lambda: notes([392, 523, 659, 784], 0.07, duty=0.5),
 }
 
 
