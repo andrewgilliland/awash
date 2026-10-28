@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=4 uid="uid://7d1qyytvsevf"]
+[gd_scene load_steps=19 format=4 uid="uid://7d1qyytvsevf"]
 
 [ext_resource type="Script" uid="uid://bduaq14l4gg0m" path="res://scripts/ui/start_screen.gd" id="1_a3st5"]
 [ext_resource type="Texture2D" uid="uid://cvaltcq38nce8" path="res://assets/backgrounds/waking_coast_backdrop.png" id="2_wwlcm"]
@@ -7,6 +7,7 @@
 [ext_resource type="Theme" uid="uid://cgm30v4u24jhi" path="res://assets/ui/awash_theme.tres" id="5_h7m14"]
 [ext_resource type="AudioStream" uid="uid://be6nbsottdvrb" path="res://assets/audio/sfx/ui_move.wav" id="6_6h8hs"]
 [ext_resource type="AudioStream" uid="uid://5bny7qifhkai" path="res://assets/audio/sfx/ui_start.wav" id="7_r8v1o"]
+[ext_resource type="AudioStream" uid="uid://b3fm30x4ipdm8" path="res://assets/audio/music/start_theme.wav" id="8_theme"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v80uv"]
 atlas = ExtResource("2_wwlcm")
@@ -143,3 +144,8 @@ bus = &"SFX"
 [node name="Start" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource("7_r8v1o")
 bus = &"SFX"
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_theme")
+volume_db = -6.0
+bus = &"Music"

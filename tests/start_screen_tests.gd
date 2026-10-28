@@ -26,6 +26,7 @@ func get_tests() -> Array:
 		["A start press opens the menu on START", _test_start_press_opens_menu],
 		["Moving between menu options ticks", _test_moving_ticks],
 		["Start screen frames the beach with palms", _test_palms_frame_beach],
+		["Start screen plays its theme on a loop", _test_plays_looping_theme],
 	]
 
 
@@ -71,6 +72,21 @@ func _test_palms_frame_beach() -> bool:
 			valid = valid and trees.get_cell_atlas_coords(cell) == PALMS[cell]
 		for column in range(SCREEN_COLUMNS):
 			valid = valid and beach.get_cell_source_id(Vector2i(column, BEACH_ROW)) == 0
+	screen.free()
+	return valid
+
+
+func _test_plays_looping_theme() -> bool:
+	var screen := _screen()
+	var music := screen.get_node_or_null("Music") as AudioStreamPlayer
+	# The theme starts a moment after the screen appears.
+	var waiting := music != null and not music.playing
+	screen.call("_start_music")
+	var valid := music != null and AudioServer.get_bus_index(&"Music") != -1
+	if valid:
+		var theme := music.stream as AudioStreamWAV
+		valid = theme != null and theme.loop_mode == AudioStreamWAV.LOOP_FORWARD
+		valid = valid and music.bus == &"Music" and music.playing and waiting
 	screen.free()
 	return valid
 
