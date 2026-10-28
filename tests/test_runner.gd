@@ -4,8 +4,10 @@ const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
 const MAIN_SCENE_PATH := "res://scenes/main.tscn"
 const PAUSE_MENU_SCENE_PATH := "res://scenes/ui/pause_menu.tscn"
 const RUNTIME_STATE_SCRIPT_PATH := "res://scripts/core/runtime_state.gd"
+const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const PlayerControllerTests := preload("res://tests/player_controller_tests.gd")
+const PlayerRigTests := preload("res://tests/player_rig_tests.gd")
 const STEP_DELTA := 0.1
 var _failures: int = 0
 
@@ -14,15 +16,14 @@ func _init() -> void:
 	var controller_tests := PlayerControllerTests.new()
 	for test in controller_tests.get_tests():
 		_run_test(test[0], test[1])
+	var rig_tests := PlayerRigTests.new()
+	for test in rig_tests.get_tests():
+		_run_test(test[0], test[1])
 
-	_run_test("Player idle and walk frames load", _test_player_idle_and_walk_frames_load)
-	_run_test("Player jump frames load", _test_player_jump_frames_load)
+	_run_test("Player scene wires the rig", _test_player_scene_wires_rig)
 	_run_test("Player faces movement direction", _test_player_faces_movement_direction)
-	_run_test(
-		"Player charge locks facing and shows sword",
-		_test_player_charge_locks_facing_and_shows_sword
-	)
-	_run_test("Player attack displays offset sword", _test_player_attack_displays_offset_sword)
+	_run_test("Player sprites follow the controller", _test_player_sprites_follow_controller)
+	_run_test("Player body reads attack finished once", _test_player_reads_attack_finished_once)
 	_run_test("Main scene loads", _test_main_scene_loads)
 	_run_test("Pause menu scene loads", _test_pause_menu_scene_loads)
 	_run_test("Runtime state defaults sane", _test_runtime_state_defaults_sane)
@@ -45,7 +46,7 @@ func _run_test(name: String, test_callable: Callable) -> void:
 		push_error("FAIL: %s" % name)
 
 
-func _test_player_idle_and_walk_frames_load() -> bool:
+func _test_player_scene_wires_rig() -> bool:
 	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
 	if packed_scene == null:
 		return false
@@ -57,44 +58,14 @@ func _test_player_idle_and_walk_frames_load() -> bool:
 	root.add_child(instance)
 	instance.call("_ready")
 	var sprite := instance.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
-	if sprite == null or sprite.sprite_frames == null:
+	var sword_sprite := instance.get_node_or_null("SwordSprite") as AnimatedSprite2D
+	if sprite == null or sword_sprite == null:
 		instance.queue_free()
 		return false
 
-	var sprite_frames := sprite.sprite_frames
-	var valid := sprite.animation == &"idle"
-	valid = valid and sprite_frames.get_frame_count(&"idle") == 1
-	valid = valid and sprite_frames.get_frame_count(&"walk") == 2
-	valid = valid and _frame_region_is(sprite_frames, &"idle", 0, Rect2(0, 0, 16, 16))
-	valid = valid and _frame_region_is(sprite_frames, &"walk", 0, Rect2(0, 0, 16, 16))
-	valid = valid and _frame_region_is(sprite_frames, &"walk", 1, Rect2(16, 0, 16, 16))
-	instance.queue_free()
-	return valid
-
-
-func _test_player_jump_frames_load() -> bool:
-	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
-	if packed_scene == null:
-		return false
-
-	var instance := packed_scene.instantiate() as CharacterBody2D
-	if instance == null:
-		return false
-
-	root.add_child(instance)
-	instance.call("_ready")
-	var sprite := instance.get_node("AnimatedSprite2D") as AnimatedSprite2D
-	var sprite_frames := sprite.sprite_frames
-	var controller := instance.get("controller") as PlayerController
-
-	var valid := sprite_frames.get_frame_count(&"jump") == 3
-	valid = valid and not sprite_frames.get_animation_loop(&"jump")
-	valid = valid and _frame_region_is(sprite_frames, &"jump", 0, Rect2(32, 0, 16, 16))
-	valid = valid and _frame_region_is(sprite_frames, &"jump", 1, Rect2(48, 0, 16, 16))
-	valid = valid and _frame_region_is(sprite_frames, &"jump", 2, Rect2(64, 0, 16, 16))
-	_step_with(controller, {"jump_pressed": true})
-	valid = valid and sprite.animation == &"jump" and sprite.is_playing()
-
+	var valid := sprite.sprite_frames != null and sword_sprite.sprite_frames != null
+	valid = valid and sprite.animation == &"idle" and not sprite.flip_h
+	valid = valid and not sword_sprite.visible
 	instance.queue_free()
 	return valid
 
@@ -123,7 +94,7 @@ func _test_player_faces_movement_direction() -> bool:
 	return faces_right and faces_left
 
 
-func _test_player_attack_displays_offset_sword() -> bool:
+func _test_player_sprites_follow_controller() -> bool:
 	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
 	if packed_scene == null:
 		return false
@@ -136,42 +107,31 @@ func _test_player_attack_displays_offset_sword() -> bool:
 	instance.call("_ready")
 	var character_sprite := instance.get_node("AnimatedSprite2D") as AnimatedSprite2D
 	var sword_sprite := instance.get_node("SwordSprite") as AnimatedSprite2D
-	var character_frames := character_sprite.sprite_frames
-	var sword_frames := sword_sprite.sprite_frames
 	var controller := instance.get("controller") as PlayerController
 
-	var valid := character_frames.get_frame_count(&"attack") == 2
-	valid = valid and sword_frames.get_frame_count(&"attack") == 2
-	valid = valid and _frame_region_is(character_frames, &"attack", 0, Rect2(80, 0, 16, 16))
-	valid = valid and _frame_region_is(character_frames, &"attack", 1, Rect2(96, 0, 16, 16))
-	valid = valid and _frame_region_is(sword_frames, &"attack", 0, Rect2(0, 0, 16, 16))
-	valid = valid and _frame_region_is(sword_frames, &"attack", 1, Rect2(16, 0, 16, 16))
+	_step_with(controller, {"jump_pressed": true})
+	var valid := character_sprite.animation == &"jump" and not sword_sprite.visible
 
-	_attack_facing(controller, 1.0)
-	valid = valid and character_sprite.animation == &"attack" and character_sprite.is_playing()
-	valid = valid and sword_sprite.visible and sword_sprite.animation == &"attack"
-	valid = valid and sword_sprite.is_playing() and sword_sprite.position == Vector2(12.0, -22.0)
+	_step_with(controller, {"direction": 1.0})
+	_step_with(controller, {"melee_held": true, "direction": 1.0})
+	valid = valid and character_sprite.animation == &"walk"
+	valid = valid and sword_sprite.visible and sword_sprite.animation == &"charge"
+
+	_step_with(controller, {})
+	valid = valid and character_sprite.animation == &"attack" and sword_sprite.visible
 	valid = valid and character_sprite.flip_h and sword_sprite.flip_h
 
-	sword_sprite.frame = 1
-	valid = valid and sword_sprite.position == Vector2(16.0, -10.0)
+	character_sprite.animation_finished.emit()
+	valid = valid and instance.get("_attack_finished") == true
 
 	_step_with(controller, {"attack_finished": true})
-	_attack_facing(controller, -1.0)
-	valid = valid and sword_sprite.position == Vector2(-12.0, -22.0)
-	valid = valid and not character_sprite.flip_h and not sword_sprite.flip_h
-
-	sword_sprite.frame = 1
-	valid = valid and sword_sprite.position == Vector2(-16.0, -10.0)
-
-	_step_with(controller, {"attack_finished": true, "on_floor": false})
-	valid = valid and not sword_sprite.visible and character_sprite.animation == &"jump"
+	valid = valid and character_sprite.animation == &"idle" and not sword_sprite.visible
 
 	instance.queue_free()
 	return valid
 
 
-func _test_player_charge_locks_facing_and_shows_sword() -> bool:
+func _test_player_reads_attack_finished_once() -> bool:
 	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
 	if packed_scene == null:
 		return false
@@ -180,43 +140,24 @@ func _test_player_charge_locks_facing_and_shows_sword() -> bool:
 	if instance == null:
 		return false
 
+	# Autoloads do not run under --script, so register the input actions _read_frame reads.
+	var input_setup := (load(INPUT_SETUP_SCRIPT_PATH) as GDScript).new() as Node
+	input_setup.call("_register_inputs")
+	input_setup.free()
+
 	root.add_child(instance)
 	instance.call("_ready")
 	var character_sprite := instance.get_node("AnimatedSprite2D") as AnimatedSprite2D
-	var sword_sprite := instance.get_node("SwordSprite") as AnimatedSprite2D
-	var sword_frames := sword_sprite.sprite_frames
 	var controller := instance.get("controller") as PlayerController
 
-	var valid := sword_frames.get_frame_count(&"charge") == 1
-	valid = valid and _frame_region_is(sword_frames, &"charge", 0, Rect2(16, 0, 16, 16))
-
-	_step_with(controller, {"direction": -1.0})
 	_step_with(controller, {"melee_held": true})
-	var charge_offset := instance.get("sword_charge_offset") as Vector2
-	var expected_charge_position := (
-		character_sprite.position + Vector2(charge_offset.x * -1.0, charge_offset.y)
-	)
-	valid = valid and sword_sprite.visible and sword_sprite.animation == &"charge"
-	valid = valid and character_sprite.animation == &"idle"
-	valid = valid and sword_sprite.position == expected_charge_position
-
-	_step_with(controller, {"melee_held": true, "direction": 1.0})
-	valid = valid and controller.velocity.x > 0.0
-	valid = valid and character_sprite.animation == &"walk"
-	valid = valid and not character_sprite.flip_h and not sword_sprite.flip_h
-
 	_step_with(controller, {})
-	_step_with(controller, {"attack_finished": true})
-	valid = valid and not sword_sprite.visible
+	character_sprite.animation_finished.emit()
+	var first := instance.call("_read_frame") as PlayerController.Frame
+	var second := instance.call("_read_frame") as PlayerController.Frame
 
 	instance.queue_free()
-	return valid
-
-
-func _attack_facing(controller: PlayerController, direction: float) -> void:
-	_step_with(controller, {"direction": direction})
-	_step_with(controller, {"melee_held": true})
-	_step_with(controller, {})
+	return first.attack_finished and not second.attack_finished
 
 
 # Steps the controller one frame with the given Frame fields; others keep their defaults.
@@ -226,19 +167,6 @@ func _step_with(controller: PlayerController, fields: Dictionary) -> void:
 	for field in fields:
 		frame.set(field, fields[field])
 	controller.step(frame, STEP_DELTA)
-
-
-func _frame_region_is(
-	sprite_frames: SpriteFrames,
-	animation_name: StringName,
-	frame_index: int,
-	expected_region: Rect2
-) -> bool:
-	var frame_texture := sprite_frames.get_frame_texture(animation_name, frame_index)
-	if frame_texture is not AtlasTexture:
-		return false
-
-	return (frame_texture as AtlasTexture).region == expected_region
 
 
 func _test_main_scene_loads() -> bool:

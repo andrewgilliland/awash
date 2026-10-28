@@ -14,6 +14,7 @@ This file provides guidance for coding agents working in this repository.
 - Make minimal, task-focused changes.
 - Preserve existing scene/script wiring unless the task requires changes.
 - Keep tests and quality gates passing before finishing work.
+- Implement test-first, one behaviour at a time: write a failing test, run `./scripts/quality/test.sh` and see it go red, write just enough code to turn it green, then refactor.
 
 ## Setup
 
