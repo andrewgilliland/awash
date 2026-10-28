@@ -14,6 +14,7 @@ This file provides guidance for coding agents working in this repository.
 - Make minimal, task-focused changes.
 - Preserve existing scene/script wiring unless the task requires changes.
 - Keep tests and quality gates passing before finishing work.
+- Implement test-first, one behaviour at a time: write a failing test, run `./scripts/quality/test.sh` and see it go red, write just enough code to turn it green, then refactor.
 
 ## Setup
 
@@ -61,6 +62,17 @@ This file provides guidance for coding agents working in this repository.
   - `./scripts/quality/lint.sh`
   - `./scripts/quality/test.sh`
 - Run `./scripts/quality/playtest.sh` for behavior-sensitive changes in `main.tscn` or runtime flow.
+
+## Branching And Pull Requests
+
+- `dev` is the integration branch; `main` is the release branch. Both change only through GitHub pull requests.
+- Start every change from an up-to-date `dev` on a new branch:
+  - `git switch dev && git pull`
+  - `git switch -c feature/<short-name>` for new behaviour, or `fix/<short-name>` for bug fixes.
+- Commit on that branch, push it, and open the PR into `dev`: `gh pr create --base dev`.
+- Releases are a PR from `dev` into `main`: `gh pr create --base main --head dev`.
+- Merging a PR is the user's decision; leave merges to them unless they ask.
+- Reviewing a PR, or answering review findings: follow `REVIEW.md`.
 
 ## Commit Hygiene
 

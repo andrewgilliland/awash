@@ -1,0 +1,29 @@
+name: Branch check
+
+# Rulesets cannot restrict a PR's source branch, so this required check does:
+# PRs into dev come from feature/* or fix/*; PRs into main come from dev.
+on:
+  pull_request:
+    branches: [main, dev]
+    types: [opened, edited, reopened, synchronize]
+
+permissions: {}
+
+jobs:
+  branch-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR source branch
+        env:
+          BASE: ${{ github.base_ref }}
+          HEAD: ${{ github.head_ref }}
+        run: |
+          case "$BASE:$HEAD" in
+            main:dev | dev:feature/* | dev:fix/*)
+              echo "OK: $HEAD -> $BASE"
+              ;;
+            *)
+              echo "::error::'$HEAD' cannot merge into '$BASE'. Use feature/* or fix/* into dev, and dev into main."
+              exit 1
+              ;;
+          esac

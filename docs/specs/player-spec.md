@@ -33,22 +33,19 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 ## Animation
 
-- `res://assets/sprites/player_1.png` is the player sprite sheet.
-- Frames use a 16x16 grid.
-- Idle uses frame 0.
-- Walk loops through frames 0 and 1.
-- Jump plays frames 2, 3, and 4 once and holds its final frame while airborne.
-- Attack uses player frames 5 and 6.
-- Charge shows sword frame 1 from `sword_1.png` at `sword_charge_offset`, mirrored by facing.
-- The attack displays sword frames 0 and 1 from `sword_1.png` at the same time.
-- Each sword frame uses its matching entry in `sword_attack_frame_offsets` and mirrors with facing.
-- Sprite frames are constructed programmatically in `scripts/player/player.gd`.
+- The Player rig's table in `scripts/player/player_rig.gd` declares the sheets (`player_1.png` and `weapons/sword_1.png`, 16x16 cells in one row), each animation's frames, speed and looping, the per-frame sword offsets, and what each state shows.
+- Idle, Walk, Jump and Attack each show their own body animation.
+- Jump plays once and holds its final frame while airborne; Attack plays once, and its end finishes the `ATTACK` state.
 - While charging, the body shows `walk` when horizontal input is held and `idle` otherwise.
+- The sword shows only during `CHARGE` and `ATTACK`, with its own `charge` and `attack` animations.
+- Each sword frame sits at its declared offset from the body, and the body and sword mirror with facing.
+- A shown animation keeps playing, even across a state change that still shows it (Walk into a moving Charge); a newly shown animation starts from its first frame.
 
 ## Ownership
 
 - `scripts/player/player_controller.gd` (the Player controller) owns the Movement and States rules: state transitions, facing, horizontal velocity and the jump impulse.
-- `scripts/player/player.gd` (the Player body) owns gravity, `move_and_slide`, reading `Input`, and the Animation rules until they move to a dedicated rig.
+- `scripts/player/player_rig.gd` (the Player rig) owns the Animation rules and their table.
+- `scripts/player/player.gd` (the Player body) owns gravity, `move_and_slide` and reading `Input`, and hands each step's state, facing and movement to the rig.
 
 ## Out Of Scope
 
