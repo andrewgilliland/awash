@@ -1,7 +1,8 @@
 extends SceneTree
 
 const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
-const MAIN_SCENE_PATH := "res://scenes/rooms/waking_coast_1.tscn"
+const FIRST_ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
+const START_SCREEN_PATH := "res://scenes/ui/start_screen.tscn"
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const PlayerControllerTests := preload("res://tests/player_controller_tests.gd")
@@ -18,6 +19,7 @@ const ScavengerBrainTests := preload("res://tests/scavenger_brain_tests.gd")
 const CombatSceneTests := preload("res://tests/combat_scene_tests.gd")
 const PlayerSoundsTests := preload("res://tests/player_sounds_tests.gd")
 const PlayerSoundSceneTests := preload("res://tests/player_sound_scene_tests.gd")
+const StartScreenTests := preload("res://tests/start_screen_tests.gd")
 const ScavengerSoundsTests := preload("res://tests/scavenger_sounds_tests.gd")
 const ScavengerSoundSceneTests := preload("res://tests/scavenger_sound_scene_tests.gd")
 const STEP_DELTA := 0.1
@@ -67,8 +69,8 @@ func _init() -> void:
 	_run_test("Player sprites follow the controller", _test_player_sprites_follow_controller)
 	_run_test("Player body reads attack finished once", _test_player_reads_attack_finished_once)
 	_run_test("Player sprite stands on its feet", _test_player_sprite_stands_on_feet)
-	_run_test("Game starts in the Waking Coast", _test_game_starts_in_waking_coast)
-	_run_test("Main scene loads", _test_main_scene_loads)
+	_run_test("Game starts at the start screen", _test_game_starts_at_start_screen)
+	_run_test("First Room loads", _test_first_room_loads)
 	_run_test("Player appears at the Run's Entry", _test_player_appears_at_entry)
 
 	# Nodes join the tree only after the first frame; the Pause menu needs get_tree().
@@ -81,6 +83,9 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var player_sound_scene_tests := PlayerSoundSceneTests.new(root)
 	for test in player_sound_scene_tests.get_tests():
+		_run_test(test[0], test[1])
+	var start_screen_tests := StartScreenTests.new(root)
+	for test in start_screen_tests.get_tests():
 		_run_test(test[0], test[1])
 	var scavenger_sound_scene_tests := ScavengerSoundSceneTests.new(root)
 	for test in scavenger_sound_scene_tests.get_tests():
@@ -248,12 +253,12 @@ func _test_player_sprite_stands_on_feet() -> bool:
 	return is_equal_approx(sprite_bottom, collision_bottom)
 
 
-func _test_game_starts_in_waking_coast() -> bool:
-	return ProjectSettings.get_setting("application/run/main_scene") == MAIN_SCENE_PATH
+func _test_game_starts_at_start_screen() -> bool:
+	return ProjectSettings.get_setting("application/run/main_scene") == START_SCREEN_PATH
 
 
-func _test_main_scene_loads() -> bool:
-	var packed_scene := load(MAIN_SCENE_PATH) as PackedScene
+func _test_first_room_loads() -> bool:
+	var packed_scene := load(FIRST_ROOM_PATH) as PackedScene
 	if packed_scene == null:
 		return false
 
@@ -271,7 +276,7 @@ func _test_main_scene_loads() -> bool:
 
 
 func _test_player_appears_at_entry() -> bool:
-	var packed_scene := load(MAIN_SCENE_PATH) as PackedScene
+	var packed_scene := load(FIRST_ROOM_PATH) as PackedScene
 	if packed_scene == null:
 		return false
 

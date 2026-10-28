@@ -6,7 +6,7 @@ This file provides guidance for coding agents working in this repository.
 
 - Name: Awash
 - Engine: Godot 4.4
-- Main scene: `res://scenes/rooms/waking_coast_1.tscn` (the first Room)
+- Main scene: `res://scenes/ui/start_screen.tscn` (the start screen; START loads the first Room, `res://scenes/rooms/waking_coast_1.tscn`)
 - Current language: GDScript
 
 ## Goals For Agents

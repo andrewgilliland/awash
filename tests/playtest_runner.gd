@@ -1,6 +1,7 @@
 extends SceneTree
 
-const MAIN_SCENE_PATH := "res://scenes/rooms/waking_coast_1.tscn"
+const FIRST_ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
+const START_SCREEN_PATH := "res://scenes/ui/start_screen.tscn"
 const RUNE_SHORE_PATH := "res://scenes/rooms/waking_coast_2.tscn"
 const CLIFF_TOP_Y := 64.0
 const TRANSITION_FRAME_LIMIT := 180
@@ -9,7 +10,7 @@ const WAKING_COAST_SAND_Y := 96.0
 const ON_SAND_TOLERANCE := 0.5
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const SCENARIO_ACTIONS: Array[StringName] = [
-	&"move_left", &"move_right", &"jump", &"melee_attack", &"pause"
+	&"move_left", &"move_right", &"jump", &"melee_attack", &"pause", &"ui_accept"
 ]
 const SETTLE_FRAME_LIMIT := 120
 # The sand at the tidal pool's west edge, where the Scavenger can reach and be reached.
@@ -21,7 +22,7 @@ var _failures: int = 0
 
 
 func _init() -> void:
-	_run_playtest("Main scene spawn stays deterministic", _playtest_main_scene_spawn)
+	_run_playtest("First Room spawn stays deterministic", _playtest_first_room_spawn)
 
 	# Scenarios play the real main scene with input events and physics frames. The tree,
 	# autoloads and input map are live only after the first frame.
@@ -36,6 +37,9 @@ func _init() -> void:
 	await _run_playtest_async("Sword defeats the Scavenger", _playtest_sword_defeats_scavenger)
 	await _run_playtest_async("Scavenger's lunge hurts the Player", _playtest_lunge_hurts_player)
 	await _run_playtest_async("Player defeat starts the Run over", _playtest_defeat_starts_over)
+	await _run_playtest_async(
+		"START begins a new Run in the first Room", _playtest_start_begins_run
+	)
 
 	if _failures > 0:
 		push_error("%d playtest(s) failed" % _failures)
@@ -55,8 +59,8 @@ func _run_playtest(name: String, playtest_callable: Callable) -> void:
 		push_error("FAIL: %s" % name)
 
 
-func _playtest_main_scene_spawn() -> bool:
-	var packed_scene := load(MAIN_SCENE_PATH) as PackedScene
+func _playtest_first_room_spawn() -> bool:
+	var packed_scene := load(FIRST_ROOM_PATH) as PackedScene
 	if packed_scene == null:
 		return false
 
@@ -81,7 +85,7 @@ func _playtest_main_scene_spawn() -> bool:
 
 # Plays one scenario on a fresh main scene once the Player has landed, then resets input and pause.
 func _run_scenario(name: String, scenario: Callable) -> void:
-	await _run_room_scenario(name, MAIN_SCENE_PATH, scenario)
+	await _run_room_scenario(name, FIRST_ROOM_PATH, scenario)
 
 
 # Plays one scenario on a fresh Room once the Player has landed, then resets input and pause.
@@ -223,7 +227,7 @@ func _playtest_walks_rooms() -> bool:
 		return false
 	run.call("start_run")
 	run.call("enter_room", &"waking_coast_1", &"east")
-	change_scene_to_file(MAIN_SCENE_PATH)
+	change_scene_to_file(FIRST_ROOM_PATH)
 
 	var valid := await _walk_until_scene(&"move_right", RUNE_SHORE_PATH)
 	valid = valid and run.get("room_id") == &"waking_coast_2"
@@ -231,7 +235,7 @@ func _playtest_walks_rooms() -> bool:
 	valid = valid and player != null and player.global_position.x < 40.0
 	valid = valid and player != null and absf(player.global_position.y - CLIFF_TOP_Y) < 1.0
 
-	valid = valid and await _walk_until_scene(&"move_left", MAIN_SCENE_PATH)
+	valid = valid and await _walk_until_scene(&"move_left", FIRST_ROOM_PATH)
 	valid = valid and run.get("room_id") == &"waking_coast_1"
 	player = _current_player()
 	valid = valid and player != null and player.global_position.x > 120.0
@@ -291,12 +295,41 @@ func _playtest_defeat_starts_over() -> bool:
 	player.get("health").current = 1
 	var restarted := await _frames_until(
 		func() -> bool:
-			return current_scene != null and current_scene.scene_file_path == MAIN_SCENE_PATH,
+			return current_scene != null and current_scene.scene_file_path == FIRST_ROOM_PATH,
 		240
 	)
 	var valid: bool = restarted and run.get("room_id") == &"waking_coast_1"
 	valid = valid and run.get("entry_id") == &"start"
 	valid = valid and not run.call("has_visited_room", &"waking_coast_2")
+	await _leave_scene()
+	return valid
+
+
+# From a Run left in the rune shore: the start screen's START begins a fresh Run.
+func _playtest_start_begins_run() -> bool:
+	var run := root.get_node_or_null("RunState")
+	if run == null:
+		return false
+	run.call("enter_room", &"waking_coast_2", &"west")
+	change_scene_to_file(START_SCREEN_PATH)
+	await _frames(5)
+	var valid := current_scene != null and current_scene.scene_file_path == START_SCREEN_PATH
+	# One press opens the menu on START; a second presses it.
+	await _tap(&"ui_accept")
+	await _frames(2)
+	await _tap(&"ui_accept")
+	var arrived := await _frames_until(
+		func() -> bool:
+			return current_scene != null and current_scene.scene_file_path == FIRST_ROOM_PATH,
+		TRANSITION_FRAME_LIMIT
+	)
+	valid = valid and arrived and run.get("room_id") == &"waking_coast_1"
+	valid = valid and run.get("entry_id") == &"start"
+	valid = valid and not run.call("has_visited_room", &"waking_coast_2")
+	var player := _current_player()
+	var entry := current_scene.get_node_or_null("Entries/start") as Marker2D if arrived else null
+	valid = valid and player != null and entry != null
+	valid = valid and player.global_position.distance_to(entry.global_position) < 1.0
 	await _leave_scene()
 	return valid
 

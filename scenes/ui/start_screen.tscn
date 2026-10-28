@@ -1,0 +1,145 @@
+[gd_scene load_steps=18 format=4 uid="uid://7d1qyytvsevf"]
+
+[ext_resource type="Script" uid="uid://bduaq14l4gg0m" path="res://scripts/ui/start_screen.gd" id="1_a3st5"]
+[ext_resource type="Texture2D" uid="uid://cvaltcq38nce8" path="res://assets/backgrounds/waking_coast_backdrop.png" id="2_wwlcm"]
+[ext_resource type="TileSet" uid="uid://87k8wahvc2uo" path="res://assets/tilesets/waking_coast_2.tres" id="3_4dybt"]
+[ext_resource type="Texture2D" uid="uid://euap7td5i4ln" path="res://assets/ui/awash_logo.png" id="4_s037r"]
+[ext_resource type="Theme" uid="uid://cgm30v4u24jhi" path="res://assets/ui/awash_theme.tres" id="5_h7m14"]
+[ext_resource type="AudioStream" uid="uid://be6nbsottdvrb" path="res://assets/audio/sfx/ui_move.wav" id="6_6h8hs"]
+[ext_resource type="AudioStream" uid="uid://5bny7qifhkai" path="res://assets/audio/sfx/ui_start.wav" id="7_r8v1o"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v80uv"]
+atlas = ExtResource("2_wwlcm")
+region = Rect2(0, 0, 160, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wrlo7"]
+atlas = ExtResource("2_wwlcm")
+region = Rect2(160, 0, 160, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rbgwb"]
+atlas = ExtResource("2_wwlcm")
+region = Rect2(320, 0, 160, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_liolv"]
+atlas = ExtResource("2_wwlcm")
+region = Rect2(480, 0, 160, 144)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_lfcpp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v80uv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wrlo7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rbgwb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_liolv")
+}],
+"loop": true,
+"name": &"default",
+"speed": 6.66667
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_088r4"]
+atlas = ExtResource("4_s037r")
+region = Rect2(0, 0, 96, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yowib"]
+atlas = ExtResource("4_s037r")
+region = Rect2(96, 0, 96, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_scmku"]
+atlas = ExtResource("4_s037r")
+region = Rect2(192, 0, 96, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8t0ok"]
+atlas = ExtResource("4_s037r")
+region = Rect2(288, 0, 96, 30)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gi57t"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_088r4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yowib")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_scmku")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8t0ok")
+}],
+"loop": true,
+"name": &"default",
+"speed": 6.66667
+}]
+
+[node name="StartScreen" type="Node2D"]
+script = ExtResource("1_a3st5")
+
+[node name="Backdrop" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_lfcpp")
+autoplay = "default"
+centered = false
+
+[node name="Beach" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAAAAgAAAABAAAAAAABAAgAAAABAAAAAAACAAgAAAABAAAAAAADAAgAAAABAAAAAAAEAAgAAAABAAAAAAAFAAgAAAABAAAAAAAGAAgAAAABAAAAAAAHAAgAAAABAAAAAAAIAAgAAAABAAAAAAAJAAgAAAABAAAAAAA=")
+tile_set = ExtResource("3_4dybt")
+collision_enabled = false
+
+[node name="Trees" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAD//wEAAAAAAAkAAAD//wIAAAAAAAoAAAAAAAEAAAABAAkAAAAAAAIAAAABAAoAAAABAAEAAAACAAkAAAABAAIAAAACAAoAAAAAAAMAAAADAAkAAAAAAAQAAAADAAkAAAAAAAUAAAADAAkAAAAAAAYAAAADAAkAAAAAAAcAAAADAAoAAAAIAAEAAAAAAAkAAAAIAAIAAAAAAAoAAAAJAAEAAAABAAkAAAAJAAIAAAABAAoAAAAKAAEAAAACAAkAAAAKAAIAAAACAAoAAAAJAAMAAAADAAkAAAAJAAQAAAADAAkAAAAJAAUAAAADAAkAAAAJAAYAAAADAAkAAAAJAAcAAAADAAoAAAA=")
+tile_set = ExtResource("3_4dybt")
+collision_enabled = false
+
+[node name="Logo" type="AnimatedSprite2D" parent="."]
+position = Vector2(80, 32)
+sprite_frames = SubResource("SpriteFrames_gi57t")
+autoplay = "default"
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 160.0
+offset_bottom = 144.0
+mouse_filter = 2
+theme = ExtResource("5_h7m14")
+
+[node name="PressStart" type="Label" parent="UI"]
+layout_mode = 0
+offset_top = 98.0
+offset_right = 160.0
+offset_bottom = 121.0
+text = "PRESS START"
+horizontal_alignment = 1
+
+[node name="Menu" type="VBoxContainer" parent="UI"]
+layout_mode = 0
+offset_left = 56.0
+offset_top = 90.0
+offset_right = 104.0
+offset_bottom = 112.0
+
+[node name="StartButton" type="Button" parent="UI/Menu"]
+layout_mode = 2
+text = "START"
+
+[node name="QuitButton" type="Button" parent="UI/Menu"]
+layout_mode = 2
+text = "QUIT"
+
+[node name="Sounds" type="Node" parent="."]
+
+[node name="Move" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("6_6h8hs")
+bus = &"SFX"
+
+[node name="Start" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("7_r8v1o")
+bus = &"SFX"
