@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://cvqng0ja373w3"]
+[gd_scene load_steps=16 format=4 uid="uid://cvqng0ja373w3"]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_knkva"]
 [ext_resource type="Texture2D" uid="uid://cvaltcq38nce8" path="res://assets/backgrounds/waking_coast_backdrop.png" id="2_frjjx"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="5_exit0"]
 [ext_resource type="PackedScene" uid="uid://mj1yaq8ulg6s" path="res://scenes/npcs/mara.tscn" id="6_mara"]
 [ext_resource type="Script" uid="uid://bfkyoas27ihcp" path="res://scripts/story/intro.gd" id="7_intro"]
+[ext_resource type="Texture2D" uid="uid://ycpwrvq077bx" path="res://assets/sprites/weapons/blacktide_stuck.png" id="8_blade"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rgf27"]
 atlas = ExtResource("2_frjjx")
@@ -69,11 +70,11 @@ tile_map_data = PackedByteArray("AAABAAAAAAAHAAYAAAABAAEAAAAHAAYAAAABAAIAAAAHAAY
 tile_set = ExtResource("3_log8p")
 
 [node name="Terrain" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAAIAAEAAAADAAQAAAAJAAEAAAAEAAQAAAAAAAQAAAAFAAYAAAABAAQAAAAFAAYAAAACAAQAAAAGAAYAAAAHAAQAAAAAAAIAAAAIAAQAAAABAAIAAAAJAAQAAAABAAIAAAADAAUAAAAGAAYAAAAGAAUAAAADAAQAAAAHAAUAAAAAAAMAAAAIAAUAAAABAAMAAAAJAAUAAAABAAMAAAAAAAYAAAABAAAAAAABAAYAAAACAAgAAAACAAYAAAAGAAUAAAADAAYAAAAFAAgAAAAEAAYAAAAFAAUAAAAFAAYAAAAFAAUAAAAGAAYAAAABAAAAAAAHAAYAAAAAAAMAAAAIAAYAAAAAAAQAAAAJAAYAAAABAAMAAAAAAAcAAAABAAEAAAABAAcAAAAEAAgAAAACAAcAAAABAAgAAAADAAcAAAAHAAgAAAAEAAcAAAABAAEAAAAFAAcAAAABAAEAAAAGAAcAAAABAAEAAAAHAAcAAAAAAAMAAAAIAAcAAAABAAMAAAAJAAcAAAAHAAMAAAAAAAgAAAABAAEAAAABAAgAAAABAAEAAAACAAgAAAABAAEAAAADAAgAAAABAAEAAAAEAAgAAAABAAEAAAAFAAgAAAABAAEAAAAGAAgAAAABAAEAAAAHAAgAAAAAAAMAAAAIAAgAAAABAAMAAAAJAAgAAAABAAMAAAA=")
+tile_map_data = PackedByteArray("AAAIAAEAAAADAAQAAAAJAAEAAAAEAAQAAAAAAAQAAAAFAAYAAAABAAQAAAAFAAYAAAACAAQAAAAGAAYAAAAHAAQAAAAAAAIAAAAIAAQAAAABAAIAAAAJAAQAAAABAAIAAAAGAAUAAAADAAQAAAAHAAUAAAAAAAMAAAAIAAUAAAABAAMAAAAJAAUAAAABAAMAAAAAAAYAAAABAAAAAAABAAYAAAABAAAAAAACAAYAAAABAAAAAAADAAYAAAACAAgAAAAEAAYAAAAGAAUAAAAFAAYAAAAGAAUAAAAGAAYAAAAFAAgAAAAHAAYAAAAAAAMAAAAIAAYAAAAAAAQAAAAJAAYAAAABAAMAAAAAAAcAAAABAAEAAAABAAcAAAABAAEAAAACAAcAAAABAAEAAAADAAcAAAAEAAgAAAAEAAcAAAABAAgAAAAFAAcAAAABAAgAAAAGAAcAAAAHAAgAAAAHAAcAAAAAAAMAAAAIAAcAAAABAAMAAAAJAAcAAAAHAAMAAAAAAAgAAAABAAEAAAABAAgAAAABAAEAAAACAAgAAAABAAEAAAADAAgAAAABAAEAAAAEAAgAAAABAAEAAAAFAAgAAAABAAEAAAAGAAgAAAABAAEAAAAHAAgAAAAAAAMAAAAIAAgAAAABAAMAAAAJAAgAAAABAAMAAAA=")
 tile_set = ExtResource("3_log8p")
 
 [node name="Props" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAAAAAMAAAAAAAcAAAACAAMAAAABAAcAAAAHAAIAAAAFAAcAAAAHAAMAAAAGAAcAAAAIAAIAAAACAAcAAAAJAAIAAAACAAQAAAAJAAMAAAACAAQAAAAJAAAAAAAAAAcAAAA=")
+tile_map_data = PackedByteArray("AAAAAAMAAAAAAAcAAAACAAMAAAABAAcAAAAJAAAAAAAAAAcAAAA=")
 tile_set = ExtResource("3_log8p")
 
 [node name="Bounds" type="StaticBody2D" parent="."]
@@ -95,8 +96,13 @@ entry_id = &"west"
 [node name="Edge" type="CollisionShape2D" parent="Exits/east"]
 shape = SubResource("RectangleShape2D_e4st0")
 
+[node name="Blacktide" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(56, 88)
+texture = ExtResource("8_blade")
+
 [node name="Mara" parent="." instance=ExtResource("6_mara")]
-position = Vector2(28, 96)
+position = Vector2(64, 96)
 
 [node name="Intro" type="Node" parent="."]
 script = ExtResource("7_intro")
@@ -104,13 +110,13 @@ script = ExtResource("7_intro")
 [node name="Entries" type="Node2D" parent="."]
 
 [node name="start" type="Marker2D" parent="Entries"]
-position = Vector2(6, 96)
+position = Vector2(80, 96)
 
 [node name="east" type="Marker2D" parent="Entries"]
 position = Vector2(148, 64)
 
 [node name="Player" parent="." instance=ExtResource("4_hdkqp")]
-position = Vector2(6, 96)
+position = Vector2(80, 96)
 
 [node name="Camera2D" parent="Player" index="3"]
 limit_left = 0

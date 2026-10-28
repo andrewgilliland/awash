@@ -10,6 +10,7 @@ func get_tests() -> Array:
 		["Advancing mid-line shows the whole line", _test_advance_mid_line],
 		["Advancing a shown line moves to the next", _test_advance_to_next],
 		["Dialogue finishes after its last line", _test_finishes],
+		["A line can carry a cue for the scene", _test_cue],
 	]
 
 
@@ -42,3 +43,14 @@ func _test_finishes() -> bool:
 	for i in 4:
 		dialogue.advance()
 	return dialogue.finished()
+
+
+func _test_cue() -> bool:
+	var dialogue := Dialogue.new([["MARA", "Here."], ["MARA", "It's yours.", &"hand_over"]])
+	var valid := dialogue.cue() == &""
+	dialogue.advance()
+	dialogue.advance()
+	valid = valid and dialogue.cue() == &"hand_over"
+	dialogue.advance()
+	dialogue.advance()
+	return valid and dialogue.cue() == &""

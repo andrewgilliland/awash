@@ -1,7 +1,7 @@
 extends Node2D
 
-# Mara Venn, the Tidefen salvager who finds Vael on the Waking Coast. She stands by the wreck,
-# and Interact talks to her.
+# Mara Venn, the Tidefen salvager who finds Vael on the Waking Coast. She waits on the beach by
+# the wreck, and Interact talks to her.
 
 const SHEET := preload("res://assets/sprites/npcs/mara/mara_venn_1.png")
 const FRAME_SIZE := Vector2i(16, 16)
