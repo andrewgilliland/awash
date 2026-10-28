@@ -3,7 +3,7 @@ extends RefCounted
 const TILESET_PATH := "res://assets/tilesets/waking_coast_2.tres"
 const SOURCE_ID := 0
 const COLUMNS := 8
-const ROWS := 9
+const ROWS := 11
 const WORLD_LAYER := 1
 const FULL_SQUARE := [Vector2(-8, -8), Vector2(8, -8), Vector2(8, 8), Vector2(-8, 8)]
 # One-way ledges and decks collide along their top 7 pixels.
@@ -29,6 +29,19 @@ const ANIMATED := [
 	Vector2i(5, 7),
 	Vector2i(2, 8),
 	Vector2i(5, 8),
+	# Palm crowns sway: near (columns 0-2) and far (columns 4-6), rows 9-10.
+	Vector2i(0, 9),
+	Vector2i(1, 9),
+	Vector2i(2, 9),
+	Vector2i(0, 10),
+	Vector2i(1, 10),
+	Vector2i(2, 10),
+	Vector2i(4, 9),
+	Vector2i(5, 9),
+	Vector2i(6, 9),
+	Vector2i(4, 10),
+	Vector2i(5, 10),
+	Vector2i(6, 10),
 ]
 const FRAME_COUNT := 4
 const FRAME_DURATION := 0.15
