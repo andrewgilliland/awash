@@ -1,0 +1,70 @@
+name: Quality
+
+# The same gates as the pre-commit hook, plus the playtest, on every PR into dev or main.
+# pull_request runs on the PR's merge with its base, so the merged result is what gets checked.
+on:
+  pull_request:
+    branches: [main, dev]
+
+permissions:
+  contents: read
+
+env:
+  GODOT_VERSION: 4.4.1
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      # Outside the workspace, so Godot's project scan never sees the binary.
+      - name: Locate Godot
+        run: echo "GODOT_BIN=$HOME/godot/godot" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install lint tools
+        run: |
+          python -m venv .venv
+          ./.venv/bin/pip install -r requirements-dev.txt
+
+      - name: Cache Godot
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/godot
+          key: godot-${{ env.GODOT_VERSION }}-linux-x86_64
+
+      - name: Download Godot
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          archive="Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+          curl -fsSL -o godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/${archive}.zip"
+          unzip -q godot.zip
+          mkdir -p "$(dirname "$GODOT_BIN")"
+          mv "${archive}" "$GODOT_BIN"
+          chmod +x "$GODOT_BIN"
+          rm godot.zip
+
+      # .godot/ is not committed, so build the import cache the scripts and scenes load from.
+      - name: Import project
+        run: |
+          source scripts/quality/godot_timeout.sh
+          run_godot --headless --path . --import
+
+      - name: Typecheck
+        run: ./scripts/quality/typecheck.sh
+
+      - name: Lint
+        run: ./scripts/quality/lint.sh
+
+      - name: Test
+        run: ./scripts/quality/test.sh
+
+      - name: Playtest
+        run: ./scripts/quality/playtest.sh
