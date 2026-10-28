@@ -2,12 +2,12 @@ extends SceneTree
 
 const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
 const MAIN_SCENE_PATH := "res://scenes/main.tscn"
-const PAUSE_MENU_SCENE_PATH := "res://scenes/ui/pause_menu.tscn"
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const PlayerControllerTests := preload("res://tests/player_controller_tests.gd")
 const PlayerRigTests := preload("res://tests/player_rig_tests.gd")
 const RunStateTests := preload("res://tests/run_state_tests.gd")
+const PauseMenuTests := preload("res://tests/pause_menu_tests.gd")
 const STEP_DELTA := 0.1
 var _failures: int = 0
 
@@ -29,7 +29,12 @@ func _init() -> void:
 	_run_test("Player body reads attack finished once", _test_player_reads_attack_finished_once)
 	_run_test("Main scene loads", _test_main_scene_loads)
 	_run_test("Player appears at the Run's Entry", _test_player_appears_at_entry)
-	_run_test("Pause menu scene loads", _test_pause_menu_scene_loads)
+
+	# Nodes join the tree only after the first frame; the Pause menu needs get_tree().
+	await process_frame
+	var pause_menu_tests := PauseMenuTests.new(root)
+	for test in pause_menu_tests.get_tests():
+		_run_test(test[0], test[1])
 
 	if _failures > 0:
 		push_error("%d test(s) failed" % _failures)
@@ -209,50 +214,3 @@ func _test_player_appears_at_entry() -> bool:
 	var valid := player.global_position == entry.global_position
 	main_scene.queue_free()
 	return valid
-
-
-func _test_pause_menu_scene_loads() -> bool:
-	var packed_scene := load(PAUSE_MENU_SCENE_PATH) as PackedScene
-	if packed_scene == null:
-		return false
-
-	var instance := packed_scene.instantiate()
-	if instance == null:
-		return false
-
-	var has_menu_panel := instance.get_node_or_null("CenterContainer/MenuPanel") != null
-	var has_stats_button := (
-		instance.get_node_or_null(
-			"CenterContainer/MenuPanel/MarginContainer/VBoxContainer/MenuButtons/StatsButton"
-		)
-		!= null
-	)
-	var has_equipment_button := (
-		instance.get_node_or_null(
-			"CenterContainer/MenuPanel/MarginContainer/VBoxContainer/MenuButtons/EquipmentButton"
-		)
-		!= null
-	)
-	var has_map_button := (
-		instance.get_node_or_null(
-			"CenterContainer/MenuPanel/MarginContainer/VBoxContainer/MenuButtons/MapButton"
-		)
-		!= null
-	)
-	var has_content_root := (
-		instance.get_node_or_null(
-			"CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"
-		)
-		!= null
-	)
-	var has_toggle_method := instance.has_method("toggle_pause")
-
-	instance.queue_free()
-	return (
-		has_menu_panel
-		and has_stats_button
-		and has_equipment_button
-		and has_map_button
-		and has_content_root
-		and has_toggle_method
-	)

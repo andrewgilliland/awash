@@ -49,3 +49,13 @@ _Avoid_: Level, map, screen
 **Entry**:
 A named place in a Room where the Player appears on entering it. Each Room has a default Entry where a new Run begins.
 _Avoid_: Spawn point, start position, door
+
+## Menus
+
+**Pause menu**:
+Pauses play and offers Resume, Quit and its Panels.
+_Avoid_: Options menu, start menu
+
+**Panel**:
+One page of the Pause menu, opened from its menu button and closed with Back. Home is the Panel shown when no other is open.
+_Avoid_: Tab, screen, page
