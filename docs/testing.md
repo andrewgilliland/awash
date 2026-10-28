@@ -19,6 +19,7 @@ Awash includes lightweight headless test and deterministic playtest runners.
 - The Run begins in `room_1` at its `start` Entry, enters Rooms at Entries, starts over, and ignores empty ids (`tests/run_state_tests.gd`).
 - The Player appears at the Run's Entry in the main scene.
 - The deterministic main-scene spawn puts the Player on the default Entry, over a `WorldLayer` with tiles.
+- End-to-end playtests (`tests/playtest_runner.gd`) play the real main scene, with autoloads, input action events and physics frames at `--fixed-fps 60`: the Player walks right, jumps and lands, plays an attack to its end and back to idle, and pause freezes and resumes play.
 
 ## File Ownership
 
