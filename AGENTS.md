@@ -72,6 +72,7 @@ This file provides guidance for coding agents working in this repository.
 - Commit on that branch, push it, and open the PR into `dev`: `gh pr create --base dev`.
 - Releases are a PR from `dev` into `main`: `gh pr create --base main --head dev`.
 - Merging a PR is the user's decision; leave merges to them unless they ask.
+- Reviewing a PR, or answering review findings: follow `REVIEW.md`.
 
 ## Commit Hygiene
 
