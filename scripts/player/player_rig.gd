@@ -71,6 +71,11 @@ func show(state: PlayerController.State, facing: float, is_moving: bool) -> void
 
 
 # Fades the Player out on the off beat of an invulnerable blink.
+# Turns the body onto its side, lying on the ground, or back upright.
+func show_lying(lying: bool) -> void:
+	_body.rotation = -PI / 2.0 if lying else 0.0
+
+
 func show_blink(lit: bool) -> void:
 	var alpha := 1.0 if lit else BLINK_ALPHA
 	_body.self_modulate.a = alpha

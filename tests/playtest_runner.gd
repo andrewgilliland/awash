@@ -10,7 +10,7 @@ const WAKING_COAST_SAND_Y := 96.0
 const ON_SAND_TOLERANCE := 0.5
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const SCENARIO_ACTIONS: Array[StringName] = [
-	&"move_left", &"move_right", &"jump", &"melee_attack", &"pause", &"ui_accept"
+	&"move_left", &"move_right", &"jump", &"melee_attack", &"pause", &"ui_accept", &"interact"
 ]
 const SETTLE_FRAME_LIMIT := 120
 # The sand at the tidal pool's west edge, where the Scavenger can reach and be reached.
@@ -40,6 +40,8 @@ func _init() -> void:
 	await _run_playtest_async(
 		"START begins a new Run in the first Room", _playtest_start_begins_run
 	)
+	await _run_playtest_async("A new game opens on Mara's intro", _playtest_new_game_intro)
+	await _run_playtest_async("Interact talks to Mara again", _playtest_talk_to_mara)
 
 	if _failures > 0:
 		push_error("%d playtest(s) failed" % _failures)
@@ -314,6 +316,10 @@ func _playtest_defeat_starts_over() -> bool:
 	var valid: bool = restarted and run.get("room_id") == &"waking_coast_1"
 	valid = valid and run.get("entry_id") == &"start"
 	valid = valid and not run.call("has_visited_room", &"waking_coast_2")
+	# Only a new game from START opens on the intro.
+	await _frames(30)
+	var box := _dialogue_box()
+	valid = valid and box != null and not box.visible and not run.get("intro_pending")
 	await _leave_scene()
 	return valid
 
@@ -352,6 +358,87 @@ func _playtest_start_begins_run() -> bool:
 	valid = valid and player.global_position.distance_to(entry.global_position) < 1.0
 	await _leave_scene()
 	return valid
+
+
+# A new game from START: Vael wakes by the wreck, Mara comes over, they talk, and control
+# comes back.
+func _playtest_new_game_intro() -> bool:
+	var run := root.get_node_or_null("RunState")
+	if run == null:
+		return false
+	change_scene_to_file(START_SCREEN_PATH)
+	await _frames(20)
+	await _tap(&"ui_accept")
+	await _frames(2)
+	await _tap(&"ui_accept")
+	var arrived := await _frames_until(
+		func() -> bool:
+			return current_scene != null and current_scene.scene_file_path == FIRST_ROOM_PATH,
+		TRANSITION_FRAME_LIMIT
+	)
+	var opened := await _frames_until(
+		func() -> bool: return _dialogue_box() != null and _dialogue_box().visible, 360
+	)
+	var player := _current_player()
+	var mara := current_scene.get_node_or_null("Mara") as Node2D if arrived else null
+	var valid := arrived and opened and player != null and mara != null
+	if not valid:
+		await _leave_scene()
+		return false
+	valid = player.get("controls_locked") and _speaker() == "MARA"
+	valid = valid and mara.global_position.x - player.global_position.x < 32.0
+	valid = valid and await _read_through_dialogue()
+	await _frames(3)
+	valid = valid and not player.get("controls_locked") and not run.get("intro_pending")
+	# Control is back: the Player walks.
+	var x := player.global_position.x
+	_press(&"move_right")
+	await _frames(15)
+	_release(&"move_right")
+	valid = valid and player.global_position.x > x + 5.0
+	await _leave_scene()
+	return valid
+
+
+# Without the intro, Mara still stands by the start Entry; Interact talks to her again.
+func _playtest_talk_to_mara() -> bool:
+	var run := root.get_node_or_null("RunState")
+	if run == null:
+		return false
+	run.call("start_run")
+	change_scene_to_file(FIRST_ROOM_PATH)
+	var landed := await _frames_until(
+		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
+		SETTLE_FRAME_LIMIT
+	)
+	var valid := landed and _dialogue_box() != null and not _dialogue_box().visible
+	await _tap(&"interact")
+	await _frames(2)
+	valid = valid and _dialogue_box().visible and _speaker() == "MARA"
+	valid = valid and _current_player().get("controls_locked")
+	valid = valid and await _read_through_dialogue()
+	await _leave_scene()
+	return valid
+
+
+func _dialogue_box() -> Control:
+	if current_scene == null:
+		return null
+	return current_scene.get_node_or_null("CanvasLayer/DialogueBox") as Control
+
+
+func _speaker() -> String:
+	return (_dialogue_box().get_node("%Speaker") as Label).text
+
+
+# Presses on through every line, as a player would; false if the box never closes.
+func _read_through_dialogue() -> bool:
+	for i in 60:
+		if not _dialogue_box().visible:
+			return true
+		await _tap(&"ui_accept")
+		await _frames(3)
+	return not _dialogue_box().visible
 
 
 func _enter_rune_shore() -> CharacterBody2D:

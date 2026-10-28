@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://mj1yaq8ulg6s"]
+
+[ext_resource type="Script" uid="uid://bb1b32fcgcg0v" path="res://scripts/npcs/mara.gd" id="1_mara"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_talk0"]
+size = Vector2(40, 24)
+
+[node name="Mara" type="Node2D"]
+script = ExtResource("1_mara")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+texture_filter = 1
+
+[node name="TalkZone" type="Area2D" parent="."]
+collision_layer = 128
+collision_mask = 2
+monitorable = false
+
+[node name="Shape" type="CollisionShape2D" parent="TalkZone"]
+position = Vector2(0, -12)
+shape = SubResource("RectangleShape2D_talk0")

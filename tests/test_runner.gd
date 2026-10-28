@@ -21,6 +21,8 @@ const PlayerSoundsTests := preload("res://tests/player_sounds_tests.gd")
 const PlayerSoundSceneTests := preload("res://tests/player_sound_scene_tests.gd")
 const StartScreenTests := preload("res://tests/start_screen_tests.gd")
 const MusicTests := preload("res://tests/music_tests.gd")
+const DialogueTests := preload("res://tests/dialogue_tests.gd")
+const IntroTests := preload("res://tests/intro_tests.gd")
 const ScavengerSoundsTests := preload("res://tests/scavenger_sounds_tests.gd")
 const ScavengerSoundSceneTests := preload("res://tests/scavenger_sound_scene_tests.gd")
 const STEP_DELTA := 0.1
@@ -58,6 +60,9 @@ func _init() -> void:
 	var scavenger_brain_tests := ScavengerBrainTests.new()
 	for test in scavenger_brain_tests.get_tests():
 		_run_test(test[0], test[1])
+	var dialogue_tests := DialogueTests.new()
+	for test in dialogue_tests.get_tests():
+		_run_test(test[0], test[1])
 	var player_sounds_tests := PlayerSoundsTests.new()
 	for test in player_sounds_tests.get_tests():
 		_run_test(test[0], test[1])
@@ -90,6 +95,9 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var music_tests := MusicTests.new(root)
 	for test in music_tests.get_tests():
+		_run_test(test[0], test[1])
+	var intro_tests := IntroTests.new(root)
+	for test in intro_tests.get_tests():
 		_run_test(test[0], test[1])
 	var scavenger_sound_scene_tests := ScavengerSoundSceneTests.new(root)
 	for test in scavenger_sound_scene_tests.get_tests():

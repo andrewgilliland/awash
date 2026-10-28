@@ -77,6 +77,7 @@ func _on_start_pressed() -> void:
 	var run := get_node_or_null("/root/RunState") as RunStateScript
 	if run != null:
 		run.start_run()
+		run.intro_pending = true
 	await get_tree().create_timer(START_PAUSE).timeout
 	var first_room: Dictionary = WorldMap.ROOMS[RunStateScript.FIRST_ROOM_ID]
 	get_tree().change_scene_to_file(first_room.scene)

@@ -6,6 +6,8 @@ const DEFAULT_ENTRY_ID := &"start"
 # Read-only for callers: the Room the Player is in and the Entry they came through.
 var room_id: StringName = FIRST_ROOM_ID
 var entry_id: StringName = DEFAULT_ENTRY_ID
+# A new game from the start screen opens on the intro; a restarted Run does not.
+var intro_pending: bool = false
 var _visited_rooms: Dictionary = {FIRST_ROOM_ID: true}
 
 
@@ -13,6 +15,7 @@ var _visited_rooms: Dictionary = {FIRST_ROOM_ID: true}
 func start_run() -> void:
 	room_id = FIRST_ROOM_ID
 	entry_id = DEFAULT_ENTRY_ID
+	intro_pending = false
 	_visited_rooms = {FIRST_ROOM_ID: true}
 
 
