@@ -11,6 +11,8 @@ const PauseMenuTests := preload("res://tests/pause_menu_tests.gd")
 const WakingCoastTilesetTests := preload("res://tests/waking_coast_tileset_tests.gd")
 const WakingCoastRoomTests := preload("res://tests/waking_coast_room_tests.gd")
 const WorldMapTests := preload("res://tests/world_map_tests.gd")
+const WakingCoastRoom2Tests := preload("res://tests/waking_coast_room_2_tests.gd")
+const RoomExitTests := preload("res://tests/room_exit_tests.gd")
 const STEP_DELTA := 0.1
 var _failures: int = 0
 
@@ -33,6 +35,12 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var world_map_tests := WorldMapTests.new()
 	for test in world_map_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_2_tests := WakingCoastRoom2Tests.new()
+	for test in room_2_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_exit_tests := RoomExitTests.new()
+	for test in room_exit_tests.get_tests():
 		_run_test(test[0], test[1])
 
 	_run_test("Player scene wires the rig", _test_player_scene_wires_rig)

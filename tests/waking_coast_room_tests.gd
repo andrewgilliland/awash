@@ -6,6 +6,8 @@ const LAYER_ORDER := [&"Backdrop", &"Wreck", &"Terrain", &"Props", &"Entries", &
 const SCREEN := Rect2i(0, 0, 10, 9)
 const START_ENTRY := Vector2(6, 96)
 const WORLD_LAYER := 1
+# On the cliff top, clear of the east Exit.
+const EAST_ENTRY := Vector2(148, 64)
 # Landmark cells from assets/waking_shores_2.aseprite: layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	&"Wreck":
@@ -42,7 +44,7 @@ func get_tests() -> Array:
 		["Waking Coast Room lays out the screen", _test_lays_out_the_screen],
 		["Waking Coast start Entry stands on the sand", _test_start_entry_on_sand],
 		["Waking Coast camera stays on the screen", _test_camera_stays_on_screen],
-		["Waking Coast walls keep the Player on the screen", _test_walls_keep_player_on_screen],
+		["Waking Coast west wall holds; east leads on", _test_walls_keep_player_on_screen],
 	]
 
 
@@ -118,7 +120,7 @@ func _test_camera_stays_on_screen() -> bool:
 	return valid
 
 
-# Until Rooms connect, solid edges stop the Player walking off the screen.
+# The west edge leads nowhere yet, so a wall holds it; the east edge is the Exit to the shore.
 func _test_walls_keep_player_on_screen() -> bool:
 	var room := _room()
 	if room == null:
@@ -127,7 +129,9 @@ func _test_walls_keep_player_on_screen() -> bool:
 	var valid := bounds != null and bounds.collision_layer == WORLD_LAYER
 	if valid:
 		valid = _is_wall(bounds.get_node_or_null("West"), 0.0, Vector2.RIGHT)
-		valid = valid and _is_wall(bounds.get_node_or_null("East"), 160.0, Vector2.LEFT)
+		valid = valid and bounds.get_node_or_null("East") == null
+	var east := room.get_node_or_null("Entries/east") as Marker2D
+	valid = valid and east != null and east.position == EAST_ENTRY
 	room.free()
 	return valid
 

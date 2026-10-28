@@ -1,8 +1,22 @@
 extends RefCounted
 
-# Where each Room sits on the Map, in screens: its top-left cell, its size, and its region.
+# Every Room: its scene, and where it sits on the Map in screens (its top-left cell and size),
+# with its region.
 const ROOMS := {
-	&"waking_coast_1": {cell = Vector2i(0, 0), size = Vector2i(1, 1), region = "Waking Coast"},
+	&"waking_coast_1":
+	{
+		scene = "res://scenes/rooms/waking_coast_1.tscn",
+		cell = Vector2i(0, 0),
+		size = Vector2i(1, 1),
+		region = "Waking Coast",
+	},
+	&"waking_coast_2":
+	{
+		scene = "res://scenes/rooms/waking_coast_2.tscn",
+		cell = Vector2i(1, 0),
+		size = Vector2i(2, 1),
+		region = "Waking Coast",
+	},
 }
 const SCREEN_SIZE := Vector2(160, 144)
 # One screen on the Map, keeping the screen's shape.
