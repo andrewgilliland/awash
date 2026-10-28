@@ -39,6 +39,7 @@ func _init() -> void:
 	_run_test("Player faces movement direction", _test_player_faces_movement_direction)
 	_run_test("Player sprites follow the controller", _test_player_sprites_follow_controller)
 	_run_test("Player body reads attack finished once", _test_player_reads_attack_finished_once)
+	_run_test("Player sprite stands on its feet", _test_player_sprite_stands_on_feet)
 	_run_test("Game starts in the Waking Coast", _test_game_starts_in_waking_coast)
 	_run_test("Main scene loads", _test_main_scene_loads)
 	_run_test("Player appears at the Run's Entry", _test_player_appears_at_entry)
@@ -188,6 +189,27 @@ func _step_with(controller: PlayerController, fields: Dictionary) -> void:
 	for field in fields:
 		frame.set(field, fields[field])
 	controller.step(frame, STEP_DELTA)
+
+
+# The body frames draw the feet on their bottom row, so that row must meet the collision's base.
+func _test_player_sprite_stands_on_feet() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var instance := packed_scene.instantiate() as CharacterBody2D
+	root.add_child(instance)
+	instance.call("_ready")
+	var sprite := instance.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	var collision := instance.get_node("CollisionShape2D") as CollisionShape2D
+	var capsule := collision.shape as CapsuleShape2D
+	var texture := sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
+	var sprite_bottom := sprite.position.y + sprite.offset.y + texture.get_height()
+	if sprite.centered:
+		sprite_bottom -= texture.get_height() / 2.0
+	var collision_bottom := collision.position.y + capsule.height / 2.0
+	instance.queue_free()
+	return is_equal_approx(sprite_bottom, collision_bottom)
 
 
 func _test_game_starts_in_waking_coast() -> bool:
