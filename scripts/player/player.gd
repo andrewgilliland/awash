@@ -8,6 +8,7 @@ const PlayerRig := preload("res://scripts/player/player_rig.gd")
 const Health := preload("res://scripts/combat/health.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const PlayerSounds := preload("res://scripts/player/player_sounds.gd")
+const INTERACTABLE_GROUP := &"interactable"
 const MAX_HEALTH := 5
 const INVULNERABLE_TIME := 1.0
 const BLINK_TIME := 0.08
@@ -58,6 +59,31 @@ func _ready() -> void:
 		controller.jumped.connect(_sounds.play.bind(PlayerSounds.JUMP))
 		_sword_hitbox.struck.connect(_on_sword_struck)
 	_on_controller_stepped()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"interact") and not event.is_echo() and interact() != null:
+		get_viewport().set_input_as_handled()
+
+
+# Uses the nearest Interactable in reach, and returns it; null when none is in reach or the
+# Player is held still.
+func interact() -> Node2D:
+	if controls_locked or not is_inside_tree():
+		return null
+	var nearest: Node2D = null
+	for target: Node2D in get_tree().get_nodes_in_group(INTERACTABLE_GROUP):
+		if not target.call("reaches", self):
+			continue
+		var closer := nearest == null
+		if not closer:
+			var here := global_position.distance_to(target.global_position)
+			closer = here < global_position.distance_to(nearest.global_position)
+		if closer:
+			nearest = target
+	if nearest != null:
+		nearest.call("use", self)
+	return nearest
 
 
 func _physics_process(delta: float) -> void:

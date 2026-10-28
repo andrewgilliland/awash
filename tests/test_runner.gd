@@ -23,6 +23,7 @@ const StartScreenTests := preload("res://tests/start_screen_tests.gd")
 const MusicTests := preload("res://tests/music_tests.gd")
 const DialogueTests := preload("res://tests/dialogue_tests.gd")
 const IntroTests := preload("res://tests/intro_tests.gd")
+const InteractionTests := preload("res://tests/interaction_tests.gd")
 const ScavengerSoundsTests := preload("res://tests/scavenger_sounds_tests.gd")
 const ScavengerSoundSceneTests := preload("res://tests/scavenger_sound_scene_tests.gd")
 const STEP_DELTA := 0.1
@@ -98,6 +99,9 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var intro_tests := IntroTests.new(root)
 	for test in intro_tests.get_tests():
+		_run_test(test[0], test[1])
+	var interaction_tests := InteractionTests.new(root)
+	for test in interaction_tests.get_tests():
 		_run_test(test[0], test[1])
 	var scavenger_sound_scene_tests := ScavengerSoundSceneTests.new(root)
 	for test in scavenger_sound_scene_tests.get_tests():

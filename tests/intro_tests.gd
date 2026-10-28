@@ -26,7 +26,7 @@ func get_tests() -> Array:
 	return [
 		["Dialogue box shows a speaker's line and locks the Player", _test_box_shows_and_locks],
 		["Dialogue box closes after its last line", _test_box_closes],
-		["Mara stands in the first Room with a talk zone", _test_mara_in_first_room],
+		["Mara stands in the first Room, ready to talk", _test_mara_in_first_room],
 		["Mara is drawn from her sprite sheet", _test_mara_sprite],
 		["A fresh Run is not owed the intro", _test_start_run_clears_intro],
 		["Every line fits the dialogue box", _test_lines_fit_box],
@@ -68,7 +68,7 @@ func _test_mara_in_first_room() -> bool:
 	var mara := room.get_node_or_null("Mara") as Node2D
 	var valid := mara != null and mara.scene_file_path == MARA_SCENE.resource_path
 	if valid:
-		var zone := mara.get_node_or_null("TalkZone") as Area2D
+		var zone := mara.get_node_or_null("Interactable") as Area2D
 		valid = zone != null and zone.collision_layer == TRIGGER_LAYER
 		valid = valid and zone.collision_mask == PLAYER_LAYER
 		var start := room.get_node("Entries/start") as Marker2D
