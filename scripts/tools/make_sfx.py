@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Synthesize the Player's chiptune sound effects as 16-bit mono WAV files.
+"""Synthesize Awash's chiptune sound effects as 16-bit mono WAV files.
 
 Each effect is built from square waves and noise, like a handheld sound chip, so
 the sounds can be tuned here and regenerated rather than edited by hand.
 
 Example:
-  python scripts/tools/make_player_sfx.py --out assets/audio/sfx
+  python scripts/tools/make_sfx.py --out assets/audio/sfx
 """
 
 from __future__ import annotations
@@ -63,6 +63,32 @@ def notes(pitches: List[float], each: float, duty: float = 0.25) -> List[float]:
     return out
 
 
+def growl(duration: float, start_hz: float, end_hz: float, tremolo_hz: float) -> List[float]:
+    """A thin square that rises in pitch and swells, throbbing, then cuts off: a build-up."""
+    count = int(RATE * duration)
+    samples, phase = [], 0.0
+    for i in range(count):
+        t = i / count
+        phase += (start_hz + (end_hz - start_hz) * t) / RATE
+        throb = 0.55 + 0.45 * math.sin(2 * math.pi * tremolo_hz * i / RATE)
+        swell = 0.35 + 0.65 * t
+        samples.append(square(phase, 0.125) * throb * swell)
+    return samples
+
+
+def bubbles(count: int, each: float, low_hz: float, high_hz: float, seed: int) -> List[float]:
+    """Short rising blips at falling, jittered pitches: something sinking out of sight."""
+    rng = random.Random(seed)
+    out: List[float] = []
+    for i in range(count):
+        base = high_hz - (high_hz - low_hz) * i / max(count - 1, 1)
+        hz = base * rng.uniform(0.9, 1.1)
+        fade = 1.0 - i / (count + 1)
+        out += [s * fade for s in sweep(each, hz, hz * 1.6, duty=0.25)]
+        out += [0.0] * int(RATE * each * 0.4)
+    return out
+
+
 def mix(*tracks: List[float]) -> List[float]:
     length = max(len(t) for t in tracks)
     return [sum(t[i] for t in tracks if i < len(t)) for i in range(length)]
@@ -81,6 +107,18 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     "player_hurt": lambda: sweep(0.26, 620, 150, duty=0.5, vibrato_hz=28, vibrato_depth=0.08),
     # A falling run of notes when the Player's Health runs out.
     "player_defeat": lambda: notes([523, 440, 349, 262, 196], 0.11),
+    # The Scavenger's wind-up: a gurgling growl that rises over the whole wind-up, so the
+    # lunge can be heard coming.
+    "scavenger_windup": lambda: growl(0.45, 95, 190, tremolo_hz=22),
+    # Its spear thrust: a sharp, bright "shing".
+    "scavenger_lunge": lambda: mix(noise(0.09, 8000, 2500, seed=4), sweep(0.06, 900, 1400, duty=0.125)),
+    # Struck: a wet croak with a splash.
+    "scavenger_hurt": lambda: mix(
+        sweep(0.2, 320, 110, duty=0.25, vibrato_hz=38, vibrato_depth=0.15),
+        noise(0.1, 3000, 500, seed=5),
+    ),
+    # Defeated: it burbles and sinks back into the pool.
+    "scavenger_defeat": lambda: mix(bubbles(6, 0.05, 180, 520, seed=6), noise(0.3, 1800, 200, seed=7)),
 }
 
 

@@ -26,6 +26,7 @@ Awash includes lightweight headless test and deterministic playtest runners.
 - Playtests: the sword defeats the Scavenger, its lunge hurts the Player, and a defeated Player starts the Run over.
 - Landing after a real fall and starting an Attack make sounds, other state changes and a moment in the air are silent, and the controller reports a jump but not a walk off a ledge (`tests/player_sounds_tests.gd`, `tests/player_controller_tests.gd`).
 - The Player carries its six sounds on the `SFX` bus and plays them for a jump, a landing, a swing, a sword hit, being hurt and being defeated (`tests/player_sound_scene_tests.gd`).
+- The Scavenger growls on its wind-up, sounds its spear on the lunge, croaks when hurt and burbles when defeated, from any state, while recovering and patrolling stay quiet; it carries those four as positional sounds on the `SFX` bus and plays them as its brain changes state (`tests/scavenger_sounds_tests.gd`, `tests/scavenger_sound_scene_tests.gd`).
 - The Run begins in `waking_coast_1` at its `start` Entry, enters Rooms at Entries, starts over, and ignores empty ids (`tests/run_state_tests.gd`).
 - The Player appears at the Run's Entry in the main scene.
 - The deterministic main-scene spawn puts the Player on the default Entry, over a `WorldLayer` with tiles.

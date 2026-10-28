@@ -18,6 +18,8 @@ const ScavengerBrainTests := preload("res://tests/scavenger_brain_tests.gd")
 const CombatSceneTests := preload("res://tests/combat_scene_tests.gd")
 const PlayerSoundsTests := preload("res://tests/player_sounds_tests.gd")
 const PlayerSoundSceneTests := preload("res://tests/player_sound_scene_tests.gd")
+const ScavengerSoundsTests := preload("res://tests/scavenger_sounds_tests.gd")
+const ScavengerSoundSceneTests := preload("res://tests/scavenger_sound_scene_tests.gd")
 const STEP_DELTA := 0.1
 var _failures: int = 0
 
@@ -56,6 +58,9 @@ func _init() -> void:
 	var player_sounds_tests := PlayerSoundsTests.new()
 	for test in player_sounds_tests.get_tests():
 		_run_test(test[0], test[1])
+	var scavenger_sounds_tests := ScavengerSoundsTests.new()
+	for test in scavenger_sounds_tests.get_tests():
+		_run_test(test[0], test[1])
 
 	_run_test("Player scene wires the rig", _test_player_scene_wires_rig)
 	_run_test("Player faces movement direction", _test_player_faces_movement_direction)
@@ -76,6 +81,9 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var player_sound_scene_tests := PlayerSoundSceneTests.new(root)
 	for test in player_sound_scene_tests.get_tests():
+		_run_test(test[0], test[1])
+	var scavenger_sound_scene_tests := ScavengerSoundSceneTests.new(root)
+	for test in scavenger_sound_scene_tests.get_tests():
 		_run_test(test[0], test[1])
 
 	if _failures > 0:

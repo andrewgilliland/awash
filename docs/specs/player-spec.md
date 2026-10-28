@@ -46,7 +46,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - `land` plays on returning to `IDLE` or `WALK` from `JUMP` after at least 0.08 seconds in the air, so appearing at an Entry lands quietly.
 - `swing` plays when `ATTACK` begins, and `hit` when the sword strikes a Hurtbox.
 - `hurt` plays when a hit lands, or `defeat` instead when it takes the last Health; the Room waits 0.7 seconds for it before starting the Run over.
-- The sounds are chiptune effects made by `scripts/tools/make_player_sfx.py` into `assets/audio/sfx/`; change them there and rerun it.
+- The sounds are chiptune effects made by `scripts/tools/make_sfx.py` into `assets/audio/sfx/`; change them there and rerun it.
 
 ## Animation
 
