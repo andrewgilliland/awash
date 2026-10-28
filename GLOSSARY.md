@@ -58,6 +58,10 @@ _Avoid_: Door, portal, transition, warp
 The music of a region, such as the Waking Coast's. It plays in each of the region's Rooms and carries on unbroken through Exits between them.
 _Avoid_: Level music, BGM, soundtrack
 
+**Intro**:
+Chapter 1's opening on a new game from the start screen: Vael wakes in the surf by the wreck and Mara comes over to talk. A restarted Run skips it.
+_Avoid_: Cutscene, prologue, tutorial
+
 ## Combat
 
 **Health**:
@@ -81,6 +85,10 @@ The Waking Coast's fish-man enemy: it patrols a tidal pool and lunges with a hoo
 _Avoid_: Sahagin, fish-man (as a name)
 
 ## Menus
+
+**Dialogue box**:
+Shows a conversation one line at a time, typed out, with the speaker's name; a press finishes a line or moves to the next. The Player is held still while it is open.
+_Avoid_: Text box, speech bubble, message window
 
 **Start screen**:
 Where the game opens: the AWASH logo over the coast, its looping theme, and a PRESS START prompt that opens START and QUIT. START begins a new Run.

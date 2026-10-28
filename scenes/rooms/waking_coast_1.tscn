@@ -1,10 +1,12 @@
-[gd_scene load_steps=13 format=4 uid="uid://cvqng0ja373w3"]
+[gd_scene load_steps=15 format=4 uid="uid://cvqng0ja373w3"]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_knkva"]
 [ext_resource type="Texture2D" uid="uid://cvaltcq38nce8" path="res://assets/backgrounds/waking_coast_backdrop.png" id="2_frjjx"]
 [ext_resource type="TileSet" uid="uid://87k8wahvc2uo" path="res://assets/tilesets/waking_coast_2.tres" id="3_log8p"]
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="4_hdkqp"]
 [ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="5_exit0"]
+[ext_resource type="PackedScene" uid="uid://mj1yaq8ulg6s" path="res://scenes/npcs/mara.tscn" id="6_mara"]
+[ext_resource type="Script" uid="uid://bfkyoas27ihcp" path="res://scripts/story/intro.gd" id="7_intro"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rgf27"]
 atlas = ExtResource("2_frjjx")
@@ -92,6 +94,12 @@ entry_id = &"west"
 
 [node name="Edge" type="CollisionShape2D" parent="Exits/east"]
 shape = SubResource("RectangleShape2D_e4st0")
+
+[node name="Mara" parent="." instance=ExtResource("6_mara")]
+position = Vector2(28, 96)
+
+[node name="Intro" type="Node" parent="."]
+script = ExtResource("7_intro")
 
 [node name="Entries" type="Node2D" parent="."]
 

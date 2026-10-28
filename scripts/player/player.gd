@@ -25,6 +25,9 @@ const SWORD_OFFSET := Vector2(12.0, -8.0)
 var controller: PlayerController = PlayerController.new()
 # Read-only for callers.
 var health: Health = Health.new(MAX_HEALTH)
+# While true the Player ignores walk, jump and melee input: dialogue and the intro hold it
+# still.
+var controls_locked: bool = false
 var _rig: PlayerRig
 var _sounds: PlayerSounds
 var _attack_finished: bool = false
@@ -69,9 +72,10 @@ func _physics_process(delta: float) -> void:
 
 func _read_frame() -> PlayerController.Frame:
 	var frame := PlayerController.Frame.new()
-	frame.direction = Input.get_axis(&"move_left", &"move_right")
-	frame.jump_pressed = Input.is_action_just_pressed(&"jump")
-	frame.melee_held = Input.is_action_pressed(&"melee_attack")
+	if not controls_locked:
+		frame.direction = Input.get_axis(&"move_left", &"move_right")
+		frame.jump_pressed = Input.is_action_just_pressed(&"jump")
+		frame.melee_held = Input.is_action_pressed(&"melee_attack")
 	frame.on_floor = is_on_floor()
 	frame.attack_finished = _attack_finished
 	frame.velocity = velocity
@@ -104,6 +108,11 @@ func _on_hurtbox_hit(hitbox: Area2D) -> void:
 		defeated.emit()
 	else:
 		_sounds.play(PlayerSounds.HURT)
+
+
+# Lies the Player down on its side, as when it washes up, or stands it back up.
+func set_lying(lying: bool) -> void:
+	_rig.show_lying(lying)
 
 
 func _on_controller_stepped() -> void:
