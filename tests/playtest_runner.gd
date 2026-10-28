@@ -312,12 +312,19 @@ func _playtest_start_begins_run() -> bool:
 		return false
 	run.call("enter_room", &"waking_coast_2", &"west")
 	change_scene_to_file(START_SCREEN_PATH)
-	await _frames(5)
+	# Long enough for the theme to start and fade in.
+	await _frames(80)
 	var valid := current_scene != null and current_scene.scene_file_path == START_SCREEN_PATH
 	# One press opens the menu on START; a second presses it.
 	await _tap(&"ui_accept")
 	await _frames(2)
+	var music := current_scene.get_node_or_null("Music") as AudioStreamPlayer
+	valid = valid and music != null and music.playing
+	var full_volume := music.volume_db if music != null else 0.0
 	await _tap(&"ui_accept")
+	# The theme fades under the start chime before the first Room loads.
+	await _frames(8)
+	valid = valid and music != null and music.volume_db < full_volume - 3.0
 	var arrived := await _frames_until(
 		func() -> bool:
 			return current_scene != null and current_scene.scene_file_path == FIRST_ROOM_PATH,

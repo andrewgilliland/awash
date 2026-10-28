@@ -79,7 +79,7 @@ _Avoid_: Sahagin, fish-man (as a name)
 ## Menus
 
 **Start screen**:
-Where the game opens: the AWASH logo over the coast and a PRESS START prompt that opens START and QUIT. START begins a new Run.
+Where the game opens: the AWASH logo over the coast, its looping theme, and a PRESS START prompt that opens START and QUIT. START begins a new Run.
 _Avoid_: Title screen, main menu, splash
 
 **Pause menu**:
