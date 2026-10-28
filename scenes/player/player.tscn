@@ -15,11 +15,11 @@ position = Vector2(0, -10)
 shape = SubResource("CapsuleShape2D_2x6a2")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -10)
+position = Vector2(0, -8)
 texture_filter = 1
 
 [node name="SwordSprite" type="AnimatedSprite2D" parent="."]
-position = Vector2(-8, -10)
+position = Vector2(-8, -8)
 texture_filter = 1
 visible = false
 
