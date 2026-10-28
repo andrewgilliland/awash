@@ -14,7 +14,7 @@
   - [ ]
 
 - [ ] Menus
-  - [ ] Map
+  - [x] Map
   - [ ] Stats
 
 - [ ] Enemies

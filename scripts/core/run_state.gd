@@ -1,6 +1,6 @@
 extends Node
 
-const FIRST_ROOM_ID := &"room_1"
+const FIRST_ROOM_ID := &"waking_coast_1"
 const DEFAULT_ENTRY_ID := &"start"
 
 # Read-only for callers: the Room the Player is in and the Entry they came through.

@@ -59,3 +59,7 @@ _Avoid_: Options menu, start menu
 **Panel**:
 One page of the Pause menu, opened from its menu button and closed with Back. Home is the Panel shown when no other is open.
 _Avoid_: Tab, screen, page
+
+**Map**:
+The Panel that draws each visited Room as a block, sized in screens, with the current Room's region and a dot where the Player stands. Unvisited Rooms stay hidden.
+_Avoid_: Minimap, world map, atlas

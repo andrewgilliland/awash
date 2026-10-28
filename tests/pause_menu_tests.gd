@@ -3,6 +3,8 @@ extends RefCounted
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const MENU_ROOT := "CenterContainer/MenuPanel/MarginContainer/VBoxContainer/"
 const PANEL_NAMES: Array[String] = ["Stats", "Equipment", "Map"]
+const SCREEN_SIZE := Vector2(160, 144)
+const PIXEL_FONT_PATH := "res://assets/fonts/awash_pixel_5x7.png"
 
 # Needs a root that is already in the tree: the Pause menu pauses through get_tree().
 var _root: Window
@@ -21,6 +23,9 @@ func get_tests() -> Array:
 		["Pause menu Back refocuses the opening button", _test_back_refocuses_opener],
 		["Pause menu pairs every button with a Panel", _test_pairs_buttons_with_panels],
 		["Pause menu disables a button with no Panel", _test_disables_unpaired_button],
+		["Pause menu fits the screen", _test_fits_the_screen],
+		["Pause menu text uses the pixel font", _test_text_uses_pixel_font],
+		["Map Panel names the Room's region", _test_map_names_region],
 	]
 
 
@@ -99,6 +104,45 @@ func _test_disables_unpaired_button() -> bool:
 	_root.add_child(menu)
 	var valid := _menu_button(menu, "Map").disabled
 	valid = valid and not _menu_button(menu, "Stats").disabled
+	_close(menu)
+	return valid
+
+
+# The game draws at 160x144, so the menu and every Panel's content must fit inside it.
+func _test_fits_the_screen() -> bool:
+	var menu := _paused_menu()
+	var menu_panel := menu.get_node("CenterContainer/MenuPanel") as Control
+	var menu_size := menu_panel.get_combined_minimum_size()
+	var content_root := menu.get_node(MENU_ROOT + "ContentRoot") as Control
+	var content_height := content_root.get_combined_minimum_size().y
+	var valid := menu_size.x <= SCREEN_SIZE.x and menu_size.y <= SCREEN_SIZE.y
+	for panel in content_root.get_children():
+		var panel_size := (panel as Control).get_combined_minimum_size()
+		valid = valid and panel_size.y <= content_height and panel_size.x <= menu_size.x
+	_close(menu)
+	return valid
+
+
+func _test_text_uses_pixel_font() -> bool:
+	var menu := _paused_menu()
+	var valid := true
+	for node in menu.find_children("*", "Control", true, false):
+		if node is not Label and node is not Button:
+			continue
+		var font := (node as Control).get_theme_font(&"font")
+		valid = valid and font != null and font.resource_path == PIXEL_FONT_PATH
+		var text: String = node.text
+		for i in text.length():
+			valid = valid and font != null and font.has_char(text.unicode_at(i))
+	_close(menu)
+	return valid
+
+
+func _test_map_names_region() -> bool:
+	var menu := _paused_menu()
+	_menu_button(menu, "Map").pressed.emit()
+	var title := menu.get_node(MENU_ROOT + "ContentRoot/MapPanel/Title") as Label
+	var valid := title.text == "Waking Coast"
 	_close(menu)
 	return valid
 
