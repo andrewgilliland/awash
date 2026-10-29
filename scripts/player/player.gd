@@ -8,6 +8,7 @@ const PlayerRig := preload("res://scripts/player/player_rig.gd")
 const Health := preload("res://scripts/combat/health.gd")
 const Level := preload("res://scripts/player/level.gd")
 const Supplies := preload("res://scripts/items/supplies.gd")
+const Equipment := preload("res://scripts/items/equipment.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const PlayerSounds := preload("res://scripts/player/player_sounds.gd")
 const INTERACTABLE_GROUP := &"interactable"
@@ -38,6 +39,8 @@ var level: Level = Level.new()
 var health: Health = Health.new(level.max_health())
 # Read-only for callers: change it through collect() and use_supply().
 var supplies: Supplies = Supplies.new()
+# Read-only for callers: what the Player wears, whose Defense takes Health off each hit.
+var equipment: Equipment = Equipment.new()
 # While true the Player ignores walk, jump and melee input: dialogue and the intro hold it
 # still.
 var controls_locked: bool = false
@@ -62,6 +65,7 @@ func _ready() -> void:
 		level = Level.new(run.get("player_experience"))
 		health = Health.new(level.max_health(), run.get("player_health"))
 		supplies = Supplies.new(run.get("player_supplies"))
+		equipment = Equipment.new(run.get("player_armor"))
 	controller.move_speed = move_speed
 	controller.acceleration = acceleration
 	controller.friction = friction
@@ -207,10 +211,11 @@ func _on_rig_attack_finished() -> void:
 	_attack_finished = true
 
 
-# A hit costs Health and throws the Player away from the hitbox, unless invulnerable.
+# A hit costs Health, less the Armor's Defense, and throws the Player away from the hitbox, unless
+# invulnerable.
 func _on_hurtbox_hit(hitbox: Area2D) -> void:
 	var damage: int = hitbox.damage if hitbox is Hitbox else Hitbox.DEFAULT_DAMAGE
-	if not health.hurt(damage, INVULNERABLE_TIME):
+	if not health.hurt(equipment.hit_cost(damage), INVULNERABLE_TIME):
 		return
 	var away := signf(global_position.x - hitbox.global_position.x)
 	if away == 0.0:

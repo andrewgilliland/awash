@@ -185,8 +185,26 @@ What defeating an enemy earns the Player toward the next Level. Each kind of ene
 _Avoid_: XP, EXP, experience points
 
 **Strength**:
-The Player's own might, added to what each sword hit costs. Levels raise it; armor does not.
+The Player's own might, added to what each sword hit costs. Levels raise it; Armor does not.
 _Avoid_: Attack (the Player state), power, damage
+
+## Equipment
+
+**Equipment**:
+What the Player wears or wields, one piece in each slot, kept for the whole Run rather than spent like a Supply. A defeat keeps it.
+_Avoid_: Gear, outfit, loadout
+
+**Armor**:
+The Equipment slot for what the Player wears. It is never empty: a new Run starts in the Worn Leather Tunic.
+_Avoid_: Armour, clothing, outfit
+
+**Defense**:
+How much Health the Player's Armor takes off each hit that lands. A hit always costs at least 5.
+_Avoid_: AC, armor class, resistance, guard
+
+**Worn Leather Tunic**:
+The Armor Vael wakes in on the Waking Coast: sea-weathered leather that gives no Defense yet.
+_Avoid_: Saltworn Leathers, starting armor, default armor
 
 ## Menus
 

@@ -22,7 +22,6 @@ func get_tests() -> Array:
 		["Choosing a Brinecap eats it, with play still paused", _test_choosing_eats],
 		["At full Health, choosing one keeps it and says so", _test_full_health_keeps],
 		["Eating the last one goes back to the Inventory tab", _test_last_one_returns_focus],
-		["Equipment has no slots yet", _test_equipment_has_no_slots],
 	]
 
 
@@ -115,15 +114,6 @@ func _test_last_one_returns_focus() -> bool:
 	return valid
 
 
-func _test_equipment_has_no_slots() -> bool:
-	var menu := PAUSE_MENU_SCENE.instantiate() as Control
-	var body := menu.get_node(MENU_ROOT + "ContentRoot/EquipmentPanel/Body") as Label
-	var valid := body != null and body.text == "No equipment slots yet"
-	menu.free()
-	return valid
-
-
-# A Player carrying the given number of Brinecaps, in a fresh Run.
 func _player(brinecaps: int) -> CharacterBody2D:
 	var run := _root.get_node("RunState")
 	run.call("start_run")

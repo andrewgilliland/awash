@@ -13,6 +13,7 @@ func get_tests() -> Array:
 		["A defeat keeps the Run, back at the start with full Health", _test_defeat_keeps_run],
 		["Run carries the Player's Experience, even through a defeat", _test_carries_experience],
 		["Run carries the Player's Supplies, even through a defeat", _test_carries_supplies],
+		["Run carries the Player's Armor, even through a defeat", _test_carries_armor],
 	]
 
 
@@ -103,5 +104,19 @@ func _test_carries_supplies() -> bool:
 	valid = valid and run.player_supplies == {&"brinecap": 2}
 	run.start_run()
 	valid = valid and run.player_supplies == {}
+	run.free()
+	return valid
+
+
+func _test_carries_armor() -> bool:
+	var run := RunStateScript.new()
+	var valid: bool = run.player_armor == &"worn_leather_tunic"
+	run.player_armor = &"something_better"
+	run.enter_room(&"waking_coast_2", &"west")
+	valid = valid and run.player_armor == &"something_better"
+	run.recover_from_defeat()
+	valid = valid and run.player_armor == &"something_better"
+	run.start_run()
+	valid = valid and run.player_armor == &"worn_leather_tunic"
 	run.free()
 	return valid
