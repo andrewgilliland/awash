@@ -14,6 +14,12 @@ const RUNE_ROAD_PATH := "res://scenes/rooms/waking_coast_6.tscn"
 # Up the rune road's steps to the gate, jumping each one when the walk stops at it.
 const RUNE_ROAD_EAST: Array[float] = [56.0, 104.0, 168.0, 232.0, 300.0]
 const RUNE_ROAD_HEIGHTS_Y := 48.0
+const STORM_WISP_PATH := "Enemies/StormWisp"
+# Where to stand by the Storm Wisp: outside its arc but near enough to set it crackling, and
+# close enough for the sword to reach it.
+const WISP_WATCH_DISTANCE := 24.0
+const WISP_STRIKE_DISTANCE := 14.0
+const WISP_ARC_DISTANCE := 8.0
 const WARDENS_GATE_PATH := "res://scenes/rooms/waking_coast_7.tscn"
 const TIDEFEN_PATH := "res://scenes/rooms/waking_coast_8.tscn"
 const UNDERTOW_PATH := "res://scenes/rooms/waking_coast_9.tscn"
@@ -88,6 +94,8 @@ func _init() -> void:
 		"Player jumps the sinkhole onto the rune road and back", _playtest_jumps_to_rune_road
 	)
 	await _run_playtest_async("Player climbs the rune road to its gate", _playtest_climbs_rune_road)
+	await _run_playtest_async("Sword disperses the Storm Wisp", _playtest_sword_disperses_wisp)
+	await _run_playtest_async("Storm Wisp's arc hurts the Player", _playtest_arc_hurts_player)
 	await _run_playtest_async(
 		"Player walks through the Warden's gate into Tidefen", _playtest_walks_to_tidefen
 	)
@@ -381,21 +389,11 @@ func _playtest_walks_to_graveyard() -> bool:
 # Down from the cliff to the sand, then deck to deck up to the stern's crate, with real input
 # and physics. The Scavenger is taken out first: this checks the route, not the fight.
 func _playtest_hops_to_stern() -> bool:
-	var run := root.get_node_or_null("RunState")
-	if run == null:
-		return false
-	run.call("start_run")
-	run.call("enter_room", &"waking_coast_4", &"west")
-	change_scene_to_file(WRECK_GRAVEYARD_PATH)
-	var landed := await _frames_until(
-		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
-		SETTLE_FRAME_LIMIT
-	)
-	if not landed:
+	var player := await _enter_room(&"waking_coast_4", &"west", WRECK_GRAVEYARD_PATH)
+	if player == null:
 		await _leave_scene()
 		return false
 	current_scene.get_node(SCAVENGER_PATH).free()
-	var player := _current_player()
 	await _walk_to_x(player, WRECK_DECKS[0][1])
 	var valid := absf(player.global_position.y - WAKING_COAST_SAND_Y) < 1.0
 	for step in WRECK_DECKS:
@@ -491,22 +489,14 @@ func _playtest_jumps_to_rune_road() -> bool:
 	return valid
 
 
-# Up the road from the beach, a step at a time, to the heights by the rune gate.
+# Up the road from the beach, a step at a time, to the heights by the rune gate. The Storm Wisp
+# over the heights is taken out first: this checks the route, not the fight.
 func _playtest_climbs_rune_road() -> bool:
-	var run := root.get_node_or_null("RunState")
-	if run == null:
-		return false
-	run.call("start_run")
-	run.call("enter_room", &"waking_coast_6", &"west")
-	change_scene_to_file(RUNE_ROAD_PATH)
-	var landed := await _frames_until(
-		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
-		SETTLE_FRAME_LIMIT
-	)
-	if not landed:
+	var player := await _enter_room(&"waking_coast_6", &"west", RUNE_ROAD_PATH)
+	if player == null:
 		await _leave_scene()
 		return false
-	var player := _current_player()
+	current_scene.get_node(STORM_WISP_PATH).free()
 	await _wade_to(player, RUNE_ROAD_EAST)
 	var valid := player.is_on_floor() and player.global_position.x > 290.0
 	valid = valid and absf(player.global_position.y - RUNE_ROAD_HEIGHTS_Y) < 1.0
@@ -601,6 +591,64 @@ func _enter_room(room_id: StringName, entry_id: StringName, path: String) -> Cha
 	return _current_player() if landed else null
 
 
+# Waits out the Storm Wisp's crackle and arc just beyond its reach, then steps in while it rests
+# and swings, until it is gone.
+func _playtest_sword_disperses_wisp() -> bool:
+	var player := await _enter_room(&"waking_coast_6", &"east", RUNE_ROAD_PATH)
+	var wisp := current_scene.get_node_or_null(STORM_WISP_PATH) if player != null else null
+	var valid := wisp != null
+	var brain = wisp.get("brain") if valid else null
+	for swing in MAX_SWINGS:
+		if not valid or not is_instance_valid(wisp):
+			break
+		await _stand_by_wisp(player, wisp, WISP_WATCH_DISTANCE)
+		await _frames_until(
+			func() -> bool: return not is_instance_valid(wisp) or brain.state == brain.State.REST,
+			180
+		)
+		if not is_instance_valid(wisp):
+			break
+		await _stand_by_wisp(player, wisp, WISP_STRIKE_DISTANCE)
+		_press(&"melee_attack")
+		await _frames(3)
+		_release(&"melee_attack")
+		await _frames(30)
+	valid = valid and await _frames_until(func() -> bool: return not is_instance_valid(wisp), 90)
+	await _leave_scene()
+	return valid
+
+
+# Stands inside the Storm Wisp's reach until its arc lands.
+func _playtest_arc_hurts_player() -> bool:
+	var player := await _enter_room(&"waking_coast_6", &"east", RUNE_ROAD_PATH)
+	var wisp := (
+		current_scene.get_node_or_null(STORM_WISP_PATH) as Node2D if player != null else null
+	)
+	if wisp == null:
+		await _leave_scene()
+		return false
+	await _stand_by_wisp(player, wisp, WISP_ARC_DISTANCE)
+	var health = player.get("health")
+	var hurt := await _frames_until(func() -> bool: return health.current < health.maximum, 180)
+	await _frames(6)
+	var valid: bool = hurt and health.current == health.maximum - 1
+	await _leave_scene()
+	return valid
+
+
+# Puts the Player on the heights a distance to the Wisp's open side, facing it.
+func _stand_by_wisp(player: CharacterBody2D, wisp: Node2D, distance: float) -> void:
+	# Stand on the side away from the east edge, so the Player never steps into its Exit.
+	var side := -1.0 if wisp.global_position.x > 256.0 else 1.0
+	var toward := &"move_right" if side < 0.0 else &"move_left"
+	_press(toward)
+	await _frames(1)
+	_release(toward)
+	player.global_position = Vector2(wisp.global_position.x + side * distance, RUNE_ROAD_HEIGHTS_Y)
+	player.velocity = Vector2.ZERO
+	await _frames(2)
+
+
 # Walks through each point in turn, jumping toward it whenever a pool's edge stops the walk.
 func _wade_to(player: CharacterBody2D, points: Array[float]) -> void:
 	for x in points:
@@ -613,21 +661,11 @@ func _wade_to(player: CharacterBody2D, points: Array[float]) -> void:
 # Jumps the tidal pool, then climbs ledge to ledge to the cliff top, with real input and physics.
 # The pool's Scavenger is taken out first: this checks the route, not the fight.
 func _playtest_climbs_cliffs() -> bool:
-	var run := root.get_node_or_null("RunState")
-	if run == null:
-		return false
-	run.call("start_run")
-	run.call("enter_room", &"waking_coast_3", &"west")
-	change_scene_to_file(SALT_CLIFFS_PATH)
-	var landed := await _frames_until(
-		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
-		SETTLE_FRAME_LIMIT
-	)
-	if not landed:
+	var player := await _enter_room(&"waking_coast_3", &"west", SALT_CLIFFS_PATH)
+	if player == null:
 		await _leave_scene()
 		return false
 	current_scene.get_node(SCAVENGER_PATH).free()
-	var player := _current_player()
 	# The pool sits below the sand: jump it, or jump back out of it.
 	await _walk_to_x(player, 20.0)
 	await _jump_toward(player, 1)

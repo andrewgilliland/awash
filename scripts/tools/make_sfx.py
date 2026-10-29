@@ -89,6 +89,22 @@ def bubbles(count: int, each: float, low_hz: float, high_hz: float, seed: int) -
     return out
 
 
+def crackle(duration: float, pops_per_second: float, seed: int) -> List[float]:
+    """Static that builds: short bright pops, sparse at first and thicker toward the end."""
+    rng = random.Random(seed)
+    count = int(RATE * duration)
+    samples = [0.0] * count
+    i = 0
+    while i < count:
+        t = i / count
+        pop = noise(rng.uniform(0.006, 0.014), 9000, 3000, seed=rng.randrange(1 << 16))
+        for k, s in enumerate(pop):
+            if i + k < count:
+                samples[i + k] += s * (0.35 + 0.65 * t)
+        i += int(RATE / (pops_per_second * (0.4 + 1.6 * t)) * rng.uniform(0.5, 1.5))
+    return samples
+
+
 def mix(*tracks: List[float]) -> List[float]:
     length = max(len(t) for t in tracks)
     return [sum(t[i] for t in tracks if i < len(t)) for i in range(length)]
@@ -119,6 +135,18 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     ),
     # Defeated: it burbles and sinks back into the pool.
     "scavenger_defeat": lambda: mix(bubbles(6, 0.05, 180, 520, seed=6), noise(0.3, 1800, 200, seed=7)),
+    # The Storm Wisp gathering its charge: static that thickens over the whole crackle, so the
+    # arc can be heard coming.
+    "storm_wisp_crackle": lambda: crackle(0.7, 18, seed=8),
+    # Its arc: a sharp electric snap.
+    "storm_wisp_zap": lambda: mix(noise(0.18, 12000, 4000, seed=9), sweep(0.16, 1800, 600, duty=0.125)),
+    # Struck: a sputtering fizz.
+    "storm_wisp_hurt": lambda: mix(
+        sweep(0.18, 900, 300, duty=0.125, vibrato_hz=45, vibrato_depth=0.2),
+        noise(0.12, 7000, 1500, seed=10),
+    ),
+    # Defeated: it hisses away on the wind.
+    "storm_wisp_defeat": lambda: mix(noise(0.5, 6000, 300, seed=11), sweep(0.3, 700, 180, duty=0.25)),
     # Menus: a soft tick as the focus moves, and a rising chime when the game starts.
     "ui_move": lambda: sweep(0.04, 880, 820, duty=0.25),
     "ui_start": lambda: notes([392, 523, 659, 784], 0.07, duty=0.5),
