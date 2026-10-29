@@ -10,6 +10,10 @@ const WRECK_GRAVEYARD_PATH := "res://scenes/rooms/waking_coast_4.tscn"
 const WRECK_DECKS := [[1, 92.0, 64.0], [1, 140.0, 48.0], [1, 180.0, 48.0], [1, 240.0, 16.0]]
 const STERN_X := Vector2(256, 304)
 const SEA_CAVE_PATH := "res://scenes/rooms/waking_coast_5.tscn"
+const RUNE_ROAD_PATH := "res://scenes/rooms/waking_coast_6.tscn"
+# Up the rune road's steps to the gate, jumping each one when the walk stops at it.
+const RUNE_ROAD_EAST: Array[float] = [56.0, 104.0, 168.0, 232.0, 300.0]
+const RUNE_ROAD_HEIGHTS_Y := 48.0
 # Walking the graveyard's beach east to the sinkhole, and the cave's floor west to the tunnel:
 # points to walk to, jumping out of a pool when the walk falls short.
 const GRAVEYARD_BEACH_EAST: Array[float] = [88.0, 150.0, 186.0, 250.0, 296.0]
@@ -71,6 +75,10 @@ func _init() -> void:
 	await _run_playtest_async(
 		"Player drops into the sea cave and loops back to the cliffs", _playtest_cave_loop
 	)
+	await _run_playtest_async(
+		"Player jumps the sinkhole onto the rune road and back", _playtest_jumps_to_rune_road
+	)
+	await _run_playtest_async("Player climbs the rune road to its gate", _playtest_climbs_rune_road)
 	await _run_playtest_async("Sword defeats the Scavenger", _playtest_sword_defeats_scavenger)
 	await _run_playtest_async("Scavenger's lunge hurts the Player", _playtest_lunge_hurts_player)
 	await _run_playtest_async("Player defeat starts the Run over", _playtest_defeat_starts_over)
@@ -418,6 +426,74 @@ func _playtest_cave_loop() -> bool:
 	player = _current_player()
 	valid = valid and player != null
 	valid = valid and player.global_position.distance_to(SALT_CLIFFS_CAVE_ENTRY) < 1.0
+	await _leave_scene()
+	return valid
+
+
+# From the graveyard's east end, a running jump over the sinkhole lands on the rune road;
+# walking back west lands short of the sinkhole.
+func _playtest_jumps_to_rune_road() -> bool:
+	var run := root.get_node_or_null("RunState")
+	if run == null:
+		return false
+	run.call("start_run")
+	run.call("enter_room", &"waking_coast_4", &"east")
+	change_scene_to_file(WRECK_GRAVEYARD_PATH)
+	var landed := await _frames_until(
+		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
+		SETTLE_FRAME_LIMIT
+	)
+	if not landed:
+		await _leave_scene()
+		return false
+	current_scene.get_node(SCAVENGER_PATH).free()
+	_press(&"move_right")
+	await _frames(2)
+	_press(&"jump")
+	var arrived := await _frames_until(
+		func() -> bool:
+			return current_scene != null and current_scene.scene_file_path == RUNE_ROAD_PATH,
+		TRANSITION_FRAME_LIMIT
+	)
+	_release(&"jump")
+	_release(&"move_right")
+	var valid: bool = arrived and run.get("room_id") == &"waking_coast_6"
+	await _frames_until(
+		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
+		SETTLE_FRAME_LIMIT
+	)
+	var player := _current_player()
+	valid = valid and player != null and player.global_position.x < 40.0
+	valid = valid and absf(player.global_position.y - WAKING_COAST_SAND_Y) < 1.0
+
+	valid = valid and await _walk_until_scene(&"move_left", WRECK_GRAVEYARD_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_4"
+	player = _current_player()
+	valid = valid and player != null and player.is_on_floor()
+	valid = valid and absf(player.global_position.y - WAKING_COAST_SAND_Y) < 1.0
+	await _leave_scene()
+	return valid
+
+
+# Up the road from the beach, a step at a time, to the heights by the rune gate.
+func _playtest_climbs_rune_road() -> bool:
+	var run := root.get_node_or_null("RunState")
+	if run == null:
+		return false
+	run.call("start_run")
+	run.call("enter_room", &"waking_coast_6", &"west")
+	change_scene_to_file(RUNE_ROAD_PATH)
+	var landed := await _frames_until(
+		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
+		SETTLE_FRAME_LIMIT
+	)
+	if not landed:
+		await _leave_scene()
+		return false
+	var player := _current_player()
+	await _wade_to(player, RUNE_ROAD_EAST)
+	var valid := player.is_on_floor() and player.global_position.x > 290.0
+	valid = valid and absf(player.global_position.y - RUNE_ROAD_HEIGHTS_Y) < 1.0
 	await _leave_scene()
 	return valid
 
