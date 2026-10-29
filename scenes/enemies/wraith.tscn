@@ -1,0 +1,77 @@
+[gd_scene load_steps=12 format=3 uid="uid://bp00p0ropehmt"]
+
+[ext_resource type="Script" uid="uid://dopxfmcxertkm" path="res://scripts/enemies/wraith.gd" id="1_wraith"]
+[ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
+[ext_resource type="Script" uid="uid://dk3355uvj2vwl" path="res://scripts/combat/hitbox.gd" id="3_hit"]
+[ext_resource type="AudioStream" uid="uid://cs6xwnjch3amb" path="res://assets/audio/sfx/wraith_wail.wav" id="4_wail"]
+[ext_resource type="AudioStream" uid="uid://b4o74pg6gntmg" path="res://assets/audio/sfx/wraith_lash.wav" id="5_lash"]
+[ext_resource type="AudioStream" uid="uid://c2njlpqyqyfg" path="res://assets/audio/sfx/wraith_hurt.wav" id="6_hurt"]
+[ext_resource type="AudioStream" uid="uid://cf80m0fh75olv" path="res://assets/audio/sfx/wraith_defeat.wav" id="7_defeat"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body0"]
+radius = 5.0
+height = 20.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_anchor0"]
+radius = 6.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lash0"]
+size = Vector2(20, 16)
+
+[node name="Wraith" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 8
+collision_mask = 0
+motion_mode = 1
+script = ExtResource("1_wraith")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("CapsuleShape2D_body0")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+monitorable = false
+script = ExtResource("2_hurt")
+
+[node name="Shape" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(1, 1)
+shape = SubResource("CircleShape2D_anchor0")
+
+[node name="LashHitbox" type="Area2D" parent="."]
+position = Vector2(14, 0)
+collision_layer = 16
+collision_mask = 4
+monitoring = false
+monitorable = false
+script = ExtResource("3_hit")
+damage = 15
+
+[node name="Shape" type="CollisionShape2D" parent="LashHitbox"]
+shape = SubResource("RectangleShape2D_lash0")
+
+[node name="Sounds" type="Node2D" parent="."]
+
+[node name="Wail" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("4_wail")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Lash" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("5_lash")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Hurt" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("6_hurt")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Defeat" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("7_defeat")
+max_distance = 240.0
+bus = &"SFX"
