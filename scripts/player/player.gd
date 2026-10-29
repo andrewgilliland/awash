@@ -9,7 +9,7 @@ const Health := preload("res://scripts/combat/health.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const PlayerSounds := preload("res://scripts/player/player_sounds.gd")
 const INTERACTABLE_GROUP := &"interactable"
-const MAX_HEALTH := 5
+const MAX_HEALTH := 50
 const INVULNERABLE_TIME := 1.0
 const BLINK_TIME := 0.08
 # A defeated Player flickers more slowly where it lies.
@@ -141,7 +141,7 @@ func _on_rig_attack_finished() -> void:
 
 # A hit costs Health and throws the Player away from the hitbox, unless invulnerable.
 func _on_hurtbox_hit(hitbox: Area2D) -> void:
-	var damage: int = hitbox.damage if hitbox is Hitbox else 1
+	var damage: int = hitbox.damage if hitbox is Hitbox else Hitbox.DEFAULT_DAMAGE
 	if not health.hurt(damage, INVULNERABLE_TIME):
 		return
 	var away := signf(global_position.x - hitbox.global_position.x)

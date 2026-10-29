@@ -6,7 +6,10 @@ extends Area2D
 # It struck a hurtbox.
 signal struck(hurtbox: Area2D)
 
-@export var damage: int = 1
+# What one hit costs. Health counts in tens, so a hit is 10.
+const DEFAULT_DAMAGE := 10
+
+@export var damage: int = DEFAULT_DAMAGE
 
 var active: bool = false:
 	set(value):

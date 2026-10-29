@@ -8,7 +8,7 @@ const StormWispBrain := preload("res://scripts/enemies/storm_wisp_brain.gd")
 const Health := preload("res://scripts/combat/health.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const StormWispSounds := preload("res://scripts/enemies/storm_wisp_sounds.gd")
-const MAX_HEALTH := 2
+const MAX_HEALTH := 20
 const INVULNERABLE_TIME := 0.3
 const DEFEAT_TIME := 0.5
 const DEFEAT_BLINK := 0.08
@@ -95,7 +95,7 @@ func _read_frame() -> StormWispBrain.Frame:
 
 # A hit costs Health and pushes the Wisp away from the hitbox, unless invulnerable.
 func _on_hurtbox_hit(hitbox: Area2D) -> void:
-	var damage: int = hitbox.damage if hitbox is Hitbox else 1
+	var damage: int = hitbox.damage if hitbox is Hitbox else Hitbox.DEFAULT_DAMAGE
 	if not health.hurt(damage, INVULNERABLE_TIME):
 		return
 	var toward := signf(global_position.x - hitbox.global_position.x)
