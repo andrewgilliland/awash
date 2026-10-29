@@ -3,7 +3,7 @@ extends RefCounted
 const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const MENU_ROOT := "CenterContainer/MenuPanel/MarginContainer/VBoxContainer/"
-const PANEL := MENU_ROOT + "ContentRoot/SuppliesPanel/"
+const PANEL := MENU_ROOT + "ContentRoot/InventoryPanel/"
 const BRINECAP := &"brinecap"
 
 # Needs a root that is already in the tree: the Panel finds the Player through its group.
@@ -16,12 +16,12 @@ func _init(root: Window) -> void:
 
 func get_tests() -> Array:
 	return [
-		["Supplies Panel lists each kind, name left and count right", _test_lists_supplies],
-		["Supplies Panel says when none are carried", _test_says_when_none],
-		["Down from the Supplies tab reaches each Supply, then Resume", _test_moves_through_rows],
+		["Inventory lists each kind, name left and count right", _test_lists_supplies],
+		["Inventory says when no Supplies are carried", _test_says_when_none],
+		["Down from the Inventory tab reaches each Supply, then Resume", _test_moves_through_rows],
 		["Choosing a Brinecap eats it, with play still paused", _test_choosing_eats],
 		["At full Health, choosing one keeps it and says so", _test_full_health_keeps],
-		["Eating the last one goes back to the Supplies tab", _test_last_one_returns_focus],
+		["Eating the last one goes back to the Inventory tab", _test_last_one_returns_focus],
 		["Equipment has no slots yet", _test_equipment_has_no_slots],
 	]
 
@@ -54,7 +54,7 @@ func _test_says_when_none() -> bool:
 func _test_moves_through_rows() -> bool:
 	var player := _player(2)
 	var menu := _supplies_menu()
-	var tab := menu.get_node(MENU_ROOT + "MenuButtons/SuppliesButton") as Button
+	var tab := menu.get_node(MENU_ROOT + "MenuButtons/InventoryButton") as Button
 	var resume := menu.get_node(MENU_ROOT + "ResumeButton") as Button
 	var row := _rows(menu)[0] as Control
 	_navigate(menu, &"ui_down")
@@ -108,7 +108,7 @@ func _test_last_one_returns_focus() -> bool:
 	_navigate(menu, &"ui_down")
 	_navigate(menu, &"ui_accept")
 	var rows := _rows(menu)
-	var tab := menu.get_node(MENU_ROOT + "MenuButtons/SuppliesButton") as Button
+	var tab := menu.get_node(MENU_ROOT + "MenuButtons/InventoryButton") as Button
 	var valid := rows.size() == 1 and rows[0] is Label and tab.has_focus()
 	valid = valid and _panel_shown(menu)
 	_close(menu, player)
@@ -134,7 +134,7 @@ func _player(brinecaps: int) -> CharacterBody2D:
 	return player
 
 
-# The Pause menu, paused and moved on to the Supplies Panel.
+# The Pause menu, paused and moved on to the Inventory.
 func _supplies_menu() -> Control:
 	var menu := PAUSE_MENU_SCENE.instantiate() as Control
 	_root.add_child(menu)
@@ -148,7 +148,7 @@ func _rows(menu: Control) -> Array:
 
 
 func _panel_shown(menu: Control) -> bool:
-	return (menu.get_node(MENU_ROOT + "ContentRoot/SuppliesPanel") as Control).visible
+	return (menu.get_node(MENU_ROOT + "ContentRoot/InventoryPanel") as Control).visible
 
 
 func _navigate(menu: Control, action: StringName) -> void:

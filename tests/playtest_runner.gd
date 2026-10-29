@@ -117,8 +117,7 @@ func _init() -> void:
 	)
 	await _run_playtest_async("Scavenger's lunge hurts the Player", _playtest_lunge_hurts_player)
 	await _run_playtest_async(
-		"A defeated Scavenger leaves a Brinecap, eaten from the Supplies Panel",
-		_playtest_brinecap_drop
+		"A defeated Scavenger leaves a Brinecap, eaten from the Inventory", _playtest_brinecap_drop
 	)
 	await _run_playtest_async(
 		"Player defeat keeps the Run, back at the start", _playtest_defeat_keeps_run
@@ -237,7 +236,7 @@ func _scenario_pause_freezes_play(player: CharacterBody2D) -> bool:
 	return valid
 
 
-# Opens on Stats; right goes on to Supplies, and left twice comes round to Map.
+# Opens on Stats; right goes on to Inventory, and left twice comes round to Map.
 func _scenario_pause_menu_pages(player: CharacterBody2D) -> bool:
 	var content := player.get_parent().get_node(
 		"CanvasLayer/PauseMenu/CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"
@@ -249,7 +248,7 @@ func _scenario_pause_menu_pages(player: CharacterBody2D) -> bool:
 	var valid: bool = paused and shown.call() == [content.get_node("StatsPanel")]
 	await _tap(&"ui_right")
 	await _frames(2)
-	valid = valid and shown.call() == [content.get_node("SuppliesPanel")]
+	valid = valid and shown.call() == [content.get_node("InventoryPanel")]
 	await _tap(&"ui_left")
 	await _tap(&"ui_left")
 	await _frames(2)
@@ -937,8 +936,7 @@ func _playtest_talk_to_mara() -> bool:
 
 
 # With the Room's roll fixed to drop: strikes the Scavenger down, walks onto the Brinecap it
-# leaves, then, hurt, pauses and chooses it on the Supplies Panel to eat it back to 10 more
-# Health.
+# leaves, then, hurt, pauses and chooses it in the Inventory to eat it back to 10 more Health.
 func _playtest_brinecap_drop() -> bool:
 	var player := await _enter_rune_shore()
 	var scavenger := current_scene.get_node_or_null(SCAVENGER_PATH) if player != null else null

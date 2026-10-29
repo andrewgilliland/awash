@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://scripts/ui/map_view.gd" id="3_map"]
 [ext_resource type="Script" uid="uid://djsuh104a5mbx" path="res://scripts/ui/stats_view.gd" id="5_stats"]
 [ext_resource type="Theme" path="res://assets/ui/awash_compact_theme.tres" id="9_compact"]
-[ext_resource type="Script" path="res://scripts/ui/supplies_view.gd" id="10_supplies"]
+[ext_resource type="Script" path="res://scripts/ui/inventory_view.gd" id="10_inventory"]
 
 [node name="PauseMenu" type="Control"]
 anchor_right = 1.0
@@ -50,9 +50,9 @@ alignment = 1
 layout_mode = 2
 text = "Stats"
 
-[node name="SuppliesButton" type="Button" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/MenuButtons"]
+[node name="InventoryButton" type="Button" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/MenuButtons"]
 layout_mode = 2
-text = "Supplies"
+text = "Inventory"
 
 [node name="EquipmentButton" type="Button" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/MenuButtons"]
 layout_mode = 2
@@ -76,19 +76,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-alignment = 1
-
-[node name="Title" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/StatsPanel"]
-layout_mode = 2
-text = "Stats"
-horizontal_alignment = 1
 
 [node name="Body" type="GridContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/StatsPanel"]
 layout_mode = 2
 columns = 2
 script = ExtResource("5_stats")
 
-[node name="SuppliesPanel" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"]
+[node name="InventoryPanel" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -96,19 +90,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-alignment = 1
 
-[node name="Title" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/SuppliesPanel"]
+[node name="Body" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/InventoryPanel" node_paths=PackedStringArray("note")]
 layout_mode = 2
-text = "Supplies"
-horizontal_alignment = 1
-
-[node name="Body" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/SuppliesPanel" node_paths=PackedStringArray("note")]
-layout_mode = 2
-script = ExtResource("10_supplies")
+script = ExtResource("10_inventory")
 note = NodePath("../Note")
 
-[node name="Note" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/SuppliesPanel"]
+[node name="Note" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/InventoryPanel"]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 0.545098, 1)
@@ -122,12 +110,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-alignment = 1
-
-[node name="Title" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel"]
-layout_mode = 2
-text = "Equipment"
-horizontal_alignment = 1
 
 [node name="Body" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel"]
 layout_mode = 2
@@ -142,11 +124,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-alignment = 1
 
-[node name="Title" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/MapPanel"]
+[node name="Region" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/MapPanel"]
 layout_mode = 2
-text = "Map"
 horizontal_alignment = 1
 
 [node name="MapView" type="Control" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/MapPanel" node_paths=PackedStringArray("region_label")]
@@ -155,7 +135,7 @@ custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("3_map")
-region_label = NodePath("../Title")
+region_label = NodePath("../Region")
 
 [node name="Divider" type="HSeparator" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
