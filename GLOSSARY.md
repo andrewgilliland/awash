@@ -44,10 +44,14 @@ _Avoid_: Wind-up, hold
 The Player state from melee release until the swing finishes: facing is locked, jumping is not possible, and horizontal movement bleeds to a stop.
 _Avoid_: Swing, strike (as state names)
 
+**Charged Attack**:
+An Attack let go after a full Charge, half a second of holding melee. It costs twice what a quick one does, and the sword blinks once the Charge is full.
+_Avoid_: Power attack, heavy attack, charge shot
+
 ## World
 
 **Run**:
-One playthrough from a new game. It remembers where the Player is in the world and what they have done.
+One playthrough from a new game. It remembers where the Player is in the world and what they have done. Only START begins a new one; a defeat keeps it.
 _Avoid_: Session, save, runtime state
 
 **Room**:
@@ -62,19 +66,85 @@ _Avoid_: Spawn point, start position, door
 An edge of a Room that leads to an Entry in another Room. Crossing it enters that Room in the Run and loads its scene.
 _Avoid_: Door, portal, transition, warp
 
+**Region**:
+A stretch of the world with its own theme and Map name, such as the Waking Coast. Each has one Safe spoke.
+_Avoid_: Biome, zone, area, level
+
+**Safe spoke**:
+The one small place in a Region with no enemies, where its people, Rest point and shops are, such as Tidefen Village. It belongs to its Region but goes by its own name.
+_Avoid_: Hub, village, town (as a kind of place)
+
+**Rest point**:
+A place in a Safe spoke where the Player recovers, and which a defeat returns them to without ending the Run.
+_Avoid_: Checkpoint, save point, bonfire
+
 **Region theme**:
-The music of a region, such as the Waking Coast's. It plays in each of the region's Rooms and carries on unbroken through Exits between them.
+The music of a Region, such as the Waking Coast's. It plays in each of the Region's Rooms outside its Safe spoke, which has a theme of its own, and carries on unbroken through Exits between them.
 _Avoid_: Level music, BGM, soundtrack
 
 **Intro**:
 Chapter 1's opening on a new game from the start screen: Vael wakes in the surf in the middle of the beach, and Mara comes in from the wreck, pulls his sword out of the sand and hands it to him as they talk. A restarted Run skips it.
 _Avoid_: Cutscene, prologue, tutorial
 
+## Layout
+
+**Main path**:
+The Rooms a Run must pass through, in order, from a Region's start to its end.
+_Avoid_: Critical path, main route, golden path
+
+**Branch**:
+An optional route off the Main path that rejoins it, such as the sea cave.
+_Avoid_: Side path, detour, secret area
+
+**Shortcut**:
+A one-way route that returns the Player quickly to an earlier point on the Main path, such as Tidefen's well through the undertow. It stays shut from its far end until first used from its near end.
+_Avoid_: Branch (for a one-way return), warp
+
+**Drop**:
+An Exit the Player falls through into a Room below, with no way back up. A sinkhole or a well is just what a Drop looks like.
+_Avoid_: Pit, sinkhole, chute, hole (as the general term)
+
+**Gate**:
+A place on a route that stays shut until an ability unlock or a defeated boss opens it, such as the ledge above the salt cliffs that double jump will reach.
+_Avoid_: Lock, barrier, door
+
+**Cache**:
+A hidden spot in a Room holding Supplies, opened with Interact, that stays empty once taken for the Run.
+_Avoid_: Crate, chest, stash, pickup
+
+**Supply**:
+A consumable used in exploration or combat, such as a Restorative, bought at a Supply Shop, found in a Cache, or left where a defeated enemy fell. The Player carries up to 9 of each kind for the Run, and a defeat does not take them away.
+_Avoid_: Item, consumable, loot (as the general term)
+
+**Tide Draught**:
+The first Restorative: a Supply that restores 20 Health.
+_Avoid_: Potion, health potion
+
+**Brinecap**:
+A pale, salt-crusted mushroom from the coast's caves and tunnels: a Restorative that restores 10 Health. Enemies forage it, so a defeated one sometimes leaves one where it fell, for the Player to collect by touch.
+_Avoid_: Mushroom (as its name), food, snack
+
+**Salvage**:
+What the Player gathers from the wreck-strewn world and spends at shops. Defeated enemies drop it, Caches can hold it, and a defeat does not take it away.
+_Avoid_: Gold, coins, money, currency
+
+**Memory Relic**:
+A rune that restores a flash of Vael's past when found, such as the one waiting in the rune alcove above the salt cliffs.
+_Avoid_: Memory shard, flashback item
+
 ## Combat
 
 **Health**:
-How many more hits something can take, in whole points. Reaching 0 is defeat.
+How much more harm something can take, counted in tens. A plain hit costs 10; stronger ones, like a Storm Wisp's arc or a Charged Attack, cost more. Reaching 0 is defeat. The Player's carries from Room to Room for the whole Run.
 _Avoid_: HP, hit points, life
+
+**Health bar**:
+The Player's Health on screen: a framed bar in the top-left corner, filled to the share of Health left. A hit drops the fill at once, and the Health it took lingers as a pale trail that drains away after it.
+_Avoid_: HP bar, life bar, hearts
+
+**Defeat**:
+The Player's Health running out. Vael falls where he lands and stops answering the controls, then wakes at the first Room's start Entry with full Health, and later at the last Rest point he used. The Run carries on, keeping his Level, Experience and Supplies.
+_Avoid_: Death, game over, dying
 
 **Hitbox**:
 The part of an attack that strikes, such as the Player's sword or a Scavenger's spear. It only strikes while live.
@@ -92,6 +162,50 @@ _Avoid_: Recoil, push
 The Waking Coast's fish-man enemy: it patrols a tidal pool and lunges with a hooked spear after a wind-up.
 _Avoid_: Sahagin, fish-man (as a name)
 
+**Storm Wisp**:
+The Waking Coast's flying enemy: a knot of mist and lightning that drifts over exposed heights. It crackles when the Player comes near, arcs lightning all around itself, then rests.
+_Avoid_: Gas cloud, wisp (alone), spark
+
+**Wraith**:
+The Waking Coast's spirit enemy: a see-through oathkeeper that haunts the tunnels under the coast. The sword passes through it until it manifests and lashes out; then, for a moment, its Rune anchor shows and can be struck.
+_Avoid_: Ghost, specter, phantom
+
+**Rune anchor**:
+The glowing stone lodged in a Wraith's chest, binding it to the coast. It is the only part of a Wraith the sword can hit, and only while it shows.
+_Avoid_: Core, weak point, heart
+
+## Growth
+
+**Level**:
+How far the Player has grown in a Run, starting at 1. Enough Experience raises it, up to the highest Level, and each Level can raise the Player's maximum Health and Strength.
+_Avoid_: XP level, rank, character level, level (for a Room)
+
+**Experience**:
+What defeating an enemy earns the Player toward the next Level. Each kind of enemy is worth its own amount, every time it is defeated, even after it returns.
+_Avoid_: XP, EXP, experience points
+
+**Strength**:
+The Player's own might, added to what each sword hit costs. Levels raise it; Armor does not.
+_Avoid_: Attack (the Player state), power, damage
+
+## Equipment
+
+**Equipment**:
+What the Player wears or wields, one piece in each slot, kept for the whole Run rather than spent like a Supply. A defeat keeps it.
+_Avoid_: Gear, outfit, loadout
+
+**Armor**:
+The Equipment slot for what the Player wears, chosen in the Equipment Panel from the Armor the Player owns, or left empty for no Defense. A new Run owns and wears the Worn Leather Tunic.
+_Avoid_: Armour, clothing, outfit
+
+**Defense**:
+How much Health the Player's Armor takes off each hit that lands. A hit always costs at least 5.
+_Avoid_: AC, armor class, resistance, guard
+
+**Worn Leather Tunic**:
+The Armor Vael wakes in on the Waking Coast: sea-weathered leather that gives no Defense yet.
+_Avoid_: Saltworn Leathers, starting armor, default armor
+
 ## Menus
 
 **Dialogue box**:
@@ -107,9 +221,13 @@ Pauses play and offers Resume, Quit and its Panels.
 _Avoid_: Options menu, start menu
 
 **Panel**:
-One page of the Pause menu, opened from its menu button and closed with Back. Home is the Panel shown when no other is open.
+One page of the Pause menu, shown from when its menu button takes focus until another one does. Left and right move from Panel to Panel, round from the last to the first, and the Pause menu opens on the first.
 _Avoid_: Tab, screen, page
 
+**Inventory**:
+The Panel listing each kind of Supply the Player carries and how many. Choosing one there uses it, with play paused: a Restorative restores its Health, and nothing is spent while Health is full.
+_Avoid_: Supplies Panel, items menu, bag
+
 **Map**:
-The Panel that draws each visited Room as a block, sized in screens, with the current Room's region and a dot where the Player stands. Unvisited Rooms stay hidden.
+The Panel that draws each visited Room as a block, sized in screens, with the name of the Region or Safe spoke the Player is in and a dot where the Player stands. Unvisited Rooms stay hidden.
 _Avoid_: Minimap, world map, atlas

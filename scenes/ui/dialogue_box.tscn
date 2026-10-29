@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://c4opttdx0wok1"]
+[gd_scene load_steps=4 format=3 uid="uid://c4opttdx0wok1"]
 
 [ext_resource type="Script" uid="uid://boir1ym7l473u" path="res://scripts/ui/dialogue_box.gd" id="1_box"]
 [ext_resource type="Theme" uid="uid://cgm30v4u24jhi" path="res://assets/ui/awash_theme.tres" id="2_theme"]
+[ext_resource type="Theme" path="res://assets/ui/awash_compact_theme.tres" id="3_compact"]
 
 [node name="DialogueBox" type="Control" groups=["dialogue_box"]]
 layout_mode = 3
@@ -21,6 +22,7 @@ offset_top = 98.0
 offset_right = 156.0
 offset_bottom = 140.0
 mouse_filter = 2
+theme = ExtResource("3_compact")
 
 [node name="Margin" type="MarginContainer" parent="Panel"]
 layout_mode = 2
@@ -51,4 +53,5 @@ offset_left = 146.0
 offset_top = 131.0
 offset_right = 152.0
 offset_bottom = 139.0
+theme = ExtResource("3_compact")
 text = "v"

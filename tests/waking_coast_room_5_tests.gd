@@ -16,6 +16,8 @@ const CAVE_DARK := Vector2i(6, 4)
 const SHAFT_ENTRY := Vector2(312, 24)
 const SHAFT_FLOOR := Vector2i(19, 6)
 const WEST_ENTRY := Vector2(12, 96)
+# At the shaft's foot, coming back from the undertow.
+const EAST_ENTRY := Vector2(308, 96)
 const SHELF := Vector2i(14, 4)
 const CRATE := Vector2i(0, 7)
 # Landmark cells from assets/waking_shores_6.aseprite: layer -> {cell: atlas coords}.
@@ -49,7 +51,7 @@ func get_tests() -> Array:
 		["Sea cave floor runs from the shaft to the tunnel", _test_floor_runs_west],
 		["Sea cave shelf holds a crate a jump up", _test_shelf_holds_crate],
 		["Sea cave camera stays inside the Room", _test_camera_limits],
-		["Sea cave walls its east edge", _test_walls_east_edge],
+		["Sea cave leads east into the undertow", _test_leads_east],
 	]
 
 
@@ -172,17 +174,18 @@ func _test_camera_limits() -> bool:
 	return valid
 
 
-func _test_walls_east_edge() -> bool:
+# Past the shaft's foot the tunnel runs on east into the undertow. Falling down the shaft does
+# not touch the Exit: it starts at the Room's edge.
+func _test_leads_east() -> bool:
 	var room := _room()
 	if room == null:
 		return false
-	var bounds := room.get_node_or_null("Bounds") as StaticBody2D
-	var valid := bounds != null and bounds.collision_layer == WORLD_LAYER
-	if valid:
-		var east := bounds.get_node_or_null("East") as CollisionShape2D
-		var boundary := east.shape as WorldBoundaryShape2D if east != null else null
-		valid = boundary != null and boundary.normal == Vector2.LEFT
-		valid = valid and east.position.x == ROOM_SIZE.x
+	var valid := room.get_node_or_null("Bounds") == null
+	var exit := room.get_node_or_null("Exits/east") as Area2D
+	valid = valid and exit != null and exit.position.x > ROOM_SIZE.x
+	valid = valid and exit.get("room_id") == &"waking_coast_9" and exit.get("entry_id") == &"west"
+	var entry := room.get_node_or_null("Entries/east") as Marker2D
+	valid = valid and entry != null and entry.position == EAST_ENTRY
 	room.free()
 	return valid
 

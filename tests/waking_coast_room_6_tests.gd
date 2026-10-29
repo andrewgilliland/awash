@@ -10,6 +10,8 @@ const CELLS := Rect2i(0, 0, 20, 9)
 const TILE := 16
 # On the sand, clear of the west Exit, at the height of the graveyard's beach.
 const WEST_ENTRY := Vector2(12, 96)
+# On the heights by the gate, clear of the east Exit.
+const EAST_ENTRY := Vector2(308, 48)
 const WORLD_LAYER := 1
 # The heights the road climbs to, at the rune gate by the east edge.
 const EAST_END := Vector2i(19, 3)
@@ -53,7 +55,7 @@ func get_tests() -> Array:
 		["Rune road climbs east a step at a time", _test_climbs_east],
 		["Rune stones stand on the road", _test_rune_stones_on_road],
 		["Rune road camera scrolls inside the Room", _test_camera_limits],
-		["Rune road walls its east edge", _test_walls_east_edge],
+		["Rune road leads east to the Warden's gate", _test_leads_east],
 	]
 
 
@@ -186,17 +188,16 @@ func _test_camera_limits() -> bool:
 	return valid
 
 
-# The Warden's gate is not built yet, so the east edge is a wall.
-func _test_walls_east_edge() -> bool:
+# The heights run on east through the rune gate to the Warden's gate.
+func _test_leads_east() -> bool:
 	var room := _room()
 	if room == null:
 		return false
-	var bounds := room.get_node_or_null("Bounds") as StaticBody2D
-	var valid := bounds != null and bounds.collision_layer == WORLD_LAYER
-	if valid:
-		var east := bounds.get_node_or_null("East") as CollisionShape2D
-		var boundary := east.shape as WorldBoundaryShape2D if east != null else null
-		valid = boundary != null and boundary.normal == Vector2.LEFT
-		valid = valid and east.position.x == ROOM_SIZE.x
+	var valid := room.get_node_or_null("Bounds") == null
+	var exit := room.get_node_or_null("Exits/east") as Area2D
+	valid = valid and exit != null and exit.position.x > ROOM_SIZE.x
+	valid = valid and exit.get("room_id") == &"waking_coast_7" and exit.get("entry_id") == &"west"
+	var entry := room.get_node_or_null("Entries/east") as Marker2D
+	valid = valid and entry != null and entry.position == EAST_ENTRY
 	room.free()
 	return valid

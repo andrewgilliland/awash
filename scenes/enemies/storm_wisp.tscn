@@ -1,0 +1,72 @@
+[gd_scene load_steps=12 format=3 uid="uid://ugyt4tg4hruo"]
+
+[ext_resource type="Script" uid="uid://cc0xpujahbe5w" path="res://scripts/enemies/storm_wisp.gd" id="1_wisp"]
+[ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
+[ext_resource type="Script" uid="uid://dk3355uvj2vwl" path="res://scripts/combat/hitbox.gd" id="3_hit"]
+[ext_resource type="AudioStream" uid="uid://cx6gc4it40f7n" path="res://assets/audio/sfx/storm_wisp_crackle.wav" id="4_crackle"]
+[ext_resource type="AudioStream" uid="uid://ds8vwxnvhiyw3" path="res://assets/audio/sfx/storm_wisp_zap.wav" id="5_zap"]
+[ext_resource type="AudioStream" uid="uid://bjoypxrbk77mi" path="res://assets/audio/sfx/storm_wisp_hurt.wav" id="6_hurt"]
+[ext_resource type="AudioStream" uid="uid://dpqfsiv3fhla3" path="res://assets/audio/sfx/storm_wisp_defeat.wav" id="7_defeat"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body0"]
+radius = 5.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hurt0"]
+radius = 7.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_arc0"]
+radius = 15.0
+
+[node name="StormWisp" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 8
+collision_mask = 0
+motion_mode = 1
+script = ExtResource("1_wisp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_body0")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("2_hurt")
+
+[node name="Shape" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_hurt0")
+
+[node name="ArcHitbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 4
+monitoring = false
+monitorable = false
+script = ExtResource("3_hit")
+damage = 15
+
+[node name="Shape" type="CollisionShape2D" parent="ArcHitbox"]
+shape = SubResource("CircleShape2D_arc0")
+
+[node name="Sounds" type="Node2D" parent="."]
+
+[node name="Crackle" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("4_crackle")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Zap" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("5_zap")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Hurt" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("6_hurt")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Defeat" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("7_defeat")
+max_distance = 240.0
+bus = &"SFX"

@@ -23,7 +23,8 @@ No one can reach Eidolon or leave it without a rune and the knowledge to harness
 
 - Each major region has one smaller safe spoke with no enemy encounters.
 - Safe spokes may contain NPCs, rest points, vendors, or story interactions.
-- Every major branch must loop back to at least one earlier hub.
+- Every major branch must loop back to at least one earlier safe spoke.
+- Every drop lands in a room with a way back to the main path, so falling is never a trap.
 - Ability unlocks open at least two old gates, not just one new path.
 - Vertical lanes reconnect to horizontal lanes where possible.
 - Endgame areas are reachable from multiple late-game hubs.
@@ -53,7 +54,7 @@ Item categories are defined in the [item catalog](../items/README.md).
 
 ## Shop Types
 
-- **Supply Shop**: Sells [Supplies](../items/README.md#supplies).
+- **Supply Shop**: Sells [Supplies](../items/README.md#supplies) for Salvage, which defeated enemies drop and caches can hold.
 - **Smith**: Upgrades [Blacktide](../items/equipment/weapons/blacktide.md)'s Attack and Special Attack, plus [Wayfarer Leathers](../items/equipment/armor/wayfarer-leathers.md)' Defense and Guard.
 - **Mystic**: Sells [Relics](../items/README.md#relics).
 

@@ -89,6 +89,22 @@ def bubbles(count: int, each: float, low_hz: float, high_hz: float, seed: int) -
     return out
 
 
+def crackle(duration: float, pops_per_second: float, seed: int) -> List[float]:
+    """Static that builds: short bright pops, sparse at first and thicker toward the end."""
+    rng = random.Random(seed)
+    count = int(RATE * duration)
+    samples = [0.0] * count
+    i = 0
+    while i < count:
+        t = i / count
+        pop = noise(rng.uniform(0.006, 0.014), 9000, 3000, seed=rng.randrange(1 << 16))
+        for k, s in enumerate(pop):
+            if i + k < count:
+                samples[i + k] += s * (0.35 + 0.65 * t)
+        i += int(RATE / (pops_per_second * (0.4 + 1.6 * t)) * rng.uniform(0.5, 1.5))
+    return samples
+
+
 def mix(*tracks: List[float]) -> List[float]:
     length = max(len(t) for t in tracks)
     return [sum(t[i] for t in tracks if i < len(t)) for i in range(length)]
@@ -107,6 +123,12 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     "player_hurt": lambda: sweep(0.26, 620, 150, duty=0.5, vibrato_hz=28, vibrato_depth=0.08),
     # A falling run of notes when the Player's Health runs out.
     "player_defeat": lambda: notes([523, 440, 349, 262, 196], 0.11),
+    # A bright climb for reaching a Level.
+    "player_level_up": lambda: notes([523, 659, 784, 1047, 1319], 0.07, duty=0.25),
+    # A quick pluck for collecting a Supply.
+    "player_pickup": lambda: notes([880, 1175], 0.05, duty=0.25),
+    # A crunch under a rising chime, for eating a Brinecap.
+    "player_eat": lambda: mix(noise(0.18, 1800, 600, seed=14), notes([392, 523, 659], 0.08, duty=0.5)),
     # The Scavenger's wind-up: a gurgling growl that rises over the whole wind-up, so the
     # lunge can be heard coming.
     "scavenger_windup": lambda: growl(0.45, 95, 190, tremolo_hz=22),
@@ -119,6 +141,30 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     ),
     # Defeated: it burbles and sinks back into the pool.
     "scavenger_defeat": lambda: mix(bubbles(6, 0.05, 180, 520, seed=6), noise(0.3, 1800, 200, seed=7)),
+    # The Storm Wisp gathering its charge: static that thickens over the whole crackle, so the
+    # arc can be heard coming.
+    "storm_wisp_crackle": lambda: crackle(0.7, 18, seed=8),
+    # Its arc: a sharp electric snap.
+    "storm_wisp_zap": lambda: mix(noise(0.18, 12000, 4000, seed=9), sweep(0.16, 1800, 600, duty=0.125)),
+    # Struck: a sputtering fizz.
+    "storm_wisp_hurt": lambda: mix(
+        sweep(0.18, 900, 300, duty=0.125, vibrato_hz=45, vibrato_depth=0.2),
+        noise(0.12, 7000, 1500, seed=10),
+    ),
+    # Defeated: it hisses away on the wind.
+    "storm_wisp_defeat": lambda: mix(noise(0.5, 6000, 300, seed=11), sweep(0.3, 700, 180, duty=0.25)),
+    # The Wraith manifesting: a high wail that rises and swells over the whole manifest, so the
+    # lash can be heard coming.
+    "wraith_wail": lambda: growl(0.5, 330, 620, tremolo_hz=7),
+    # Its lash: a cold whoosh of claw through air.
+    "wraith_lash": lambda: mix(noise(0.2, 2500, 7000, seed=12), sweep(0.14, 500, 900, duty=0.25)),
+    # Struck on its anchor: a crack of stone.
+    "wraith_hurt": lambda: mix(noise(0.08, 9000, 1500, seed=13), sweep(0.12, 300, 110, duty=0.125)),
+    # Defeated: it sighs away into the water.
+    "wraith_defeat": lambda: mix(
+        sweep(0.6, 440, 110, duty=0.5, vibrato_hz=6, vibrato_depth=0.05),
+        bubbles(5, 0.06, 160, 420, seed=14),
+    ),
     # Menus: a soft tick as the focus moves, and a rising chime when the game starts.
     "ui_move": lambda: sweep(0.04, 880, 820, duty=0.25),
     "ui_start": lambda: notes([392, 523, 659, 784], 0.07, duty=0.5),

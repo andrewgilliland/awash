@@ -49,6 +49,30 @@ const ROOMS := {
 		size = Vector2i(2, 1),
 		region = "Waking Coast",
 	},
+	# One screen: the arena at the road's end.
+	&"waking_coast_7":
+	{
+		scene = "res://scenes/rooms/waking_coast_7.tscn",
+		cell = Vector2i(8, -1),
+		size = Vector2i(1, 1),
+		region = "Waking Coast",
+	},
+	# Tidefen, at the end of the coast: two screens past the Warden's gate.
+	&"waking_coast_8":
+	{
+		scene = "res://scenes/rooms/waking_coast_8.tscn",
+		cell = Vector2i(9, -1),
+		size = Vector2i(2, 1),
+		region = "Waking Coast",
+	},
+	# Four screens of tunnel under the road, the gate and Tidefen's well, back to the sea cave.
+	&"waking_coast_9":
+	{
+		scene = "res://scenes/rooms/waking_coast_9.tscn",
+		cell = Vector2i(6, 0),
+		size = Vector2i(4, 1),
+		region = "Waking Coast",
+	},
 }
 # Each region's theme, played in its Rooms.
 const REGION_MUSIC := {

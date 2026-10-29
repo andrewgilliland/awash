@@ -17,8 +17,14 @@ const WakingCoastRoom3Tests := preload("res://tests/waking_coast_room_3_tests.gd
 const WakingCoastRoom4Tests := preload("res://tests/waking_coast_room_4_tests.gd")
 const WakingCoastRoom5Tests := preload("res://tests/waking_coast_room_5_tests.gd")
 const WakingCoastRoom6Tests := preload("res://tests/waking_coast_room_6_tests.gd")
+const WakingCoastRoom7Tests := preload("res://tests/waking_coast_room_7_tests.gd")
+const WakingCoastRoom8Tests := preload("res://tests/waking_coast_room_8_tests.gd")
+const WakingCoastRoom9Tests := preload("res://tests/waking_coast_room_9_tests.gd")
 const RoomExitTests := preload("res://tests/room_exit_tests.gd")
 const HealthTests := preload("res://tests/health_tests.gd")
+const LevelTests := preload("res://tests/level_tests.gd")
+const SuppliesTests := preload("res://tests/supplies_tests.gd")
+const EquipmentTests := preload("res://tests/equipment_tests.gd")
 const ScavengerBrainTests := preload("res://tests/scavenger_brain_tests.gd")
 const CombatSceneTests := preload("res://tests/combat_scene_tests.gd")
 const PlayerSoundsTests := preload("res://tests/player_sounds_tests.gd")
@@ -30,6 +36,18 @@ const IntroTests := preload("res://tests/intro_tests.gd")
 const InteractionTests := preload("res://tests/interaction_tests.gd")
 const ScavengerSoundsTests := preload("res://tests/scavenger_sounds_tests.gd")
 const ScavengerSoundSceneTests := preload("res://tests/scavenger_sound_scene_tests.gd")
+const StormWispBrainTests := preload("res://tests/storm_wisp_brain_tests.gd")
+const StormWispSoundsTests := preload("res://tests/storm_wisp_sounds_tests.gd")
+const StormWispSceneTests := preload("res://tests/storm_wisp_scene_tests.gd")
+const WraithBrainTests := preload("res://tests/wraith_brain_tests.gd")
+const WraithSoundsTests := preload("res://tests/wraith_sounds_tests.gd")
+const WraithSceneTests := preload("res://tests/wraith_scene_tests.gd")
+const HealthBarTests := preload("res://tests/health_bar_tests.gd")
+const PlayerGrowthTests := preload("res://tests/player_growth_tests.gd")
+const EnemyExperienceTests := preload("res://tests/enemy_experience_tests.gd")
+const PlayerSuppliesTests := preload("res://tests/player_supplies_tests.gd")
+const InventoryTests := preload("res://tests/inventory_tests.gd")
+const PlayerArmorTests := preload("res://tests/player_armor_tests.gd")
 const STEP_DELTA := 0.1
 var _failures: int = 0
 
@@ -68,11 +86,29 @@ func _init() -> void:
 	var room_6_tests := WakingCoastRoom6Tests.new()
 	for test in room_6_tests.get_tests():
 		_run_test(test[0], test[1])
+	var room_7_tests := WakingCoastRoom7Tests.new()
+	for test in room_7_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_8_tests := WakingCoastRoom8Tests.new()
+	for test in room_8_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_9_tests := WakingCoastRoom9Tests.new()
+	for test in room_9_tests.get_tests():
+		_run_test(test[0], test[1])
 	var room_exit_tests := RoomExitTests.new()
 	for test in room_exit_tests.get_tests():
 		_run_test(test[0], test[1])
 	var health_tests := HealthTests.new()
 	for test in health_tests.get_tests():
+		_run_test(test[0], test[1])
+	var level_tests := LevelTests.new()
+	for test in level_tests.get_tests():
+		_run_test(test[0], test[1])
+	var supplies_tests := SuppliesTests.new()
+	for test in supplies_tests.get_tests():
+		_run_test(test[0], test[1])
+	var equipment_tests := EquipmentTests.new()
+	for test in equipment_tests.get_tests():
 		_run_test(test[0], test[1])
 	var scavenger_brain_tests := ScavengerBrainTests.new()
 	for test in scavenger_brain_tests.get_tests():
@@ -85,6 +121,18 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var scavenger_sounds_tests := ScavengerSoundsTests.new()
 	for test in scavenger_sounds_tests.get_tests():
+		_run_test(test[0], test[1])
+	var storm_wisp_brain_tests := StormWispBrainTests.new()
+	for test in storm_wisp_brain_tests.get_tests():
+		_run_test(test[0], test[1])
+	var storm_wisp_sounds_tests := StormWispSoundsTests.new()
+	for test in storm_wisp_sounds_tests.get_tests():
+		_run_test(test[0], test[1])
+	var wraith_brain_tests := WraithBrainTests.new()
+	for test in wraith_brain_tests.get_tests():
+		_run_test(test[0], test[1])
+	var wraith_sounds_tests := WraithSoundsTests.new()
+	for test in wraith_sounds_tests.get_tests():
 		_run_test(test[0], test[1])
 
 	_run_test("Player scene wires the rig", _test_player_scene_wires_rig)
@@ -121,6 +169,30 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var scavenger_sound_scene_tests := ScavengerSoundSceneTests.new(root)
 	for test in scavenger_sound_scene_tests.get_tests():
+		_run_test(test[0], test[1])
+	var storm_wisp_scene_tests := StormWispSceneTests.new(root)
+	for test in storm_wisp_scene_tests.get_tests():
+		_run_test(test[0], test[1])
+	var wraith_scene_tests := WraithSceneTests.new(root)
+	for test in wraith_scene_tests.get_tests():
+		_run_test(test[0], test[1])
+	var health_bar_tests := HealthBarTests.new(root)
+	for test in health_bar_tests.get_tests():
+		_run_test(test[0], test[1])
+	var player_growth_tests := PlayerGrowthTests.new(root)
+	for test in player_growth_tests.get_tests():
+		_run_test(test[0], test[1])
+	var enemy_experience_tests := EnemyExperienceTests.new(root)
+	for test in enemy_experience_tests.get_tests():
+		_run_test(test[0], test[1])
+	var player_supplies_tests := PlayerSuppliesTests.new(root)
+	for test in player_supplies_tests.get_tests():
+		_run_test(test[0], test[1])
+	var inventory_tests := InventoryTests.new(root)
+	for test in inventory_tests.get_tests():
+		_run_test(test[0], test[1])
+	var player_armor_tests := PlayerArmorTests.new(root)
+	for test in player_armor_tests.get_tests():
 		_run_test(test[0], test[1])
 
 	if _failures > 0:

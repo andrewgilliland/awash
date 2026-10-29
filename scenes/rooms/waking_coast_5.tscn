@@ -1,12 +1,9 @@
-[gd_scene load_steps=7 format=4 uid="uid://qv8d1r312fm3"]
+[gd_scene load_steps=6 format=4 uid="uid://qv8d1r312fm3"]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_p33uc"]
 [ext_resource type="TileSet" uid="uid://87k8wahvc2uo" path="res://assets/tilesets/waking_coast_2.tres" id="2_qe563"]
 [ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="3_3vlc5"]
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="4_hoelc"]
-
-[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_1b1tq"]
-normal = Vector2(-1, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p5551"]
 size = Vector2(8, 144)
@@ -28,13 +25,6 @@ tile_set = ExtResource("2_qe563")
 tile_map_data = PackedByteArray("AAAOAAMAAAAAAAcAAAANAAMAAAABAAcAAAADAAUAAAAHAAcAAAA=")
 tile_set = ExtResource("2_qe563")
 
-[node name="Bounds" type="StaticBody2D" parent="."]
-collision_mask = 0
-
-[node name="East" type="CollisionShape2D" parent="Bounds"]
-position = Vector2(320, 0)
-shape = SubResource("WorldBoundaryShape2D_1b1tq")
-
 [node name="Exits" type="Node2D" parent="."]
 
 [node name="west" type="Area2D" parent="Exits"]
@@ -48,6 +38,17 @@ entry_id = &"cave"
 [node name="Edge" type="CollisionShape2D" parent="Exits/west"]
 shape = SubResource("RectangleShape2D_p5551")
 
+[node name="east" type="Area2D" parent="Exits"]
+position = Vector2(324, 72)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("3_3vlc5")
+room_id = &"waking_coast_9"
+entry_id = &"west"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/east"]
+shape = SubResource("RectangleShape2D_p5551")
+
 [node name="Entries" type="Node2D" parent="."]
 
 [node name="west" type="Marker2D" parent="Entries"]
@@ -55,6 +56,9 @@ position = Vector2(12, 96)
 
 [node name="shaft" type="Marker2D" parent="Entries"]
 position = Vector2(312, 24)
+
+[node name="east" type="Marker2D" parent="Entries"]
+position = Vector2(308, 96)
 
 [node name="Player" parent="." instance=ExtResource("4_hoelc")]
 position = Vector2(12, 96)
