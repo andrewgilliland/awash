@@ -17,7 +17,6 @@ func _register_inputs() -> void:
 	_add_action_if_missing("interact")
 	_add_action_if_missing("pause")
 	_add_action_if_missing("map")
-	_add_action_if_missing("use")
 
 	_add_key("move_left", Key.KEY_LEFT)
 	_add_key("move_left", Key.KEY_A)
@@ -33,7 +32,6 @@ func _register_inputs() -> void:
 	_add_key("interact", Key.KEY_E)
 	_add_key("pause", Key.KEY_ESCAPE)
 	_add_key("map", Key.KEY_TAB)
-	_add_key("use", Key.KEY_Q)
 	# The keys that walk the Player also move through menus, beside the arrows Godot gives ui_*.
 	_add_key("ui_left", Key.KEY_A)
 	_add_key("ui_right", Key.KEY_D)
@@ -47,7 +45,6 @@ func _register_inputs() -> void:
 	_add_button("interact", 3)
 	_add_button("pause", 7)
 	_add_button("map", 6)
-	_add_button("use", JOY_BUTTON_LEFT_SHOULDER)
 
 	_add_axis("move_left", 0, -1.0)
 	_add_axis("move_right", 0, 1.0)

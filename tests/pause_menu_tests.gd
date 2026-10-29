@@ -2,7 +2,7 @@ extends RefCounted
 
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const MENU_ROOT := "CenterContainer/MenuPanel/MarginContainer/VBoxContainer/"
-const PANEL_NAMES: Array[String] = ["Stats", "Equipment", "Map"]
+const PANEL_NAMES: Array[String] = ["Stats", "Supplies", "Equipment", "Map"]
 const SCREEN_SIZE := Vector2(160, 144)
 const COMPACT_FONT_PATH := "res://assets/fonts/awash_pixel_3x5.png"
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
@@ -57,7 +57,7 @@ func _test_focus_shows_panel() -> bool:
 func _test_left_right_moves_panels() -> bool:
 	var menu := _paused_menu()
 	var valid := true
-	for panel_name in ["Equipment", "Map", "Stats"]:
+	for panel_name in ["Supplies", "Equipment", "Map", "Stats"]:
 		_navigate(menu, &"ui_right")
 		valid = valid and _menu_button(menu, panel_name).has_focus()
 		valid = valid and _shown_panel(menu) == panel_name
@@ -74,7 +74,7 @@ func _test_move_keys_page_menu() -> bool:
 	input_setup.free()
 	var menu := _paused_menu()
 	_press_key(menu, KEY_D)
-	var valid := _shown_panel(menu) == "Equipment"
+	var valid := _shown_panel(menu) == "Supplies"
 	_press_key(menu, KEY_A)
 	_press_key(menu, KEY_A)
 	valid = valid and _shown_panel(menu) == "Map"
@@ -84,6 +84,7 @@ func _test_move_keys_page_menu() -> bool:
 
 func _test_down_keeps_panel() -> bool:
 	var menu := _paused_menu()
+	_navigate(menu, &"ui_right")
 	_navigate(menu, &"ui_right")
 	_navigate(menu, &"ui_down")
 	var valid := (menu.get_node(MENU_ROOT + "ResumeButton") as Button).has_focus()
@@ -141,6 +142,7 @@ func _test_disables_unpaired_button() -> bool:
 	valid = valid and not _menu_button(menu, "Stats").disabled
 	# Left and right pass over it, from Equipment round to Stats.
 	menu.call("toggle_pause")
+	_navigate(menu, &"ui_right")
 	_navigate(menu, &"ui_right")
 	_navigate(menu, &"ui_right")
 	valid = valid and _menu_button(menu, "Stats").has_focus() and _shown_panel(menu) == "Stats"

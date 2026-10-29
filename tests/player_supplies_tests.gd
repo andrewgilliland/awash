@@ -15,28 +15,13 @@ func _init(root: Window) -> void:
 
 func get_tests() -> Array:
 	return [
-		["Use is on Q and the left shoulder", _test_use_action_bound],
 		["Player starts with the Run's Supplies", _test_starts_with_runs_supplies],
 		["Collecting a Brinecap carries it, into the Run", _test_collect_carries],
 		["Player carries no more than the limit", _test_collect_stops_at_limit],
-		["Use eats a Brinecap for 10 Health, with a chime", _test_use_eats_brinecap],
-		["Use at full Health keeps the Brinecap", _test_use_at_full_keeps],
-		["Use does nothing with none, held still or defeated", _test_use_does_nothing],
-		["The Use button eats a Brinecap", _test_use_button_eats],
+		["Eating a Brinecap restores 10 Health, with a chime", _test_use_eats_brinecap],
+		["Eating at full Health keeps the Brinecap", _test_use_at_full_keeps],
+		["Eating does nothing with none, held still or defeated", _test_use_does_nothing],
 	]
-
-
-func _test_use_action_bound() -> bool:
-	_register_inputs()
-	var key := InputEventKey.new()
-	key.physical_keycode = KEY_Q
-	var shoulder := InputEventJoypadButton.new()
-	shoulder.button_index = JOY_BUTTON_LEFT_SHOULDER
-	return (
-		InputMap.has_action(&"use")
-		and InputMap.action_has_event(&"use", key)
-		and InputMap.action_has_event(&"use", shoulder)
-	)
 
 
 func _test_starts_with_runs_supplies() -> bool:
@@ -80,7 +65,7 @@ func _test_use_eats_brinecap() -> bool:
 	player.call("collect", BRINECAP)
 	var health = player.get("health")
 	health.hurt(20, 0.0)
-	var used: bool = player.call("use_supply")
+	var used: bool = player.call("use_supply", BRINECAP)
 	var valid: bool = used and health.current == health.maximum - 10
 	valid = valid and player.get("supplies").count(BRINECAP) == 0
 	valid = valid and _playing(player, &"Eat")
@@ -95,7 +80,7 @@ func _test_use_at_full_keeps() -> bool:
 	_run().call("start_run")
 	var player := _player()
 	player.call("collect", BRINECAP)
-	var used: bool = player.call("use_supply")
+	var used: bool = player.call("use_supply", BRINECAP)
 	var valid: bool = not used and player.get("supplies").count(BRINECAP) == 1
 	valid = valid and not _playing(player, &"Eat")
 	player.free()
@@ -108,10 +93,10 @@ func _test_use_does_nothing() -> bool:
 	var player := _player()
 	var health = player.get("health")
 	health.hurt(20, 0.0)
-	var valid: bool = not player.call("use_supply")
+	var valid: bool = not player.call("use_supply", BRINECAP)
 	player.call("collect", BRINECAP)
 	player.set("controls_locked", true)
-	valid = valid and not player.call("use_supply")
+	valid = valid and not player.call("use_supply", BRINECAP)
 	player.set("controls_locked", false)
 	# A last hit defeats the Player.
 	health.hurt(health.current - 10, 0.0)
@@ -119,27 +104,9 @@ func _test_use_does_nothing() -> bool:
 	var hitbox := Area2D.new()
 	_root.add_child(hitbox)
 	player.call("_on_hurtbox_hit", hitbox)
-	valid = valid and player.call("is_defeated") and not player.call("use_supply")
+	valid = valid and player.call("is_defeated") and not player.call("use_supply", BRINECAP)
 	valid = valid and player.get("supplies").count(BRINECAP) == 1
 	hitbox.free()
-	player.free()
-	_run().call("start_run")
-	return valid
-
-
-func _test_use_button_eats() -> bool:
-	_run().call("start_run")
-	var player := _player()
-	player.call("collect", BRINECAP)
-	player.get("health").hurt(20, 0.0)
-	var event := InputEventAction.new()
-	event.action = &"use"
-	event.pressed = true
-	_root.push_input(event)
-	var valid: bool = player.get("supplies").count(BRINECAP) == 0
-	event = event.duplicate()
-	event.pressed = false
-	_root.push_input(event)
 	player.free()
 	_run().call("start_run")
 	return valid

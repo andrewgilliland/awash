@@ -84,8 +84,6 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"interact") and not event.is_echo() and interact() != null:
 		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed(&"use") and not event.is_echo() and use_supply():
-		get_viewport().set_input_as_handled()
 
 
 # Carries one more of a kind of Supply, with a pickup sound, and returns whether there was room.
@@ -97,12 +95,13 @@ func collect(kind: StringName) -> bool:
 	return true
 
 
-# Eats the ready Supply for the Health it restores, and returns whether it did. It keeps the
-# Supply when there is nothing to restore, and does nothing while the Player is held still or
-# defeated.
-func use_supply() -> bool:
-	var kind := supplies.ready_kind()
-	if kind.is_empty() or controls_locked or _defeated or health.current >= health.maximum:
+# Uses one Supply of a kind, as chosen on the Supplies Panel: a Restorative restores its Health.
+# Returns whether it did. Nothing is spent with none carried, at full Health, or while the
+# Player is held still or defeated.
+func use_supply(kind: StringName) -> bool:
+	if supplies.count(kind) <= 0 or controls_locked or _defeated:
+		return false
+	if health.current >= health.maximum:
 		return false
 	health.heal(Supplies.KINDS[kind].restores)
 	supplies.spend(kind)

@@ -11,18 +11,14 @@ func get_tests() -> Array:
 		["Supplies stop at the carry limit", _test_stop_at_limit],
 		["Spending a Supply carries one fewer", _test_spend_carries_fewer],
 		["Spending with none carried does nothing", _test_spend_none],
-		["The ready Supply is the first kind carried", _test_ready_kind],
+		["Supplies list the kinds carried", _test_kinds_carried],
 		["Supplies can start from carried counts", _test_start_from_counts],
 	]
 
 
 func _test_start_empty() -> bool:
 	var supplies := Supplies.new()
-	return (
-		supplies.count(Supplies.BRINECAP) == 0
-		and supplies.kinds().is_empty()
-		and supplies.ready_kind() == &""
-	)
+	return supplies.count(Supplies.BRINECAP) == 0 and supplies.kinds().is_empty()
 
 
 func _test_kinds_table() -> bool:
@@ -62,13 +58,12 @@ func _test_spend_none() -> bool:
 	return not supplies.spend(Supplies.BRINECAP) and supplies.count(Supplies.BRINECAP) == 0
 
 
-func _test_ready_kind() -> bool:
+func _test_kinds_carried() -> bool:
 	var supplies := Supplies.new()
 	supplies.add(Supplies.BRINECAP)
-	var valid := supplies.ready_kind() == Supplies.BRINECAP
-	valid = valid and supplies.kinds() == [Supplies.BRINECAP]
+	var valid := supplies.kinds() == [Supplies.BRINECAP]
 	supplies.spend(Supplies.BRINECAP)
-	return valid and supplies.ready_kind() == &"" and supplies.kinds().is_empty()
+	return valid and supplies.kinds().is_empty()
 
 
 # The Run hands back what it carried; counts over the limit or of unknown kinds are dropped.

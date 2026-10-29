@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://scripts/ui/map_view.gd" id="3_map"]
 [ext_resource type="Script" uid="uid://djsuh104a5mbx" path="res://scripts/ui/stats_view.gd" id="5_stats"]
 [ext_resource type="Theme" path="res://assets/ui/awash_compact_theme.tres" id="9_compact"]
-[ext_resource type="Script" path="res://scripts/ui/equipment_view.gd" id="10_equipment"]
+[ext_resource type="Script" path="res://scripts/ui/supplies_view.gd" id="10_supplies"]
 
 [node name="PauseMenu" type="Control"]
 anchor_right = 1.0
@@ -50,6 +50,10 @@ alignment = 1
 layout_mode = 2
 text = "Stats"
 
+[node name="SuppliesButton" type="Button" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/MenuButtons"]
+layout_mode = 2
+text = "Supplies"
+
 [node name="EquipmentButton" type="Button" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/MenuButtons"]
 layout_mode = 2
 text = "Equipment"
@@ -84,6 +88,32 @@ layout_mode = 2
 columns = 2
 script = ExtResource("5_stats")
 
+[node name="SuppliesPanel" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/SuppliesPanel"]
+layout_mode = 2
+text = "Supplies"
+horizontal_alignment = 1
+
+[node name="Body" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/SuppliesPanel" node_paths=PackedStringArray("note")]
+layout_mode = 2
+script = ExtResource("10_supplies")
+note = NodePath("../Note")
+
+[node name="Note" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/SuppliesPanel"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.545098, 1)
+horizontal_alignment = 1
+
 [node name="EquipmentPanel" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"]
 visible = false
 layout_mode = 1
@@ -99,10 +129,10 @@ layout_mode = 2
 text = "Equipment"
 horizontal_alignment = 1
 
-[node name="Body" type="GridContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel"]
+[node name="Body" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel"]
 layout_mode = 2
-columns = 2
-script = ExtResource("10_equipment")
+text = "No equipment slots yet"
+horizontal_alignment = 1
 
 [node name="MapPanel" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"]
 visible = false
