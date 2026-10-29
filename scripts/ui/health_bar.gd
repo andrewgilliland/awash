@@ -8,7 +8,7 @@ const PLAYER_GROUP := &"player"
 # How long the trail holds after a hit, then how long it takes to drain.
 const HOLD_TIME := 0.15
 const DRAIN_TIME := 0.5
-const FILL_SIZE := Vector2(40, 5)
+const FILL_SIZE := Vector2(40, 3)
 const PADDING := 2.0
 const FRAME_COLOUR := Color("94a5c6")
 const BACK_COLOUR := Color("183931")

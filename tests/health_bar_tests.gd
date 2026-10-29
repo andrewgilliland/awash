@@ -9,6 +9,8 @@ const SCREEN_SIZE := Vector2(160, 144)
 const MENU_ROOT := "CenterContainer/MenuPanel/MarginContainer/VBoxContainer/"
 const FRAME := 1.0 / 60.0
 const ONE_HIT := 10
+# The tallest the framed bar may be, in pixels.
+const SLIM_HEIGHT := 7.0
 
 # Needs a root that is already in the tree: the bar and Stats find the Player through its group.
 var _root: Window
@@ -24,6 +26,7 @@ func get_tests() -> Array:
 		["A hit drops the fill, and the lost Health drains away after it", _test_hit_drains],
 		["Health bar hides with no Player", _test_hides_without_player],
 		["Health bar sits in the top-left corner, on screen", _test_top_left],
+		["Health bar is slim: a thin fill inside its frame", _test_slim],
 		["Every Room puts the Health bar under its Pause menu", _test_room_has_bar],
 		["Stats shows Health left out of its total", _test_stats_shows_health],
 		["A defeated Player stops answering controls", _test_defeat_locks_controls],
@@ -87,6 +90,16 @@ func _test_top_left() -> bool:
 	var rect := Rect2(bar.position, bar.get_combined_minimum_size())
 	var valid := rect.position.x <= 8.0 and rect.position.y <= 8.0
 	valid = valid and rect.end.x <= SCREEN_SIZE.x / 2.0 and rect.end.y <= SCREEN_SIZE.y / 4.0
+	bar.free()
+	return valid
+
+
+func _test_slim() -> bool:
+	var bar := _bar()
+	var outer := bar.get_combined_minimum_size()
+	var valid := outer.y <= SLIM_HEIGHT and HealthBar.FILL_SIZE.y >= 2.0
+	# The scene's rect matches what the bar draws.
+	valid = valid and bar.size == outer
 	bar.free()
 	return valid
 
