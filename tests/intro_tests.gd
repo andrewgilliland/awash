@@ -10,8 +10,9 @@ const PLAYER_LAYER := 1 << 1
 const MARA_SHEET_PATH := "res://assets/sprites/npcs/mara/mara_venn_1.png"
 const IntroScript := preload("res://scripts/story/intro.gd")
 const MaraScript := preload("res://scripts/npcs/mara.gd")
-# The box's text area: 142 pixels of 6-pixel glyphs, three rows deep.
-const BOX_COLUMNS := 23
+const COMPACT_FONT_PATH := "res://assets/fonts/awash_pixel_3x5.png"
+# The box's text area: 142 pixels of 4-pixel glyphs, three rows deep (each row 9 pixels apart).
+const BOX_COLUMNS := 35
 const BOX_ROWS := 3
 
 # Needs a root that is already in the tree: the box finds the Player through its group.
@@ -31,6 +32,7 @@ func get_tests() -> Array:
 		["Mara is drawn from her sprite sheet", _test_mara_sprite],
 		["A fresh Run is not owed the intro", _test_start_run_clears_intro],
 		["Every line fits the dialogue box", _test_lines_fit_box],
+		["Dialogue box text uses the compact pixel font", _test_box_uses_compact_font],
 		["Mara hands Vael his sword once, mid-intro", _test_intro_hands_over_sword],
 	]
 
@@ -123,6 +125,20 @@ func _test_lines_fit_box() -> bool:
 		if rows > BOX_ROWS:
 			push_error("Too long for the dialogue box (%d rows): %s" % [rows, line[1]])
 			valid = false
+	return valid
+
+
+func _test_box_uses_compact_font() -> bool:
+	var box := DIALOGUE_BOX.instantiate()
+	_root.add_child(box)
+	var valid := true
+	for label_name in ["%Speaker", "%Text", "%Next"]:
+		var font := (box.get_node(label_name) as Label).get_theme_font(&"font")
+		valid = valid and font != null and font.resource_path == COMPACT_FONT_PATH
+	# The box keeps its framed panel around the smaller text.
+	var panel := box.get_node("Panel") as PanelContainer
+	valid = valid and panel.get_theme_stylebox(&"panel") is StyleBoxFlat
+	box.free()
 	return valid
 
 

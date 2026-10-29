@@ -30,6 +30,7 @@ func get_tests() -> Array:
 		["Every Room puts the Health bar under its Pause menu", _test_room_has_bar],
 		["Stats shows Health left out of its total", _test_stats_shows_health],
 		["Stats shows Level, Experience and Strength, to MAX", _test_stats_shows_growth],
+		["Stats lines up names on the left, values on the right", _test_stats_columns],
 		["A defeated Player stops answering controls", _test_defeat_locks_controls],
 	]
 
@@ -123,13 +124,13 @@ func _test_stats_shows_health() -> bool:
 	_root.add_child(menu)
 	menu.call("toggle_pause")
 	var stats_button := menu.get_node(MENU_ROOT + "MenuButtons/StatsButton") as Button
-	var body := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/Body") as Label
+	var body := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/Body") as Container
 	stats_button.pressed.emit()
-	var valid := body.text.contains("Health 50 / 50")
+	var valid := _stats_rows(body).has(["Health", "50 / 50"])
 	player.get("health").hurt(2 * ONE_HIT, 0.0)
 	(menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/BackButton") as Button).pressed.emit()
 	stats_button.pressed.emit()
-	valid = valid and body.text.contains("Health 30 / 50")
+	valid = valid and _stats_rows(body).has(["Health", "30 / 50"])
 	menu.get_tree().paused = false
 	menu.free()
 	player.free()
@@ -143,22 +144,76 @@ func _test_stats_shows_growth() -> bool:
 	menu.call("toggle_pause")
 	var stats_button := menu.get_node(MENU_ROOT + "MenuButtons/StatsButton") as Button
 	var back_button := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/BackButton") as Button
-	var body := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/Body") as Label
+	var body := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/Body") as Container
 	stats_button.pressed.emit()
-	var valid := body.text == "Level 1\nExperience 0 / 40\nHealth 50 / 50\nStrength 0"
+	var valid := (
+		_stats_rows(body)
+		== [["Level", "1"], ["Experience", "0 / 40"], ["Health", "50 / 50"], ["Strength", "0"]]
+	)
 	player.call("gain_experience", 45)
 	back_button.pressed.emit()
 	stats_button.pressed.emit()
-	valid = valid and body.text == "Level 2\nExperience 45 / 100\nHealth 60 / 60\nStrength 0"
+	valid = (
+		valid
+		and (
+			_stats_rows(body)
+			== [
+				["Level", "2"], ["Experience", "45 / 100"], ["Health", "60 / 60"], ["Strength", "0"]
+			]
+		)
+	)
 	player.call("gain_experience", 1000)
 	back_button.pressed.emit()
 	stats_button.pressed.emit()
-	valid = valid and body.text == "Level 5\nExperience 1045 / MAX\nHealth 90 / 90\nStrength 10"
+	valid = (
+		valid
+		and (
+			_stats_rows(body)
+			== [
+				["Level", "5"],
+				["Experience", "1045 / MAX"],
+				["Health", "90 / 90"],
+				["Strength", "10"],
+			]
+		)
+	)
 	menu.get_tree().paused = false
 	menu.free()
 	player.free()
 	_root.get_node("RunState").call("start_run")
 	return valid
+
+
+# Each row is a name pinned left and its value pushed out to the Panel's right edge.
+func _test_stats_columns() -> bool:
+	var player := _player()
+	var menu := PAUSE_MENU_SCENE.instantiate() as Control
+	_root.add_child(menu)
+	menu.call("toggle_pause")
+	(menu.get_node(MENU_ROOT + "MenuButtons/StatsButton") as Button).pressed.emit()
+	var body := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/Body") as GridContainer
+	var valid := body != null and body.columns == 2 and body.get_child_count() == 8
+	if valid:
+		for index in body.get_child_count():
+			var label := body.get_child(index) as Label
+			if index % 2 == 0:
+				valid = valid and label.horizontal_alignment == HORIZONTAL_ALIGNMENT_LEFT
+			else:
+				valid = valid and label.horizontal_alignment == HORIZONTAL_ALIGNMENT_RIGHT
+				valid = valid and label.size_flags_horizontal & Control.SIZE_EXPAND != 0
+	menu.get_tree().paused = false
+	menu.free()
+	player.free()
+	return valid
+
+
+# The Stats rows as [name, value] pairs, read from the Body's labels in order.
+func _stats_rows(body: Container) -> Array:
+	var rows := []
+	var labels := body.get_children()
+	for index in range(0, labels.size() - 1, 2):
+		rows.append([(labels[index] as Label).text, (labels[index + 1] as Label).text])
+	return rows
 
 
 func _test_defeat_locks_controls() -> bool:
