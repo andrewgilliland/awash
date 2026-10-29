@@ -14,7 +14,8 @@ const SCENARIO_ACTIONS: Array[StringName] = [
 	&"interact",
 	&"ui_left",
 	&"ui_right",
-	&"use",
+	&"ui_up",
+	&"ui_down",
 ]
 const SETTLE_FRAME_LIMIT := 120
 const TRANSITION_FRAME_LIMIT := 180

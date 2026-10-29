@@ -3,10 +3,10 @@ extends RefCounted
 # The Supplies the Player carries in a Run: how many of each kind, up to the carry limit.
 
 const BRINECAP := &"brinecap"
-# Every kind of Supply, in the order they are listed: its name, the Health it restores, and its
-# 8x8 icon.
+# Every kind of Supply, in the order the Supplies Panel lists them: its name, and the Health it
+# restores.
 const KINDS := {
-	BRINECAP: {name = "Brinecap", restores = 10, icon = "res://assets/sprites/items/brinecap.png"},
+	BRINECAP: {name = "Brinecap", restores = 10},
 }
 # The most of any one kind the Player can carry.
 const CARRY_LIMIT := 9
@@ -48,12 +48,6 @@ func kinds() -> Array[StringName]:
 		if count(kind) > 0:
 			carried.append(kind)
 	return carried
-
-
-# The Supply Use spends: the first kind carried, or none.
-func ready_kind() -> StringName:
-	var carried := kinds()
-	return carried[0] if not carried.is_empty() else &""
 
 
 # The counts for the Run to carry: every kind carried, and how many.

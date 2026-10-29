@@ -32,10 +32,6 @@ _Avoid_: Direction, orientation
 The button for using whatever the Player stands by: E, or Y / Triangle on a gamepad. It uses the nearest Interactable in reach, and does nothing while the Player is held still.
 _Avoid_: Action button, use, talk
 
-**Use**:
-The button that spends the ready Supply, chosen in the Equipment Panel, without pausing play.
-_Avoid_: Item button, quick-use, consume
-
 **Interactable**:
 Anything Interact can use, such as Mara. It reports being used and shows a bobbing arrow above itself while the Player is in reach; what using it does is up to its owner.
 _Avoid_: Usable, trigger, hotspot
@@ -209,6 +205,10 @@ _Avoid_: Options menu, start menu
 **Panel**:
 One page of the Pause menu, shown from when its menu button takes focus until another one does. Left and right move from Panel to Panel, round from the last to the first, and the Pause menu opens on the first.
 _Avoid_: Tab, screen, page
+
+**Supplies Panel**:
+The Panel listing each kind of Supply the Player carries and how many. Choosing one there uses it, with play paused: a Restorative restores its Health, and nothing is spent while Health is full.
+_Avoid_: Items menu, inventory, bag
 
 **Map**:
 The Panel that draws each visited Room as a block, sized in screens, with the name of the Region or Safe spoke the Player is in and a dot where the Player stands. Unvisited Rooms stay hidden.

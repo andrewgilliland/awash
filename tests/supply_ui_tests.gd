@@ -2,13 +2,11 @@ extends RefCounted
 
 const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
-const FIRST_ROOM_SCENE := preload("res://scenes/rooms/waking_coast_1.tscn")
-const SUPPLY_COUNT_PATH := "res://scenes/ui/supply_count.tscn"
-const BRINECAP_SPRITE_PATH := "res://assets/sprites/items/brinecap.png"
 const MENU_ROOT := "CenterContainer/MenuPanel/MarginContainer/VBoxContainer/"
+const PANEL := MENU_ROOT + "ContentRoot/SuppliesPanel/"
 const BRINECAP := &"brinecap"
 
-# Needs a root that is already in the tree: the views find the Player through its group.
+# Needs a root that is already in the tree: the Panel finds the Player through its group.
 var _root: Window
 
 
@@ -18,81 +16,110 @@ func _init(root: Window) -> void:
 
 func get_tests() -> Array:
 	return [
-		["Equipment lists Supplies, name left and count right", _test_equipment_lists_supplies],
-		["Equipment says when no Supplies are carried", _test_equipment_with_none],
-		["The readout shows the ready Supply and how many", _test_readout_shows_count],
-		["The readout hides when no Supplies are carried", _test_readout_hides_with_none],
-		["Every Room puts the readout under the Health bar", _test_room_has_readout],
+		["Supplies Panel lists each kind, name left and count right", _test_lists_supplies],
+		["Supplies Panel says when none are carried", _test_says_when_none],
+		["Down from the Supplies tab reaches each Supply, then Resume", _test_moves_through_rows],
+		["Choosing a Brinecap eats it, with play still paused", _test_choosing_eats],
+		["At full Health, choosing one keeps it and says so", _test_full_health_keeps],
+		["Eating the last one goes back to the Supplies tab", _test_last_one_returns_focus],
+		["Equipment has no slots yet", _test_equipment_has_no_slots],
 	]
 
 
-func _test_equipment_lists_supplies() -> bool:
+func _test_lists_supplies() -> bool:
 	var player := _player(3)
-	var menu := _equipment_menu()
-	var body := menu.get_node(MENU_ROOT + "ContentRoot/EquipmentPanel/Body") as GridContainer
-	var valid := body != null and body.columns == 2 and _rows(body) == [["Brinecap", "3"]]
+	var menu := _supplies_menu()
+	var rows := _rows(menu)
+	var valid := rows.size() == 1 and rows[0] is Button
 	if valid:
-		valid = (body.get_child(0) as Label).horizontal_alignment == HORIZONTAL_ALIGNMENT_LEFT
-		var count := body.get_child(1) as Label
+		var row := rows[0] as Button
+		var count := row.get_node_or_null("Count") as Label
+		valid = row.text == "Brinecap" and row.alignment == HORIZONTAL_ALIGNMENT_LEFT
+		valid = valid and count != null and count.text == "3"
 		valid = valid and count.horizontal_alignment == HORIZONTAL_ALIGNMENT_RIGHT
-		valid = valid and count.size_flags_horizontal & Control.SIZE_EXPAND != 0
 	_close(menu, player)
 	return valid
 
 
-func _test_equipment_with_none() -> bool:
+func _test_says_when_none() -> bool:
 	var player := _player(0)
-	var menu := _equipment_menu()
-	var body := menu.get_node(MENU_ROOT + "ContentRoot/EquipmentPanel/Body") as Container
-	var labels := body.get_children() if body != null else []
-	var valid := labels.size() == 1 and (labels[0] as Label).text == "No Supplies carried"
+	var menu := _supplies_menu()
+	var rows := _rows(menu)
+	var valid := rows.size() == 1 and rows[0] is Label
+	valid = valid and (rows[0] as Label).text == "No Supplies carried"
 	_close(menu, player)
 	return valid
 
 
-func _test_readout_shows_count() -> bool:
+func _test_moves_through_rows() -> bool:
 	var player := _player(2)
-	var readout := _readout()
-	if readout == null:
-		player.free()
-		return false
-	readout.call("_process", 0.0)
-	var icon := readout.get_node("Icon") as TextureRect
-	var count := readout.get_node("Count") as Label
-	var valid := readout.visible and count.text == "2"
-	valid = valid and icon.texture != null and icon.texture.resource_path == BRINECAP_SPRITE_PATH
+	var menu := _supplies_menu()
+	var tab := menu.get_node(MENU_ROOT + "MenuButtons/SuppliesButton") as Button
+	var resume := menu.get_node(MENU_ROOT + "ResumeButton") as Button
+	var row := _rows(menu)[0] as Control
+	_navigate(menu, &"ui_down")
+	var valid := row.has_focus() and _panel_shown(menu)
+	_navigate(menu, &"ui_down")
+	valid = valid and resume.has_focus() and _panel_shown(menu)
+	_navigate(menu, &"ui_up")
+	valid = valid and row.has_focus()
+	_navigate(menu, &"ui_up")
+	valid = valid and tab.has_focus()
+	_close(menu, player)
+	return valid
+
+
+func _test_choosing_eats() -> bool:
+	var player := _player(2)
+	var health = player.get("health")
+	health.hurt(20, 0.0)
+	var menu := _supplies_menu()
+	_navigate(menu, &"ui_down")
+	_navigate(menu, &"ui_accept")
+	var row := _rows(menu)[0] as Button
+	var eat := player.get_node("Sounds/Eat") as AudioStreamPlayer
+	var valid: bool = health.current == health.maximum - 10
+	valid = valid and (row.get_node("Count") as Label).text == "1" and row.has_focus()
+	valid = valid and menu.get_tree().paused and _panel_shown(menu)
+	# The tree is paused, so the eat sound has to play through it.
+	valid = valid and eat.process_mode == Node.PROCESS_MODE_ALWAYS and eat.playing
+	_close(menu, player)
+	return valid
+
+
+func _test_full_health_keeps() -> bool:
+	var player := _player(2)
+	var menu := _supplies_menu()
+	var note := menu.get_node(PANEL + "Note") as Label
+	var valid := not note.visible
+	_navigate(menu, &"ui_down")
+	_navigate(menu, &"ui_accept")
+	var row := _rows(menu)[0] as Button
+	valid = valid and (row.get_node("Count") as Label).text == "2"
+	valid = valid and note.visible and note.text == "Health is full"
+	_close(menu, player)
+	return valid
+
+
+func _test_last_one_returns_focus() -> bool:
+	var player := _player(1)
 	player.get("health").hurt(20, 0.0)
-	player.call("use_supply")
-	readout.call("_process", 0.0)
-	valid = valid and count.text == "1"
-	readout.free()
-	player.free()
-	_root.get_node("RunState").call("start_run")
+	var menu := _supplies_menu()
+	_navigate(menu, &"ui_down")
+	_navigate(menu, &"ui_accept")
+	var rows := _rows(menu)
+	var tab := menu.get_node(MENU_ROOT + "MenuButtons/SuppliesButton") as Button
+	var valid := rows.size() == 1 and rows[0] is Label and tab.has_focus()
+	valid = valid and _panel_shown(menu)
+	_close(menu, player)
 	return valid
 
 
-func _test_readout_hides_with_none() -> bool:
-	var player := _player(0)
-	var readout := _readout()
-	if readout == null:
-		player.free()
-		return false
-	readout.call("_process", 0.0)
-	var valid := not readout.visible
-	readout.free()
-	player.free()
-	return valid
-
-
-func _test_room_has_readout() -> bool:
-	var room := FIRST_ROOM_SCENE.instantiate()
-	room.call("_ready")
-	var readout := room.get_node_or_null("CanvasLayer/SupplyCount") as Control
-	var bar := room.get_node_or_null("CanvasLayer/HealthBar") as Control
-	var valid := readout != null and bar != null
-	valid = valid and readout.position.x == bar.position.x
-	valid = valid and readout.position.y >= bar.position.y + bar.size.y
-	room.free()
+func _test_equipment_has_no_slots() -> bool:
+	var menu := PAUSE_MENU_SCENE.instantiate() as Control
+	var body := menu.get_node(MENU_ROOT + "ContentRoot/EquipmentPanel/Body") as Label
+	var valid := body != null and body.text == "No equipment slots yet"
+	menu.free()
 	return valid
 
 
@@ -107,21 +134,29 @@ func _player(brinecaps: int) -> CharacterBody2D:
 	return player
 
 
-func _equipment_menu() -> Control:
+# The Pause menu, paused and moved on to the Supplies Panel.
+func _supplies_menu() -> Control:
 	var menu := PAUSE_MENU_SCENE.instantiate() as Control
 	_root.add_child(menu)
 	menu.call("toggle_pause")
-	(menu.get_node(MENU_ROOT + "MenuButtons/EquipmentButton") as Button).grab_focus()
+	_navigate(menu, &"ui_right")
 	return menu
 
 
-func _readout() -> Control:
-	var scene := load(SUPPLY_COUNT_PATH) as PackedScene
-	if scene == null:
-		return null
-	var readout := scene.instantiate() as Control
-	_root.add_child(readout)
-	return readout
+func _rows(menu: Control) -> Array:
+	return menu.get_node(PANEL + "Body").get_children()
+
+
+func _panel_shown(menu: Control) -> bool:
+	return (menu.get_node(MENU_ROOT + "ContentRoot/SuppliesPanel") as Control).visible
+
+
+func _navigate(menu: Control, action: StringName) -> void:
+	for pressed in [true, false]:
+		var event := InputEventAction.new()
+		event.action = action
+		event.pressed = pressed
+		menu.get_viewport().push_input(event)
 
 
 func _close(menu: Control, player: Node) -> void:
@@ -129,11 +164,3 @@ func _close(menu: Control, player: Node) -> void:
 	menu.free()
 	player.free()
 	_root.get_node("RunState").call("start_run")
-
-
-func _rows(body: Container) -> Array:
-	var rows := []
-	var labels := body.get_children()
-	for index in range(0, labels.size() - 1, 2):
-		rows.append([(labels[index] as Label).text, (labels[index + 1] as Label).text])
-	return rows
