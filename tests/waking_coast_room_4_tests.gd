@@ -18,6 +18,12 @@ const CELLS := Rect2i(0, 0, 20, 9)
 const TILE := 16
 # On the cliff top, clear of the west Exit, at the height the salt cliffs' top leaves off.
 const WEST_ENTRY := Vector2(12, 64)
+# On the sand just short of the sinkhole, coming back from the rune road.
+const EAST_ENTRY := Vector2(296, 96)
+# The east edge: a wall from just under a standing Player's feet down, and the Exit from the
+# top down to just above a standing Player's head (it is 20 pixels tall).
+const EAST_WALL_TOP := 88
+const EAST_EXIT_BOTTOM := 72
 const WORLD_LAYER := 1
 const SHALLOW := Vector2i(5, 5)
 const DECKS := [Vector2i(4, 6), Vector2i(5, 6), Vector2i(6, 6)]
@@ -71,7 +77,7 @@ func get_tests() -> Array:
 		["Wreck graveyard Room lays out two screens", _test_lays_out_two_screens],
 		["Wreck graveyard west Entry stands on the cliff", _test_west_entry_on_cliff],
 		["Wreck graveyard camera scrolls inside the Room", _test_camera_limits],
-		["Wreck graveyard walls its east edge", _test_walls_east_edge],
+		["Wreck graveyard leads east over the sinkhole", _test_leads_east],
 		["Wreck graveyard beach runs east without the decks", _test_beach_runs_east],
 		["Wreck decks lead up to the stern's crate", _test_decks_reach_stern],
 		["A Scavenger wades the wreck graveyard's second pool", _test_scavenger_in_pool],
@@ -159,20 +165,32 @@ func _test_camera_limits() -> bool:
 	return valid
 
 
-# The rune road on to Tidefen is not built yet, so the east edge is a wall; the west edge is
-# the Exit back to the salt cliffs' top.
-func _test_walls_east_edge() -> bool:
+# A jump over the sinkhole carries on east onto the rune road. Below the sand's height the east
+# edge stays walled, and the Exit sits only above a standing Player's head, so walking off the
+# sand falls into the sinkhole rather than out east. The west edge is the Exit back to the salt
+# cliffs' top. Coming back, the Player lands short of the sinkhole.
+func _test_leads_east() -> bool:
 	var room := _room()
 	if room == null:
 		return false
 	var bounds := room.get_node_or_null("Bounds") as StaticBody2D
 	var valid := bounds != null and bounds.collision_layer == WORLD_LAYER
+	var wall := bounds.get_node_or_null("EastLow") as CollisionShape2D if valid else null
+	valid = valid and wall != null and wall.position.x > ROOM_SIZE.x - TILE
+	valid = valid and _vertical_span(wall) == Vector2(EAST_WALL_TOP, ROOM_SIZE.y)
+	var east_exit := room.get_node_or_null("Exits/east") as Area2D
+	valid = valid and east_exit != null and east_exit.position.x > ROOM_SIZE.x
 	if valid:
-		var east := bounds.get_node_or_null("East") as CollisionShape2D
-		var boundary := east.shape as WorldBoundaryShape2D if east != null else null
-		valid = boundary != null and boundary.normal == Vector2.LEFT
-		valid = valid and east.position.x == ROOM_SIZE.x
-		valid = valid and bounds.get_node_or_null("West") == null
+		var edge := east_exit.get_node("Edge") as CollisionShape2D
+		valid = _vertical_span(edge) == Vector2(0, EAST_EXIT_BOTTOM)
+	valid = valid and east_exit.get("room_id") == &"waking_coast_6"
+	valid = valid and east_exit.get("entry_id") == &"west"
+	var entry := room.get_node_or_null("Entries/east") as Marker2D
+	valid = valid and entry != null and entry.position == EAST_ENTRY
+	if valid:
+		var terrain := room.get_node("Terrain") as TileMapLayer
+		var below := Vector2i(entry.position / TILE)
+		valid = terrain.get_cell_source_id(below) == 0 and below.x < SINKHOLE_COLUMN
 	var exit := room.get_node_or_null("Exits/west") as Area2D
 	valid = valid and exit != null and exit.position.x < 0.0
 	valid = valid and exit.get("room_id") == &"waking_coast_3" and exit.get("entry_id") == &"east"
@@ -240,3 +258,13 @@ func _test_sinkhole() -> bool:
 	valid = valid and exit.get("room_id") == &"waking_coast_5" and exit.get("entry_id") == &"shaft"
 	room.free()
 	return valid
+
+
+# The top and bottom of a rectangle collision shape, in the Room's space.
+static func _vertical_span(shape_node: CollisionShape2D) -> Vector2:
+	var rectangle := shape_node.shape as RectangleShape2D
+	if rectangle == null:
+		return Vector2(-1, -1)
+	var owner_y := (shape_node.get_parent() as Node2D).position.y
+	var top := owner_y + shape_node.position.y - rectangle.size.y / 2.0
+	return Vector2(top, top + rectangle.size.y)

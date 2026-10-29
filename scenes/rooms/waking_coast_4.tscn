@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://bx268c2rvjlfx"]
+[gd_scene load_steps=16 format=4 uid="uid://bx268c2rvjlfx"]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_e4a78"]
 [ext_resource type="Texture2D" uid="uid://df6yx4ak5xo7u" path="res://assets/backgrounds/waking_coast_2_backdrop.png" id="2_t2pux"]
@@ -43,14 +43,17 @@ animations = [{
 "speed": 6.66667
 }]
 
-[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_25do0"]
-normal = Vector2(-1, 0)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rgke0"]
 size = Vector2(8, 144)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sink0"]
 size = Vector2(16, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eastlow"]
+size = Vector2(8, 56)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_easttop"]
+size = Vector2(8, 72)
 
 [node name="WakingCoast4" type="Node2D"]
 script = ExtResource("1_e4a78")
@@ -88,9 +91,9 @@ patrol_right = 246.0
 [node name="Bounds" type="StaticBody2D" parent="."]
 collision_mask = 0
 
-[node name="East" type="CollisionShape2D" parent="Bounds"]
-position = Vector2(320, 0)
-shape = SubResource("WorldBoundaryShape2D_25do0")
+[node name="EastLow" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(324, 116)
+shape = SubResource("RectangleShape2D_eastlow")
 
 [node name="Exits" type="Node2D" parent="."]
 
@@ -104,6 +107,17 @@ entry_id = &"east"
 
 [node name="Edge" type="CollisionShape2D" parent="Exits/west"]
 shape = SubResource("RectangleShape2D_rgke0")
+
+[node name="east" type="Area2D" parent="Exits"]
+position = Vector2(324, 36)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("5_b1h7n")
+room_id = &"waking_coast_6"
+entry_id = &"west"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/east"]
+shape = SubResource("RectangleShape2D_easttop")
 
 [node name="sinkhole" type="Area2D" parent="Exits"]
 position = Vector2(312, 160)
@@ -120,6 +134,9 @@ shape = SubResource("RectangleShape2D_sink0")
 
 [node name="west" type="Marker2D" parent="Entries"]
 position = Vector2(12, 64)
+
+[node name="east" type="Marker2D" parent="Entries"]
+position = Vector2(296, 96)
 
 [node name="Player" parent="." instance=ExtResource("6_fm3aj")]
 position = Vector2(12, 64)

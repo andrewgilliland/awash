@@ -18,6 +18,7 @@ key_areas:
   - salt cliffs
   - wreck graveyard
   - sea cave
+  - rune road
 ---
 
 ## Description
