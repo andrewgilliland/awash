@@ -12,6 +12,8 @@ const INTERACTABLE_GROUP := &"interactable"
 const MAX_HEALTH := 5
 const INVULNERABLE_TIME := 1.0
 const BLINK_TIME := 0.08
+# A defeated Player flickers more slowly where it lies.
+const DEFEAT_BLINK_TIME := 0.15
 # Up and away from whatever struck the Player.
 const KNOCKBACK := Vector2(90.0, -120.0)
 # The sword's reach, in front of the Player when facing right.
@@ -33,6 +35,8 @@ var _rig: PlayerRig
 var _sounds: PlayerSounds
 var _attack_finished: bool = false
 var _knockback: Vector2 = Vector2.ZERO
+var _defeated: bool = false
+var _defeat_time: float = 0.0
 
 @onready var _character_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var _sword_sprite: AnimatedSprite2D = $SwordSprite
@@ -42,6 +46,9 @@ var _knockback: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
+	var run := get_node_or_null("/root/RunState")
+	if run != null:
+		health = Health.new(MAX_HEALTH, run.get("player_health"))
 	controller.move_speed = move_speed
 	controller.acceleration = acceleration
 	controller.friction = friction
@@ -92,13 +99,25 @@ func _physics_process(delta: float) -> void:
 	velocity = controller.velocity
 	_apply_gravity(delta)
 	move_and_slide()
+	if _defeated:
+		# Down where it lands, flickering until the Room gives way.
+		_defeat_time += delta
+		if is_on_floor():
+			_rig.show_lying(true)
+		_rig.show_blink(fmod(_defeat_time, DEFEAT_BLINK_TIME * 2.0) < DEFEAT_BLINK_TIME)
+		return
 	var blink_lit := fmod(health.invulnerable_left, BLINK_TIME * 2.0) < BLINK_TIME
 	_rig.show_blink(health.invulnerable_left <= 0.0 or blink_lit)
 
 
+# Whether the Player's Health has run out: it no longer answers the controls.
+func is_defeated() -> bool:
+	return _defeated
+
+
 func _read_frame() -> PlayerController.Frame:
 	var frame := PlayerController.Frame.new()
-	if not controls_locked:
+	if not controls_locked and not _defeated:
 		frame.direction = Input.get_axis(&"move_left", &"move_right")
 		frame.jump_pressed = Input.is_action_just_pressed(&"jump")
 		frame.melee_held = Input.is_action_pressed(&"melee_attack")
@@ -129,7 +148,11 @@ func _on_hurtbox_hit(hitbox: Area2D) -> void:
 	if away == 0.0:
 		away = -controller.facing
 	_knockback = Vector2(KNOCKBACK.x * away, KNOCKBACK.y)
+	var run := get_node_or_null("/root/RunState")
+	if run != null:
+		run.set("player_health", health.current)
 	if health.is_defeated():
+		_defeated = true
 		_sounds.play(PlayerSounds.DEFEAT)
 		defeated.emit()
 	else:

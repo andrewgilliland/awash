@@ -10,6 +10,7 @@ func get_tests() -> Array:
 		["Invulnerability blocks hits until it wears off", _test_invulnerability_blocks_hits],
 		["Health stops at zero and is defeated", _test_stops_at_zero],
 		["Defeated Health ignores hits", _test_defeated_ignores_hits],
+		["Health can start partly spent", _test_starts_partly_spent],
 	]
 
 
@@ -45,3 +46,11 @@ func _test_defeated_ignores_hits() -> bool:
 	var health := Health.new(1)
 	health.hurt(1, 0.0)
 	return not health.hurt(1, 0.0) and health.current == 0
+
+
+func _test_starts_partly_spent() -> bool:
+	var carried := Health.new(5, 3)
+	var valid := carried.current == 3 and carried.maximum == 5
+	# A carried value never starts above the maximum or at defeat.
+	valid = valid and Health.new(5, 9).current == 5 and Health.new(5, 0).current == 5
+	return valid and Health.new(5).current == 5

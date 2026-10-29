@@ -1,4 +1,7 @@
-extends SceneTree
+extends "res://tests/playtest_harness.gd"
+
+# The playtests: real Rooms, real input and physics. The harness they run on is in
+# tests/playtest_harness.gd.
 
 const FIRST_ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
 const START_SCREEN_PATH := "res://scenes/ui/start_screen.tscn"
@@ -49,21 +52,11 @@ const SALT_CLIFFS_CLIMB := [
 	[1, 100.0, SALT_CLIFFS_TOP_Y],
 ]
 const CLIFF_TOP_Y := 64.0
-const TRANSITION_FRAME_LIMIT := 180
-const WAKING_COAST_SAND_Y := 96.0
-# Collision margins rest the Player a fraction of a pixel off the sand; falling through is far more.
-const ON_SAND_TOLERANCE := 0.5
 const PlayerController := preload("res://scripts/player/player_controller.gd")
-const SCENARIO_ACTIONS: Array[StringName] = [
-	&"move_left", &"move_right", &"jump", &"melee_attack", &"pause", &"ui_accept", &"interact"
-]
-const SETTLE_FRAME_LIMIT := 120
 # The sand at the tidal pool's west edge, where the Scavenger can reach and be reached.
 const POOL_EDGE := Vector2(122, 96)
 const SCAVENGER_PATH := "Enemies/Scavenger"
 const MAX_SWINGS := 8
-
-var _failures: int = 0
 
 
 func _init() -> void:
@@ -105,7 +98,10 @@ func _init() -> void:
 	)
 	await _run_playtest_async("Sword defeats the Scavenger", _playtest_sword_defeats_scavenger)
 	await _run_playtest_async("Scavenger's lunge hurts the Player", _playtest_lunge_hurts_player)
-	await _run_playtest_async("Player defeat starts the Run over", _playtest_defeat_starts_over)
+	await _run_playtest_async(
+		"Player defeat keeps the Run, back at the start", _playtest_defeat_keeps_run
+	)
+	await _run_playtest_async("Health carries through an Exit", _playtest_health_carries)
 	await _run_playtest_async(
 		"START begins a new Run in the first Room", _playtest_start_begins_run
 	)
@@ -119,15 +115,6 @@ func _init() -> void:
 
 	print("All playtests passed")
 	quit(0)
-
-
-func _run_playtest(name: String, playtest_callable: Callable) -> void:
-	var result = playtest_callable.call()
-	if result:
-		print("PASS: %s" % name)
-	else:
-		_failures += 1
-		push_error("FAIL: %s" % name)
 
 
 func _playtest_first_room_spawn() -> bool:
@@ -157,33 +144,6 @@ func _playtest_first_room_spawn() -> bool:
 # Plays one scenario on a fresh main scene once the Player has landed, then resets input and pause.
 func _run_scenario(name: String, scenario: Callable) -> void:
 	await _run_room_scenario(name, FIRST_ROOM_PATH, scenario)
-
-
-# Plays one scenario on a fresh Room once the Player has landed, then resets input and pause.
-func _run_room_scenario(name: String, room_path: String, scenario: Callable) -> void:
-	var packed_scene := load(room_path) as PackedScene
-	if packed_scene == null:
-		_failures += 1
-		push_error("FAIL: %s (cannot load %s)" % [name, room_path])
-		return
-	var main_scene := packed_scene.instantiate() as Node2D
-	root.add_child(main_scene)
-	var player := main_scene.get_node("Player") as CharacterBody2D
-	var landed := await _frames_until(
-		func() -> bool: return player.is_on_floor(), SETTLE_FRAME_LIMIT
-	)
-	var result: bool = landed and await scenario.call(player)
-	for action in SCENARIO_ACTIONS:
-		Input.action_release(action)
-	paused = false
-	main_scene.free()
-	await process_frame
-
-	if result:
-		print("PASS: %s" % name)
-	else:
-		_failures += 1
-		push_error("FAIL: %s" % name)
 
 
 func _scenario_walks_right(player: CharacterBody2D) -> bool:
@@ -278,18 +238,6 @@ func _scenario_stops_at_west_edge(player: CharacterBody2D) -> bool:
 	valid = valid and player.global_position.x < 12.0
 	valid = valid and _is_on_sand(player)
 	return valid
-
-
-# Like _run_playtest, for playtests that wait on frames.
-func _run_playtest_async(name: String, playtest: Callable) -> void:
-	var result: bool = await playtest.call()
-	for action in SCENARIO_ACTIONS:
-		Input.action_release(action)
-	if result:
-		print("PASS: %s" % name)
-	else:
-		_failures += 1
-		push_error("FAIL: %s" % name)
 
 
 # Plays the real game flow: the Run starts on the first Room's cliff top, walks off its east
@@ -576,21 +524,6 @@ func _playtest_drops_home() -> bool:
 	return valid
 
 
-# Starts a fresh Run in a Room at an Entry and waits for the Player to land.
-func _enter_room(room_id: StringName, entry_id: StringName, path: String) -> CharacterBody2D:
-	var run := root.get_node_or_null("RunState")
-	if run == null:
-		return null
-	run.call("start_run")
-	run.call("enter_room", room_id, entry_id)
-	change_scene_to_file(path)
-	var landed := await _frames_until(
-		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
-		SETTLE_FRAME_LIMIT
-	)
-	return _current_player() if landed else null
-
-
 # Waits out the Storm Wisp's crackle and arc just beyond its reach, then steps in while it rests
 # and swings, until it is gone.
 func _playtest_sword_disperses_wisp() -> bool:
@@ -649,15 +582,6 @@ func _stand_by_wisp(player: CharacterBody2D, wisp: Node2D, distance: float) -> v
 	await _frames(2)
 
 
-# Walks through each point in turn, jumping toward it whenever a pool's edge stops the walk.
-func _wade_to(player: CharacterBody2D, points: Array[float]) -> void:
-	for x in points:
-		await _walk_to_x(player, x)
-		var distance := x - player.global_position.x
-		if absf(distance) > 4.0:
-			await _jump_toward(player, 1 if distance > 0.0 else -1)
-
-
 # Jumps the tidal pool, then climbs ledge to ledge to the cliff top, with real input and physics.
 # The pool's Scavenger is taken out first: this checks the route, not the fight.
 func _playtest_climbs_cliffs() -> bool:
@@ -683,34 +607,6 @@ func _playtest_climbs_cliffs() -> bool:
 	valid = valid and player.global_position.x > 112.0
 	await _leave_scene()
 	return valid
-
-
-func _walk_to_x(player: CharacterBody2D, x: float) -> void:
-	for i in 240:
-		var distance := x - player.global_position.x
-		if absf(distance) < 2.0:
-			break
-		_release(&"move_left" if distance > 0.0 else &"move_right")
-		_press(&"move_right" if distance > 0.0 else &"move_left")
-		await _frames(1)
-	_release(&"move_left")
-	_release(&"move_right")
-	await _frames(20)
-
-
-# Jumps, holding a direction (or none), until the Player lands.
-func _jump_toward(player: CharacterBody2D, direction: int) -> void:
-	if direction != 0:
-		_press(&"move_right" if direction > 0 else &"move_left")
-	_press(&"jump")
-	await _frames(4)
-	await _frames_until(
-		func() -> bool: return player.is_on_floor() and player.velocity.y >= 0.0, 120
-	)
-	_release(&"jump")
-	_release(&"move_left")
-	_release(&"move_right")
-	await _frames(15)
 
 
 # Swings at the Scavenger from the pool's edge until it is gone. Its lunges may knock the
@@ -750,8 +646,9 @@ func _playtest_lunge_hurts_player() -> bool:
 	return valid
 
 
-# One Health left at the pool's edge: the next lunge ends the Run, which starts over.
-func _playtest_defeat_starts_over() -> bool:
+# One Health left at the pool's edge: the next lunge defeats the Player. It falls where it lands
+# and stops answering the controls, then wakes in the first Room with full Health, the Run kept.
+func _playtest_defeat_keeps_run() -> bool:
 	var player := await _enter_rune_shore()
 	if player == null:
 		await _leave_scene()
@@ -759,18 +656,55 @@ func _playtest_defeat_starts_over() -> bool:
 	var run := root.get_node("RunState")
 	await _face_pool_from_edge(player)
 	player.get("health").current = 1
+	var down := await _frames_until(func() -> bool: return player.call("is_defeated"), 240)
+	# Let the hit's knockback play out, then the controls should do nothing.
+	await _frames_until(
+		func() -> bool: return player.is_on_floor() and is_zero_approx(player.velocity.x), 90
+	)
+	var body := player.get_node("AnimatedSprite2D") as Node2D
+	var valid: bool = down and not is_zero_approx(body.rotation)
+	var x := player.global_position.x
+	_press(&"move_left")
+	await _frames(12)
+	_release(&"move_left")
+	valid = valid and absf(player.global_position.x - x) < 1.0
 	var restarted := await _frames_until(
 		func() -> bool:
 			return current_scene != null and current_scene.scene_file_path == FIRST_ROOM_PATH,
 		240
 	)
-	var valid: bool = restarted and run.get("room_id") == &"waking_coast_1"
+	valid = valid and restarted and run.get("room_id") == &"waking_coast_1"
 	valid = valid and run.get("entry_id") == &"start"
-	valid = valid and not run.call("has_visited_room", &"waking_coast_2")
-	# Only a new game from START opens on the intro.
+	valid = valid and run.call("has_visited_room", &"waking_coast_2")
 	await _frames(30)
+	var health = _current_player().get("health")
+	valid = valid and health.current == health.maximum
+	# Only a new game from START opens on the intro.
 	var box := _dialogue_box()
 	valid = valid and box != null and not box.visible and not run.get("intro_pending")
+	await _leave_scene()
+	return valid
+
+
+# A hit taken in the rune shore is still taken after walking west into the first Room, and the
+# Health bar there shows it.
+func _playtest_health_carries() -> bool:
+	var player := await _enter_rune_shore()
+	if player == null:
+		await _leave_scene()
+		return false
+	var blow := Area2D.new()
+	current_scene.add_child(blow)
+	blow.global_position = player.global_position + Vector2(10, 0)
+	player.call("_on_hurtbox_hit", blow)
+	blow.queue_free()
+	var valid := await _walk_until_scene(&"move_left", FIRST_ROOM_PATH)
+	var health = _current_player().get("health")
+	valid = valid and health.current == health.maximum - 1
+	await _frames(2)
+	var bar := current_scene.get_node("CanvasLayer/HealthBar")
+	var full: Array = bar.call("segments").filter(func(s: int) -> bool: return s == 0)
+	valid = valid and full.size() == health.maximum - 1
 	await _leave_scene()
 	return valid
 
@@ -875,26 +809,6 @@ func _playtest_talk_to_mara() -> bool:
 	return valid
 
 
-func _dialogue_box() -> Control:
-	if current_scene == null:
-		return null
-	return current_scene.get_node_or_null("CanvasLayer/DialogueBox") as Control
-
-
-func _speaker() -> String:
-	return (_dialogue_box().get_node("%Speaker") as Label).text
-
-
-# Presses on through every line, as a player would; false if the box never closes.
-func _read_through_dialogue() -> bool:
-	for i in 60:
-		if not _dialogue_box().visible:
-			return true
-		await _tap(&"ui_accept")
-		await _frames(3)
-	return not _dialogue_box().visible
-
-
 func _enter_rune_shore() -> CharacterBody2D:
 	var run := root.get_node_or_null("RunState")
 	if run == null:
@@ -916,81 +830,3 @@ func _face_pool_from_edge(player: CharacterBody2D) -> void:
 	player.global_position = POOL_EDGE
 	player.velocity = Vector2.ZERO
 	await _frames(2)
-
-
-func _leave_scene() -> void:
-	for action in SCENARIO_ACTIONS:
-		Input.action_release(action)
-	var run := root.get_node_or_null("RunState")
-	if run != null:
-		run.call("start_run")
-	if current_scene != null:
-		current_scene.free()
-	await process_frame
-
-
-# Lands in the current Room, then holds a direction until the scene becomes the given Room.
-func _walk_until_scene(action: StringName, scene_path: String) -> bool:
-	var landed := await _frames_until(
-		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
-		SETTLE_FRAME_LIMIT
-	)
-	_press(action)
-	var arrived := await _frames_until(
-		func() -> bool:
-			return current_scene != null and current_scene.scene_file_path == scene_path,
-		TRANSITION_FRAME_LIMIT
-	)
-	_release(action)
-	await _frames_until(
-		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
-		SETTLE_FRAME_LIMIT
-	)
-	return landed and arrived
-
-
-func _current_player() -> CharacterBody2D:
-	if current_scene == null:
-		return null
-	return current_scene.get_node_or_null("Player") as CharacterBody2D
-
-
-func _is_on_sand(player: CharacterBody2D) -> bool:
-	return absf(player.global_position.y - WAKING_COAST_SAND_Y) < ON_SAND_TOLERANCE
-
-
-# Presses and releases an action across one frame, like a quick key tap.
-func _tap(action: StringName) -> void:
-	_press(action)
-	await _frames(1)
-	_release(action)
-
-
-func _press(action: StringName) -> void:
-	_send(action, true)
-
-
-func _release(action: StringName) -> void:
-	_send(action, false)
-
-
-# The same path a key or button takes: an action event through Input to the game's handlers.
-func _send(action: StringName, pressed: bool) -> void:
-	var event := InputEventAction.new()
-	event.action = action
-	event.pressed = pressed
-	Input.parse_input_event(event)
-
-
-# Advances physics frames until the condition holds; false if it never does within the limit.
-func _frames_until(condition: Callable, limit: int) -> bool:
-	for i in limit:
-		await physics_frame
-		if condition.call():
-			return true
-	return false
-
-
-func _frames(count: int) -> void:
-	for i in count:
-		await physics_frame

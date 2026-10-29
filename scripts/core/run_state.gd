@@ -2,12 +2,16 @@ extends Node
 
 const FIRST_ROOM_ID := &"waking_coast_1"
 const DEFAULT_ENTRY_ID := &"start"
+# The Player's Health when the Run has nothing less to carry.
+const FULL_HEALTH := -1
 
 # Read-only for callers: the Room the Player is in and the Entry they came through.
 var room_id: StringName = FIRST_ROOM_ID
 var entry_id: StringName = DEFAULT_ENTRY_ID
 # A new game from the start screen opens on the intro; a restarted Run does not.
 var intro_pending: bool = false
+# The Player's Health, carried from Room to Room; FULL_HEALTH until a hit lands.
+var player_health: int = FULL_HEALTH
 var _visited_rooms: Dictionary = {FIRST_ROOM_ID: true}
 
 
@@ -16,7 +20,18 @@ func start_run() -> void:
 	room_id = FIRST_ROOM_ID
 	entry_id = DEFAULT_ENTRY_ID
 	intro_pending = false
+	player_health = FULL_HEALTH
 	_visited_rooms = {FIRST_ROOM_ID: true}
+
+
+# After a defeat the Run carries on: back at the first Room's default Entry with full Health,
+# keeping every Room visited.
+func recover_from_defeat() -> void:
+	room_id = FIRST_ROOM_ID
+	entry_id = DEFAULT_ENTRY_ID
+	intro_pending = false
+	player_health = FULL_HEALTH
+	_visited_rooms[FIRST_ROOM_ID] = true
 
 
 func enter_room(next_room_id: StringName, next_entry_id: StringName) -> void:

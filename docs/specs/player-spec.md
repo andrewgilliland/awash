@@ -36,7 +36,8 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - The Player has 5 Health. A hit from an enemy hitbox costs its damage (1 for a Scavenger's spear).
 - A hit that lands knocks the Player up and away from the hitbox (90 sideways, 120 up) and takes control away for 0.3 seconds: walk, jump and melee input are ignored, a charge or attack is lost, and the Player shows `JUMP` while tumbling.
 - After a hit the Player is invulnerable for 1 second and blinks; hits during that time cost nothing.
-- At 0 Health the Player is defeated, and the Run starts over at the first Room's `start` Entry.
+- The Player's Health carries from Room to Room; only a defeat or a new Run refills it.
+- At 0 Health the Player is defeated. It stops answering the controls, falls where it lands and flickers. Then it wakes at the first Room's `start` Entry with full Health, and the Run, its visited Rooms and its Map carry on.
 - The sword's hitbox is live only during `ATTACK`, 12 pixels in front of the Player by facing; each hit costs an enemy 1 Health.
 
 ## Sound
@@ -45,7 +46,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - `jump` plays when the jump impulse is applied, not when the Player walks off a ledge or is knocked into the air.
 - `land` plays on returning to `IDLE` or `WALK` from `JUMP` after at least 0.08 seconds in the air, so appearing at an Entry lands quietly.
 - `swing` plays when `ATTACK` begins, and `hit` when the sword strikes a Hurtbox.
-- `hurt` plays when a hit lands, or `defeat` instead when it takes the last Health; the Room waits 0.7 seconds for it before starting the Run over.
+- `hurt` plays when a hit lands, or `defeat` instead when it takes the last Health; the Room waits 1.2 seconds, to see the Player fall and hear the sound, before it moves the Player back to the start.
 - The sounds are chiptune effects made by `scripts/tools/make_sfx.py` into `assets/audio/sfx/`; change them there and rerun it.
 
 ## Animation
@@ -64,7 +65,8 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - `scripts/player/player_rig.gd` (the Player rig) owns the Animation rules and their table.
 - `scripts/player/player.gd` (the Player body) owns gravity, `move_and_slide` and reading `Input`, and hands each step's state, facing and movement to the rig. It owns the Player's Health, turns a hurtbox hit into the controller's knockback, keeps the sword hitbox live during `ATTACK`, and reports defeat.
 - `scripts/player/player_controller.gd` also owns knockback and the stun that follows a hit.
-- `scripts/core/main.gd` (the Room) starts the Run over when the Player is defeated.
+- `scripts/core/main.gd` (the Room) adds the Health bar under its Pause menu, and returns the Player to the start when it is defeated. `scripts/core/run_state.gd` carries the Player's Health between Rooms and recovers the Run from a defeat.
+- `scripts/ui/health_bar.gd` (the Health bar) draws the Player's Health in the top-left corner and flashes a lost segment. `scripts/ui/stats_view.gd` shows `Health current / maximum` on the Stats Panel.
 - `scripts/player/player_sounds.gd` (the Player sounds) owns which state changes make a sound and plays sounds by name; the Player body hands it the controller's state changes and jumps, the sword's strikes and its own hits.
 
 ## Out Of Scope
