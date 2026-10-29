@@ -17,6 +17,9 @@ const WakingCoastRoom3Tests := preload("res://tests/waking_coast_room_3_tests.gd
 const WakingCoastRoom4Tests := preload("res://tests/waking_coast_room_4_tests.gd")
 const WakingCoastRoom5Tests := preload("res://tests/waking_coast_room_5_tests.gd")
 const WakingCoastRoom6Tests := preload("res://tests/waking_coast_room_6_tests.gd")
+const WakingCoastRoom7Tests := preload("res://tests/waking_coast_room_7_tests.gd")
+const WakingCoastRoom8Tests := preload("res://tests/waking_coast_room_8_tests.gd")
+const WakingCoastRoom9Tests := preload("res://tests/waking_coast_room_9_tests.gd")
 const RoomExitTests := preload("res://tests/room_exit_tests.gd")
 const HealthTests := preload("res://tests/health_tests.gd")
 const ScavengerBrainTests := preload("res://tests/scavenger_brain_tests.gd")
@@ -67,6 +70,15 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var room_6_tests := WakingCoastRoom6Tests.new()
 	for test in room_6_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_7_tests := WakingCoastRoom7Tests.new()
+	for test in room_7_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_8_tests := WakingCoastRoom8Tests.new()
+	for test in room_8_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_9_tests := WakingCoastRoom9Tests.new()
+	for test in room_9_tests.get_tests():
 		_run_test(test[0], test[1])
 	var room_exit_tests := RoomExitTests.new()
 	for test in room_exit_tests.get_tests():
