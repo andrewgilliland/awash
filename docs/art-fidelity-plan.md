@@ -81,6 +81,12 @@ Each phase lands as its own PR. Each passes typecheck, lint, tests and playtests
 - Delete superseded art: `waking_coast_1`, `waking_coast_2`, `Tree-Assets`, `forest_tileset`, `world_tileset`, and the old player and enemy sheets.
 - Move the reference banner out of `assets/` into `docs/reference/`, so it never ships.
 
+## Validation
+
+- **Automated:** `scripts/quality/art.sh` checks the art against `docs/art-style.md`: the palette, readability (each surface 40+ greyscale steps from what is behind it), collision against art (lit top edges), seams, animation loops, and character fit. It also writes a contact sheet of every Room in colour, greyscale and a 25% thumbnail. A run on today's art sets the starting point: 1 of 13 files on the palette, 0 of 9 Rooms fully readable, 7 of 16 ground tiles with a lit edge, and clean seams, loops and character fit.
+- **By eye:** each art PR carries before and after contact sheets, with a look at the greyscale (can ground be told from sky?) and the thumbnail (is the path still clear at a quarter size?).
+- **Gate:** once a phase's art lands, its checks join the pre-commit gate for that art, so later work can't slip back.
+
 ## Risks
 
 - **Hand-drawn art is the long pole.** Phase 2 alone is about 90 tiles plus 4 frames for each animated tile. Draw Phase 0's style target first, so the style isn't changed midway.

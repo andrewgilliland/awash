@@ -38,6 +38,7 @@ Awash includes lightweight headless test and deterministic playtest runners.
 - The Run begins in `waking_coast_1` at its `start` Entry, enters Rooms at Entries, starts over, and ignores empty ids (`tests/run_state_tests.gd`).
 - The Player appears at the Run's Entry in the first Room.
 - The deterministic main-scene spawn puts the Player on the default Entry, over a `WorldLayer` with tiles.
+- The art checks behind `scripts/quality/art.sh` (`scripts/tools/art_checks.gd`) find colours off a palette, a surface's lit top edge, art that reaches its collision, whether a value reads against what is behind it, a seam across a tile edge, a loop's jump from last frame to first, and a figure's separate pieces (`tests/art_checks_tests.gd`, on small made-up pictures).
 - End-to-end playtests (`tests/playtest_runner.gd`) play the real first Room, with autoloads, input action events and physics frames at `--fixed-fps 60`: the Player walks right, jumps and lands, plays an attack to its end and back to idle, and pause freezes and resumes play.
 
 ## File Ownership
@@ -57,3 +58,7 @@ Awash includes lightweight headless test and deterministic playtest runners.
 - `assets/ui/awash_theme.tres` gives the menus the 5x7 pixel font (`assets/fonts/awash_pixel_5x7.png`, drawn in its `.aseprite`) and the game's palette.
 - `scripts/core/main.gd` places the Player at the Run's Entry, using the Room's `Entries` markers (a new Run starts in `scenes/rooms/waking_coast_1.tscn`).
 - `scripts/ui/start_screen.gd` owns the start screen (`scenes/ui/start_screen.tscn`, the main scene): PRESS START opens the START / QUIT menu, and START begins a new Run in the first Room. Its logo is drawn in `assets/ui/awash_logo.aseprite`. Its theme (`assets/audio/music/start_theme.wav`, made by `scripts/tools/make_music.py`) fades in a moment after the screen appears, loops on the `Music` bus, and fades out under the start chime.
+
+## Art report
+
+`scripts/quality/art.sh` runs the art checks over the game's art and Rooms against `docs/art-style.md`: the palette, readability, collision against art, seams, loops and character fit. `scripts/tools/room_render.gd` draws each Room flat from its tiles, headless. The report writes `build/art-report/` (ignored by git): `report.json`, plus a contact sheet of every Room at its Map position in colour, greyscale and a 25% thumbnail. It exits 1 while any check fails, so it stays out of the pre-commit gate until the re-skinned art lands.
