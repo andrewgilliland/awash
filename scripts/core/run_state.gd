@@ -1,5 +1,7 @@
 extends Node
 
+const Equipment := preload("res://scripts/items/equipment.gd")
+
 const FIRST_ROOM_ID := &"waking_coast_1"
 const DEFAULT_ENTRY_ID := &"start"
 # The Player's Health when the Run has nothing less to carry.
@@ -16,6 +18,8 @@ var player_health: int = FULL_HEALTH
 var player_experience: int = 0
 # The Supplies the Player carries this Run, as Supplies.to_counts() gives them.
 var player_supplies: Dictionary = {}
+# The Armor the Player wears this Run.
+var player_armor: StringName = Equipment.STARTING_ARMOR
 var _visited_rooms: Dictionary = {FIRST_ROOM_ID: true}
 
 
@@ -27,11 +31,12 @@ func start_run() -> void:
 	player_health = FULL_HEALTH
 	player_experience = 0
 	player_supplies = {}
+	player_armor = Equipment.STARTING_ARMOR
 	_visited_rooms = {FIRST_ROOM_ID: true}
 
 
 # After a defeat the Run carries on: back at the first Room's default Entry with full Health,
-# keeping every Room visited and all the Player's Experience and Supplies.
+# keeping every Room visited and all the Player's Experience, Supplies and Equipment.
 func recover_from_defeat() -> void:
 	room_id = FIRST_ROOM_ID
 	entry_id = DEFAULT_ENTRY_ID

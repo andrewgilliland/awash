@@ -29,7 +29,7 @@ func get_tests() -> Array:
 		["Health bar is slim: a thin fill inside its frame", _test_slim],
 		["Every Room puts the Health bar under its Pause menu", _test_room_has_bar],
 		["Stats shows Health left out of its total", _test_stats_shows_health],
-		["Stats shows Level, Experience and Strength, to MAX", _test_stats_shows_growth],
+		["Stats shows Level, Experience, Strength and Defense", _test_stats_shows_growth],
 		["Stats lines up names on the left, values on the right", _test_stats_columns],
 		["A defeated Player stops answering controls", _test_defeat_locks_controls],
 	]
@@ -142,7 +142,13 @@ func _test_stats_shows_growth() -> bool:
 	var body := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/Body") as Container
 	var valid := (
 		_stats_rows(body)
-		== [["Level", "1"], ["Experience", "0 / 40"], ["Health", "50 / 50"], ["Strength", "0"]]
+		== [
+			["Level", "1"],
+			["Experience", "0 / 40"],
+			["Health", "50 / 50"],
+			["Strength", "0"],
+			["Defense", "0"],
+		]
 	)
 	player.call("gain_experience", 45)
 	_reshow_stats(menu)
@@ -151,7 +157,11 @@ func _test_stats_shows_growth() -> bool:
 		and (
 			_stats_rows(body)
 			== [
-				["Level", "2"], ["Experience", "45 / 100"], ["Health", "60 / 60"], ["Strength", "0"]
+				["Level", "2"],
+				["Experience", "45 / 100"],
+				["Health", "60 / 60"],
+				["Strength", "0"],
+				["Defense", "0"],
 			]
 		)
 	)
@@ -166,6 +176,7 @@ func _test_stats_shows_growth() -> bool:
 				["Experience", "1045 / MAX"],
 				["Health", "90 / 90"],
 				["Strength", "10"],
+				["Defense", "0"],
 			]
 		)
 	)
@@ -183,7 +194,7 @@ func _test_stats_columns() -> bool:
 	_root.add_child(menu)
 	menu.call("toggle_pause")
 	var body := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/Body") as GridContainer
-	var valid := body != null and body.columns == 2 and body.get_child_count() == 8
+	var valid := body != null and body.columns == 2 and body.get_child_count() == 10
 	if valid:
 		for index in body.get_child_count():
 			var label := body.get_child(index) as Label

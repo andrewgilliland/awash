@@ -33,7 +33,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 ## Damage
 
-- The Player starts with 50 Health, counted in tens; each Level sets its maximum (see Growth). A hit from an enemy hitbox costs its damage: 10 for a Scavenger's spear, 15 for a Storm Wisp's arc. Five spear hits defeat it, or four arcs.
+- The Player starts with 50 Health, counted in tens; each Level sets its maximum (see Growth). A hit from an enemy hitbox costs its damage, less the Armor's Defense: 10 for a Scavenger's spear, 15 for a Storm Wisp's arc in the Worn Leather Tunic. Five spear hits defeat it, or four arcs.
 - A hit that lands knocks the Player up and away from the hitbox (90 sideways, 120 up) and takes control away for 0.3 seconds: walk, jump and melee input are ignored, a charge or attack is lost, and the Player shows `JUMP` while tumbling.
 - After a hit the Player is invulnerable for 1 second and blinks; hits during that time cost nothing.
 - The Player's Health carries from Room to Room; only a defeat or a new Run refills it.
@@ -67,6 +67,13 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - The Run carries the Supplies from Room to Room and through a defeat; only a new Run empties them.
 - The Inventory sits second in the Pause menu, after Stats. Like every Panel, it has no title of its own (its tab names it) and its content starts at the top; only the Map heads its Panel, with the Region's name. It lists each kind carried as a row, its name on the left and how many on the right, or says `No Supplies carried`. Down from its tab runs through the rows to Resume, and up runs back; using the last of a kind removes its row and returns focus to the tab.
 
+## Equipment
+
+- The Player has one Equipment slot so far, Armor, and it is never empty: a new Run starts in the Worn Leather Tunic. `scripts/items/equipment.gd` declares every Armor with its name and Defense.
+- Defense is the Health the Armor takes off each hit that lands. A hit Defense lowers still costs at least 5, and a weaker hit costs what it is. The Worn Leather Tunic has Defense 0, so it changes nothing.
+- The Run carries the Armor worn from Room to Room and through a defeat; only a new Run puts the Worn Leather Tunic back on.
+- The Equipment Panel shows `Armor` on the left and the piece worn on the right; with only one Armor, nothing there takes focus. Stats shows the Defense after Strength.
+
 ## Sound
 
 - Sounds play on the `SFX` audio bus (`default_bus_layout.tres`), from `AudioStreamPlayer`s under the Player's `Sounds` node.
@@ -91,11 +98,11 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 - `scripts/player/player_controller.gd` (the Player controller) owns the Movement and States rules: state transitions, facing, horizontal velocity and the jump impulse.
 - `scripts/player/player_rig.gd` (the Player rig) owns the Animation rules and their table.
-- `scripts/player/player.gd` (the Player body) owns gravity, `move_and_slide` and reading `Input`, and hands each step's state, facing and movement to the rig. It owns the Player's Health, Level and Supplies, collects and uses Supplies, turns Experience into Levels, Health and the sword's hit, turns a hurtbox hit into the controller's knockback, keeps the sword hitbox live during `ATTACK`, and reports defeat.
+- `scripts/player/player.gd` (the Player body) owns gravity, `move_and_slide` and reading `Input`, and hands each step's state, facing and movement to the rig. It owns the Player's Health, Level, Supplies and Equipment, takes the Armor's Defense off each hit, collects and uses Supplies, turns Experience into Levels, Health and the sword's hit, turns a hurtbox hit into the controller's knockback, keeps the sword hitbox live during `ATTACK`, and reports defeat.
 - `scripts/player/player_controller.gd` also owns knockback and the stun that follows a hit.
 - `scripts/player/level.gd` (the Level) owns the Level table and reads a Level and its stats from total Experience.
-- `scripts/core/main.gd` (the Room) adds the Health bar under its Pause menu, hands each of its enemies' defeats to the Player as Experience, rolls each one's drop chance and adds the Brinecap it leaves, and returns the Player to the start when it is defeated. `scripts/core/run_state.gd` carries the Player's Health, Experience and Supplies between Rooms and recovers the Run from a defeat.
-- `scripts/ui/health_bar.gd` (the Health bar) fills to the share of the Player's Health left, in the top-left corner. A hit drops the fill at once, and a trail of the lost Health holds for 0.15 seconds, then drains over 0.5. `scripts/ui/stats_view.gd` shows the Level, Experience, `Health current / maximum` and Strength on the Stats Panel, names on the left and values on the right. `scripts/ui/level_up_flash.gd` shows LEVEL UP over the Player. `scripts/items/supply_pickup.gd` is a Supply lying in a Room (`scenes/items/brinecap.tscn`); `scripts/ui/inventory_view.gd` lists Supplies on the Inventory and uses the one chosen; `scripts/ui/pause_menu.gd` links focus down through its rows.
+- `scripts/core/main.gd` (the Room) adds the Health bar under its Pause menu, hands each of its enemies' defeats to the Player as Experience, rolls each one's drop chance and adds the Brinecap it leaves, and returns the Player to the start when it is defeated. `scripts/core/run_state.gd` carries the Player's Health, Experience, Supplies and Armor between Rooms and recovers the Run from a defeat.
+- `scripts/ui/health_bar.gd` (the Health bar) fills to the share of the Player's Health left, in the top-left corner. A hit drops the fill at once, and a trail of the lost Health holds for 0.15 seconds, then drains over 0.5. `scripts/ui/stats_view.gd` shows the Level, Experience, `Health current / maximum`, Strength and Defense on the Stats Panel, names on the left and values on the right. `scripts/ui/level_up_flash.gd` shows LEVEL UP over the Player. `scripts/items/supply_pickup.gd` is a Supply lying in a Room (`scenes/items/brinecap.tscn`); `scripts/ui/inventory_view.gd` lists Supplies on the Inventory and uses the one chosen; `scripts/ui/equipment_view.gd` shows each Equipment slot and its piece; `scripts/ui/pause_menu.gd` links focus down through its rows.
 - `scripts/player/player_sounds.gd` (the Player sounds) owns which state changes make a sound and plays sounds by name; the Player body hands it the controller's state changes and jumps, the sword's strikes and its own hits.
 
 ## Out Of Scope
