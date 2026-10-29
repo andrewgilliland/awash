@@ -5,7 +5,6 @@ extends "res://tests/playtest_harness.gd"
 
 const FIRST_ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
 const START_SCREEN_PATH := "res://scenes/ui/start_screen.tscn"
-const RUNE_SHORE_PATH := "res://scenes/rooms/waking_coast_2.tscn"
 const SALT_CLIFFS_PATH := "res://scenes/rooms/waking_coast_3.tscn"
 const WRECK_GRAVEYARD_PATH := "res://scenes/rooms/waking_coast_4.tscn"
 # Up the wreck decks from the beach: [direction, launch x, height landed on]. The first deck
@@ -53,9 +52,6 @@ const SALT_CLIFFS_CLIMB := [
 ]
 const CLIFF_TOP_Y := 64.0
 const PlayerController := preload("res://scripts/player/player_controller.gd")
-# The sand at the tidal pool's west edge, where the Scavenger can reach and be reached.
-const POOL_EDGE := Vector2(122, 96)
-const SCAVENGER_PATH := "Enemies/Scavenger"
 const WRAITH_PATH := "Enemies/Wraith"
 const UNDERTOW_FLOOR_Y := 96.0
 # Where to stand by the Wraith: near enough to draw out its lash, clear of the lash while it
@@ -63,7 +59,7 @@ const UNDERTOW_FLOOR_Y := 96.0
 const WRAITH_BAIT_DISTANCE := 18.0
 const WRAITH_CLEAR_DISTANCE := 40.0
 const WRAITH_STRIKE_DISTANCE := 14.0
-const MAX_SWINGS := 8
+const BRINECAP_PATH := "res://scenes/items/brinecap.tscn"
 # What any enemy hit costs the Player.
 const ONE_HIT := 10
 # What the Storm Wisp's arc and the Wraith's lash cost: stronger hits than the spear's.
@@ -120,6 +116,9 @@ func _init() -> void:
 		"Sword defeats the Scavenger and earns its Experience", _playtest_sword_defeats_scavenger
 	)
 	await _run_playtest_async("Scavenger's lunge hurts the Player", _playtest_lunge_hurts_player)
+	await _run_playtest_async(
+		"A defeated Scavenger leaves a Brinecap, and Use eats it", _playtest_brinecap_drop
+	)
 	await _run_playtest_async(
 		"Player defeat keeps the Run, back at the start", _playtest_defeat_keeps_run
 	)
@@ -588,10 +587,7 @@ func _playtest_sword_disperses_wisp() -> bool:
 		if not is_instance_valid(wisp):
 			break
 		await _stand_by_wisp(player, wisp, WISP_STRIKE_DISTANCE)
-		_press(&"melee_attack")
-		await _frames(3)
-		_release(&"melee_attack")
-		await _frames(30)
+		await _swing()
 	valid = valid and await _frames_until(func() -> bool: return not is_instance_valid(wisp), 90)
 	await _leave_scene()
 	return valid
@@ -664,10 +660,7 @@ func _playtest_strikes_wraith() -> bool:
 		await _stand_by_wraith(player, wraith, WRAITH_CLEAR_DISTANCE)
 		await _frames_until(func() -> bool: return brain.state == brain.State.EXPOSED, 120)
 		await _stand_by_wraith(player, wraith, WRAITH_STRIKE_DISTANCE)
-		_press(&"melee_attack")
-		await _frames(3)
-		_release(&"melee_attack")
-		await _frames(30)
+		await _swing()
 	var valid := await _frames_until(func() -> bool: return not is_instance_valid(wraith), 90)
 	valid = valid and health.current == health.maximum
 	await _leave_scene()
@@ -743,9 +736,8 @@ func _playtest_climbs_cliffs() -> bool:
 	return valid
 
 
-# Swings at the Scavenger from the pool's edge until it is gone. Its lunges may knock the
-# Player away, so each swing starts back at the edge, facing the pool. Its Experience goes to the
-# Player and into the Run.
+# Strikes the Scavenger down from the pool's edge; its Experience goes to the Player and into the
+# Run.
 func _playtest_sword_defeats_scavenger() -> bool:
 	var player := await _enter_rune_shore()
 	var scavenger := current_scene.get_node_or_null(SCAVENGER_PATH) if player != null else null
@@ -753,14 +745,8 @@ func _playtest_sword_defeats_scavenger() -> bool:
 	var worth: int = scavenger.get("EXPERIENCE") if valid else 0
 	var run := root.get_node("RunState")
 	var before: int = run.get("player_experience")
-	for swing in MAX_SWINGS:
-		if not valid or not is_instance_valid(scavenger):
-			break
-		await _face_pool_from_edge(player)
-		_press(&"melee_attack")
-		await _frames(3)
-		_release(&"melee_attack")
-		await _frames(30)
+	if valid:
+		await _strike_down_scavenger(player, scavenger)
 	valid = (
 		valid and await _frames_until(func() -> bool: return not is_instance_valid(scavenger), 90)
 	)
@@ -949,24 +935,41 @@ func _playtest_talk_to_mara() -> bool:
 	return valid
 
 
-func _enter_rune_shore() -> CharacterBody2D:
-	var run := root.get_node_or_null("RunState")
-	if run == null:
+# With the Room's roll fixed to drop: strikes the Scavenger down, walks onto the Brinecap it
+# leaves, then, hurt, presses Use to eat it back to 10 more Health.
+func _playtest_brinecap_drop() -> bool:
+	var player := await _enter_rune_shore()
+	var scavenger := current_scene.get_node_or_null(SCAVENGER_PATH) if player != null else null
+	var valid := scavenger != null
+	if valid:
+		current_scene.set("drop_roll", func() -> float: return 0.0)
+	if valid:
+		await _strike_down_scavenger(player, scavenger)
+	var find_brinecap := func() -> Node2D:
+		for node in current_scene.get_children():
+			if node.scene_file_path == BRINECAP_PATH:
+				return node
 		return null
-	run.call("start_run")
-	run.call("enter_room", &"waking_coast_2", &"west")
-	change_scene_to_file(RUNE_SHORE_PATH)
-	var landed := await _frames_until(
-		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
-		SETTLE_FRAME_LIMIT
+	valid = (
+		valid
+		and await _frames_until(
+			func() -> bool:
+				var brinecap: Node2D = find_brinecap.call()
+				return brinecap != null and (brinecap as CharacterBody2D).is_on_floor(),
+			120
+		)
 	)
-	return _current_player() if landed else null
-
-
-func _face_pool_from_edge(player: CharacterBody2D) -> void:
-	_press(&"move_right")
-	await _frames(1)
-	_release(&"move_right")
-	player.global_position = POOL_EDGE
-	player.velocity = Vector2.ZERO
-	await _frames(2)
+	var supplies = player.get("supplies") if valid else null
+	if valid:
+		await _walk_to_x(player, (find_brinecap.call() as Node2D).global_position.x)
+		valid = await _frames_until(func() -> bool: return supplies.count(&"brinecap") == 1, 60)
+	valid = valid and find_brinecap.call() == null
+	var health = player.get("health")
+	if valid:
+		health.hurt(20, 0.0)
+		var hurt: int = health.current
+		await _tap(&"use")
+		await _frames(2)
+		valid = health.current == hurt + 10 and supplies.count(&"brinecap") == 0
+	await _leave_scene()
+	return valid

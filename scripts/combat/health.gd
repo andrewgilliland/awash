@@ -1,6 +1,6 @@
 extends RefCounted
 
-# Read-only for callers: change them through hurt(), step() and raise_maximum().
+# Read-only for callers: change them through hurt(), heal(), step() and raise_maximum().
 var maximum: int
 var current: int
 var invulnerable_left: float = 0.0
@@ -22,6 +22,13 @@ func hurt(amount: int, invulnerable_for: float) -> bool:
 	current = maxi(current - amount, 0)
 	invulnerable_left = invulnerable_for
 	return true
+
+
+# Restores Health, up to the maximum. Defeated Health stays defeated.
+func heal(amount: int) -> void:
+	if amount <= 0 or is_defeated():
+		return
+	current = mini(current + amount, maximum)
 
 
 # Raises the maximum, and what is left by as much: more room, not a refill. Defeated Health

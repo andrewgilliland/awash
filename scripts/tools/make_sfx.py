@@ -125,6 +125,10 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     "player_defeat": lambda: notes([523, 440, 349, 262, 196], 0.11),
     # A bright climb for reaching a Level.
     "player_level_up": lambda: notes([523, 659, 784, 1047, 1319], 0.07, duty=0.25),
+    # A quick pluck for collecting a Supply.
+    "player_pickup": lambda: notes([880, 1175], 0.05, duty=0.25),
+    # A crunch under a rising chime, for eating a Brinecap.
+    "player_eat": lambda: mix(noise(0.18, 1800, 600, seed=14), notes([392, 523, 659], 0.08, duty=0.5)),
     # The Scavenger's wind-up: a gurgling growl that rises over the whole wind-up, so the
     # lunge can be heard coming.
     "scavenger_windup": lambda: growl(0.45, 95, 190, tremolo_hz=22),

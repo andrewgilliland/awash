@@ -13,6 +13,8 @@ func get_tests() -> Array:
 		["Health can start partly spent", _test_starts_partly_spent],
 		["Raising the maximum raises current Health with it", _test_raise_maximum],
 		["Raising the maximum leaves defeated Health defeated", _test_raise_maximum_defeated],
+		["Healing restores Health up to the maximum", _test_heal_stops_at_maximum],
+		["Healing does nothing to defeated Health", _test_heal_defeated],
 	]
 
 
@@ -73,3 +75,20 @@ func _test_raise_maximum_defeated() -> bool:
 	health.hurt(50, 0.0)
 	health.raise_maximum(10)
 	return health.maximum == 60 and health.current == 0 and health.is_defeated()
+
+
+func _test_heal_stops_at_maximum() -> bool:
+	var health := Health.new(50, 30)
+	health.heal(10)
+	var valid := health.current == 40
+	health.heal(30)
+	valid = valid and health.current == 50
+	health.heal(-10)
+	return valid and health.current == 50
+
+
+func _test_heal_defeated() -> bool:
+	var health := Health.new(50)
+	health.hurt(50, 0.0)
+	health.heal(10)
+	return health.current == 0 and health.is_defeated()

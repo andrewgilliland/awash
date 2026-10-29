@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bsmxp4op6cc6e"]
+[gd_scene load_steps=19 format=3 uid="uid://bsmxp4op6cc6e"]
 
 [ext_resource type="Script" uid="uid://o4osibv7x85f" path="res://scripts/player/player.gd" id="1_3h4r8"]
 [ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
@@ -12,6 +12,8 @@
 [ext_resource type="AudioStream" uid="uid://cptrr1jwbprox" path="res://assets/audio/sfx/player_level_up.wav" id="10_level_up"]
 [ext_resource type="Script" uid="uid://cjjmbw2nuu4ll" path="res://scripts/ui/level_up_flash.gd" id="11_flash"]
 [ext_resource type="Theme" uid="uid://cgm30v4u24jhi" path="res://assets/ui/awash_theme.tres" id="12_theme"]
+[ext_resource type="AudioStream" uid="uid://cs23yp0gax6n0" path="res://assets/audio/sfx/player_pickup.wav" id="13_pickup"]
+[ext_resource type="AudioStream" uid="uid://cirxtkaunnpmk" path="res://assets/audio/sfx/player_eat.wav" id="14_eat"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2x6a2"]
 radius = 6.0
@@ -94,6 +96,14 @@ bus = &"SFX"
 
 [node name="LevelUp" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource("10_level_up")
+bus = &"SFX"
+
+[node name="Pickup" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("13_pickup")
+bus = &"SFX"
+
+[node name="Eat" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("14_eat")
 bus = &"SFX"
 
 [node name="LevelUp" type="Label" parent="."]

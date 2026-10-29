@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="1_pause"]
 [ext_resource type="Theme" path="res://assets/ui/awash_theme.tres" id="2_theme"]
 [ext_resource type="Script" path="res://scripts/ui/map_view.gd" id="3_map"]
 [ext_resource type="Script" uid="uid://djsuh104a5mbx" path="res://scripts/ui/stats_view.gd" id="5_stats"]
 [ext_resource type="Theme" path="res://assets/ui/awash_compact_theme.tres" id="9_compact"]
+[ext_resource type="Script" path="res://scripts/ui/equipment_view.gd" id="10_equipment"]
 
 [node name="PauseMenu" type="Control"]
 anchor_right = 1.0
@@ -98,10 +99,10 @@ layout_mode = 2
 text = "Equipment"
 horizontal_alignment = 1
 
-[node name="Body" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel"]
+[node name="Body" type="GridContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel"]
 layout_mode = 2
-text = "No equipment slots yet"
-horizontal_alignment = 1
+columns = 2
+script = ExtResource("10_equipment")
 
 [node name="MapPanel" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"]
 visible = false

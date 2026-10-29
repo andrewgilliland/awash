@@ -14,6 +14,8 @@ var intro_pending: bool = false
 var player_health: int = FULL_HEALTH
 # The Player's total Experience this Run; their Level is read from it.
 var player_experience: int = 0
+# The Supplies the Player carries this Run, as Supplies.to_counts() gives them.
+var player_supplies: Dictionary = {}
 var _visited_rooms: Dictionary = {FIRST_ROOM_ID: true}
 
 
@@ -24,11 +26,12 @@ func start_run() -> void:
 	intro_pending = false
 	player_health = FULL_HEALTH
 	player_experience = 0
+	player_supplies = {}
 	_visited_rooms = {FIRST_ROOM_ID: true}
 
 
 # After a defeat the Run carries on: back at the first Room's default Entry with full Health,
-# keeping every Room visited and all the Player's Experience.
+# keeping every Room visited and all the Player's Experience and Supplies.
 func recover_from_defeat() -> void:
 	room_id = FIRST_ROOM_ID
 	entry_id = DEFAULT_ENTRY_ID
