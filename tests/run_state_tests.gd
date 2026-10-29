@@ -111,12 +111,15 @@ func _test_carries_supplies() -> bool:
 func _test_carries_armor() -> bool:
 	var run := RunStateScript.new()
 	var valid: bool = run.player_armor == &"worn_leather_tunic"
-	run.player_armor = &"something_better"
+	valid = valid and run.player_owned_armor == [&"worn_leather_tunic"]
+	run.player_armor = &""
+	run.player_owned_armor = [&"worn_leather_tunic", &"something_better"]
 	run.enter_room(&"waking_coast_2", &"west")
-	valid = valid and run.player_armor == &"something_better"
+	valid = valid and run.player_armor == &""
 	run.recover_from_defeat()
-	valid = valid and run.player_armor == &"something_better"
+	valid = valid and run.player_armor == &"" and run.player_owned_armor.size() == 2
 	run.start_run()
 	valid = valid and run.player_armor == &"worn_leather_tunic"
+	valid = valid and run.player_owned_armor == [&"worn_leather_tunic"]
 	run.free()
 	return valid

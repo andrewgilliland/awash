@@ -86,14 +86,14 @@ func _test_move_keys_page_menu() -> bool:
 
 func _test_down_keeps_panel() -> bool:
 	var menu := _paused_menu()
-	_navigate(menu, &"ui_right")
-	_navigate(menu, &"ui_right")
+	# The Map has nothing to choose in it, so down goes straight to Resume.
+	_navigate(menu, &"ui_left")
 	_navigate(menu, &"ui_down")
 	var valid := (menu.get_node(MENU_ROOT + "ResumeButton") as Button).has_focus()
-	valid = valid and _shown_panel(menu) == "Equipment"
+	valid = valid and _shown_panel(menu) == "Map"
 	# Up returns to the shown Panel's button.
 	_navigate(menu, &"ui_up")
-	valid = valid and _menu_button(menu, "Equipment").has_focus()
+	valid = valid and _menu_button(menu, "Map").has_focus()
 	_close(menu)
 	return valid
 

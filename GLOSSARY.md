@@ -195,7 +195,7 @@ What the Player wears or wields, one piece in each slot, kept for the whole Run 
 _Avoid_: Gear, outfit, loadout
 
 **Armor**:
-The Equipment slot for what the Player wears. It is never empty: a new Run starts in the Worn Leather Tunic.
+The Equipment slot for what the Player wears, chosen in the Equipment Panel from the Armor the Player owns, or left empty for no Defense. A new Run owns and wears the Worn Leather Tunic.
 _Avoid_: Armour, clothing, outfit
 
 **Defense**:

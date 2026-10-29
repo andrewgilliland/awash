@@ -18,8 +18,9 @@ var player_health: int = FULL_HEALTH
 var player_experience: int = 0
 # The Supplies the Player carries this Run, as Supplies.to_counts() gives them.
 var player_supplies: Dictionary = {}
-# The Armor the Player wears this Run.
+# The Armor the Player wears this Run, or &"" for none, and every Armor it owns.
 var player_armor: StringName = Equipment.STARTING_ARMOR
+var player_owned_armor: Array[StringName] = [Equipment.STARTING_ARMOR]
 var _visited_rooms: Dictionary = {FIRST_ROOM_ID: true}
 
 
@@ -32,6 +33,7 @@ func start_run() -> void:
 	player_experience = 0
 	player_supplies = {}
 	player_armor = Equipment.STARTING_ARMOR
+	player_owned_armor = [Equipment.STARTING_ARMOR]
 	_visited_rooms = {FIRST_ROOM_ID: true}
 
 
