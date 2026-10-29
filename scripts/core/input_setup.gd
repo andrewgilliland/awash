@@ -32,6 +32,11 @@ func _register_inputs() -> void:
 	_add_key("interact", Key.KEY_E)
 	_add_key("pause", Key.KEY_ESCAPE)
 	_add_key("map", Key.KEY_TAB)
+	# The keys that walk the Player also move through menus, beside the arrows Godot gives ui_*.
+	_add_key("ui_left", Key.KEY_A)
+	_add_key("ui_right", Key.KEY_D)
+	_add_key("ui_up", Key.KEY_W)
+	_add_key("ui_down", Key.KEY_S)
 
 	# Xbox/PlayStation style defaults.
 	_add_button("jump", 0)

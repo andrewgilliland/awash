@@ -203,7 +203,7 @@ Pauses play and offers Resume, Quit and its Panels.
 _Avoid_: Options menu, start menu
 
 **Panel**:
-One page of the Pause menu, opened from its menu button and closed with Back. Home is the Panel shown when no other is open.
+One page of the Pause menu, shown from when its menu button takes focus until another one does. Left and right move from Panel to Panel, round from the last to the first, and the Pause menu opens on the first.
 _Avoid_: Tab, screen, page
 
 **Map**:
