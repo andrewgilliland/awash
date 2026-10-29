@@ -2,6 +2,7 @@ extends RefCounted
 
 const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
 const SCAVENGER_SCENE := preload("res://scenes/enemies/scavenger.tscn")
+const STORM_WISP_SCENE := preload("res://scenes/enemies/storm_wisp.tscn")
 const RUNE_SHORE_SCENE := preload("res://scenes/rooms/waking_coast_2.tscn")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const PlayerController := preload("res://scripts/player/player_controller.gd")
@@ -26,6 +27,7 @@ func get_tests() -> Array:
 		["Player has a hurtbox and a sword hitbox", _test_player_boxes],
 		["Sword hitbox is live only during an Attack", _test_sword_live_in_attack],
 		["A hit costs the Player Health and knocks it away", _test_player_hit],
+		["Health counts in tens: 50 for Vael, a hit costs 10", _test_health_in_tens],
 		["Scavenger has a body, hurtbox and spear", _test_scavenger_boxes],
 		["Rune shore keeps a Scavenger in its tidal pool", _test_scavenger_in_pool],
 	]
@@ -74,13 +76,13 @@ func _test_player_hit() -> bool:
 
 	hurtbox.call("take_hit", hitbox)
 	var health = player.get("health")
-	var valid: bool = health.current == health.maximum - 1
+	var valid: bool = health.current == health.maximum - hitbox.damage
 	var frame := player.call("_read_frame") as PlayerController.Frame
 	valid = valid and frame.knockback.x > 0.0 and frame.knockback.y < 0.0
 
 	# Invulnerable straight after: a second hit costs nothing.
 	hurtbox.call("take_hit", hitbox)
-	valid = valid and health.current == health.maximum - 1
+	valid = valid and health.current == health.maximum - hitbox.damage
 	player.free()
 	hitbox.free()
 	return valid
@@ -143,3 +145,13 @@ func _step(controller: PlayerController, fields: Dictionary) -> void:
 	for field in fields:
 		frame.set(field, fields[field])
 	controller.step(frame, 0.1)
+
+
+# Every hit costs 10, so Vael takes 5 hits, a Scavenger 3 and a Storm Wisp 2.
+func _test_health_in_tens() -> bool:
+	var valid := Hitbox.new().damage == 10
+	for spec in [[PLAYER_SCENE, 50], [SCAVENGER_SCENE, 30], [STORM_WISP_SCENE, 20]]:
+		var body := (spec[0] as PackedScene).instantiate()
+		valid = valid and body.get("health").maximum == spec[1]
+		body.free()
+	return valid
