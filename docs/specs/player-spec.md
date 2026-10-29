@@ -33,12 +33,12 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 ## Damage
 
-- The Player has 50 Health, counted in tens. A hit from an enemy hitbox costs its damage: 10 for a Scavenger's spear or a Storm Wisp's arc, so five hits defeat it.
+- The Player has 50 Health, counted in tens. A hit from an enemy hitbox costs its damage: 10 for a Scavenger's spear, 15 for a Storm Wisp's arc. Five spear hits defeat it, or four arcs.
 - A hit that lands knocks the Player up and away from the hitbox (90 sideways, 120 up) and takes control away for 0.3 seconds: walk, jump and melee input are ignored, a charge or attack is lost, and the Player shows `JUMP` while tumbling.
 - After a hit the Player is invulnerable for 1 second and blinks; hits during that time cost nothing.
 - The Player's Health carries from Room to Room; only a defeat or a new Run refills it.
 - At 0 Health the Player is defeated. It stops answering the controls, falls where it lands and flickers. Then it wakes at the first Room's `start` Entry with full Health, and the Run, its visited Rooms and its Map carry on.
-- The sword's hitbox is live only during `ATTACK`, 12 pixels in front of the Player by facing; each hit costs an enemy 10 Health.
+- The sword's hitbox is live only during `ATTACK`, 12 pixels in front of the Player by facing. A quick Attack costs an enemy 10 Health; a Charged Attack, let go after 0.5 seconds of `CHARGE`, costs 20. Once the Charge is full the sword blinks bright every 0.08 seconds until it is let go.
 
 ## Sound
 

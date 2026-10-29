@@ -22,6 +22,8 @@ func get_tests() -> Array:
 		["Controller ignores input while stunned", _test_ignores_input_while_stunned],
 		["Controller cancels an attack when hit", _test_hit_cancels_attack],
 		["Controller reports a jump, not a walk off a ledge", _test_reports_jump],
+		["Controller fully charges after holding melee", _test_fully_charges],
+		["An Attack after a full Charge is a charged Attack", _test_charged_attack],
 	]
 
 
@@ -270,6 +272,58 @@ func _test_reports_each_state_change_once() -> bool:
 			[PlayerController.State.WALK, PlayerController.State.CHARGE],
 		]
 	)
+
+
+func _test_fully_charges() -> bool:
+	var controller := _charged_controller()
+	var valid: bool = not controller.is_fully_charged()
+	_hold_melee(controller, controller.charge_time)
+	valid = valid and controller.is_fully_charged()
+	# A jump mid-charge keeps it full.
+	var frame := _next_frame(controller)
+	frame.melee_held = true
+	frame.jump_pressed = true
+	controller.step(frame, DELTA)
+	valid = valid and controller.is_fully_charged()
+	controller.step(_next_frame(controller), DELTA)
+	return valid and not controller.is_fully_charged()
+
+
+func _test_charged_attack() -> bool:
+	# A quick tap swings plainly.
+	var controller := _charged_controller()
+	controller.step(_next_frame(controller), DELTA)
+	var valid := controller.state == PlayerController.State.ATTACK
+	valid = valid and not controller.charged_attack
+
+	var frame := _next_frame(controller)
+	frame.attack_finished = true
+	controller.step(frame, DELTA)
+	frame = _next_frame(controller)
+	frame.melee_held = true
+	controller.step(frame, DELTA)
+	_hold_melee(controller, controller.charge_time)
+	controller.step(_next_frame(controller), DELTA)
+	valid = valid and controller.state == PlayerController.State.ATTACK
+	valid = valid and controller.charged_attack
+
+	# The next quick tap is plain again.
+	frame = _next_frame(controller)
+	frame.attack_finished = true
+	controller.step(frame, DELTA)
+	frame = _next_frame(controller)
+	frame.melee_held = true
+	controller.step(frame, DELTA)
+	controller.step(_next_frame(controller), DELTA)
+	return valid and not controller.charged_attack
+
+
+# Keeps melee held for at least the given time.
+func _hold_melee(controller: PlayerController, time: float) -> void:
+	for i in ceili(time / DELTA) + 1:
+		var frame := _next_frame(controller)
+		frame.melee_held = true
+		controller.step(frame, DELTA)
 
 
 func _charged_controller() -> PlayerController:
