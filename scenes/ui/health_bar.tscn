@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://jk3esreniei0"]
+
+[ext_resource type="Script" uid="uid://cnn7jvohvihaa" path="res://scripts/ui/health_bar.gd" id="1_bar"]
+
+[node name="HealthBar" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 47.0
+offset_bottom = 13.0
+mouse_filter = 2
+script = ExtResource("1_bar")

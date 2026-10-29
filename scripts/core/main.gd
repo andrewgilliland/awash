@@ -2,10 +2,11 @@ extends Node2D
 
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
+const HEALTH_BAR_SCENE := preload("res://scenes/ui/health_bar.tscn")
 const RunStateScript := preload("res://scripts/core/run_state.gd")
 const WorldMap := preload("res://scripts/core/world_map.gd")
-# Long enough for the defeat sound to finish before the Room is replaced.
-const DEFEAT_PAUSE := 0.7
+# Long enough to see the Player fall and hear the defeat sound before the Room is replaced.
+const DEFEAT_PAUSE := 1.2
 
 @onready var _player: CharacterBody2D = $Player
 @onready var _entries: Node = $Entries
@@ -15,18 +16,20 @@ const DEFEAT_PAUSE := 0.7
 func _ready() -> void:
 	_ensure_pause_menu()
 	_ensure_dialogue_box()
+	_ensure_health_bar()
 	_place_player_at_entry()
 	_play_region_music()
 	if _player != null and not _player.is_connected(&"defeated", _on_player_defeated):
 		_player.connect(&"defeated", _on_player_defeated)
 
 
-# A defeated Player starts the Run over in the first Room, after a beat.
+# After a beat to see it fall, a defeated Player wakes in the first Room with full Health; the
+# Run carries on.
 func _on_player_defeated() -> void:
 	await get_tree().create_timer(DEFEAT_PAUSE).timeout
 	var run := _get_run()
 	if run != null:
-		run.start_run()
+		run.recover_from_defeat()
 	var first_room: Dictionary = WorldMap.ROOMS[RunStateScript.FIRST_ROOM_ID]
 	get_tree().change_scene_to_file.call_deferred(first_room.scene)
 
@@ -74,6 +77,16 @@ func _ensure_pause_menu() -> void:
 	var pause_menu := PAUSE_MENU_SCENE.instantiate()
 	pause_menu.name = "PauseMenu"
 	_canvas_layer.add_child(pause_menu)
+
+
+# The Health bar sits under the Pause menu and the dialogue box, so both draw over it.
+func _ensure_health_bar() -> void:
+	if _canvas_layer == null or _canvas_layer.get_node_or_null("HealthBar") != null:
+		return
+	var bar := HEALTH_BAR_SCENE.instantiate()
+	bar.name = "HealthBar"
+	_canvas_layer.add_child(bar)
+	_canvas_layer.move_child(bar, 0)
 
 
 func _ensure_dialogue_box() -> void:

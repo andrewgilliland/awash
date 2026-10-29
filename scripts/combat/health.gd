@@ -6,9 +6,12 @@ var current: int
 var invulnerable_left: float = 0.0
 
 
-func _init(starting_maximum: int) -> void:
+# Starts full, or at a carried amount when one between 1 and the maximum is given.
+func _init(starting_maximum: int, starting_current: int = -1) -> void:
 	maximum = starting_maximum
 	current = starting_maximum
+	if starting_current > 0 and starting_current <= starting_maximum:
+		current = starting_current
 
 
 # Takes a hit unless invulnerable or already defeated; a hit that lands starts a new

@@ -36,6 +36,7 @@ const ScavengerSoundSceneTests := preload("res://tests/scavenger_sound_scene_tes
 const StormWispBrainTests := preload("res://tests/storm_wisp_brain_tests.gd")
 const StormWispSoundsTests := preload("res://tests/storm_wisp_sounds_tests.gd")
 const StormWispSceneTests := preload("res://tests/storm_wisp_scene_tests.gd")
+const HealthBarTests := preload("res://tests/health_bar_tests.gd")
 const STEP_DELTA := 0.1
 var _failures: int = 0
 
@@ -145,6 +146,9 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var storm_wisp_scene_tests := StormWispSceneTests.new(root)
 	for test in storm_wisp_scene_tests.get_tests():
+		_run_test(test[0], test[1])
+	var health_bar_tests := HealthBarTests.new(root)
+	for test in health_bar_tests.get_tests():
 		_run_test(test[0], test[1])
 
 	if _failures > 0:

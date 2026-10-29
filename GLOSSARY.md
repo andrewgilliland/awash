@@ -131,8 +131,16 @@ _Avoid_: Memory shard, flashback item
 ## Combat
 
 **Health**:
-How many more hits something can take, in whole points. Reaching 0 is defeat.
+How many more hits something can take, in whole points. Reaching 0 is defeat. The Player's carries from Room to Room for the whole Run.
 _Avoid_: HP, hit points, life
+
+**Health bar**:
+The Player's Health on screen: a framed bar in the top-left corner with one segment per point. A segment lost to a hit flashes, then empties.
+_Avoid_: HP bar, life bar, hearts
+
+**Defeat**:
+The Player's Health running out. Vael falls where he lands and stops answering the controls, then wakes at the first Room's start Entry with full Health, and later at the last Rest point he used. The Run carries on.
+_Avoid_: Death, game over, dying
 
 **Hitbox**:
 The part of an attack that strikes, such as the Player's sword or a Scavenger's spear. It only strikes while live.
