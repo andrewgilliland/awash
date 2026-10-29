@@ -5,6 +5,7 @@ const MENU_ROOT := "CenterContainer/MenuPanel/MarginContainer/VBoxContainer/"
 const PANEL_NAMES: Array[String] = ["Stats", "Equipment", "Map"]
 const SCREEN_SIZE := Vector2(160, 144)
 const COMPACT_FONT_PATH := "res://assets/fonts/awash_pixel_3x5.png"
+const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 
 # Needs a root that is already in the tree: the Pause menu pauses through get_tree().
 var _root: Window
@@ -16,11 +17,13 @@ func _init(root: Window) -> void:
 
 func get_tests() -> Array:
 	return [
-		["Pause menu pauses on Home", _test_pauses_on_home],
-		["Pause menu opens each Panel from its button", _test_opens_each_panel],
-		["Pause menu Back returns to Home", _test_back_returns_home],
+		["Pause menu opens on the first Panel", _test_opens_on_first_panel],
+		["Focusing a menu button shows its Panel", _test_focus_shows_panel],
+		["Left and right move from Panel to Panel, wrapping", _test_left_right_moves_panels],
+		["The Player's move keys page the Pause menu too", _test_move_keys_page_menu],
+		["Down to Resume keeps the Panel; up returns to its button", _test_down_keeps_panel],
+		["Pause menu opens on the first Panel each time", _test_reopens_on_first_panel],
 		["Pause menu Resume unpauses", _test_resume_unpauses],
-		["Pause menu Back refocuses the opening button", _test_back_refocuses_opener],
 		["Pause menu pairs every button with a Panel", _test_pairs_buttons_with_panels],
 		["Pause menu disables a button with no Panel", _test_disables_unpaired_button],
 		["Pause menu fits the screen", _test_fits_the_screen],
@@ -30,33 +33,74 @@ func get_tests() -> Array:
 	]
 
 
-func _test_pauses_on_home() -> bool:
+func _test_opens_on_first_panel() -> bool:
 	var menu := _paused_menu()
 	var valid := menu.get_tree().paused
 	valid = valid and menu.get_node("Backdrop").visible
 	valid = valid and menu.get_node("CenterContainer/MenuPanel").visible
-	valid = valid and _shown_panel(menu) == "Home"
+	valid = valid and _shown_panel(menu) == "Stats"
 	valid = valid and _menu_button(menu, "Stats").has_focus()
 	_close(menu)
 	return valid
 
 
-func _test_opens_each_panel() -> bool:
+func _test_focus_shows_panel() -> bool:
 	var menu := _paused_menu()
 	var valid := true
 	for panel_name in PANEL_NAMES:
-		_menu_button(menu, panel_name).pressed.emit()
+		_menu_button(menu, panel_name).grab_focus()
 		valid = valid and _shown_panel(menu) == panel_name
-		valid = valid and _back_button(menu, panel_name).has_focus()
 	_close(menu)
 	return valid
 
 
-func _test_back_returns_home() -> bool:
+func _test_left_right_moves_panels() -> bool:
 	var menu := _paused_menu()
-	_menu_button(menu, "Equipment").pressed.emit()
-	_back_button(menu, "Equipment").pressed.emit()
-	var valid := _shown_panel(menu) == "Home"
+	var valid := true
+	for panel_name in ["Equipment", "Map", "Stats"]:
+		_navigate(menu, &"ui_right")
+		valid = valid and _menu_button(menu, panel_name).has_focus()
+		valid = valid and _shown_panel(menu) == panel_name
+	_navigate(menu, &"ui_left")
+	valid = valid and _menu_button(menu, "Map").has_focus() and _shown_panel(menu) == "Map"
+	_close(menu)
+	return valid
+
+
+# A and D walk the Player, so they page the menu as the arrows do.
+func _test_move_keys_page_menu() -> bool:
+	var input_setup := (load(INPUT_SETUP_SCRIPT_PATH) as GDScript).new() as Node
+	input_setup.call("_register_inputs")
+	input_setup.free()
+	var menu := _paused_menu()
+	_press_key(menu, KEY_D)
+	var valid := _shown_panel(menu) == "Equipment"
+	_press_key(menu, KEY_A)
+	_press_key(menu, KEY_A)
+	valid = valid and _shown_panel(menu) == "Map"
+	_close(menu)
+	return valid
+
+
+func _test_down_keeps_panel() -> bool:
+	var menu := _paused_menu()
+	_navigate(menu, &"ui_right")
+	_navigate(menu, &"ui_down")
+	var valid := (menu.get_node(MENU_ROOT + "ResumeButton") as Button).has_focus()
+	valid = valid and _shown_panel(menu) == "Equipment"
+	# Up returns to the shown Panel's button.
+	_navigate(menu, &"ui_up")
+	valid = valid and _menu_button(menu, "Equipment").has_focus()
+	_close(menu)
+	return valid
+
+
+func _test_reopens_on_first_panel() -> bool:
+	var menu := _paused_menu()
+	_navigate(menu, &"ui_left")
+	menu.call("toggle_pause")
+	menu.call("toggle_pause")
+	var valid := _shown_panel(menu) == "Stats" and _menu_button(menu, "Stats").has_focus()
 	_close(menu)
 	return valid
 
@@ -71,16 +115,7 @@ func _test_resume_unpauses() -> bool:
 	return valid
 
 
-func _test_back_refocuses_opener() -> bool:
-	var menu := _paused_menu()
-	_menu_button(menu, "Map").pressed.emit()
-	_back_button(menu, "Map").pressed.emit()
-	var valid := _menu_button(menu, "Map").has_focus()
-	_close(menu)
-	return valid
-
-
-# Every <Name>Button opens a <Name>Panel that has a BackButton; every Panel but Home has a button.
+# Every <Name>Button shows a <Name>Panel, every Panel has a button, and no Panel needs a Back.
 func _test_pairs_buttons_with_panels() -> bool:
 	var menu := PAUSE_MENU_SCENE.instantiate() as Control
 	var menu_buttons := menu.get_node(MENU_ROOT + "MenuButtons")
@@ -90,11 +125,10 @@ func _test_pairs_buttons_with_panels() -> bool:
 		var panel_name := button.name.trim_suffix("Button")
 		var panel := content_root.get_node_or_null("%sPanel" % panel_name)
 		valid = valid and button is Button and button.name.ends_with("Button")
-		valid = valid and panel != null and panel.get_node_or_null("BackButton") is Button
+		valid = valid and panel != null and panel.get_node_or_null("BackButton") == null
 	for panel in content_root.get_children():
 		var panel_name := panel.name.trim_suffix("Panel")
-		if panel_name != "Home":
-			valid = valid and menu_buttons.get_node_or_null("%sButton" % panel_name) != null
+		valid = valid and menu_buttons.get_node_or_null("%sButton" % panel_name) != null
 	menu.free()
 	return valid
 
@@ -105,6 +139,11 @@ func _test_disables_unpaired_button() -> bool:
 	_root.add_child(menu)
 	var valid := _menu_button(menu, "Map").disabled
 	valid = valid and not _menu_button(menu, "Stats").disabled
+	# Left and right pass over it, from Equipment round to Stats.
+	menu.call("toggle_pause")
+	_navigate(menu, &"ui_right")
+	_navigate(menu, &"ui_right")
+	valid = valid and _menu_button(menu, "Stats").has_focus() and _shown_panel(menu) == "Stats"
 	_close(menu)
 	return valid
 
@@ -144,7 +183,7 @@ func _test_text_uses_pixel_font() -> bool:
 
 func _test_map_names_region() -> bool:
 	var menu := _paused_menu()
-	_menu_button(menu, "Map").pressed.emit()
+	_menu_button(menu, "Map").grab_focus()
 	var title := menu.get_node(MENU_ROOT + "ContentRoot/MapPanel/Title") as Label
 	var valid := title.text == "Waking Coast"
 	_close(menu)
@@ -176,8 +215,21 @@ func _menu_button(menu: Control, panel_name: String) -> Button:
 	return menu.get_node(MENU_ROOT + "MenuButtons/%sButton" % panel_name) as Button
 
 
-func _back_button(menu: Control, panel_name: String) -> Button:
-	return menu.get_node(MENU_ROOT + "ContentRoot/%sPanel/BackButton" % panel_name) as Button
+func _press_key(menu: Control, key: Key) -> void:
+	for pressed in [true, false]:
+		var event := InputEventKey.new()
+		event.physical_keycode = key
+		event.pressed = pressed
+		menu.get_viewport().push_input(event)
+
+
+# Presses and lets go of a ui_ direction, as a keyboard or pad would, moving the menu's focus.
+func _navigate(menu: Control, action: StringName) -> void:
+	for pressed in [true, false]:
+		var event := InputEventAction.new()
+		event.action = action
+		event.pressed = pressed
+		menu.get_viewport().push_input(event)
 
 
 # The name of the one visible Panel, or "" when none or several are visible.

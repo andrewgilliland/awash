@@ -81,6 +81,7 @@ func _init() -> void:
 	await _run_scenario("Player jumps and lands", _scenario_jumps_and_lands)
 	await _run_scenario("Player attack plays out", _scenario_attack_plays_out)
 	await _run_scenario("Pause freezes and resumes play", _scenario_pause_freezes_play)
+	await _run_scenario("Left and right page the Pause menu", _scenario_pause_menu_pages)
 	await _run_scenario("Player walks the Waking Coast sand", _scenario_walks_waking_coast_sand)
 	await _run_scenario("Player stops at the west edge", _scenario_stops_at_west_edge)
 	await _run_playtest_async("Player walks between the Waking Coast Rooms", _playtest_walks_rooms)
@@ -234,6 +235,28 @@ func _scenario_pause_freezes_play(player: CharacterBody2D) -> bool:
 	valid = valid and not paused and not (menu_panel as Control).visible
 	valid = valid and player.global_position.x > paused_x
 	return valid
+
+
+# Opens on Stats; right goes on to Equipment, and left twice comes round to Map.
+func _scenario_pause_menu_pages(player: CharacterBody2D) -> bool:
+	var content := player.get_parent().get_node(
+		"CanvasLayer/PauseMenu/CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"
+	)
+	var shown := func() -> Array:
+		return content.get_children().filter(func(panel: Control) -> bool: return panel.visible)
+	await _tap(&"pause")
+	await _frames(2)
+	var valid: bool = paused and shown.call() == [content.get_node("StatsPanel")]
+	await _tap(&"ui_right")
+	await _frames(2)
+	valid = valid and shown.call() == [content.get_node("EquipmentPanel")]
+	await _tap(&"ui_left")
+	await _tap(&"ui_left")
+	await _frames(2)
+	valid = valid and shown.call() == [content.get_node("MapPanel")]
+	await _tap(&"pause")
+	await _frames(2)
+	return valid and not paused
 
 
 func _scenario_walks_waking_coast_sand(player: CharacterBody2D) -> bool:

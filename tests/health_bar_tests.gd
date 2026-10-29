@@ -123,13 +123,10 @@ func _test_stats_shows_health() -> bool:
 	var menu := PAUSE_MENU_SCENE.instantiate() as Control
 	_root.add_child(menu)
 	menu.call("toggle_pause")
-	var stats_button := menu.get_node(MENU_ROOT + "MenuButtons/StatsButton") as Button
 	var body := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/Body") as Container
-	stats_button.pressed.emit()
 	var valid := _stats_rows(body).has(["Health", "50 / 50"])
 	player.get("health").hurt(2 * ONE_HIT, 0.0)
-	(menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/BackButton") as Button).pressed.emit()
-	stats_button.pressed.emit()
+	_reshow_stats(menu)
 	valid = valid and _stats_rows(body).has(["Health", "30 / 50"])
 	menu.get_tree().paused = false
 	menu.free()
@@ -142,17 +139,13 @@ func _test_stats_shows_growth() -> bool:
 	var menu := PAUSE_MENU_SCENE.instantiate() as Control
 	_root.add_child(menu)
 	menu.call("toggle_pause")
-	var stats_button := menu.get_node(MENU_ROOT + "MenuButtons/StatsButton") as Button
-	var back_button := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/BackButton") as Button
 	var body := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/Body") as Container
-	stats_button.pressed.emit()
 	var valid := (
 		_stats_rows(body)
 		== [["Level", "1"], ["Experience", "0 / 40"], ["Health", "50 / 50"], ["Strength", "0"]]
 	)
 	player.call("gain_experience", 45)
-	back_button.pressed.emit()
-	stats_button.pressed.emit()
+	_reshow_stats(menu)
 	valid = (
 		valid
 		and (
@@ -163,8 +156,7 @@ func _test_stats_shows_growth() -> bool:
 		)
 	)
 	player.call("gain_experience", 1000)
-	back_button.pressed.emit()
-	stats_button.pressed.emit()
+	_reshow_stats(menu)
 	valid = (
 		valid
 		and (
@@ -190,7 +182,6 @@ func _test_stats_columns() -> bool:
 	var menu := PAUSE_MENU_SCENE.instantiate() as Control
 	_root.add_child(menu)
 	menu.call("toggle_pause")
-	(menu.get_node(MENU_ROOT + "MenuButtons/StatsButton") as Button).pressed.emit()
 	var body := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/Body") as GridContainer
 	var valid := body != null and body.columns == 2 and body.get_child_count() == 8
 	if valid:
@@ -205,6 +196,12 @@ func _test_stats_columns() -> bool:
 	menu.free()
 	player.free()
 	return valid
+
+
+# Moves to the next Panel and back, so Stats reads the Player afresh.
+func _reshow_stats(menu: Control) -> void:
+	(menu.get_node(MENU_ROOT + "MenuButtons/EquipmentButton") as Button).grab_focus()
+	(menu.get_node(MENU_ROOT + "MenuButtons/StatsButton") as Button).grab_focus()
 
 
 # The Stats rows as [name, value] pairs, read from the Body's labels in order.

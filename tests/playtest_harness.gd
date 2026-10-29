@@ -5,7 +5,15 @@ extends SceneTree
 # wading, entering and leaving Rooms, reading dialogue).
 
 const SCENARIO_ACTIONS: Array[StringName] = [
-	&"move_left", &"move_right", &"jump", &"melee_attack", &"pause", &"ui_accept", &"interact"
+	&"move_left",
+	&"move_right",
+	&"jump",
+	&"melee_attack",
+	&"pause",
+	&"ui_accept",
+	&"interact",
+	&"ui_left",
+	&"ui_right",
 ]
 const SETTLE_FRAME_LIMIT := 120
 const TRANSITION_FRAME_LIMIT := 180
