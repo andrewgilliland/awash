@@ -7,6 +7,7 @@ const PlayerController := preload("res://scripts/player/player_controller.gd")
 const PlayerRig := preload("res://scripts/player/player_rig.gd")
 const Health := preload("res://scripts/combat/health.gd")
 const Level := preload("res://scripts/player/level.gd")
+const Supplies := preload("res://scripts/items/supplies.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const PlayerSounds := preload("res://scripts/player/player_sounds.gd")
 const INTERACTABLE_GROUP := &"interactable"
@@ -35,6 +36,8 @@ var controller: PlayerController = PlayerController.new()
 var level: Level = Level.new()
 # Read-only for callers.
 var health: Health = Health.new(level.max_health())
+# Read-only for callers: change it through collect() and use_supply().
+var supplies: Supplies = Supplies.new()
 # While true the Player ignores walk, jump and melee input: dialogue and the intro hold it
 # still.
 var controls_locked: bool = false
@@ -58,6 +61,7 @@ func _ready() -> void:
 	if run != null:
 		level = Level.new(run.get("player_experience"))
 		health = Health.new(level.max_health(), run.get("player_health"))
+		supplies = Supplies.new(run.get("player_supplies"))
 	controller.move_speed = move_speed
 	controller.acceleration = acceleration
 	controller.friction = friction
@@ -80,6 +84,45 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"interact") and not event.is_echo() and interact() != null:
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed(&"use") and not event.is_echo() and use_supply():
+		get_viewport().set_input_as_handled()
+
+
+# Carries one more of a kind of Supply, with a pickup sound, and returns whether there was room.
+func collect(kind: StringName) -> bool:
+	if not supplies.add(kind):
+		return false
+	_write_supplies_to_run()
+	_sounds.play(PlayerSounds.PICKUP)
+	return true
+
+
+# Eats the ready Supply for the Health it restores, and returns whether it did. It keeps the
+# Supply when there is nothing to restore, and does nothing while the Player is held still or
+# defeated.
+func use_supply() -> bool:
+	var kind := supplies.ready_kind()
+	if kind.is_empty() or controls_locked or _defeated or health.current >= health.maximum:
+		return false
+	health.heal(Supplies.KINDS[kind].restores)
+	supplies.spend(kind)
+	_write_supplies_to_run()
+	var run := _get_run()
+	if run != null:
+		run.set("player_health", health.current)
+	_sounds.play(PlayerSounds.EAT)
+	return true
+
+
+func _write_supplies_to_run() -> void:
+	var run := _get_run()
+	if run != null:
+		run.set("player_supplies", supplies.to_counts())
+
+
+# Null outside the tree or without the autoload, as in headless tests.
+func _get_run() -> Node:
+	return get_node_or_null("/root/RunState") if is_inside_tree() else null
 
 
 # Uses the nearest Interactable in reach, and returns it; null when none is in reach or the

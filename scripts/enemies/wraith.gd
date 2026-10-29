@@ -14,6 +14,8 @@ const WraithSounds := preload("res://scripts/enemies/wraith_sounds.gd")
 const MAX_HEALTH := 30
 # What defeating a Wraith earns the Player.
 const EXPERIENCE := 20
+# The chance a defeated Wraith leaves a Brinecap where it fell.
+const DROP_CHANCE := 0.35
 const INVULNERABLE_TIME := 0.3
 const DEFEAT_TIME := 0.6
 const DEFEAT_BLINK := 0.08

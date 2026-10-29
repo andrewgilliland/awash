@@ -3,11 +3,19 @@ extends Node2D
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
 const HEALTH_BAR_SCENE := preload("res://scenes/ui/health_bar.tscn")
+const SUPPLY_COUNT_SCENE := preload("res://scenes/ui/supply_count.tscn")
+const BRINECAP_SCENE := preload("res://scenes/items/brinecap.tscn")
 const RunStateScript := preload("res://scripts/core/run_state.gd")
 const WorldMap := preload("res://scripts/core/world_map.gd")
 const ENEMY_GROUP := &"enemy"
 # Long enough to see the Player fall and hear the defeat sound before the Room is replaced.
 const DEFEAT_PAUSE := 1.2
+
+# Rolled once per enemy defeat, from 0 up to 1; under the enemy's DROP_CHANCE leaves a
+# Brinecap. Tests swap it for a fixed roll.
+var drop_roll: Callable = randf
+# Where defeated enemies left a Brinecap, waiting for the Room's next physics step.
+var _brinecaps_due: Array[Vector2] = []
 
 @onready var _player: CharacterBody2D = $Player
 @onready var _entries: Node = $Entries
@@ -18,6 +26,7 @@ func _ready() -> void:
 	_ensure_pause_menu()
 	_ensure_dialogue_box()
 	_ensure_health_bar()
+	_ensure_supply_count()
 	_place_player_at_entry()
 	_play_region_music()
 	if _player != null and not _player.is_connected(&"defeated", _on_player_defeated):
@@ -25,17 +34,31 @@ func _ready() -> void:
 	_hand_enemy_defeats_to_player()
 
 
-# Every enemy defeated in this Room earns the Player its Experience, whatever struck it down.
+# Every enemy defeated in this Room earns the Player its Experience, whatever struck it down, and
+# may leave a Brinecap where it fell.
 func _hand_enemy_defeats_to_player() -> void:
 	if _player == null or not is_inside_tree():
 		return
 	for enemy in get_tree().get_nodes_in_group(ENEMY_GROUP):
-		if is_ancestor_of(enemy) and not enemy.is_connected(&"defeated", _on_enemy_defeated):
-			enemy.connect(&"defeated", _on_enemy_defeated)
+		if is_ancestor_of(enemy) and not enemy.has_connections(&"defeated"):
+			enemy.connect(&"defeated", _on_enemy_defeated.bind(enemy))
 
 
-func _on_enemy_defeated(experience: int) -> void:
+func _on_enemy_defeated(experience: int, enemy: Node2D) -> void:
 	_player.call("gain_experience", experience)
+	var chance: float = enemy.get_script().get_script_constant_map().get("DROP_CHANCE", 0.0)
+	if drop_roll.call() < chance:
+		_brinecaps_due.append(enemy.global_position)
+
+
+# An enemy falls while physics is reporting the hit, when nothing may join the world, so its
+# Brinecap joins on the Room's next step.
+func _physics_process(_delta: float) -> void:
+	for at in _brinecaps_due:
+		var brinecap := BRINECAP_SCENE.instantiate() as Node2D
+		add_child(brinecap)
+		brinecap.global_position = at
+	_brinecaps_due.clear()
 
 
 # After a beat to see it fall, a defeated Player wakes in the first Room with full Health; the
@@ -102,6 +125,16 @@ func _ensure_health_bar() -> void:
 	bar.name = "HealthBar"
 	_canvas_layer.add_child(bar)
 	_canvas_layer.move_child(bar, 0)
+
+
+# The Supply readout sits under the Health bar, and under the menus with it.
+func _ensure_supply_count() -> void:
+	if _canvas_layer == null or _canvas_layer.get_node_or_null("SupplyCount") != null:
+		return
+	var readout := SUPPLY_COUNT_SCENE.instantiate()
+	readout.name = "SupplyCount"
+	_canvas_layer.add_child(readout)
+	_canvas_layer.move_child(readout, 1)
 
 
 func _ensure_dialogue_box() -> void:

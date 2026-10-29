@@ -2,7 +2,7 @@ extends SceneTree
 
 # What the playtests run on: running and reporting each one, sending input the way a key or
 # button would, waiting on frames, and the moves the playtests share (walking, jumping,
-# wading, entering and leaving Rooms, reading dialogue).
+# wading, entering and leaving Rooms, fighting the rune shore's Scavenger, reading dialogue).
 
 const SCENARIO_ACTIONS: Array[StringName] = [
 	&"move_left",
@@ -14,10 +14,17 @@ const SCENARIO_ACTIONS: Array[StringName] = [
 	&"interact",
 	&"ui_left",
 	&"ui_right",
+	&"use",
 ]
 const SETTLE_FRAME_LIMIT := 120
 const TRANSITION_FRAME_LIMIT := 180
 const WAKING_COAST_SAND_Y := 96.0
+const RUNE_SHORE_PATH := "res://scenes/rooms/waking_coast_2.tscn"
+# The sand at the rune shore's tidal pool's west edge, where its Scavenger can reach and be
+# reached.
+const POOL_EDGE := Vector2(122, 96)
+const SCAVENGER_PATH := "Enemies/Scavenger"
+const MAX_SWINGS := 8
 # Collision margins rest the Player a fraction of a pixel off the sand; falling through is far more.
 const ON_SAND_TOLERANCE := 0.5
 
@@ -186,6 +193,14 @@ func _is_on_sand(player: CharacterBody2D) -> bool:
 
 
 # Presses and releases an action across one frame, like a quick key tap.
+# One quick swing of the sword, and long enough after for the Attack to play out.
+func _swing() -> void:
+	_press(&"melee_attack")
+	await _frames(3)
+	_release(&"melee_attack")
+	await _frames(30)
+
+
 func _tap(action: StringName) -> void:
 	_press(action)
 	await _frames(1)
@@ -220,3 +235,36 @@ func _frames_until(condition: Callable, limit: int) -> bool:
 func _frames(count: int) -> void:
 	for i in count:
 		await physics_frame
+
+
+func _enter_rune_shore() -> CharacterBody2D:
+	var run := root.get_node_or_null("RunState")
+	if run == null:
+		return null
+	run.call("start_run")
+	run.call("enter_room", &"waking_coast_2", &"west")
+	change_scene_to_file(RUNE_SHORE_PATH)
+	var landed := await _frames_until(
+		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
+		SETTLE_FRAME_LIMIT
+	)
+	return _current_player() if landed else null
+
+
+# Swings at the Scavenger from the pool's edge until it is gone. Its lunges may knock the
+# Player away, so each swing starts back at the edge, facing the pool.
+func _strike_down_scavenger(player: CharacterBody2D, scavenger: Node) -> void:
+	for swing in MAX_SWINGS:
+		if not is_instance_valid(scavenger):
+			return
+		await _face_pool_from_edge(player)
+		await _swing()
+
+
+func _face_pool_from_edge(player: CharacterBody2D) -> void:
+	_press(&"move_right")
+	await _frames(1)
+	_release(&"move_right")
+	player.global_position = POOL_EDGE
+	player.velocity = Vector2.ZERO
+	await _frames(2)

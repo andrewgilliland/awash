@@ -5,7 +5,7 @@ const PlayerController := preload("res://scripts/player/player_controller.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const Hurtbox := preload("res://scripts/combat/hurtbox.gd")
 const SOUNDS: Array[StringName] = [
-	&"Jump", &"Land", &"Swing", &"Hit", &"Hurt", &"Defeat", &"LevelUp"
+	&"Jump", &"Land", &"Swing", &"Hit", &"Hurt", &"Defeat", &"LevelUp", &"Pickup", &"Eat"
 ]
 const SFX_BUS := &"SFX"
 

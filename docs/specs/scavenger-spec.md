@@ -10,7 +10,7 @@ The Scavenger is the Waking Coast's first enemy (see `docs/enemies/scavenger.md`
 - When the Player is within 40 pixels sideways and 20 pixels up or down, it stops, turns to face the Player, and winds up for 0.45 seconds, drawing its spear back.
 - It then lunges at 150 pixels a second for 0.2 seconds with its spear hitbox live, 10 pixels in front of it, and recovers standing still for 0.6 seconds before patrolling again.
 - A sword hit costs it 10 Health, or 20 for a Charged Attack, ends any wind-up or lunge, turns it toward the Player and pushes it away at 90 pixels a second, slowing over 0.35 seconds. It is invulnerable for 0.3 seconds after a hit, so one swing lands once.
-- At 0 Health it stops, blinks for 0.6 seconds, and is gone. Its defeat earns the Player 10 Experience, every time.
+- At 0 Health it stops, blinks for 0.6 seconds, and is gone. Its defeat earns the Player 10 Experience, every time, and has a 25% chance to leave a Brinecap where it fell.
 
 ## Sound
 

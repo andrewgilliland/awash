@@ -117,12 +117,16 @@ A hidden spot in a Room holding Supplies, opened with Interact, that stays empty
 _Avoid_: Crate, chest, stash, pickup
 
 **Supply**:
-A consumable used in exploration or combat, such as a Restorative, bought at a Supply Shop or found in a Cache.
-_Avoid_: Item, consumable, loot (as the general term)
+A consumable used in exploration or combat, such as a Restorative, bought at a Supply Shop, found in a Cache, or left where a defeated enemy fell. The Player carries up to 9 of each kind for the Run, and a defeat does not take them away.
+_Avoid_: Item, consumable, loot (as the general term), inventory
 
 **Tide Draught**:
 The first Restorative: a Supply that restores 20 Health.
 _Avoid_: Potion, health potion
+
+**Brinecap**:
+A pale, salt-crusted mushroom from the coast's caves and tunnels: a Restorative that restores 10 Health. Enemies forage it, so a defeated one sometimes leaves one where it fell, for the Player to collect by touch.
+_Avoid_: Mushroom (as its name), food, snack
 
 **Salvage**:
 What the Player gathers from the wreck-strewn world and spends at shops. Defeated enemies drop it, Caches can hold it, and a defeat does not take it away.
@@ -143,7 +147,7 @@ The Player's Health on screen: a framed bar in the top-left corner, filled to th
 _Avoid_: HP bar, life bar, hearts
 
 **Defeat**:
-The Player's Health running out. Vael falls where he lands and stops answering the controls, then wakes at the first Room's start Entry with full Health, and later at the last Rest point he used. The Run carries on, keeping his Level and Experience.
+The Player's Health running out. Vael falls where he lands and stops answering the controls, then wakes at the first Room's start Entry with full Health, and later at the last Rest point he used. The Run carries on, keeping his Level, Experience and Supplies.
 _Avoid_: Death, game over, dying
 
 **Hitbox**:
