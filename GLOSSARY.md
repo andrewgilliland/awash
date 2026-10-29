@@ -32,6 +32,10 @@ _Avoid_: Direction, orientation
 The button for using whatever the Player stands by: E, or Y / Triangle on a gamepad. It uses the nearest Interactable in reach, and does nothing while the Player is held still.
 _Avoid_: Action button, use, talk
 
+**Use**:
+The button that spends the ready Supply, chosen in the Equipment Panel, without pausing play.
+_Avoid_: Item button, quick-use, consume
+
 **Interactable**:
 Anything Interact can use, such as Mara. It reports being used and shows a bobbing arrow above itself while the Player is in reach; what using it does is up to its owner.
 _Avoid_: Usable, trigger, hotspot
@@ -47,7 +51,7 @@ _Avoid_: Swing, strike (as state names)
 ## World
 
 **Run**:
-One playthrough from a new game. It remembers where the Player is in the world and what they have done.
+One playthrough from a new game. It remembers where the Player is in the world and what they have done. Only START begins a new one; a defeat keeps it.
 _Avoid_: Session, save, runtime state
 
 **Room**:
@@ -62,13 +66,67 @@ _Avoid_: Spawn point, start position, door
 An edge of a Room that leads to an Entry in another Room. Crossing it enters that Room in the Run and loads its scene.
 _Avoid_: Door, portal, transition, warp
 
+**Region**:
+A stretch of the world with its own theme and Map name, such as the Waking Coast. Each has one Safe spoke.
+_Avoid_: Biome, zone, area, level
+
+**Safe spoke**:
+The one small place in a Region with no enemies, where its people, Rest point and shops are, such as Tidefen Village. It belongs to its Region but goes by its own name.
+_Avoid_: Hub, village, town (as a kind of place)
+
+**Rest point**:
+A place in a Safe spoke where the Player recovers, and which a defeat returns them to without ending the Run.
+_Avoid_: Checkpoint, save point, bonfire
+
 **Region theme**:
-The music of a region, such as the Waking Coast's. It plays in each of the region's Rooms and carries on unbroken through Exits between them.
+The music of a Region, such as the Waking Coast's. It plays in each of the Region's Rooms outside its Safe spoke, which has a theme of its own, and carries on unbroken through Exits between them.
 _Avoid_: Level music, BGM, soundtrack
 
 **Intro**:
 Chapter 1's opening on a new game from the start screen: Vael wakes in the surf in the middle of the beach, and Mara comes in from the wreck, pulls his sword out of the sand and hands it to him as they talk. A restarted Run skips it.
 _Avoid_: Cutscene, prologue, tutorial
+
+## Layout
+
+**Main path**:
+The Rooms a Run must pass through, in order, from a Region's start to its end.
+_Avoid_: Critical path, main route, golden path
+
+**Branch**:
+An optional route off the Main path that rejoins it, such as the sea cave.
+_Avoid_: Side path, detour, secret area
+
+**Shortcut**:
+A one-way route that returns the Player quickly to an earlier point on the Main path, such as Tidefen's well through the undertow. It stays shut from its far end until first used from its near end.
+_Avoid_: Branch (for a one-way return), warp
+
+**Drop**:
+An Exit the Player falls through into a Room below, with no way back up. A sinkhole or a well is just what a Drop looks like.
+_Avoid_: Pit, sinkhole, chute, hole (as the general term)
+
+**Gate**:
+A place on a route that stays shut until an ability unlock or a defeated boss opens it, such as the ledge above the salt cliffs that double jump will reach.
+_Avoid_: Lock, barrier, door
+
+**Cache**:
+A hidden spot in a Room holding Supplies, opened with Interact, that stays empty once taken for the Run.
+_Avoid_: Crate, chest, stash, pickup
+
+**Supply**:
+A consumable used in exploration or combat, such as a Restorative, bought at a Supply Shop or found in a Cache.
+_Avoid_: Item, consumable, loot (as the general term)
+
+**Tide Draught**:
+The first Restorative: a Supply that restores 2 Health.
+_Avoid_: Potion, health potion
+
+**Salvage**:
+What the Player gathers from the wreck-strewn world and spends at shops. Defeated enemies drop it, Caches can hold it, and a defeat does not take it away.
+_Avoid_: Gold, coins, money, currency
+
+**Memory Relic**:
+A rune that restores a flash of Vael's past when found, such as the one waiting in the rune alcove above the salt cliffs.
+_Avoid_: Memory shard, flashback item
 
 ## Combat
 
@@ -111,5 +169,5 @@ One page of the Pause menu, opened from its menu button and closed with Back. Ho
 _Avoid_: Tab, screen, page
 
 **Map**:
-The Panel that draws each visited Room as a block, sized in screens, with the current Room's region and a dot where the Player stands. Unvisited Rooms stay hidden.
+The Panel that draws each visited Room as a block, sized in screens, with the name of the Region or Safe spoke the Player is in and a dot where the Player stands. Unvisited Rooms stay hidden.
 _Avoid_: Minimap, world map, atlas
