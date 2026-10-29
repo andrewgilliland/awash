@@ -54,6 +54,7 @@ func _test_reports_defeat_once() -> bool:
 func _test_room_hands_defeat_to_player() -> bool:
 	var run := _root.get_node("RunState")
 	run.call("start_run")
+	run.call("enter_room", &"waking_coast_2", &"west")
 	var room := RUNE_SHORE_SCENE.instantiate()
 	_root.add_child(room)
 	var scavenger := room.get_node("Enemies/Scavenger")
