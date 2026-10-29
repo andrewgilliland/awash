@@ -17,6 +17,14 @@ const ROOMS := {
 		size = Vector2i(2, 1),
 		region = "Waking Coast",
 	},
+	# Two screens tall: its beach is level with the rune shore, its cliff top a screen above.
+	&"waking_coast_3":
+	{
+		scene = "res://scenes/rooms/waking_coast_3.tscn",
+		cell = Vector2i(3, -1),
+		size = Vector2i(1, 2),
+		region = "Waking Coast",
+	},
 }
 # Each region's theme, played in its Rooms.
 const REGION_MUSIC := {

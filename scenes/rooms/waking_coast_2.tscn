@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=4 uid="uid://ds70702jd85cp"]
+[gd_scene load_steps=13 format=4 uid="uid://ds70702jd85cp"]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_7cmpu"]
 [ext_resource type="Texture2D" uid="uid://df6yx4ak5xo7u" path="res://assets/backgrounds/waking_coast_2_backdrop.png" id="2_7v22y"]
@@ -43,9 +43,6 @@ animations = [{
 "speed": 6.66667
 }]
 
-[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_rwyxi"]
-normal = Vector2(-1, 0)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fgj4w"]
 size = Vector2(8, 144)
 
@@ -86,13 +83,6 @@ position = Vector2(144, 104)
 patrol_left = 134.0
 patrol_right = 154.0
 
-[node name="Bounds" type="StaticBody2D" parent="."]
-collision_mask = 0
-
-[node name="East" type="CollisionShape2D" parent="Bounds"]
-position = Vector2(320, 0)
-shape = SubResource("WorldBoundaryShape2D_rwyxi")
-
 [node name="Exits" type="Node2D" parent="."]
 
 [node name="west" type="Area2D" parent="Exits"]
@@ -106,10 +96,24 @@ entry_id = &"east"
 [node name="Edge" type="CollisionShape2D" parent="Exits/west"]
 shape = SubResource("RectangleShape2D_fgj4w")
 
+[node name="east" type="Area2D" parent="Exits"]
+position = Vector2(324, 72)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_uinnw")
+room_id = &"waking_coast_3"
+entry_id = &"west"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/east"]
+shape = SubResource("RectangleShape2D_fgj4w")
+
 [node name="Entries" type="Node2D" parent="."]
 
 [node name="west" type="Marker2D" parent="Entries"]
 position = Vector2(12, 64)
+
+[node name="east" type="Marker2D" parent="Entries"]
+position = Vector2(308, 96)
 
 [node name="Player" parent="." instance=ExtResource("5_4reif")]
 position = Vector2(12, 64)

@@ -17,6 +17,8 @@ const ROOM_SIZE := Vector2i(320, 144)
 const CELLS := Rect2i(0, 0, 20, 9)
 # On the cliff top, clear of the west Exit, at the height the first Room's cliff leaves off.
 const WEST_ENTRY := Vector2(12, 64)
+# On the sand, clear of the east Exit.
+const EAST_ENTRY := Vector2(308, 96)
 const WORLD_LAYER := 1
 # Landmark cells from assets/waking_shores_3.aseprite: layer -> {cell: atlas coords}.
 const LANDMARKS := {
@@ -57,7 +59,7 @@ func get_tests() -> Array:
 		["Rune shore Room lays out two screens", _test_lays_out_two_screens],
 		["Rune shore west Entry stands on the cliff", _test_west_entry_on_cliff],
 		["Rune shore camera scrolls inside the Room", _test_camera_limits],
-		["Rune shore walls its east edge", _test_walls_east_edge],
+		["Rune shore leads east to the salt cliffs", _test_leads_east],
 	]
 
 
@@ -135,18 +137,16 @@ func _test_camera_limits() -> bool:
 	return valid
 
 
-# Tidefen is not built yet, so the shore's east edge is a wall; the west edge is an Exit.
-func _test_walls_east_edge() -> bool:
+# The shore's east edge is the Exit up to the salt cliffs; neither edge is walled.
+func _test_leads_east() -> bool:
 	var room := _room()
 	if room == null:
 		return false
-	var bounds := room.get_node_or_null("Bounds") as StaticBody2D
-	var valid := bounds != null and bounds.collision_layer == WORLD_LAYER
-	if valid:
-		var east := bounds.get_node_or_null("East") as CollisionShape2D
-		var boundary := east.shape as WorldBoundaryShape2D if east != null else null
-		valid = boundary != null and boundary.normal == Vector2.LEFT
-		valid = valid and east.position.x == ROOM_SIZE.x
-		valid = valid and bounds.get_node_or_null("West") == null
+	var valid := room.get_node_or_null("Bounds") == null
+	var exit := room.get_node_or_null("Exits/east") as Area2D
+	valid = valid and exit != null and exit.position.x > ROOM_SIZE.x
+	valid = valid and exit.get("room_id") == &"waking_coast_3" and exit.get("entry_id") == &"west"
+	var entry := room.get_node_or_null("Entries/east") as Marker2D
+	valid = valid and entry != null and entry.position == EAST_ENTRY
 	room.free()
 	return valid
