@@ -19,6 +19,8 @@ key_areas:
   - wreck graveyard
   - sea cave
   - rune road
+  - Warden's gate
+  - undertow
 ---
 
 ## Description
@@ -44,15 +46,15 @@ Once the ceremonial landing site for wardens sworn to protect forbidden knowledg
 
 ### Exploration
 
-- Hide Supplies in optional wreck compartments, caves, and ledges visible from the main route.
+- Hide Supplies in optional wreck compartments, caves, and ledges visible from the main route. The first two caches, a Tide Draught each, are the wreck graveyard's stern compartment and the sea cave's shelf.
 - Use broken ships and runes as landmarks so players can orient without a detailed map.
-- Place the first rest point and Supply Shop in Tidefen Village at the end of the region.
+- Place the first rest point and Supply Shop in Tidefen Village at the end of the region. Ringing Tidefen's bell is the rest point.
 
 ### Backtracking
 
 - Keep the first visit completable with starting movement abilities.
-- Reserve elevated wrecks and hidden rune alcoves for the later double-jump return.
-- Let the return route reconnect to Tidefen through a short one-way drop.
+- Reserve elevated wrecks and hidden rune alcoves for the later double-jump return. Double jump opens two gates here: the crate ledge above the salt cliffs, up to the rune alcove and its Memory Relic, and Tidefen's rooftops, which hold a cache.
+- Let the return route reconnect to Tidefen through a short one-way drop. Tidefen's well drops into the undertow, a shortcut back west to the sea cave; it stays shut from the cave side until first used from Tidefen.
 
 ### Boss Test
 
