@@ -4,11 +4,16 @@ extends CharacterBody2D
 # through rock and sword alike, manifests to lash at a Player who comes close, then shows the
 # rune anchor in its chest for a moment: the only time it can be struck.
 
+# Its Health ran out; the Room hands its Experience to the Player.
+signal defeated(experience: int)
+
 const WraithBrain := preload("res://scripts/enemies/wraith_brain.gd")
 const Health := preload("res://scripts/combat/health.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const WraithSounds := preload("res://scripts/enemies/wraith_sounds.gd")
 const MAX_HEALTH := 30
+# What defeating a Wraith earns the Player.
+const EXPERIENCE := 20
 const INVULNERABLE_TIME := 0.3
 const DEFEAT_TIME := 0.6
 const DEFEAT_BLINK := 0.08
@@ -106,6 +111,8 @@ func _on_hurtbox_hit(hitbox: Area2D) -> void:
 	var toward := signf(global_position.x - hitbox.global_position.x)
 	_knocked_toward = toward if toward != 0.0 else -brain.facing
 	_hurtbox.set_deferred("monitorable", false)
+	if health.is_defeated():
+		defeated.emit(EXPERIENCE)
 
 
 func _show() -> void:

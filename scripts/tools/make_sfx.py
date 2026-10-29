@@ -123,6 +123,8 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     "player_hurt": lambda: sweep(0.26, 620, 150, duty=0.5, vibrato_hz=28, vibrato_depth=0.08),
     # A falling run of notes when the Player's Health runs out.
     "player_defeat": lambda: notes([523, 440, 349, 262, 196], 0.11),
+    # A bright climb for reaching a Level.
+    "player_level_up": lambda: notes([523, 659, 784, 1047, 1319], 0.07, duty=0.25),
     # The Scavenger's wind-up: a gurgling growl that rises over the whole wind-up, so the
     # lunge can be heard coming.
     "scavenger_windup": lambda: growl(0.45, 95, 190, tremolo_hz=22),

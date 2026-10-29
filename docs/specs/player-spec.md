@@ -33,12 +33,31 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 ## Damage
 
-- The Player has 50 Health, counted in tens. A hit from an enemy hitbox costs its damage: 10 for a Scavenger's spear, 15 for a Storm Wisp's arc. Five spear hits defeat it, or four arcs.
+- The Player starts with 50 Health, counted in tens; each Level sets its maximum (see Growth). A hit from an enemy hitbox costs its damage: 10 for a Scavenger's spear, 15 for a Storm Wisp's arc. Five spear hits defeat it, or four arcs.
 - A hit that lands knocks the Player up and away from the hitbox (90 sideways, 120 up) and takes control away for 0.3 seconds: walk, jump and melee input are ignored, a charge or attack is lost, and the Player shows `JUMP` while tumbling.
 - After a hit the Player is invulnerable for 1 second and blinks; hits during that time cost nothing.
 - The Player's Health carries from Room to Room; only a defeat or a new Run refills it.
 - At 0 Health the Player is defeated. It stops answering the controls, falls where it lands and flickers. Then it wakes at the first Room's `start` Entry with full Health, and the Run, its visited Rooms and its Map carry on.
-- The sword's hitbox is live only during `ATTACK`, 12 pixels in front of the Player by facing. A quick Attack costs an enemy 10 Health; a Charged Attack, let go after 0.5 seconds of `CHARGE`, costs 20. Once the Charge is full the sword blinks bright every 0.08 seconds until it is let go.
+- The sword's hitbox is live only during `ATTACK`, 12 pixels in front of the Player by facing. A quick Attack costs an enemy 10 Health plus the Player's Strength; a Charged Attack, let go after 0.5 seconds of `CHARGE`, costs twice that, 20 at Strength 0. Once the Charge is full the sword blinks bright every 0.08 seconds until it is let go.
+
+## Growth
+
+- Every enemy defeated in a Room earns the Player that enemy's Experience, every time, even one that has come back: 10 for a Scavenger, 15 for a Storm Wisp, 20 for a Wraith.
+- The Player's Level is read from its total Experience against the Level table in `scripts/player/level.gd`. Each row gives the total Experience that reaches the Level and its maximum Health and Strength, in tens; the last row is the highest Level.
+
+  | Level | Total Experience | Max Health | Strength |
+  |---|---|---|---|
+  | 1 | 0 | 50 | 0 |
+  | 2 | 40 | 60 | 0 |
+  | 3 | 100 | 70 | 0 |
+  | 4 | 180 | 80 | 0 |
+  | 5 | 300 | 90 | 10 |
+
+- One defeat can raise more than one Level. Past the highest Level, Experience still counts but raises nothing.
+- Reaching a Level raises the Health left by as much as the maximum rose; it is not a refill. Defeated Health stays defeated.
+- Reaching a Level plays `level_up` and shows LEVEL UP over the Player, rising 10 pixels and fading over 1 second, without pausing play. Near a screen edge it sits inside the screen rather than centred on the Player.
+- The Run carries the total Experience from Room to Room and through a defeat; only a new Run resets it.
+- The Stats Panel shows the Level, Experience out of the total for the next Level (or `MAX` at the highest), Health and Strength.
 
 ## Sound
 
@@ -46,6 +65,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - `jump` plays when the jump impulse is applied, not when the Player walks off a ledge or is knocked into the air.
 - `land` plays on returning to `IDLE` or `WALK` from `JUMP` after at least 0.08 seconds in the air, so appearing at an Entry lands quietly.
 - `swing` plays when `ATTACK` begins, and `hit` when the sword strikes a Hurtbox.
+- `level_up` plays on reaching a Level.
 - `hurt` plays when a hit lands, or `defeat` instead when it takes the last Health; the Room waits 1.2 seconds, to see the Player fall and hear the sound, before it moves the Player back to the start.
 - The sounds are chiptune effects made by `scripts/tools/make_sfx.py` into `assets/audio/sfx/`; change them there and rerun it.
 
@@ -63,10 +83,11 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 - `scripts/player/player_controller.gd` (the Player controller) owns the Movement and States rules: state transitions, facing, horizontal velocity and the jump impulse.
 - `scripts/player/player_rig.gd` (the Player rig) owns the Animation rules and their table.
-- `scripts/player/player.gd` (the Player body) owns gravity, `move_and_slide` and reading `Input`, and hands each step's state, facing and movement to the rig. It owns the Player's Health, turns a hurtbox hit into the controller's knockback, keeps the sword hitbox live during `ATTACK`, and reports defeat.
+- `scripts/player/player.gd` (the Player body) owns gravity, `move_and_slide` and reading `Input`, and hands each step's state, facing and movement to the rig. It owns the Player's Health and Level, turns Experience into Levels, Health and the sword's hit, turns a hurtbox hit into the controller's knockback, keeps the sword hitbox live during `ATTACK`, and reports defeat.
 - `scripts/player/player_controller.gd` also owns knockback and the stun that follows a hit.
-- `scripts/core/main.gd` (the Room) adds the Health bar under its Pause menu, and returns the Player to the start when it is defeated. `scripts/core/run_state.gd` carries the Player's Health between Rooms and recovers the Run from a defeat.
-- `scripts/ui/health_bar.gd` (the Health bar) fills to the share of the Player's Health left, in the top-left corner. A hit drops the fill at once, and a trail of the lost Health holds for 0.15 seconds, then drains over 0.5. `scripts/ui/stats_view.gd` shows `Health current / maximum` on the Stats Panel.
+- `scripts/player/level.gd` (the Level) owns the Level table and reads a Level and its stats from total Experience.
+- `scripts/core/main.gd` (the Room) adds the Health bar under its Pause menu, hands each of its enemies' defeats to the Player as Experience, and returns the Player to the start when it is defeated. `scripts/core/run_state.gd` carries the Player's Health and Experience between Rooms and recovers the Run from a defeat.
+- `scripts/ui/health_bar.gd` (the Health bar) fills to the share of the Player's Health left, in the top-left corner. A hit drops the fill at once, and a trail of the lost Health holds for 0.15 seconds, then drains over 0.5. `scripts/ui/stats_view.gd` shows the Level, Experience, `Health current / maximum` and Strength on the Stats Panel. `scripts/ui/level_up_flash.gd` shows LEVEL UP over the Player.
 - `scripts/player/player_sounds.gd` (the Player sounds) owns which state changes make a sound and plays sounds by name; the Player body hands it the controller's state changes and jumps, the sword's strikes and its own hits.
 
 ## Out Of Scope

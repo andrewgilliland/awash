@@ -5,6 +5,7 @@ const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
 const HEALTH_BAR_SCENE := preload("res://scenes/ui/health_bar.tscn")
 const RunStateScript := preload("res://scripts/core/run_state.gd")
 const WorldMap := preload("res://scripts/core/world_map.gd")
+const ENEMY_GROUP := &"enemy"
 # Long enough to see the Player fall and hear the defeat sound before the Room is replaced.
 const DEFEAT_PAUSE := 1.2
 
@@ -21,6 +22,20 @@ func _ready() -> void:
 	_play_region_music()
 	if _player != null and not _player.is_connected(&"defeated", _on_player_defeated):
 		_player.connect(&"defeated", _on_player_defeated)
+	_hand_enemy_defeats_to_player()
+
+
+# Every enemy defeated in this Room earns the Player its Experience, whatever struck it down.
+func _hand_enemy_defeats_to_player() -> void:
+	if _player == null or not is_inside_tree():
+		return
+	for enemy in get_tree().get_nodes_in_group(ENEMY_GROUP):
+		if is_ancestor_of(enemy) and not enemy.is_connected(&"defeated", _on_enemy_defeated):
+			enemy.connect(&"defeated", _on_enemy_defeated)
+
+
+func _on_enemy_defeated(experience: int) -> void:
+	_player.call("gain_experience", experience)
 
 
 # After a beat to see it fall, a defeated Player wakes in the first Room with full Health; the

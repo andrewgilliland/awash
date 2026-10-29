@@ -12,6 +12,8 @@ var entry_id: StringName = DEFAULT_ENTRY_ID
 var intro_pending: bool = false
 # The Player's Health, carried from Room to Room; FULL_HEALTH until a hit lands.
 var player_health: int = FULL_HEALTH
+# The Player's total Experience this Run; their Level is read from it.
+var player_experience: int = 0
 var _visited_rooms: Dictionary = {FIRST_ROOM_ID: true}
 
 
@@ -21,11 +23,12 @@ func start_run() -> void:
 	entry_id = DEFAULT_ENTRY_ID
 	intro_pending = false
 	player_health = FULL_HEALTH
+	player_experience = 0
 	_visited_rooms = {FIRST_ROOM_ID: true}
 
 
 # After a defeat the Run carries on: back at the first Room's default Entry with full Health,
-# keeping every Room visited.
+# keeping every Room visited and all the Player's Experience.
 func recover_from_defeat() -> void:
 	room_id = FIRST_ROOM_ID
 	entry_id = DEFAULT_ENTRY_ID

@@ -1,10 +1,15 @@
 extends CharacterBody2D
 
+# Its Health ran out; the Room hands its Experience to the Player.
+signal defeated(experience: int)
+
 const ScavengerBrain := preload("res://scripts/enemies/scavenger_brain.gd")
 const Health := preload("res://scripts/combat/health.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const ScavengerSounds := preload("res://scripts/enemies/scavenger_sounds.gd")
 const MAX_HEALTH := 30
+# What defeating a Scavenger earns the Player.
+const EXPERIENCE := 10
 const INVULNERABLE_TIME := 0.3
 const DEFEAT_TIME := 0.6
 const DEFEAT_BLINK := 0.1
@@ -101,6 +106,7 @@ func _on_hurtbox_hit(hitbox: Area2D) -> void:
 	_knocked_toward = toward if toward != 0.0 else -brain.facing
 	if health.is_defeated():
 		_hurtbox.set_deferred("monitorable", false)
+		defeated.emit(EXPERIENCE)
 
 
 func _show() -> void:

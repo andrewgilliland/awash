@@ -11,6 +11,7 @@ func get_tests() -> Array:
 		["Run ignores an empty Room or Entry", _test_ignores_empty_ids],
 		["Run carries the Player's Health from Room to Room", _test_carries_health],
 		["A defeat keeps the Run, back at the start with full Health", _test_defeat_keeps_run],
+		["Run carries the Player's Experience, even through a defeat", _test_carries_experience],
 	]
 
 
@@ -73,5 +74,19 @@ func _test_defeat_keeps_run() -> bool:
 	var valid := run.room_id == &"waking_coast_1" and run.entry_id == &"start"
 	valid = valid and run.has_visited_room(&"waking_coast_2") and not run.intro_pending
 	valid = valid and run.player_health == RunStateScript.FULL_HEALTH
+	run.free()
+	return valid
+
+
+func _test_carries_experience() -> bool:
+	var run := RunStateScript.new()
+	var valid := run.player_experience == 0
+	run.player_experience = 45
+	run.enter_room(&"waking_coast_2", &"west")
+	valid = valid and run.player_experience == 45
+	run.recover_from_defeat()
+	valid = valid and run.player_experience == 45
+	run.start_run()
+	valid = valid and run.player_experience == 0
 	run.free()
 	return valid

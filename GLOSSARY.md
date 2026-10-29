@@ -143,7 +143,7 @@ The Player's Health on screen: a framed bar in the top-left corner, filled to th
 _Avoid_: HP bar, life bar, hearts
 
 **Defeat**:
-The Player's Health running out. Vael falls where he lands and stops answering the controls, then wakes at the first Room's start Entry with full Health, and later at the last Rest point he used. The Run carries on.
+The Player's Health running out. Vael falls where he lands and stops answering the controls, then wakes at the first Room's start Entry with full Health, and later at the last Rest point he used. The Run carries on, keeping his Level and Experience.
 _Avoid_: Death, game over, dying
 
 **Hitbox**:
@@ -173,6 +173,20 @@ _Avoid_: Ghost, specter, phantom
 **Rune anchor**:
 The glowing stone lodged in a Wraith's chest, binding it to the coast. It is the only part of a Wraith the sword can hit, and only while it shows.
 _Avoid_: Core, weak point, heart
+
+## Growth
+
+**Level**:
+How far the Player has grown in a Run, starting at 1. Enough Experience raises it, up to the highest Level, and each Level can raise the Player's maximum Health and Strength.
+_Avoid_: XP level, rank, character level, level (for a Room)
+
+**Experience**:
+What defeating an enemy earns the Player toward the next Level. Each kind of enemy is worth its own amount, every time it is defeated, even after it returns.
+_Avoid_: XP, EXP, experience points
+
+**Strength**:
+The Player's own might, added to what each sword hit costs. Levels raise it; armor does not.
+_Avoid_: Attack (the Player state), power, damage
 
 ## Menus
 
