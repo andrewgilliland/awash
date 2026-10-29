@@ -2,7 +2,7 @@ extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_3.tscn"
 const TILESET_PATH := "res://assets/tilesets/waking_coast_2.tres"
-const PlayerController := preload("res://scripts/player/player_controller.gd")
+const RoomReach := preload("res://tests/room_reach.gd")
 const LAYER_ORDER := [&"Backdrop", &"Wreck", &"Terrain", &"Props", &"Entries", &"Player"]
 # Two screens tall.
 const ROOM_SIZE := Vector2i(160, 288)
@@ -11,13 +11,16 @@ const TILE := 16
 const SCREEN_HEIGHT := 144
 # On the beach, clear of the west Exit, at the height the rune shore's sand leaves off.
 const WEST_ENTRY := Vector2(12, 240)
+# On the cliff top, clear of the east Exit.
+const EAST_ENTRY := Vector2(148, 64)
+# In the tunnel through the cliff's foot, on the beach's level.
+const CAVE_ENTRY := Vector2(148, 240)
+const TUNNEL := Rect2i(7, 13, 3, 2)
 const WORLD_LAYER := 1
 const SHALLOW := Vector2i(5, 5)
 # The cliff top the climb ends on, and the high ledge left for a double jump.
 const CLIFF_TOP := Vector2i(8, 4)
 const HIGH_LEDGE := Vector2i(5, 1)
-# How far apart, in tiles, the ends of two surfaces can be for a jump to cross.
-const JUMP_GAP := 2
 # Landmark cells from assets/waking_shores_4.aseprite: layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	# A broken mast holds up the wreck decks on the west side of the climb.
@@ -35,8 +38,8 @@ const LANDMARKS := {
 		Vector2i(9, 4): Vector2i(1, 2),
 		Vector2i(7, 17): Vector2i(0, 3),
 		# salt-slick stone ledges on the cliff, wreck decks across from them
-		Vector2i(4, 13): Vector2i(3, 4),
-		Vector2i(6, 13): Vector2i(5, 4),
+		Vector2i(3, 13): Vector2i(3, 4),
+		Vector2i(5, 13): Vector2i(5, 4),
 		Vector2i(1, 11): Vector2i(4, 6),
 		Vector2i(3, 11): Vector2i(6, 6),
 		Vector2i(4, 9): Vector2i(3, 4),
@@ -61,8 +64,9 @@ func get_tests() -> Array:
 		["Salt cliffs high ledge waits for a double jump", _test_high_ledge_out_of_reach],
 		["Salt cliffs west Entry stands on the beach", _test_west_entry_on_beach],
 		["Salt cliffs camera scrolls up the Room", _test_camera_limits],
-		["Salt cliffs wall the east edge and the top screen's west", _test_walls],
+		["Salt cliffs lead east from the top and back west from the beach", _test_edges],
 		["A Scavenger hunts the salt cliffs' tidal pool", _test_scavenger_in_pool],
+		["A tunnel at the cliff's foot leads into the sea cave", _test_tunnel_to_cave],
 	]
 
 
@@ -121,9 +125,10 @@ func _test_climb_reaches_top() -> bool:
 	var room := _room()
 	if room == null:
 		return false
-	var reached := _reachable_surfaces(room.get_node("Terrain") as TileMapLayer)
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var reached := RoomReach.reachable(terrain, Vector2i(WEST_ENTRY / TILE))
 	room.free()
-	return _span_at(reached, CLIFF_TOP) != null
+	return RoomReach.span_at(reached, CLIFF_TOP) != null
 
 
 func _test_high_ledge_out_of_reach() -> bool:
@@ -131,9 +136,9 @@ func _test_high_ledge_out_of_reach() -> bool:
 	if room == null:
 		return false
 	var terrain := room.get_node("Terrain") as TileMapLayer
-	var reached := _reachable_surfaces(terrain)
-	var valid := _span_at(_surfaces(terrain), HIGH_LEDGE) != null
-	valid = valid and _span_at(reached, HIGH_LEDGE) == null
+	var reached := RoomReach.reachable(terrain, Vector2i(WEST_ENTRY / TILE))
+	var valid := RoomReach.span_at(RoomReach.surfaces(terrain), HIGH_LEDGE) != null
+	valid = valid and RoomReach.span_at(reached, HIGH_LEDGE) == null
 	room.free()
 	return valid
 
@@ -166,19 +171,17 @@ func _test_camera_limits() -> bool:
 	return valid
 
 
-# The rune road on to Tidefen is not built yet, so the east edge is a wall. On the west, the
-# bottom screen is the Exit back to the rune shore and the top screen is walled.
-func _test_walls() -> bool:
+# The cliff top's east edge is the Exit on to the wreck graveyard; below it the cliff is solid
+# rock. On the west, the bottom screen is the Exit back to the rune shore and the top screen is
+# walled.
+func _test_edges() -> bool:
 	var room := _room()
 	if room == null:
 		return false
 	var bounds := room.get_node_or_null("Bounds") as StaticBody2D
 	var valid := bounds != null and bounds.collision_layer == WORLD_LAYER
 	if valid:
-		var east := bounds.get_node_or_null("East") as CollisionShape2D
-		var boundary := east.shape as WorldBoundaryShape2D if east != null else null
-		valid = boundary != null and boundary.normal == Vector2.LEFT
-		valid = valid and east.position.x == ROOM_SIZE.x
+		valid = bounds.get_node_or_null("East") == null
 		var west := bounds.get_node_or_null("WestTop") as CollisionShape2D
 		valid = valid and west != null and west.position.x < 0.0
 		valid = valid and _vertical_span(west) == Vector2(0, SCREEN_HEIGHT)
@@ -189,6 +192,15 @@ func _test_walls() -> bool:
 		var edge := exit.get_node("Edge") as CollisionShape2D
 		valid = exit.position.x < 0.0
 		valid = valid and _vertical_span(edge) == Vector2(SCREEN_HEIGHT, ROOM_SIZE.y)
+	var east_exit := room.get_node_or_null("Exits/east") as Area2D
+	valid = valid and east_exit != null and east_exit.position.x > ROOM_SIZE.x
+	valid = valid and east_exit.get("room_id") == &"waking_coast_4"
+	valid = valid and east_exit.get("entry_id") == &"west"
+	if valid:
+		var east_edge := east_exit.get_node("Edge") as CollisionShape2D
+		valid = _vertical_span(east_edge) == Vector2(0, SCREEN_HEIGHT)
+	var entry := room.get_node_or_null("Entries/east") as Marker2D
+	valid = valid and entry != null and entry.position == EAST_ENTRY
 	room.free()
 	return valid
 
@@ -209,6 +221,30 @@ func _test_scavenger_in_pool() -> bool:
 	return valid
 
 
+# A tunnel through the cliff's foot, level with the beach, is the Exit east into the sea cave.
+func _test_tunnel_to_cave() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var valid := true
+	for row in range(TUNNEL.position.y, TUNNEL.end.y):
+		for column in range(TUNNEL.position.x, TUNNEL.end.x):
+			valid = valid and terrain.get_cell_source_id(Vector2i(column, row)) == -1
+	for column in range(TUNNEL.position.x, TUNNEL.end.x):
+		valid = valid and terrain.get_cell_source_id(Vector2i(column, TUNNEL.end.y)) == 0
+	var exit := room.get_node_or_null("Exits/cave") as Area2D
+	valid = valid and exit != null and exit.position.x > ROOM_SIZE.x
+	valid = valid and exit.get("room_id") == &"waking_coast_5" and exit.get("entry_id") == &"west"
+	if valid:
+		var edge := exit.get_node("Edge") as CollisionShape2D
+		valid = _vertical_span(edge) == Vector2(SCREEN_HEIGHT, ROOM_SIZE.y)
+	var entry := room.get_node_or_null("Entries/cave") as Marker2D
+	valid = valid and entry != null and entry.position == CAVE_ENTRY
+	room.free()
+	return valid
+
+
 # The top and bottom of a rectangle collision shape, in the Room's space.
 static func _vertical_span(shape_node: CollisionShape2D) -> Vector2:
 	var rectangle := shape_node.shape as RectangleShape2D
@@ -217,58 +253,3 @@ static func _vertical_span(shape_node: CollisionShape2D) -> Vector2:
 	var owner_y := (shape_node.get_parent() as Node2D).position.y
 	var top := owner_y + shape_node.position.y - rectangle.size.y / 2.0
 	return Vector2(top, top + rectangle.size.y)
-
-
-# How many tiles a single jump rises, from the Player's jump and the world's gravity.
-static func _jump_rows() -> int:
-	var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity")
-	var jump_speed := -PlayerController.new().jump_velocity
-	return int(jump_speed * jump_speed / (2.0 * gravity) / TILE)
-
-
-# Every run of tiles the Player can stand on: a row, and its first and last column.
-static func _surfaces(terrain: TileMapLayer) -> Array[Vector3i]:
-	var spans: Array[Vector3i] = []
-	var rect := terrain.get_used_rect()
-	for row in range(rect.position.y, rect.end.y):
-		var start := -1
-		for column in range(rect.position.x, rect.end.x + 1):
-			var standable := (
-				terrain.get_cell_source_id(Vector2i(column, row)) == 0
-				and terrain.get_cell_source_id(Vector2i(column, row - 1)) == -1
-			)
-			if standable and start == -1:
-				start = column
-			elif not standable and start != -1:
-				spans.append(Vector3i(row, start, column - 1))
-				start = -1
-	return spans
-
-
-# The surfaces reached from the beach's west end, jumping up at most a jump's rows, or
-# dropping down, across gaps of at most JUMP_GAP tiles.
-static func _reachable_surfaces(terrain: TileMapLayer) -> Array[Vector3i]:
-	var spans := _surfaces(terrain)
-	var start: Variant = _span_at(spans, Vector2i(WEST_ENTRY / TILE))
-	if start == null:
-		return []
-	var rise := _jump_rows()
-	var reached: Array[Vector3i] = [start]
-	var index := 0
-	while index < reached.size():
-		var from := reached[index]
-		index += 1
-		for to in spans:
-			if to in reached:
-				continue
-			var gap := maxi(to.y - from.z, from.y - to.z) - 1
-			if gap <= JUMP_GAP and from.x - to.x <= rise:
-				reached.append(to)
-	return reached
-
-
-static func _span_at(spans: Array[Vector3i], cell: Vector2i) -> Variant:
-	for span in spans:
-		if span.x == cell.y and cell.x >= span.y and cell.x <= span.z:
-			return span
-	return null

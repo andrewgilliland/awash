@@ -4,6 +4,18 @@ const FIRST_ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
 const START_SCREEN_PATH := "res://scenes/ui/start_screen.tscn"
 const RUNE_SHORE_PATH := "res://scenes/rooms/waking_coast_2.tscn"
 const SALT_CLIFFS_PATH := "res://scenes/rooms/waking_coast_3.tscn"
+const WRECK_GRAVEYARD_PATH := "res://scenes/rooms/waking_coast_4.tscn"
+# Up the wreck decks from the beach: [direction, launch x, height landed on]. The first deck
+# (x 112-160), the mast's (x 160-192), the taller hull's (x 208-256), then the stern's.
+const WRECK_DECKS := [[1, 92.0, 64.0], [1, 140.0, 48.0], [1, 180.0, 48.0], [1, 240.0, 16.0]]
+const STERN_X := Vector2(256, 304)
+const SEA_CAVE_PATH := "res://scenes/rooms/waking_coast_5.tscn"
+# Walking the graveyard's beach east to the sinkhole, and the cave's floor west to the tunnel:
+# points to walk to, jumping out of a pool when the walk falls short.
+const GRAVEYARD_BEACH_EAST: Array[float] = [88.0, 150.0, 186.0, 250.0, 296.0]
+const SEA_CAVE_WEST: Array[float] = [170.0, 120.0, 40.0]
+# The cliffs' tunnel Entry, at the foot of the climb.
+const SALT_CLIFFS_CAVE_ENTRY := Vector2(148, 240)
 # The salt cliffs' beach, two screens down, and the cliff top the climb ends on.
 const SALT_CLIFFS_BEACH_Y := 240.0
 const SALT_CLIFFS_TOP_Y := 64.0
@@ -52,6 +64,13 @@ func _init() -> void:
 		"Player walks up the shore to the salt cliffs", _playtest_walks_to_cliffs
 	)
 	await _run_playtest_async("Player climbs the salt cliffs to the top", _playtest_climbs_cliffs)
+	await _run_playtest_async(
+		"Player walks from the cliff top to the wreck graveyard", _playtest_walks_to_graveyard
+	)
+	await _run_playtest_async("Player hops the wreck decks to the stern", _playtest_hops_to_stern)
+	await _run_playtest_async(
+		"Player drops into the sea cave and loops back to the cliffs", _playtest_cave_loop
+	)
 	await _run_playtest_async("Sword defeats the Scavenger", _playtest_sword_defeats_scavenger)
 	await _run_playtest_async("Scavenger's lunge hurts the Player", _playtest_lunge_hurts_player)
 	await _run_playtest_async("Player defeat starts the Run over", _playtest_defeat_starts_over)
@@ -308,6 +327,110 @@ func _playtest_walks_to_cliffs() -> bool:
 	return valid
 
 
+# From the salt cliffs' top on to the wreck graveyard's cliff, then back.
+func _playtest_walks_to_graveyard() -> bool:
+	var run := root.get_node_or_null("RunState")
+	if run == null:
+		return false
+	run.call("start_run")
+	run.call("enter_room", &"waking_coast_3", &"east")
+	change_scene_to_file(SALT_CLIFFS_PATH)
+	await _frames_until(
+		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
+		SETTLE_FRAME_LIMIT
+	)
+	var valid := await _walk_until_scene(&"move_right", WRECK_GRAVEYARD_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_4"
+	var player := _current_player()
+	valid = valid and player != null and player.global_position.x < 40.0
+	valid = valid and player != null and absf(player.global_position.y - CLIFF_TOP_Y) < 1.0
+
+	valid = valid and await _walk_until_scene(&"move_left", SALT_CLIFFS_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_3"
+	player = _current_player()
+	valid = valid and player != null and player.global_position.x > 120.0
+	valid = valid and player != null and absf(player.global_position.y - SALT_CLIFFS_TOP_Y) < 1.0
+	await _leave_scene()
+	return valid
+
+
+# Down from the cliff to the sand, then deck to deck up to the stern's crate, with real input
+# and physics. The Scavenger is taken out first: this checks the route, not the fight.
+func _playtest_hops_to_stern() -> bool:
+	var run := root.get_node_or_null("RunState")
+	if run == null:
+		return false
+	run.call("start_run")
+	run.call("enter_room", &"waking_coast_4", &"west")
+	change_scene_to_file(WRECK_GRAVEYARD_PATH)
+	var landed := await _frames_until(
+		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
+		SETTLE_FRAME_LIMIT
+	)
+	if not landed:
+		await _leave_scene()
+		return false
+	current_scene.get_node(SCAVENGER_PATH).free()
+	var player := _current_player()
+	await _walk_to_x(player, WRECK_DECKS[0][1])
+	var valid := absf(player.global_position.y - WAKING_COAST_SAND_Y) < 1.0
+	for step in WRECK_DECKS:
+		if not valid:
+			break
+		await _walk_to_x(player, step[1])
+		await _jump_toward(player, step[0])
+		valid = player.is_on_floor() and absf(player.global_position.y - step[2]) < 1.0
+	var x := player.global_position.x
+	valid = valid and x > STERN_X.x and x < STERN_X.y
+	await _leave_scene()
+	return valid
+
+
+# The loop with real input and physics: east along the graveyard's beach, down the sinkhole,
+# west through the sea cave and out of the tunnel at the salt cliffs' foot. The Scavenger is
+# taken out first: this checks the route, not the fight.
+func _playtest_cave_loop() -> bool:
+	var run := root.get_node_or_null("RunState")
+	if run == null:
+		return false
+	run.call("start_run")
+	run.call("enter_room", &"waking_coast_4", &"west")
+	change_scene_to_file(WRECK_GRAVEYARD_PATH)
+	var landed := await _frames_until(
+		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
+		SETTLE_FRAME_LIMIT
+	)
+	if not landed:
+		await _leave_scene()
+		return false
+	current_scene.get_node(SCAVENGER_PATH).free()
+	await _wade_to(_current_player(), GRAVEYARD_BEACH_EAST)
+	var valid := await _walk_until_scene(&"move_right", SEA_CAVE_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_5"
+	var player := _current_player()
+	valid = valid and player != null and player.is_on_floor() and player.global_position.x > 300.0
+	if not valid:
+		await _leave_scene()
+		return false
+	await _wade_to(player, SEA_CAVE_WEST)
+	valid = await _walk_until_scene(&"move_left", SALT_CLIFFS_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_3"
+	player = _current_player()
+	valid = valid and player != null
+	valid = valid and player.global_position.distance_to(SALT_CLIFFS_CAVE_ENTRY) < 1.0
+	await _leave_scene()
+	return valid
+
+
+# Walks through each point in turn, jumping toward it whenever a pool's edge stops the walk.
+func _wade_to(player: CharacterBody2D, points: Array[float]) -> void:
+	for x in points:
+		await _walk_to_x(player, x)
+		var distance := x - player.global_position.x
+		if absf(distance) > 4.0:
+			await _jump_toward(player, 1 if distance > 0.0 else -1)
+
+
 # Jumps the tidal pool, then climbs ledge to ledge to the cliff top, with real input and physics.
 # The pool's Scavenger is taken out first: this checks the route, not the fight.
 func _playtest_climbs_cliffs() -> bool:
@@ -331,7 +454,9 @@ func _playtest_climbs_cliffs() -> bool:
 	await _jump_toward(player, 1)
 	if player.global_position.y > SALT_CLIFFS_BEACH_Y + 1.0:
 		await _jump_toward(player, 1)
-	var valid := absf(player.global_position.y - SALT_CLIFFS_BEACH_Y) < 1.0
+	# Landing on the beach, or already up on the lowest ledge, which hangs over the pool's far
+	# edge; the first step jumps straight up onto that ledge either way.
+	var valid := player.is_on_floor() and player.global_position.y < SALT_CLIFFS_BEACH_Y + 1.0
 	for step in SALT_CLIFFS_CLIMB:
 		if not valid:
 			break

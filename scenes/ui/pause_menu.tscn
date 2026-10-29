@@ -138,6 +138,7 @@ text = "Map"
 horizontal_alignment = 1
 
 [node name="MapView" type="Control" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/MapPanel" node_paths=PackedStringArray("region_label")]
+clip_contents = true
 custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 size_flags_vertical = 3
