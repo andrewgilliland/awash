@@ -17,6 +17,7 @@ key_areas:
   - rune shore
   - salt cliffs
   - wreck graveyard
+  - sea cave
 ---
 
 ## Description
