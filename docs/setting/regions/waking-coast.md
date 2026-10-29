@@ -16,6 +16,7 @@ key_areas:
   - Black Surf
   - rune shore
   - salt cliffs
+  - wreck graveyard
 ---
 
 ## Description

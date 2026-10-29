@@ -26,6 +26,7 @@ func get_tests() -> Array:
 		["Pause menu fits the screen", _test_fits_the_screen],
 		["Pause menu text uses the pixel font", _test_text_uses_pixel_font],
 		["Map Panel names the Room's region", _test_map_names_region],
+		["Map keeps far Rooms inside its Panel", _test_map_clips_far_rooms],
 	]
 
 
@@ -143,6 +144,15 @@ func _test_map_names_region() -> bool:
 	_menu_button(menu, "Map").pressed.emit()
 	var title := menu.get_node(MENU_ROOT + "ContentRoot/MapPanel/Title") as Label
 	var valid := title.text == "Waking Coast"
+	_close(menu)
+	return valid
+
+
+# A coast wider than the Panel runs off its edges rather than over the menu's frame.
+func _test_map_clips_far_rooms() -> bool:
+	var menu := _paused_menu()
+	var map_view := menu.get_node(MENU_ROOT + "ContentRoot/MapPanel/MapView") as Control
+	var valid := map_view.clip_contents
 	_close(menu)
 	return valid
 
