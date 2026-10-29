@@ -21,8 +21,10 @@ const WEST_ENTRY := Vector2(12, 64)
 const WORLD_LAYER := 1
 const SHALLOW := Vector2i(5, 5)
 const DECKS := [Vector2i(4, 6), Vector2i(5, 6), Vector2i(6, 6)]
-# The beach's east end, and the stern compartment's deck with its crate.
-const EAST_END := Vector2i(19, 6)
+# The beach's east end, where the sand gives way into the sea cave, and the stern
+# compartment's deck with its crate.
+const EAST_END := Vector2i(18, 6)
+const SINKHOLE_COLUMN := 19
 const STERN_DECK := Vector2i(17, 1)
 const STERN_CRATE := Vector2i(18, 0)
 const CRATE := Vector2i(0, 7)
@@ -73,6 +75,7 @@ func get_tests() -> Array:
 		["Wreck graveyard beach runs east without the decks", _test_beach_runs_east],
 		["Wreck decks lead up to the stern's crate", _test_decks_reach_stern],
 		["A Scavenger wades the wreck graveyard's second pool", _test_scavenger_in_pool],
+		["A sinkhole at the beach's east end drops into the sea cave", _test_sinkhole],
 	]
 
 
@@ -122,7 +125,8 @@ func _test_lays_out_two_screens() -> bool:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	for column in range(CELLS.size.x):
-		valid = valid and terrain.get_cell_source_id(Vector2i(column, CELLS.end.y - 1)) == 0
+		var filled := terrain.get_cell_source_id(Vector2i(column, CELLS.end.y - 1)) == 0
+		valid = valid and filled == (column != SINKHOLE_COLUMN)
 	room.free()
 	return valid
 
@@ -216,5 +220,23 @@ func _test_scavenger_in_pool() -> bool:
 			var cell := Vector2i(int(x / TILE), row)
 			valid = valid and terrain.get_cell_atlas_coords(cell) == SHALLOW
 		valid = valid and scavenger.position.x > ROOM_SIZE.x / 2.0
+	room.free()
+	return valid
+
+
+# The sand at the east end gives way: a hole to the bottom of the Room, and an Exit under it
+# down into the sea cave's shaft.
+func _test_sinkhole() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var valid := true
+	for row in range(6, CELLS.end.y):
+		valid = valid and terrain.get_cell_source_id(Vector2i(SINKHOLE_COLUMN, row)) == -1
+	var exit := room.get_node_or_null("Exits/sinkhole") as Area2D
+	valid = valid and exit != null and exit.position.y > ROOM_SIZE.y
+	valid = valid and int(exit.position.x / TILE) == SINKHOLE_COLUMN
+	valid = valid and exit.get("room_id") == &"waking_coast_5" and exit.get("entry_id") == &"shaft"
 	room.free()
 	return valid

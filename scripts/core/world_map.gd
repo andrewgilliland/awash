@@ -33,6 +33,14 @@ const ROOMS := {
 		size = Vector2i(2, 1),
 		region = "Waking Coast",
 	},
+	# Under the wreck graveyard, beside the salt cliffs' foot.
+	&"waking_coast_5":
+	{
+		scene = "res://scenes/rooms/waking_coast_5.tscn",
+		cell = Vector2i(4, 0),
+		size = Vector2i(2, 1),
+		region = "Waking Coast",
+	},
 }
 # Each region's theme, played in its Rooms.
 const REGION_MUSIC := {

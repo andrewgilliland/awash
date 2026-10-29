@@ -13,6 +13,9 @@ const SCREEN_HEIGHT := 144
 const WEST_ENTRY := Vector2(12, 240)
 # On the cliff top, clear of the east Exit.
 const EAST_ENTRY := Vector2(148, 64)
+# In the tunnel through the cliff's foot, on the beach's level.
+const CAVE_ENTRY := Vector2(148, 240)
+const TUNNEL := Rect2i(7, 13, 3, 2)
 const WORLD_LAYER := 1
 const SHALLOW := Vector2i(5, 5)
 # The cliff top the climb ends on, and the high ledge left for a double jump.
@@ -35,8 +38,8 @@ const LANDMARKS := {
 		Vector2i(9, 4): Vector2i(1, 2),
 		Vector2i(7, 17): Vector2i(0, 3),
 		# salt-slick stone ledges on the cliff, wreck decks across from them
-		Vector2i(4, 13): Vector2i(3, 4),
-		Vector2i(6, 13): Vector2i(5, 4),
+		Vector2i(3, 13): Vector2i(3, 4),
+		Vector2i(5, 13): Vector2i(5, 4),
 		Vector2i(1, 11): Vector2i(4, 6),
 		Vector2i(3, 11): Vector2i(6, 6),
 		Vector2i(4, 9): Vector2i(3, 4),
@@ -63,6 +66,7 @@ func get_tests() -> Array:
 		["Salt cliffs camera scrolls up the Room", _test_camera_limits],
 		["Salt cliffs lead east from the top and back west from the beach", _test_edges],
 		["A Scavenger hunts the salt cliffs' tidal pool", _test_scavenger_in_pool],
+		["A tunnel at the cliff's foot leads into the sea cave", _test_tunnel_to_cave],
 	]
 
 
@@ -213,6 +217,30 @@ func _test_scavenger_in_pool() -> bool:
 		for x in [scavenger.get("patrol_left"), scavenger.get("patrol_right")]:
 			var cell := Vector2i(int(x / TILE), row)
 			valid = valid and terrain.get_cell_atlas_coords(cell) == SHALLOW
+	room.free()
+	return valid
+
+
+# A tunnel through the cliff's foot, level with the beach, is the Exit east into the sea cave.
+func _test_tunnel_to_cave() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var valid := true
+	for row in range(TUNNEL.position.y, TUNNEL.end.y):
+		for column in range(TUNNEL.position.x, TUNNEL.end.x):
+			valid = valid and terrain.get_cell_source_id(Vector2i(column, row)) == -1
+	for column in range(TUNNEL.position.x, TUNNEL.end.x):
+		valid = valid and terrain.get_cell_source_id(Vector2i(column, TUNNEL.end.y)) == 0
+	var exit := room.get_node_or_null("Exits/cave") as Area2D
+	valid = valid and exit != null and exit.position.x > ROOM_SIZE.x
+	valid = valid and exit.get("room_id") == &"waking_coast_5" and exit.get("entry_id") == &"west"
+	if valid:
+		var edge := exit.get_node("Edge") as CollisionShape2D
+		valid = _vertical_span(edge) == Vector2(SCREEN_HEIGHT, ROOM_SIZE.y)
+	var entry := room.get_node_or_null("Entries/cave") as Marker2D
+	valid = valid and entry != null and entry.position == CAVE_ENTRY
 	room.free()
 	return valid
 
