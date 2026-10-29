@@ -2,7 +2,7 @@ extends RefCounted
 
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const MENU_ROOT := "CenterContainer/MenuPanel/MarginContainer/VBoxContainer/"
-const PANEL_NAMES: Array[String] = ["Stats", "Supplies", "Equipment", "Map"]
+const PANEL_NAMES: Array[String] = ["Stats", "Inventory", "Equipment", "Map"]
 const SCREEN_SIZE := Vector2(160, 144)
 const COMPACT_FONT_PATH := "res://assets/fonts/awash_pixel_3x5.png"
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
@@ -27,6 +27,8 @@ func get_tests() -> Array:
 		["Pause menu pairs every button with a Panel", _test_pairs_buttons_with_panels],
 		["Pause menu disables a button with no Panel", _test_disables_unpaired_button],
 		["Pause menu fits the screen", _test_fits_the_screen],
+		["No Panel repeats its tab's name as a title", _test_no_repeated_titles],
+		["Every Panel's content starts at the top", _test_panels_align_top],
 		["Pause menu text uses the compact pixel font", _test_text_uses_pixel_font],
 		["Map Panel names the Room's region", _test_map_names_region],
 		["Map keeps far Rooms inside its Panel", _test_map_clips_far_rooms],
@@ -57,7 +59,7 @@ func _test_focus_shows_panel() -> bool:
 func _test_left_right_moves_panels() -> bool:
 	var menu := _paused_menu()
 	var valid := true
-	for panel_name in ["Supplies", "Equipment", "Map", "Stats"]:
+	for panel_name in ["Inventory", "Equipment", "Map", "Stats"]:
 		_navigate(menu, &"ui_right")
 		valid = valid and _menu_button(menu, panel_name).has_focus()
 		valid = valid and _shown_panel(menu) == panel_name
@@ -74,7 +76,7 @@ func _test_move_keys_page_menu() -> bool:
 	input_setup.free()
 	var menu := _paused_menu()
 	_press_key(menu, KEY_D)
-	var valid := _shown_panel(menu) == "Supplies"
+	var valid := _shown_panel(menu) == "Inventory"
 	_press_key(menu, KEY_A)
 	_press_key(menu, KEY_A)
 	valid = valid and _shown_panel(menu) == "Map"
@@ -150,6 +152,28 @@ func _test_disables_unpaired_button() -> bool:
 	return valid
 
 
+# The tab already names the Panel, so no Label in it says the same.
+func _test_no_repeated_titles() -> bool:
+	var menu := PAUSE_MENU_SCENE.instantiate() as Control
+	var valid := true
+	for panel_name in PANEL_NAMES:
+		var tab := _menu_button(menu, panel_name).text.to_lower()
+		var panel := menu.get_node(MENU_ROOT + "ContentRoot/%sPanel" % panel_name)
+		for label in panel.find_children("*", "Label", true, false):
+			valid = valid and (label as Label).text.to_lower() != tab
+	menu.free()
+	return valid
+
+
+func _test_panels_align_top() -> bool:
+	var menu := PAUSE_MENU_SCENE.instantiate() as Control
+	var valid := true
+	for panel in menu.get_node(MENU_ROOT + "ContentRoot").get_children():
+		valid = valid and (panel as BoxContainer).alignment == BoxContainer.ALIGNMENT_BEGIN
+	menu.free()
+	return valid
+
+
 # The game draws at 160x144, so the menu and every Panel's content must fit inside it.
 func _test_fits_the_screen() -> bool:
 	var menu := _paused_menu()
@@ -186,7 +210,7 @@ func _test_text_uses_pixel_font() -> bool:
 func _test_map_names_region() -> bool:
 	var menu := _paused_menu()
 	_menu_button(menu, "Map").grab_focus()
-	var title := menu.get_node(MENU_ROOT + "ContentRoot/MapPanel/Title") as Label
+	var title := menu.get_node(MENU_ROOT + "ContentRoot/MapPanel/Region") as Label
 	var valid := title.text == "Waking Coast"
 	_close(menu)
 	return valid

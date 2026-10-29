@@ -45,7 +45,7 @@ const HealthBarTests := preload("res://tests/health_bar_tests.gd")
 const PlayerGrowthTests := preload("res://tests/player_growth_tests.gd")
 const EnemyExperienceTests := preload("res://tests/enemy_experience_tests.gd")
 const PlayerSuppliesTests := preload("res://tests/player_supplies_tests.gd")
-const SupplyUiTests := preload("res://tests/supply_ui_tests.gd")
+const InventoryTests := preload("res://tests/inventory_tests.gd")
 const STEP_DELTA := 0.1
 var _failures: int = 0
 
@@ -183,8 +183,8 @@ func _init() -> void:
 	var player_supplies_tests := PlayerSuppliesTests.new(root)
 	for test in player_supplies_tests.get_tests():
 		_run_test(test[0], test[1])
-	var supply_ui_tests := SupplyUiTests.new(root)
-	for test in supply_ui_tests.get_tests():
+	var inventory_tests := InventoryTests.new(root)
+	for test in inventory_tests.get_tests():
 		_run_test(test[0], test[1])
 
 	if _failures > 0:

@@ -3,7 +3,7 @@ extends RefCounted
 # The Supplies the Player carries in a Run: how many of each kind, up to the carry limit.
 
 const BRINECAP := &"brinecap"
-# Every kind of Supply, in the order the Supplies Panel lists them: its name, and the Health it
+# Every kind of Supply, in the order the Inventory lists them: its name, and the Health it
 # restores.
 const KINDS := {
 	BRINECAP: {name = "Brinecap", restores = 10},

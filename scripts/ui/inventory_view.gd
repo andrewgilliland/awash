@@ -1,7 +1,7 @@
 extends VBoxContainer
 
-# The Supplies Panel's list: a row for each kind of Supply the Player carries, its name on the
-# left and how many on the right, read each time the Panel opens. Choosing a row uses one of
+# The Inventory's list: a row for each kind of Supply the Player carries, its name on the left
+# and how many on the right, read each time the Panel opens. Choosing a row uses one of
 # that kind; at full Health nothing is spent, and the note under the list says so.
 
 # The rows changed, so the Pause menu relinks focus through them.

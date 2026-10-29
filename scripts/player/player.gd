@@ -95,7 +95,7 @@ func collect(kind: StringName) -> bool:
 	return true
 
 
-# Uses one Supply of a kind, as chosen on the Supplies Panel: a Restorative restores its Health.
+# Uses one Supply of a kind, as chosen in the Inventory: a Restorative restores its Health.
 # Returns whether it did. Nothing is spent with none carried, at full Health, or while the
 # Player is held still or defeated.
 func use_supply(kind: StringName) -> bool:

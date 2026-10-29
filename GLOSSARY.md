@@ -114,7 +114,7 @@ _Avoid_: Crate, chest, stash, pickup
 
 **Supply**:
 A consumable used in exploration or combat, such as a Restorative, bought at a Supply Shop, found in a Cache, or left where a defeated enemy fell. The Player carries up to 9 of each kind for the Run, and a defeat does not take them away.
-_Avoid_: Item, consumable, loot (as the general term), inventory
+_Avoid_: Item, consumable, loot (as the general term)
 
 **Tide Draught**:
 The first Restorative: a Supply that restores 20 Health.
@@ -206,9 +206,9 @@ _Avoid_: Options menu, start menu
 One page of the Pause menu, shown from when its menu button takes focus until another one does. Left and right move from Panel to Panel, round from the last to the first, and the Pause menu opens on the first.
 _Avoid_: Tab, screen, page
 
-**Supplies Panel**:
+**Inventory**:
 The Panel listing each kind of Supply the Player carries and how many. Choosing one there uses it, with play paused: a Restorative restores its Health, and nothing is spent while Health is full.
-_Avoid_: Items menu, inventory, bag
+_Avoid_: Supplies Panel, items menu, bag
 
 **Map**:
 The Panel that draws each visited Room as a block, sized in screens, with the name of the Region or Safe spoke the Player is in and a dot where the Player stands. Unvisited Rooms stay hidden.
