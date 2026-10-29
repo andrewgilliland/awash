@@ -150,6 +150,10 @@ _Avoid_: Recoil, push
 The Waking Coast's fish-man enemy: it patrols a tidal pool and lunges with a hooked spear after a wind-up.
 _Avoid_: Sahagin, fish-man (as a name)
 
+**Storm Wisp**:
+The Waking Coast's flying enemy: a knot of mist and lightning that drifts over exposed heights. It crackles when the Player comes near, arcs lightning all around itself, then rests.
+_Avoid_: Gas cloud, wisp (alone), spark
+
 ## Menus
 
 **Dialogue box**:
