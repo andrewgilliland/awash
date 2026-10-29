@@ -19,6 +19,8 @@ key_areas:
   - wreck graveyard
   - sea cave
   - rune road
+  - Warden's gate
+  - undertow
 ---
 
 ## Description

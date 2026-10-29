@@ -14,6 +14,15 @@ const RUNE_ROAD_PATH := "res://scenes/rooms/waking_coast_6.tscn"
 # Up the rune road's steps to the gate, jumping each one when the walk stops at it.
 const RUNE_ROAD_EAST: Array[float] = [56.0, 104.0, 168.0, 232.0, 300.0]
 const RUNE_ROAD_HEIGHTS_Y := 48.0
+const WARDENS_GATE_PATH := "res://scenes/rooms/waking_coast_7.tscn"
+const TIDEFEN_PATH := "res://scenes/rooms/waking_coast_8.tscn"
+const UNDERTOW_PATH := "res://scenes/rooms/waking_coast_9.tscn"
+const TIDEFEN_SAND_Y := 112.0
+# Up onto Tidefen's walkway: straight up onto the ledge from under it, then on to the walkway.
+const TIDEFEN_CLIMB := [[0, 40.0, 80.0], [1, 56.0, 64.0]]
+const TIDEFEN_STALL_X := 250.0
+# West along the undertow from the well's shaft: through three pools and over two rocks.
+const UNDERTOW_WEST: Array[float] = [470.0, 400.0, 280.0, 200.0, 90.0, 20.0]
 # Walking the graveyard's beach east to the sinkhole, and the cave's floor west to the tunnel:
 # points to walk to, jumping out of a pool when the walk falls short.
 const GRAVEYARD_BEACH_EAST: Array[float] = [88.0, 150.0, 186.0, 250.0, 296.0]
@@ -79,6 +88,13 @@ func _init() -> void:
 		"Player jumps the sinkhole onto the rune road and back", _playtest_jumps_to_rune_road
 	)
 	await _run_playtest_async("Player climbs the rune road to its gate", _playtest_climbs_rune_road)
+	await _run_playtest_async(
+		"Player walks through the Warden's gate into Tidefen", _playtest_walks_to_tidefen
+	)
+	await _run_playtest_async("Player climbs onto Tidefen's walkway", _playtest_climbs_tidefen)
+	await _run_playtest_async(
+		"Tidefen's well drops home through the undertow", _playtest_drops_home
+	)
 	await _run_playtest_async("Sword defeats the Scavenger", _playtest_sword_defeats_scavenger)
 	await _run_playtest_async("Scavenger's lunge hurts the Player", _playtest_lunge_hurts_player)
 	await _run_playtest_async("Player defeat starts the Run over", _playtest_defeat_starts_over)
@@ -496,6 +512,93 @@ func _playtest_climbs_rune_road() -> bool:
 	valid = valid and absf(player.global_position.y - RUNE_ROAD_HEIGHTS_Y) < 1.0
 	await _leave_scene()
 	return valid
+
+
+# From the rune road's heights east through the Warden's gate, down into its arena and on into
+# Tidefen.
+func _playtest_walks_to_tidefen() -> bool:
+	var run := root.get_node_or_null("RunState")
+	if run == null:
+		return false
+	run.call("start_run")
+	run.call("enter_room", &"waking_coast_6", &"east")
+	change_scene_to_file(RUNE_ROAD_PATH)
+	var valid := await _walk_until_scene(&"move_right", WARDENS_GATE_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_7"
+	valid = valid and await _walk_until_scene(&"move_right", TIDEFEN_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_8"
+	var player := _current_player()
+	valid = valid and player != null and player.global_position.x < 40.0
+	valid = valid and absf(player.global_position.y - TIDEFEN_SAND_Y) < 1.0
+	await _leave_scene()
+	return valid
+
+
+# From Tidefen's sand up onto the ledge, then the walkway, and along it to the shop's stall.
+func _playtest_climbs_tidefen() -> bool:
+	var player := await _enter_room(&"waking_coast_8", &"west", TIDEFEN_PATH)
+	if player == null:
+		await _leave_scene()
+		return false
+	var valid := true
+	for step in TIDEFEN_CLIMB:
+		await _walk_to_x(player, step[1])
+		await _jump_toward(player, step[0])
+		valid = valid and player.is_on_floor() and absf(player.global_position.y - step[2]) < 1.0
+	await _walk_to_x(player, TIDEFEN_STALL_X)
+	valid = valid and absf(player.global_position.x - TIDEFEN_STALL_X) < 4.0
+	valid = valid and absf(player.global_position.y - TIDEFEN_CLIMB[-1][2]) < 1.0
+	await _leave_scene()
+	return valid
+
+
+# The way home with real input: wade into Tidefen's well, run the undertow west, through the
+# sea cave and out at the salt cliffs' foot. The undertow's Scavenger is taken out first.
+func _playtest_drops_home() -> bool:
+	var player := await _enter_room(&"waking_coast_8", &"west", TIDEFEN_PATH)
+	if player == null:
+		await _leave_scene()
+		return false
+	var run := root.get_node("RunState")
+	var valid := await _walk_until_scene(&"move_right", UNDERTOW_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_9"
+	player = _current_player()
+	valid = valid and player != null and player.is_on_floor() and player.global_position.x > 620.0
+	if not valid:
+		await _leave_scene()
+		return false
+	current_scene.get_node(SCAVENGER_PATH).free()
+	await _wade_to(player, UNDERTOW_WEST)
+	valid = await _walk_until_scene(&"move_left", SEA_CAVE_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_5"
+	player = _current_player()
+	valid = valid and player != null
+	if not valid:
+		await _leave_scene()
+		return false
+	await _wade_to(player, SEA_CAVE_WEST)
+	valid = await _walk_until_scene(&"move_left", SALT_CLIFFS_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_3"
+	player = _current_player()
+	valid = valid and player != null
+	valid = valid and player.global_position.distance_to(SALT_CLIFFS_CAVE_ENTRY) < 1.0
+	await _leave_scene()
+	return valid
+
+
+# Starts a fresh Run in a Room at an Entry and waits for the Player to land.
+func _enter_room(room_id: StringName, entry_id: StringName, path: String) -> CharacterBody2D:
+	var run := root.get_node_or_null("RunState")
+	if run == null:
+		return null
+	run.call("start_run")
+	run.call("enter_room", room_id, entry_id)
+	change_scene_to_file(path)
+	var landed := await _frames_until(
+		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
+		SETTLE_FRAME_LIMIT
+	)
+	return _current_player() if landed else null
 
 
 # Walks through each point in turn, jumping toward it whenever a pool's edge stops the walk.
