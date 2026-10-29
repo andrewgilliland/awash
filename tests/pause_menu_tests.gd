@@ -4,7 +4,7 @@ const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const MENU_ROOT := "CenterContainer/MenuPanel/MarginContainer/VBoxContainer/"
 const PANEL_NAMES: Array[String] = ["Stats", "Equipment", "Map"]
 const SCREEN_SIZE := Vector2(160, 144)
-const PIXEL_FONT_PATH := "res://assets/fonts/awash_pixel_5x7.png"
+const COMPACT_FONT_PATH := "res://assets/fonts/awash_pixel_3x5.png"
 
 # Needs a root that is already in the tree: the Pause menu pauses through get_tree().
 var _root: Window
@@ -24,7 +24,7 @@ func get_tests() -> Array:
 		["Pause menu pairs every button with a Panel", _test_pairs_buttons_with_panels],
 		["Pause menu disables a button with no Panel", _test_disables_unpaired_button],
 		["Pause menu fits the screen", _test_fits_the_screen],
-		["Pause menu text uses the pixel font", _test_text_uses_pixel_font],
+		["Pause menu text uses the compact pixel font", _test_text_uses_pixel_font],
 		["Map Panel names the Room's region", _test_map_names_region],
 		["Map keeps far Rooms inside its Panel", _test_map_clips_far_rooms],
 	]
@@ -131,10 +131,13 @@ func _test_text_uses_pixel_font() -> bool:
 		if node is not Label and node is not Button:
 			continue
 		var font := (node as Control).get_theme_font(&"font")
-		valid = valid and font != null and font.resource_path == PIXEL_FONT_PATH
+		valid = valid and font != null and font.resource_path == COMPACT_FONT_PATH
 		var text: String = node.text
 		for i in text.length():
 			valid = valid and font != null and font.has_char(text.unicode_at(i))
+		# The menu's own look still applies around the smaller text.
+		if node is Button:
+			valid = valid and (node as Button).get_theme_stylebox(&"focus") is StyleBoxFlat
 	_close(menu)
 	return valid
 

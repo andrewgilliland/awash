@@ -1,0 +1,25 @@
+[remap]
+
+importer="font_data_image"
+type="FontFile"
+uid="uid://bgdjvfgsjjgcq"
+path="res://.godot/imported/awash_pixel_3x5.png-1a221f9d9968404bdbad6c456f53e1e9.fontdata"
+
+[deps]
+
+source_file="res://assets/fonts/awash_pixel_3x5.png"
+dest_files=["res://.godot/imported/awash_pixel_3x5.png-1a221f9d9968404bdbad6c456f53e1e9.fontdata"]
+
+[params]
+
+character_ranges=PackedStringArray("0x20-0x7E")
+kerning_pairs=PackedStringArray()
+columns=16
+rows=6
+image_margin=Rect2i(0, 0, 0, 0)
+character_margin=Rect2i(0, 0, 0, 0)
+ascent=5
+descent=1
+fallbacks=[]
+compress=true
+scaling_mode=2
