@@ -18,6 +18,11 @@ const DEFEAT_BLINK_TIME := 0.15
 const KNOCKBACK := Vector2(90.0, -120.0)
 # The sword's reach, in front of the Player when facing right.
 const SWORD_OFFSET := Vector2(12.0, -8.0)
+# What a charged Attack costs, against a quick one's Hitbox.DEFAULT_DAMAGE.
+const CHARGED_DAMAGE := 20
+# A full Charge makes the sword blink bright.
+const CHARGED_GLOW := Color(2.0, 2.0, 2.0)
+const CHARGED_BLINK_TIME := 0.08
 
 @export var move_speed: float = 80.0
 @export var acceleration: float = 600.0
@@ -168,8 +173,17 @@ func _on_controller_stepped() -> void:
 	_rig.show(controller.state, controller.facing, controller.is_moving)
 	_sword_hitbox.position = Vector2(SWORD_OFFSET.x * controller.facing, SWORD_OFFSET.y)
 	var attacking := controller.state == PlayerController.State.ATTACK
+	if attacking:
+		_sword_hitbox.damage = (
+			CHARGED_DAMAGE if controller.charged_attack else Hitbox.DEFAULT_DAMAGE
+		)
 	if _sword_hitbox.active != attacking:
 		_sword_hitbox.active = attacking
+	var lit := (
+		controller.is_fully_charged()
+		and fmod(controller.time_in_state, CHARGED_BLINK_TIME * 2.0) < CHARGED_BLINK_TIME
+	)
+	_sword_sprite.modulate = CHARGED_GLOW if lit else Color.WHITE
 
 
 func _on_controller_state_changed(

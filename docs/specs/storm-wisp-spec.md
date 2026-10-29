@@ -6,11 +6,11 @@ The Storm Wisp is the Waking Coast's second enemy (see `docs/enemies/storm-wisp.
 
 ## Behavior
 
-- It has 20 Health, two sword hits, flies through the world without colliding, and drifts across its stretch of sky at 16 pixels a second. It turns at the ends, and bobs 4 pixels up and down around the height it is placed at.
+- It has 20 Health, two quick sword hits or one Charged Attack, flies through the world without colliding, and drifts across its stretch of sky at 16 pixels a second. It turns at the ends, and bobs 4 pixels up and down around the height it is placed at.
 - When the Player comes within 32 pixels, it stops and **crackles** for 0.7 seconds.
-- It then **arcs** for 0.3 seconds. Its lightning hitbox, a circle 15 pixels across from its centre, is live, and costs the Player 10 Health.
+- It then **arcs** for 0.3 seconds. Its lightning hitbox, a circle 15 pixels across from its centre, is live, and costs the Player 15 Health, more than a Scavenger's spear.
 - It **rests**, dim and still, for 0.9 seconds, then drifts again. Resting is the moment to strike.
-- A sword hit costs it 10 Health, ends any crackle or arc, and pushes it away at 70 pixels a second, slowing over 0.35 seconds. It is invulnerable for 0.3 seconds after a hit, so one swing lands once.
+- A sword hit costs it 10 Health, or 20 for a Charged Attack, ends any crackle or arc, and pushes it away at 70 pixels a second, slowing over 0.35 seconds. It is invulnerable for 0.3 seconds after a hit, so one swing lands once.
 - At 0 Health it stops, blinks for 0.5 seconds, and is gone.
 - It hovers about 14 pixels above the ground it guards, where a swing from the ground reaches it and its arc reaches the Player.
 

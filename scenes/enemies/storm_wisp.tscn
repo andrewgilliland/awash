@@ -44,6 +44,7 @@ collision_mask = 4
 monitoring = false
 monitorable = false
 script = ExtResource("3_hit")
+damage = 15
 
 [node name="Shape" type="CollisionShape2D" parent="ArcHitbox"]
 shape = SubResource("CircleShape2D_arc0")

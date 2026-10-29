@@ -48,6 +48,10 @@ _Avoid_: Wind-up, hold
 The Player state from melee release until the swing finishes: facing is locked, jumping is not possible, and horizontal movement bleeds to a stop.
 _Avoid_: Swing, strike (as state names)
 
+**Charged Attack**:
+An Attack let go after a full Charge, half a second of holding melee. It costs twice what a quick one does, and the sword blinks once the Charge is full.
+_Avoid_: Power attack, heavy attack, charge shot
+
 ## World
 
 **Run**:
@@ -117,7 +121,7 @@ A consumable used in exploration or combat, such as a Restorative, bought at a S
 _Avoid_: Item, consumable, loot (as the general term)
 
 **Tide Draught**:
-The first Restorative: a Supply that restores 2 Health.
+The first Restorative: a Supply that restores 20 Health.
 _Avoid_: Potion, health potion
 
 **Salvage**:
@@ -131,7 +135,7 @@ _Avoid_: Memory shard, flashback item
 ## Combat
 
 **Health**:
-How much more harm something can take, counted in tens: a hit costs 10. Reaching 0 is defeat. The Player's carries from Room to Room for the whole Run.
+How much more harm something can take, counted in tens. A plain hit costs 10; stronger ones, like a Storm Wisp's arc or a Charged Attack, cost more. Reaching 0 is defeat. The Player's carries from Room to Room for the whole Run.
 _Avoid_: HP, hit points, life
 
 **Health bar**:

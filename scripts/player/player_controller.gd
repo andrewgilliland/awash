@@ -31,11 +31,15 @@ var friction: float = 800.0
 var jump_velocity: float = -260.0
 # How long a hit takes control away.
 var stun_time: float = 0.3
+# How long melee must be held for a full Charge.
+var charge_time: float = 0.5
 
 var state: State = State.IDLE
 var facing: float = -1.0
 var is_moving: bool = false
 var velocity: Vector2 = Vector2.ZERO
+# Whether the current or last Attack was let go from a full Charge.
+var charged_attack: bool = false
 # How long the Player has been in its current state; while state_changed is emitted, how
 # long it was in the state it just left.
 var time_in_state: float = 0.0
@@ -85,10 +89,16 @@ func _step_in_control(frame: Frame, delta: float) -> void:
 		if frame.melee_held:
 			state = State.CHARGE
 		elif state == State.CHARGE:
+			charged_attack = is_fully_charged()
 			state = State.ATTACK
 
 	_update_horizontal_velocity(frame.direction, delta)
 	_update_locomotion_state(frame, on_floor)
+
+
+# Melee has been held long enough that letting go makes a charged Attack.
+func is_fully_charged() -> bool:
+	return state == State.CHARGE and time_in_state >= charge_time
 
 
 func _update_horizontal_velocity(direction: float, delta: float) -> void:

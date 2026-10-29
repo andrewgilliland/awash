@@ -59,6 +59,8 @@ const SCAVENGER_PATH := "Enemies/Scavenger"
 const MAX_SWINGS := 8
 # What any enemy hit costs the Player.
 const ONE_HIT := 10
+# What the Storm Wisp's arc costs: a stronger hit than the spear's.
+const ARC_HIT := 15
 
 
 func _init() -> void:
@@ -91,6 +93,9 @@ func _init() -> void:
 	await _run_playtest_async("Player climbs the rune road to its gate", _playtest_climbs_rune_road)
 	await _run_playtest_async("Sword disperses the Storm Wisp", _playtest_sword_disperses_wisp)
 	await _run_playtest_async("Storm Wisp's arc hurts the Player", _playtest_arc_hurts_player)
+	await _run_playtest_async(
+		"A charged Attack disperses the Storm Wisp in one blow", _playtest_charged_wisp
+	)
 	await _run_playtest_async(
 		"Player walks through the Warden's gate into Tidefen", _playtest_walks_to_tidefen
 	)
@@ -566,7 +571,32 @@ func _playtest_arc_hurts_player() -> bool:
 	var health = player.get("health")
 	var hurt := await _frames_until(func() -> bool: return health.current < health.maximum, 180)
 	await _frames(6)
-	var valid: bool = hurt and health.current == health.maximum - ONE_HIT
+	var valid: bool = hurt and health.current == health.maximum - ARC_HIT
+	await _leave_scene()
+	return valid
+
+
+# Charges just beyond the Wisp's reach through its crackle and arc, then steps in while it rests
+# and lets go: one swing.
+func _playtest_charged_wisp() -> bool:
+	var player := await _enter_room(&"waking_coast_6", &"east", RUNE_ROAD_PATH)
+	var wisp := (
+		current_scene.get_node_or_null(STORM_WISP_PATH) as Node2D if player != null else null
+	)
+	if wisp == null:
+		await _leave_scene()
+		return false
+	var brain = wisp.get("brain")
+	await _stand_by_wisp(player, wisp, WISP_WATCH_DISTANCE)
+	_press(&"melee_attack")
+	var rested := await _frames_until(func() -> bool: return brain.state == brain.State.REST, 180)
+	var controller = player.get("controller")
+	var valid: bool = rested and controller.is_fully_charged()
+	var side := signf(player.global_position.x - wisp.global_position.x)
+	player.global_position.x = wisp.global_position.x + side * WISP_STRIKE_DISTANCE
+	await _frames(2)
+	_release(&"melee_attack")
+	valid = valid and await _frames_until(func() -> bool: return not is_instance_valid(wisp), 90)
 	await _leave_scene()
 	return valid
 
