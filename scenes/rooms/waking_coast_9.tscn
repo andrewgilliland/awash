@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=4 uid="uid://b688tn8h740ui"]
+[gd_scene load_steps=9 format=4 uid="uid://b688tn8h740ui"]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_6drkr"]
 [ext_resource type="TileSet" uid="uid://87k8wahvc2uo" path="res://assets/tilesets/waking_coast_2.tres" id="2_lflsc"]
 [ext_resource type="PackedScene" uid="uid://b7jkme67anbk7" path="res://scenes/enemies/scavenger.tscn" id="3_yqqv3"]
 [ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="4_iwtkp"]
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="5_ibv26"]
+[ext_resource type="PackedScene" uid="uid://bp00p0ropehmt" path="res://scenes/enemies/wraith.tscn" id="6_wraith"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_r5npm"]
 normal = Vector2(-1, 0)
@@ -35,6 +36,11 @@ tile_set = ExtResource("2_lflsc")
 position = Vector2(336, 104)
 patrol_left = 310.0
 patrol_right = 362.0
+
+[node name="Wraith" parent="Enemies" instance=ExtResource("6_wraith")]
+position = Vector2(496, 80)
+haunt_left = 448.0
+haunt_right = 528.0
 
 [node name="Bounds" type="StaticBody2D" parent="."]
 collision_mask = 0

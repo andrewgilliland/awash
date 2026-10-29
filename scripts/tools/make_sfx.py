@@ -147,6 +147,18 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     ),
     # Defeated: it hisses away on the wind.
     "storm_wisp_defeat": lambda: mix(noise(0.5, 6000, 300, seed=11), sweep(0.3, 700, 180, duty=0.25)),
+    # The Wraith manifesting: a high wail that rises and swells over the whole manifest, so the
+    # lash can be heard coming.
+    "wraith_wail": lambda: growl(0.5, 330, 620, tremolo_hz=7),
+    # Its lash: a cold whoosh of claw through air.
+    "wraith_lash": lambda: mix(noise(0.2, 2500, 7000, seed=12), sweep(0.14, 500, 900, duty=0.25)),
+    # Struck on its anchor: a crack of stone.
+    "wraith_hurt": lambda: mix(noise(0.08, 9000, 1500, seed=13), sweep(0.12, 300, 110, duty=0.125)),
+    # Defeated: it sighs away into the water.
+    "wraith_defeat": lambda: mix(
+        sweep(0.6, 440, 110, duty=0.5, vibrato_hz=6, vibrato_depth=0.05),
+        bubbles(5, 0.06, 160, 420, seed=14),
+    ),
     # Menus: a soft tick as the focus moves, and a rising chime when the game starts.
     "ui_move": lambda: sweep(0.04, 880, 820, duty=0.25),
     "ui_start": lambda: notes([392, 523, 659, 784], 0.07, duty=0.5),

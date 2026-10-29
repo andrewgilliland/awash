@@ -166,6 +166,14 @@ _Avoid_: Sahagin, fish-man (as a name)
 The Waking Coast's flying enemy: a knot of mist and lightning that drifts over exposed heights. It crackles when the Player comes near, arcs lightning all around itself, then rests.
 _Avoid_: Gas cloud, wisp (alone), spark
 
+**Wraith**:
+The Waking Coast's spirit enemy: a see-through oathkeeper that haunts the tunnels under the coast. The sword passes through it until it manifests and lashes out; then, for a moment, its Rune anchor shows and can be struck.
+_Avoid_: Ghost, specter, phantom
+
+**Rune anchor**:
+The glowing stone lodged in a Wraith's chest, binding it to the coast. It is the only part of a Wraith the sword can hit, and only while it shows.
+_Avoid_: Core, weak point, heart
+
 ## Menus
 
 **Dialogue box**:

@@ -56,11 +56,19 @@ const PlayerController := preload("res://scripts/player/player_controller.gd")
 # The sand at the tidal pool's west edge, where the Scavenger can reach and be reached.
 const POOL_EDGE := Vector2(122, 96)
 const SCAVENGER_PATH := "Enemies/Scavenger"
+const WRAITH_PATH := "Enemies/Wraith"
+const UNDERTOW_FLOOR_Y := 96.0
+# Where to stand by the Wraith: near enough to draw out its lash, clear of the lash while it
+# wails, and in sword reach of its anchor.
+const WRAITH_BAIT_DISTANCE := 18.0
+const WRAITH_CLEAR_DISTANCE := 40.0
+const WRAITH_STRIKE_DISTANCE := 14.0
 const MAX_SWINGS := 8
 # What any enemy hit costs the Player.
 const ONE_HIT := 10
-# What the Storm Wisp's arc costs: a stronger hit than the spear's.
+# What the Storm Wisp's arc and the Wraith's lash cost: stronger hits than the spear's.
 const ARC_HIT := 15
+const LASH_HIT := 15
 
 
 func _init() -> void:
@@ -100,6 +108,10 @@ func _init() -> void:
 		"Player walks through the Warden's gate into Tidefen", _playtest_walks_to_tidefen
 	)
 	await _run_playtest_async("Player climbs onto Tidefen's walkway", _playtest_climbs_tidefen)
+	await _run_playtest_async(
+		"Player baits the Wraith's lash, then strikes its anchor", _playtest_strikes_wraith
+	)
+	await _run_playtest_async("Wraith's lash hurts the Player", _playtest_lash_hurts_player)
 	await _run_playtest_async(
 		"Tidefen's well drops home through the undertow", _playtest_drops_home
 	)
@@ -498,7 +510,8 @@ func _playtest_climbs_tidefen() -> bool:
 
 
 # The way home with real input: wade into Tidefen's well, run the undertow west, through the
-# sea cave and out at the salt cliffs' foot. The undertow's Scavenger is taken out first.
+# sea cave and out at the salt cliffs' foot. The undertow's Scavenger and Wraith are taken out
+# first.
 func _playtest_drops_home() -> bool:
 	var player := await _enter_room(&"waking_coast_8", &"west", TIDEFEN_PATH)
 	if player == null:
@@ -513,6 +526,7 @@ func _playtest_drops_home() -> bool:
 		await _leave_scene()
 		return false
 	current_scene.get_node(SCAVENGER_PATH).free()
+	current_scene.get_node(WRAITH_PATH).free()
 	await _wade_to(player, UNDERTOW_WEST)
 	valid = await _walk_until_scene(&"move_left", SEA_CAVE_PATH)
 	valid = valid and run.get("room_id") == &"waking_coast_5"
@@ -599,6 +613,69 @@ func _playtest_charged_wisp() -> bool:
 	valid = valid and await _frames_until(func() -> bool: return not is_instance_valid(wisp), 90)
 	await _leave_scene()
 	return valid
+
+
+# Steps in to draw out the Wraith's lash, backs away while it wails, and steps back in to
+# strike its anchor while it shows, until it is gone, untouched.
+func _playtest_strikes_wraith() -> bool:
+	var player := await _enter_room(&"waking_coast_9", &"west", UNDERTOW_PATH)
+	var wraith := current_scene.get_node_or_null(WRAITH_PATH) as Node2D if player != null else null
+	if wraith == null:
+		await _leave_scene()
+		return false
+	var brain = wraith.get("brain")
+	var health = player.get("health")
+	for swing in MAX_SWINGS:
+		if not is_instance_valid(wraith):
+			break
+		await _stand_by_wraith(player, wraith, WRAITH_BAIT_DISTANCE)
+		await _frames_until(
+			func() -> bool:
+				return not is_instance_valid(wraith) or brain.state == brain.State.MANIFEST,
+			180
+		)
+		if not is_instance_valid(wraith):
+			break
+		await _stand_by_wraith(player, wraith, WRAITH_CLEAR_DISTANCE)
+		await _frames_until(func() -> bool: return brain.state == brain.State.EXPOSED, 120)
+		await _stand_by_wraith(player, wraith, WRAITH_STRIKE_DISTANCE)
+		_press(&"melee_attack")
+		await _frames(3)
+		_release(&"melee_attack")
+		await _frames(30)
+	var valid := await _frames_until(func() -> bool: return not is_instance_valid(wraith), 90)
+	valid = valid and health.current == health.maximum
+	await _leave_scene()
+	return valid
+
+
+# Stands inside the Wraith's reach until its lash lands.
+func _playtest_lash_hurts_player() -> bool:
+	var player := await _enter_room(&"waking_coast_9", &"west", UNDERTOW_PATH)
+	var wraith := current_scene.get_node_or_null(WRAITH_PATH) as Node2D if player != null else null
+	if wraith == null:
+		await _leave_scene()
+		return false
+	await _stand_by_wraith(player, wraith, WRAITH_BAIT_DISTANCE)
+	var health = player.get("health")
+	var hurt := await _frames_until(func() -> bool: return health.current < health.maximum, 180)
+	await _frames(6)
+	var valid: bool = hurt and health.current == health.maximum - LASH_HIT
+	await _leave_scene()
+	return valid
+
+
+# Puts the Player on the floor a distance from the Wraith, on the side with more room in its
+# haunt, facing it.
+func _stand_by_wraith(player: CharacterBody2D, wraith: Node2D, distance: float) -> void:
+	var side := 1.0 if wraith.global_position.x < 488.0 else -1.0
+	var toward := &"move_left" if side > 0.0 else &"move_right"
+	_press(toward)
+	await _frames(1)
+	_release(toward)
+	player.global_position = Vector2(wraith.global_position.x + side * distance, UNDERTOW_FLOOR_Y)
+	player.velocity = Vector2.ZERO
+	await _frames(2)
 
 
 # Puts the Player on the heights a distance to the Wisp's open side, facing it.
