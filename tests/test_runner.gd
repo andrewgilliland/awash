@@ -1,13 +1,35 @@
 extends SceneTree
 
 const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
-const MAIN_SCENE_PATH := "res://scenes/main.tscn"
+const FIRST_ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
+const START_SCREEN_PATH := "res://scenes/ui/start_screen.tscn"
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const PlayerControllerTests := preload("res://tests/player_controller_tests.gd")
 const PlayerRigTests := preload("res://tests/player_rig_tests.gd")
 const RunStateTests := preload("res://tests/run_state_tests.gd")
 const PauseMenuTests := preload("res://tests/pause_menu_tests.gd")
+const WakingCoastTilesetTests := preload("res://tests/waking_coast_tileset_tests.gd")
+const WakingCoastRoomTests := preload("res://tests/waking_coast_room_tests.gd")
+const WorldMapTests := preload("res://tests/world_map_tests.gd")
+const WakingCoastRoom2Tests := preload("res://tests/waking_coast_room_2_tests.gd")
+const WakingCoastRoom3Tests := preload("res://tests/waking_coast_room_3_tests.gd")
+const WakingCoastRoom4Tests := preload("res://tests/waking_coast_room_4_tests.gd")
+const WakingCoastRoom5Tests := preload("res://tests/waking_coast_room_5_tests.gd")
+const WakingCoastRoom6Tests := preload("res://tests/waking_coast_room_6_tests.gd")
+const RoomExitTests := preload("res://tests/room_exit_tests.gd")
+const HealthTests := preload("res://tests/health_tests.gd")
+const ScavengerBrainTests := preload("res://tests/scavenger_brain_tests.gd")
+const CombatSceneTests := preload("res://tests/combat_scene_tests.gd")
+const PlayerSoundsTests := preload("res://tests/player_sounds_tests.gd")
+const PlayerSoundSceneTests := preload("res://tests/player_sound_scene_tests.gd")
+const StartScreenTests := preload("res://tests/start_screen_tests.gd")
+const MusicTests := preload("res://tests/music_tests.gd")
+const DialogueTests := preload("res://tests/dialogue_tests.gd")
+const IntroTests := preload("res://tests/intro_tests.gd")
+const InteractionTests := preload("res://tests/interaction_tests.gd")
+const ScavengerSoundsTests := preload("res://tests/scavenger_sounds_tests.gd")
+const ScavengerSoundSceneTests := preload("res://tests/scavenger_sound_scene_tests.gd")
 const STEP_DELTA := 0.1
 var _failures: int = 0
 
@@ -22,18 +44,83 @@ func _init() -> void:
 	var run_state_tests := RunStateTests.new()
 	for test in run_state_tests.get_tests():
 		_run_test(test[0], test[1])
+	var tileset_tests := WakingCoastTilesetTests.new()
+	for test in tileset_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_tests := WakingCoastRoomTests.new()
+	for test in room_tests.get_tests():
+		_run_test(test[0], test[1])
+	var world_map_tests := WorldMapTests.new()
+	for test in world_map_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_2_tests := WakingCoastRoom2Tests.new()
+	for test in room_2_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_3_tests := WakingCoastRoom3Tests.new()
+	for test in room_3_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_4_tests := WakingCoastRoom4Tests.new()
+	for test in room_4_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_5_tests := WakingCoastRoom5Tests.new()
+	for test in room_5_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_6_tests := WakingCoastRoom6Tests.new()
+	for test in room_6_tests.get_tests():
+		_run_test(test[0], test[1])
+	var room_exit_tests := RoomExitTests.new()
+	for test in room_exit_tests.get_tests():
+		_run_test(test[0], test[1])
+	var health_tests := HealthTests.new()
+	for test in health_tests.get_tests():
+		_run_test(test[0], test[1])
+	var scavenger_brain_tests := ScavengerBrainTests.new()
+	for test in scavenger_brain_tests.get_tests():
+		_run_test(test[0], test[1])
+	var dialogue_tests := DialogueTests.new()
+	for test in dialogue_tests.get_tests():
+		_run_test(test[0], test[1])
+	var player_sounds_tests := PlayerSoundsTests.new()
+	for test in player_sounds_tests.get_tests():
+		_run_test(test[0], test[1])
+	var scavenger_sounds_tests := ScavengerSoundsTests.new()
+	for test in scavenger_sounds_tests.get_tests():
+		_run_test(test[0], test[1])
 
 	_run_test("Player scene wires the rig", _test_player_scene_wires_rig)
 	_run_test("Player faces movement direction", _test_player_faces_movement_direction)
 	_run_test("Player sprites follow the controller", _test_player_sprites_follow_controller)
 	_run_test("Player body reads attack finished once", _test_player_reads_attack_finished_once)
-	_run_test("Main scene loads", _test_main_scene_loads)
+	_run_test("Player sprite stands on its feet", _test_player_sprite_stands_on_feet)
+	_run_test("Game starts at the start screen", _test_game_starts_at_start_screen)
+	_run_test("First Room loads", _test_first_room_loads)
 	_run_test("Player appears at the Run's Entry", _test_player_appears_at_entry)
 
 	# Nodes join the tree only after the first frame; the Pause menu needs get_tree().
 	await process_frame
 	var pause_menu_tests := PauseMenuTests.new(root)
 	for test in pause_menu_tests.get_tests():
+		_run_test(test[0], test[1])
+	var combat_scene_tests := CombatSceneTests.new(root)
+	for test in combat_scene_tests.get_tests():
+		_run_test(test[0], test[1])
+	var player_sound_scene_tests := PlayerSoundSceneTests.new(root)
+	for test in player_sound_scene_tests.get_tests():
+		_run_test(test[0], test[1])
+	var start_screen_tests := StartScreenTests.new(root)
+	for test in start_screen_tests.get_tests():
+		_run_test(test[0], test[1])
+	var music_tests := MusicTests.new(root)
+	for test in music_tests.get_tests():
+		_run_test(test[0], test[1])
+	var intro_tests := IntroTests.new(root)
+	for test in intro_tests.get_tests():
+		_run_test(test[0], test[1])
+	var interaction_tests := InteractionTests.new(root)
+	for test in interaction_tests.get_tests():
+		_run_test(test[0], test[1])
+	var scavenger_sound_scene_tests := ScavengerSoundSceneTests.new(root)
+	for test in scavenger_sound_scene_tests.get_tests():
 		_run_test(test[0], test[1])
 
 	if _failures > 0:
@@ -177,8 +264,33 @@ func _step_with(controller: PlayerController, fields: Dictionary) -> void:
 	controller.step(frame, STEP_DELTA)
 
 
-func _test_main_scene_loads() -> bool:
-	var packed_scene := load(MAIN_SCENE_PATH) as PackedScene
+# The body frames draw the feet on their bottom row, so that row must meet the collision's base.
+func _test_player_sprite_stands_on_feet() -> bool:
+	var packed_scene := load(PLAYER_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		return false
+
+	var instance := packed_scene.instantiate() as CharacterBody2D
+	root.add_child(instance)
+	instance.call("_ready")
+	var sprite := instance.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	var collision := instance.get_node("CollisionShape2D") as CollisionShape2D
+	var capsule := collision.shape as CapsuleShape2D
+	var texture := sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
+	var sprite_bottom := sprite.position.y + sprite.offset.y + texture.get_height()
+	if sprite.centered:
+		sprite_bottom -= texture.get_height() / 2.0
+	var collision_bottom := collision.position.y + capsule.height / 2.0
+	instance.queue_free()
+	return is_equal_approx(sprite_bottom, collision_bottom)
+
+
+func _test_game_starts_at_start_screen() -> bool:
+	return ProjectSettings.get_setting("application/run/main_scene") == START_SCREEN_PATH
+
+
+func _test_first_room_loads() -> bool:
+	var packed_scene := load(FIRST_ROOM_PATH) as PackedScene
 	if packed_scene == null:
 		return false
 
@@ -190,13 +302,13 @@ func _test_main_scene_loads() -> bool:
 
 	var has_player := instance.get_node_or_null("Player") != null
 	var has_pause_menu := instance.get_node_or_null("CanvasLayer/PauseMenu") != null
-	var has_world := instance.get_node_or_null("WorldLayer") is TileMapLayer
+	var has_world := instance.get_node_or_null("Terrain") is TileMapLayer
 	instance.queue_free()
 	return has_player and has_world and has_pause_menu
 
 
 func _test_player_appears_at_entry() -> bool:
-	var packed_scene := load(MAIN_SCENE_PATH) as PackedScene
+	var packed_scene := load(FIRST_ROOM_PATH) as PackedScene
 	if packed_scene == null:
 		return false
 

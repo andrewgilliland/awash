@@ -18,7 +18,74 @@ func get_tests() -> Array:
 		["Controller keeps charge through a jump", _test_keeps_charge_through_jump],
 		["Controller attacks in the air", _test_attacks_in_air],
 		["Controller reports each state change once", _test_reports_each_state_change_once],
+		["Controller is knocked back by a hit", _test_knocked_back_by_hit],
+		["Controller ignores input while stunned", _test_ignores_input_while_stunned],
+		["Controller cancels an attack when hit", _test_hit_cancels_attack],
+		["Controller reports a jump, not a walk off a ledge", _test_reports_jump],
 	]
+
+
+func _test_reports_jump() -> bool:
+	var controller := PlayerController.new()
+	var jumps := [0]
+	controller.jumped.connect(func() -> void: jumps[0] += 1)
+
+	var frame := _next_frame(controller)
+	frame.on_floor = false
+	controller.step(frame, DELTA)
+	var valid: bool = controller.state == PlayerController.State.JUMP and jumps[0] == 0
+
+	frame = _next_frame(controller)
+	frame.jump_pressed = true
+	controller.step(frame, DELTA)
+	frame = _next_frame(controller)
+	frame.jump_pressed = true
+	frame.on_floor = false
+	controller.step(frame, DELTA)
+	return valid and jumps[0] == 1
+
+
+func _test_knocked_back_by_hit() -> bool:
+	var controller := _charged_controller()
+	var frame := _next_frame(controller)
+	frame.melee_held = true
+	frame.knockback = Vector2(90.0, -120.0)
+	controller.step(frame, DELTA)
+	var valid := controller.velocity == Vector2(90.0, -120.0)
+	return valid and controller.state == PlayerController.State.JUMP
+
+
+func _test_ignores_input_while_stunned() -> bool:
+	var controller := PlayerController.new()
+	var frame := _next_frame(controller)
+	frame.knockback = Vector2(-90.0, -120.0)
+	controller.step(frame, DELTA)
+
+	frame = _next_frame(controller)
+	frame.direction = 1.0
+	frame.jump_pressed = true
+	frame.melee_held = true
+	controller.step(frame, DELTA)
+	var valid := controller.velocity == Vector2(-90.0, -120.0)
+	valid = valid and controller.state == PlayerController.State.JUMP
+	valid = valid and controller.facing == -1.0
+
+	# Past the stun, input steers again.
+	for i in ceili(controller.stun_time / DELTA) + 1:
+		frame = _next_frame(controller)
+		frame.direction = 1.0
+		controller.step(frame, DELTA)
+	return valid and controller.state == PlayerController.State.WALK and controller.facing == 1.0
+
+
+func _test_hit_cancels_attack() -> bool:
+	var controller := _charged_controller()
+	controller.step(_next_frame(controller), DELTA)
+	var valid := controller.state == PlayerController.State.ATTACK
+	var frame := _next_frame(controller)
+	frame.knockback = Vector2(90.0, -120.0)
+	controller.step(frame, DELTA)
+	return valid and controller.state == PlayerController.State.JUMP
 
 
 func _test_starts_idle_facing_left() -> bool:

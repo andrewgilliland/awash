@@ -1,0 +1,107 @@
+[gd_scene load_steps=13 format=4 uid="uid://5rkpchv4phx6"]
+
+[ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_piiga"]
+[ext_resource type="Texture2D" uid="uid://df6yx4ak5xo7u" path="res://assets/backgrounds/waking_coast_2_backdrop.png" id="2_twnfb"]
+[ext_resource type="TileSet" uid="uid://87k8wahvc2uo" path="res://assets/tilesets/waking_coast_2.tres" id="3_g2c80"]
+[ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="4_4f723"]
+[ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="5_qtgvq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gbfvr"]
+atlas = ExtResource("2_twnfb")
+region = Rect2(0, 0, 320, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uscgx"]
+atlas = ExtResource("2_twnfb")
+region = Rect2(320, 0, 320, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0hhmj"]
+atlas = ExtResource("2_twnfb")
+region = Rect2(640, 0, 320, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ty88t"]
+atlas = ExtResource("2_twnfb")
+region = Rect2(960, 0, 320, 144)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8cl46"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gbfvr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uscgx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0hhmj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ty88t")
+}],
+"loop": true,
+"name": &"default",
+"speed": 6.66667
+}]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_bnp5k"]
+normal = Vector2(-1, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w8iih"]
+size = Vector2(8, 144)
+
+[node name="WakingCoast6" type="Node2D"]
+script = ExtResource("1_piiga")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Backdrop" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_8cl46")
+autoplay = "default"
+centered = false
+
+[node name="Trees" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAABAAEAAAAAAAkAAAABAAIAAAAAAAoAAAACAAEAAAABAAkAAAACAAIAAAABAAoAAAADAAEAAAACAAkAAAADAAIAAAACAAoAAAACAAMAAAADAAkAAAACAAQAAAADAAkAAAACAAUAAAADAAoAAAA=")
+tile_set = ExtResource("3_g2c80")
+
+[node name="Terrain" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAAAAYAAAABAAAAAAAAAAcAAAABAAEAAAAAAAgAAAABAAEAAAABAAYAAAABAAAAAAABAAcAAAABAAEAAAABAAgAAAABAAEAAAACAAYAAAABAAAAAAACAAcAAAABAAEAAAACAAgAAAABAAEAAAADAAYAAAABAAAAAAADAAcAAAABAAEAAAADAAgAAAABAAEAAAAEAAUAAAAAAAIAAAAEAAYAAAAAAAMAAAAEAAcAAAAAAAMAAAAEAAgAAAAAAAMAAAAFAAUAAAABAAIAAAAFAAYAAAABAAMAAAAFAAcAAAABAAMAAAAFAAgAAAABAAMAAAAGAAUAAAABAAIAAAAGAAYAAAABAAMAAAAGAAcAAAAHAAMAAAAGAAgAAAABAAMAAAAHAAUAAAABAAIAAAAHAAYAAAABAAMAAAAHAAcAAAABAAMAAAAHAAgAAAABAAMAAAAIAAQAAAAAAAIAAAAIAAUAAAAAAAMAAAAIAAYAAAAAAAMAAAAIAAcAAAAAAAMAAAAIAAgAAAAAAAMAAAAJAAQAAAABAAIAAAAJAAUAAAABAAMAAAAJAAYAAAABAAMAAAAJAAcAAAABAAMAAAAJAAgAAAABAAMAAAAKAAQAAAABAAIAAAAKAAUAAAABAAMAAAAKAAYAAAABAAQAAAAKAAcAAAABAAMAAAAKAAgAAAABAAMAAAALAAQAAAABAAIAAAALAAUAAAABAAMAAAALAAYAAAABAAMAAAALAAcAAAABAAMAAAALAAgAAAABAAMAAAAMAAMAAAAAAAIAAAAMAAQAAAAAAAMAAAAMAAUAAAAAAAMAAAAMAAYAAAAAAAMAAAAMAAcAAAAAAAMAAAAMAAgAAAAAAAMAAAANAAMAAAABAAIAAAANAAQAAAABAAMAAAANAAUAAAABAAMAAAANAAYAAAABAAMAAAANAAcAAAABAAMAAAANAAgAAAABAAMAAAAOAAMAAAABAAIAAAAOAAQAAAABAAMAAAAOAAUAAAABAAMAAAAOAAYAAAABAAMAAAAOAAcAAAABAAMAAAAOAAgAAAABAAMAAAAPAAMAAAABAAIAAAAPAAQAAAABAAMAAAAPAAUAAAAAAAQAAAAPAAYAAAABAAMAAAAPAAcAAAABAAMAAAAPAAgAAAABAAMAAAAQAAMAAAABAAIAAAAQAAQAAAABAAMAAAAQAAUAAAABAAMAAAAQAAYAAAABAAMAAAAQAAcAAAABAAMAAAAQAAgAAAABAAMAAAARAAMAAAABAAIAAAARAAQAAAABAAMAAAARAAUAAAABAAMAAAARAAYAAAABAAMAAAARAAcAAAAHAAMAAAARAAgAAAABAAMAAAASAAMAAAABAAIAAAASAAQAAAABAAMAAAASAAUAAAABAAMAAAASAAYAAAABAAMAAAASAAcAAAABAAMAAAASAAgAAAABAAMAAAATAAMAAAABAAIAAAATAAQAAAABAAMAAAATAAUAAAABAAMAAAATAAYAAAABAAMAAAATAAcAAAABAAMAAAATAAgAAAABAAMAAAA=")
+tile_set = ExtResource("3_g2c80")
+
+[node name="Props" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAABAAUAAAAHAAcAAAAGAAMAAAAFAAcAAAAGAAQAAAAGAAcAAAAKAAIAAAAFAAcAAAAKAAMAAAAGAAcAAAAQAAEAAAAFAAcAAAAQAAIAAAAGAAcAAAASAAEAAAAFAAcAAAASAAIAAAAGAAcAAAA=")
+tile_set = ExtResource("3_g2c80")
+
+[node name="Bounds" type="StaticBody2D" parent="."]
+collision_mask = 0
+
+[node name="East" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(320, 0)
+shape = SubResource("WorldBoundaryShape2D_bnp5k")
+
+[node name="Exits" type="Node2D" parent="."]
+
+[node name="west" type="Area2D" parent="Exits"]
+position = Vector2(-4, 72)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_4f723")
+room_id = &"waking_coast_4"
+entry_id = &"east"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/west"]
+shape = SubResource("RectangleShape2D_w8iih")
+
+[node name="Entries" type="Node2D" parent="."]
+
+[node name="west" type="Marker2D" parent="Entries"]
+position = Vector2(12, 96)
+
+[node name="Player" parent="." instance=ExtResource("5_qtgvq")]
+position = Vector2(12, 96)
+
+[node name="Camera2D" parent="Player" index="3"]
+limit_left = 0
+limit_top = 0
+limit_right = 320
+limit_bottom = 144
+
+[editable path="Player"]

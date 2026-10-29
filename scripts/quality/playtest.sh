@@ -18,6 +18,6 @@ elif ! command -v "$GODOT_BIN" >/dev/null 2>&1; then
 fi
 
 echo "Running deterministic headless playtests..."
-run_godot --headless --path "$PROJECT_ROOT" --script res://tests/playtest_runner.gd
+run_godot --headless --path "$PROJECT_ROOT" --fixed-fps 60 --script res://tests/playtest_runner.gd
 
 echo "Playtest pass complete."

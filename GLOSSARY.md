@@ -28,6 +28,14 @@ _Avoid_: Mode, action
 The horizontal direction the Player looks and strikes toward; left or right, never neutral.
 _Avoid_: Direction, orientation
 
+**Interact**:
+The button for using whatever the Player stands by: E, or Y / Triangle on a gamepad. It uses the nearest Interactable in reach, and does nothing while the Player is held still.
+_Avoid_: Action button, use, talk
+
+**Interactable**:
+Anything Interact can use, such as Mara. It reports being used and shows a bobbing arrow above itself while the Player is in reach; what using it does is up to its owner.
+_Avoid_: Usable, trigger, hotspot
+
 **Charge**:
 The Player state while melee is held: the sword is raised, movement continues, and facing is locked.
 _Avoid_: Wind-up, hold
@@ -47,10 +55,52 @@ One area of the world, loaded as a single scene.
 _Avoid_: Level, map, screen
 
 **Entry**:
-A named place in a Room where the Player appears on entering it. Each Room has a default Entry where a new Run begins.
+A named place in a Room where the Player appears on entering it. A new Run begins at the first Room's `start` Entry.
 _Avoid_: Spawn point, start position, door
 
+**Exit**:
+An edge of a Room that leads to an Entry in another Room. Crossing it enters that Room in the Run and loads its scene.
+_Avoid_: Door, portal, transition, warp
+
+**Region theme**:
+The music of a region, such as the Waking Coast's. It plays in each of the region's Rooms and carries on unbroken through Exits between them.
+_Avoid_: Level music, BGM, soundtrack
+
+**Intro**:
+Chapter 1's opening on a new game from the start screen: Vael wakes in the surf in the middle of the beach, and Mara comes in from the wreck, pulls his sword out of the sand and hands it to him as they talk. A restarted Run skips it.
+_Avoid_: Cutscene, prologue, tutorial
+
+## Combat
+
+**Health**:
+How many more hits something can take, in whole points. Reaching 0 is defeat.
+_Avoid_: HP, hit points, life
+
+**Hitbox**:
+The part of an attack that strikes, such as the Player's sword or a Scavenger's spear. It only strikes while live.
+_Avoid_: Damage box, attack area
+
+**Hurtbox**:
+The part of a body that can be struck by a Hitbox.
+_Avoid_: Hitbox (for the struck side), body
+
+**Knockback**:
+The throw a landed hit gives the struck body, away from the Hitbox.
+_Avoid_: Recoil, push
+
+**Scavenger**:
+The Waking Coast's fish-man enemy: it patrols a tidal pool and lunges with a hooked spear after a wind-up.
+_Avoid_: Sahagin, fish-man (as a name)
+
 ## Menus
+
+**Dialogue box**:
+Shows a conversation one line at a time, typed out, with the speaker's name; a press finishes a line or moves to the next. The Player is held still while it is open.
+_Avoid_: Text box, speech bubble, message window
+
+**Start screen**:
+Where the game opens: the AWASH logo over the coast, its looping theme, and a PRESS START prompt that opens START and QUIT. START begins a new Run.
+_Avoid_: Title screen, main menu, splash
 
 **Pause menu**:
 Pauses play and offers Resume, Quit and its Panels.
@@ -59,3 +109,7 @@ _Avoid_: Options menu, start menu
 **Panel**:
 One page of the Pause menu, opened from its menu button and closed with Back. Home is the Panel shown when no other is open.
 _Avoid_: Tab, screen, page
+
+**Map**:
+The Panel that draws each visited Room as a block, sized in screens, with the current Room's region and a dot where the Player stands. Unvisited Rooms stay hidden.
+_Avoid_: Minimap, world map, atlas

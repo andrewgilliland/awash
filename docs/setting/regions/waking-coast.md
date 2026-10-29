@@ -15,6 +15,10 @@ bosses: [../../enemies/nameless-warden.md]
 key_areas:
   - Black Surf
   - rune shore
+  - salt cliffs
+  - wreck graveyard
+  - sea cave
+  - rune road
 ---
 
 ## Description

@@ -1,0 +1,74 @@
+[gd_scene load_steps=12 format=3 uid="uid://b7jkme67anbk7"]
+
+[ext_resource type="Script" uid="uid://4yjhvi7vclm2" path="res://scripts/enemies/scavenger.gd" id="1_scav"]
+[ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
+[ext_resource type="Script" uid="uid://dk3355uvj2vwl" path="res://scripts/combat/hitbox.gd" id="3_hit"]
+[ext_resource type="AudioStream" uid="uid://cec0jmkysrq0d" path="res://assets/audio/sfx/scavenger_windup.wav" id="4_windup"]
+[ext_resource type="AudioStream" uid="uid://bkbno6c6q03lp" path="res://assets/audio/sfx/scavenger_lunge.wav" id="5_lunge"]
+[ext_resource type="AudioStream" uid="uid://dxi6b8subkgvi" path="res://assets/audio/sfx/scavenger_hurt.wav" id="6_hurt"]
+[ext_resource type="AudioStream" uid="uid://fq1telygdugx" path="res://assets/audio/sfx/scavenger_defeat.wav" id="7_defeat"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body0"]
+size = Vector2(10, 14)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt0"]
+size = Vector2(12, 14)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_spear"]
+size = Vector2(16, 8)
+
+[node name="Scavenger" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 8
+script = ExtResource("1_scav")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -7)
+shape = SubResource("RectangleShape2D_body0")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+texture_filter = 1
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("2_hurt")
+
+[node name="Shape" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -7)
+shape = SubResource("RectangleShape2D_hurt0")
+
+[node name="SpearHitbox" type="Area2D" parent="."]
+position = Vector2(10, -9)
+collision_layer = 16
+collision_mask = 4
+monitoring = false
+monitorable = false
+script = ExtResource("3_hit")
+
+[node name="Shape" type="CollisionShape2D" parent="SpearHitbox"]
+shape = SubResource("RectangleShape2D_spear")
+
+[node name="Sounds" type="Node2D" parent="."]
+position = Vector2(0, -8)
+
+[node name="Windup" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("4_windup")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Lunge" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("5_lunge")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Hurt" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("6_hurt")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Defeat" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("7_defeat")
+max_distance = 240.0
+bus = &"SFX"

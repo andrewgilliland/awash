@@ -6,7 +6,7 @@ This file provides guidance for coding agents working in this repository.
 
 - Name: Awash
 - Engine: Godot 4.4
-- Main scene: `res://scenes/main.tscn`
+- Main scene: `res://scenes/ui/start_screen.tscn` (the start screen; START loads the first Room, `res://scenes/rooms/waking_coast_1.tscn`)
 - Current language: GDScript
 
 ## Goals For Agents
@@ -61,7 +61,7 @@ This file provides guidance for coding agents working in this repository.
 - For pause/menu changes, verify at minimum:
   - `./scripts/quality/lint.sh`
   - `./scripts/quality/test.sh`
-- Run `./scripts/quality/playtest.sh` for behavior-sensitive changes in `main.tscn` or runtime flow.
+- Run `./scripts/quality/playtest.sh` for behavior-sensitive changes in a Room under `scenes/` or runtime flow.
 
 ## Branching And Pull Requests
 
@@ -79,3 +79,17 @@ This file provides guidance for coding agents working in this repository.
 - Stage only files related to the requested task.
 - Do not include unrelated scene/editor churn.
 - Keep commit messages short and descriptive.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in this repo's GitHub Issues, managed with the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five default triage labels, each named for its role (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.

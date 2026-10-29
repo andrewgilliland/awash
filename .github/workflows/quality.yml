@@ -57,6 +57,10 @@ jobs:
           source scripts/quality/godot_timeout.sh
           run_godot --headless --path . --import
 
+      # Proves the typecheck gate still rejects broken scripts before trusting its pass below.
+      - name: Typecheck self-test
+        run: ./scripts/quality/typecheck_selftest.sh
+
       - name: Typecheck
         run: ./scripts/quality/typecheck.sh
 

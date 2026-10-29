@@ -20,6 +20,8 @@ run_godot() {
 
 	local status=0
 	wait "$godot_pid" || status=$?
+	# Stop the watchdog now rather than waiting out its current one-second sleep.
+	kill "$watchdog_pid" 2>/dev/null || true
 	wait "$watchdog_pid" 2>/dev/null || true
 	return "$status"
 }

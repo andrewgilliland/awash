@@ -1,0 +1,49 @@
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://cgm30v4u24jhi"]
+
+[ext_resource type="FontFile" uid="uid://b2pxeecyf5njy" path="res://assets/fonts/awash_pixel_5x7.png" id="1_mk6y0"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_j4ty5"]
+content_margin_left = 2.0
+content_margin_top = 1.0
+content_margin_right = 2.0
+content_margin_bottom = 1.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nm4pw"]
+content_margin_left = 2.0
+content_margin_top = 1.0
+content_margin_right = 2.0
+content_margin_bottom = 1.0
+bg_color = Color(0.0941176, 0.223529, 0.192157, 1)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_2qc2x"]
+color = Color(0.321569, 0.388235, 0.54902, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0vcd6"]
+bg_color = Color(0, 0.156863, 0.219608, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.580392, 0.647059, 0.776471, 1)
+
+[resource]
+default_font = ExtResource("1_mk6y0")
+default_font_size = 8
+Button/colors/font_color = Color(0.580392, 0.647059, 0.776471, 1)
+Button/colors/font_disabled_color = Color(0.321569, 0.388235, 0.54902, 1)
+Button/colors/font_focus_color = Color(1, 1, 0.545098, 1)
+Button/colors/font_hover_color = Color(1, 1, 0.545098, 1)
+Button/colors/font_hover_pressed_color = Color(1, 1, 0.545098, 1)
+Button/colors/font_pressed_color = Color(1, 1, 0.545098, 1)
+Button/styles/disabled = SubResource("StyleBoxEmpty_j4ty5")
+Button/styles/focus = SubResource("StyleBoxFlat_nm4pw")
+Button/styles/hover = SubResource("StyleBoxFlat_nm4pw")
+Button/styles/hover_pressed = SubResource("StyleBoxFlat_nm4pw")
+Button/styles/normal = SubResource("StyleBoxEmpty_j4ty5")
+Button/styles/pressed = SubResource("StyleBoxFlat_nm4pw")
+HBoxContainer/constants/separation = 4
+HSeparator/constants/separation = 3
+HSeparator/styles/separator = SubResource("StyleBoxLine_2qc2x")
+Label/colors/font_color = Color(0.972549, 0.972549, 0.972549, 1)
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_0vcd6")
+VBoxContainer/constants/separation = 2

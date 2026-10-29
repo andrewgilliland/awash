@@ -1,0 +1,127 @@
+[gd_scene load_steps=13 format=4 uid="uid://ds70702jd85cp"]
+
+[ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_7cmpu"]
+[ext_resource type="Texture2D" uid="uid://df6yx4ak5xo7u" path="res://assets/backgrounds/waking_coast_2_backdrop.png" id="2_7v22y"]
+[ext_resource type="TileSet" uid="uid://87k8wahvc2uo" path="res://assets/tilesets/waking_coast_2.tres" id="3_22jwo"]
+[ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="4_uinnw"]
+[ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="5_4reif"]
+[ext_resource type="PackedScene" uid="uid://b7jkme67anbk7" path="res://scenes/enemies/scavenger.tscn" id="6_scav"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ntsve"]
+atlas = ExtResource("2_7v22y")
+region = Rect2(0, 0, 320, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1vajv"]
+atlas = ExtResource("2_7v22y")
+region = Rect2(320, 0, 320, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rk76a"]
+atlas = ExtResource("2_7v22y")
+region = Rect2(640, 0, 320, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g5dat"]
+atlas = ExtResource("2_7v22y")
+region = Rect2(960, 0, 320, 144)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_wpsy7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ntsve")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1vajv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rk76a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g5dat")
+}],
+"loop": true,
+"name": &"default",
+"speed": 6.66667
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fgj4w"]
+size = Vector2(8, 144)
+
+[node name="WakingCoast2" type="Node2D"]
+script = ExtResource("1_7cmpu")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Backdrop" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_wpsy7")
+autoplay = "default"
+centered = false
+
+[node name="FarTrees" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAEAAAAAAAEAAkAAAAEAAEAAAAEAAoAAAAFAAAAAAAFAAkAAAAFAAEAAAAFAAoAAAAGAAAAAAAGAAkAAAAGAAEAAAAGAAoAAAAFAAIAAAAHAAkAAAAFAAMAAAAHAAkAAAAFAAQAAAAHAAoAAAARAAAAAAAEAAkAAAARAAEAAAAEAAoAAAASAAAAAAAFAAkAAAASAAEAAAAFAAoAAAATAAAAAAAGAAkAAAATAAEAAAAGAAoAAAASAAIAAAAHAAkAAAASAAMAAAAHAAkAAAASAAQAAAAHAAoAAAA=")
+tile_set = ExtResource("3_22jwo")
+
+[node name="Trees" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAGAAEAAAAAAAkAAAAGAAIAAAAAAAoAAAAHAAEAAAABAAkAAAAHAAIAAAABAAoAAAAIAAEAAAACAAkAAAAIAAIAAAACAAoAAAAHAAMAAAADAAkAAAAHAAQAAAADAAkAAAAHAAUAAAADAAoAAAAJAAEAAAAAAAkAAAAJAAIAAAAAAAoAAAAKAAEAAAABAAkAAAAKAAIAAAABAAoAAAALAAEAAAACAAkAAAALAAIAAAACAAoAAAAKAAMAAAADAAkAAAAKAAQAAAADAAkAAAAKAAUAAAADAAoAAAA=")
+tile_set = ExtResource("3_22jwo")
+
+[node name="Wreck" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAARAAQAAAAAAAYAAAASAAQAAAACAAYAAAARAAUAAAAAAAYAAAASAAUAAAACAAYAAAA=")
+tile_set = ExtResource("3_22jwo")
+
+[node name="Terrain" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAAAAQAAAABAAIAAAABAAQAAAABAAIAAAACAAQAAAABAAIAAAADAAQAAAACAAIAAAAEAAUAAAADAAQAAAAFAAUAAAAFAAQAAAANAAUAAAAHAAIAAAAOAAQAAAADAAIAAAAOAAUAAAADAAMAAAAOAAEAAAADAAQAAAAPAAEAAAAEAAQAAAAQAAEAAAAFAAQAAAAAAAUAAAABAAMAAAABAAUAAAABAAMAAAACAAUAAAABAAMAAAADAAUAAAACAAMAAAAAAAYAAAABAAMAAAABAAYAAAABAAQAAAACAAYAAAABAAMAAAADAAYAAAACAAMAAAAAAAcAAAABAAMAAAABAAcAAAABAAMAAAACAAcAAAAHAAMAAAADAAcAAAACAAMAAAAAAAgAAAABAAMAAAABAAgAAAABAAMAAAACAAgAAAABAAMAAAADAAgAAAACAAMAAAAEAAYAAAABAAAAAAAEAAcAAAABAAEAAAAEAAgAAAABAAEAAAAFAAYAAAABAAAAAAAFAAcAAAABAAEAAAAFAAgAAAABAAEAAAAGAAYAAAABAAAAAAAGAAcAAAABAAEAAAAGAAgAAAABAAEAAAAHAAYAAAABAAAAAAAHAAcAAAABAAEAAAAHAAgAAAABAAEAAAAIAAYAAAAFAAUAAAAIAAcAAAABAAEAAAAIAAgAAAABAAEAAAAJAAYAAAAFAAUAAAAJAAcAAAABAAEAAAAJAAgAAAABAAEAAAAKAAYAAAABAAAAAAAKAAcAAAABAAEAAAAKAAgAAAABAAEAAAALAAYAAAABAAAAAAALAAcAAAABAAEAAAALAAgAAAABAAEAAAAMAAYAAAABAAAAAAAMAAcAAAABAAEAAAAMAAgAAAABAAEAAAANAAYAAAABAAAAAAANAAcAAAABAAEAAAANAAgAAAABAAEAAAAOAAYAAAABAAAAAAAOAAcAAAABAAEAAAAOAAgAAAABAAEAAAAPAAYAAAACAAgAAAAPAAcAAAAEAAgAAAAPAAgAAAABAAEAAAAQAAYAAAAGAAUAAAAQAAcAAAABAAgAAAAQAAgAAAABAAEAAAARAAYAAAAFAAgAAAARAAcAAAAHAAgAAAARAAgAAAABAAEAAAASAAYAAAABAAAAAAASAAcAAAABAAEAAAASAAgAAAABAAEAAAATAAYAAAABAAAAAAATAAcAAAABAAEAAAATAAgAAAABAAEAAAA=")
+tile_set = ExtResource("3_22jwo")
+
+[node name="Props" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAQAAAAAAAAAAcAAAAPAAIAAAACAAcAAAALAAQAAAAFAAcAAAALAAUAAAAGAAcAAAATAAQAAAAFAAcAAAATAAUAAAAGAAcAAAAGAAUAAAAHAAcAAAAQAAUAAAABAAcAAAA=")
+tile_set = ExtResource("3_22jwo")
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Scavenger" parent="Enemies" instance=ExtResource("6_scav")]
+position = Vector2(144, 104)
+patrol_left = 134.0
+patrol_right = 154.0
+
+[node name="Exits" type="Node2D" parent="."]
+
+[node name="west" type="Area2D" parent="Exits"]
+position = Vector2(-4, 72)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_uinnw")
+room_id = &"waking_coast_1"
+entry_id = &"east"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/west"]
+shape = SubResource("RectangleShape2D_fgj4w")
+
+[node name="east" type="Area2D" parent="Exits"]
+position = Vector2(324, 72)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_uinnw")
+room_id = &"waking_coast_3"
+entry_id = &"west"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/east"]
+shape = SubResource("RectangleShape2D_fgj4w")
+
+[node name="Entries" type="Node2D" parent="."]
+
+[node name="west" type="Marker2D" parent="Entries"]
+position = Vector2(12, 64)
+
+[node name="east" type="Marker2D" parent="Entries"]
+position = Vector2(308, 96)
+
+[node name="Player" parent="." instance=ExtResource("5_4reif")]
+position = Vector2(12, 64)
+
+[node name="Camera2D" parent="Player" index="3"]
+limit_left = 0
+limit_top = 0
+limit_right = 320
+limit_bottom = 144
+
+[editable path="Player"]
