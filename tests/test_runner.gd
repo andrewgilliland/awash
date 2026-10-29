@@ -22,6 +22,7 @@ const WakingCoastRoom8Tests := preload("res://tests/waking_coast_room_8_tests.gd
 const WakingCoastRoom9Tests := preload("res://tests/waking_coast_room_9_tests.gd")
 const RoomExitTests := preload("res://tests/room_exit_tests.gd")
 const HealthTests := preload("res://tests/health_tests.gd")
+const LevelTests := preload("res://tests/level_tests.gd")
 const ScavengerBrainTests := preload("res://tests/scavenger_brain_tests.gd")
 const CombatSceneTests := preload("res://tests/combat_scene_tests.gd")
 const PlayerSoundsTests := preload("res://tests/player_sounds_tests.gd")
@@ -40,6 +41,8 @@ const WraithBrainTests := preload("res://tests/wraith_brain_tests.gd")
 const WraithSoundsTests := preload("res://tests/wraith_sounds_tests.gd")
 const WraithSceneTests := preload("res://tests/wraith_scene_tests.gd")
 const HealthBarTests := preload("res://tests/health_bar_tests.gd")
+const PlayerGrowthTests := preload("res://tests/player_growth_tests.gd")
+const EnemyExperienceTests := preload("res://tests/enemy_experience_tests.gd")
 const STEP_DELTA := 0.1
 var _failures: int = 0
 
@@ -92,6 +95,9 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var health_tests := HealthTests.new()
 	for test in health_tests.get_tests():
+		_run_test(test[0], test[1])
+	var level_tests := LevelTests.new()
+	for test in level_tests.get_tests():
 		_run_test(test[0], test[1])
 	var scavenger_brain_tests := ScavengerBrainTests.new()
 	for test in scavenger_brain_tests.get_tests():
@@ -161,6 +167,12 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var health_bar_tests := HealthBarTests.new(root)
 	for test in health_bar_tests.get_tests():
+		_run_test(test[0], test[1])
+	var player_growth_tests := PlayerGrowthTests.new(root)
+	for test in player_growth_tests.get_tests():
+		_run_test(test[0], test[1])
+	var enemy_experience_tests := EnemyExperienceTests.new(root)
+	for test in enemy_experience_tests.get_tests():
 		_run_test(test[0], test[1])
 
 	if _failures > 0:

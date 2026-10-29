@@ -29,6 +29,7 @@ func get_tests() -> Array:
 		["Health bar is slim: a thin fill inside its frame", _test_slim],
 		["Every Room puts the Health bar under its Pause menu", _test_room_has_bar],
 		["Stats shows Health left out of its total", _test_stats_shows_health],
+		["Stats shows Level, Experience and Strength, to MAX", _test_stats_shows_growth],
 		["A defeated Player stops answering controls", _test_defeat_locks_controls],
 	]
 
@@ -124,14 +125,39 @@ func _test_stats_shows_health() -> bool:
 	var stats_button := menu.get_node(MENU_ROOT + "MenuButtons/StatsButton") as Button
 	var body := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/Body") as Label
 	stats_button.pressed.emit()
-	var valid := body.text == "Health 50 / 50"
+	var valid := body.text.contains("Health 50 / 50")
 	player.get("health").hurt(2 * ONE_HIT, 0.0)
 	(menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/BackButton") as Button).pressed.emit()
 	stats_button.pressed.emit()
-	valid = valid and body.text == "Health 30 / 50"
+	valid = valid and body.text.contains("Health 30 / 50")
 	menu.get_tree().paused = false
 	menu.free()
 	player.free()
+	return valid
+
+
+func _test_stats_shows_growth() -> bool:
+	var player := _player()
+	var menu := PAUSE_MENU_SCENE.instantiate() as Control
+	_root.add_child(menu)
+	menu.call("toggle_pause")
+	var stats_button := menu.get_node(MENU_ROOT + "MenuButtons/StatsButton") as Button
+	var back_button := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/BackButton") as Button
+	var body := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/Body") as Label
+	stats_button.pressed.emit()
+	var valid := body.text == "Level 1\nExperience 0 / 40\nHealth 50 / 50\nStrength 0"
+	player.call("gain_experience", 45)
+	back_button.pressed.emit()
+	stats_button.pressed.emit()
+	valid = valid and body.text == "Level 2\nExperience 45 / 100\nHealth 60 / 60\nStrength 0"
+	player.call("gain_experience", 1000)
+	back_button.pressed.emit()
+	stats_button.pressed.emit()
+	valid = valid and body.text == "Level 5\nExperience 1045 / MAX\nHealth 90 / 90\nStrength 10"
+	menu.get_tree().paused = false
+	menu.free()
+	player.free()
+	_root.get_node("RunState").call("start_run")
 	return valid
 
 

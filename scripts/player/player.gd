@@ -6,10 +6,10 @@ signal defeated
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const PlayerRig := preload("res://scripts/player/player_rig.gd")
 const Health := preload("res://scripts/combat/health.gd")
+const Level := preload("res://scripts/player/level.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const PlayerSounds := preload("res://scripts/player/player_sounds.gd")
 const INTERACTABLE_GROUP := &"interactable"
-const MAX_HEALTH := 50
 const INVULNERABLE_TIME := 1.0
 const BLINK_TIME := 0.08
 # A defeated Player flickers more slowly where it lies.
@@ -18,8 +18,8 @@ const DEFEAT_BLINK_TIME := 0.15
 const KNOCKBACK := Vector2(90.0, -120.0)
 # The sword's reach, in front of the Player when facing right.
 const SWORD_OFFSET := Vector2(12.0, -8.0)
-# What a charged Attack costs, against a quick one's Hitbox.DEFAULT_DAMAGE.
-const CHARGED_DAMAGE := 20
+# A charged Attack costs this many times a quick one.
+const CHARGED_MULTIPLIER := 2
 # A full Charge makes the sword blink bright.
 const CHARGED_GLOW := Color(2.0, 2.0, 2.0)
 const CHARGED_BLINK_TIME := 0.08
@@ -31,8 +31,10 @@ const CHARGED_BLINK_TIME := 0.08
 
 # Read-only for callers; owns state, facing and horizontal movement rules.
 var controller: PlayerController = PlayerController.new()
+# Read-only for callers: change it through gain_experience().
+var level: Level = Level.new()
 # Read-only for callers.
-var health: Health = Health.new(MAX_HEALTH)
+var health: Health = Health.new(level.max_health())
 # While true the Player ignores walk, jump and melee input: dialogue and the intro hold it
 # still.
 var controls_locked: bool = false
@@ -48,12 +50,14 @@ var _defeat_time: float = 0.0
 @onready var _hurtbox: Area2D = $Hurtbox
 @onready var _sword_hitbox: Hitbox = $SwordHitbox
 @onready var _sound_players: Node = $Sounds
+@onready var _level_up: Label = $LevelUp
 
 
 func _ready() -> void:
 	var run := get_node_or_null("/root/RunState")
 	if run != null:
-		health = Health.new(MAX_HEALTH, run.get("player_health"))
+		level = Level.new(run.get("player_experience"))
+		health = Health.new(level.max_health(), run.get("player_health"))
 	controller.move_speed = move_speed
 	controller.acceleration = acceleration
 	controller.friction = friction
@@ -115,6 +119,23 @@ func _physics_process(delta: float) -> void:
 	_rig.show_blink(health.invulnerable_left <= 0.0 or blink_lit)
 
 
+# Adds Experience toward the next Level. Reaching one raises maximum Health and Strength, chimes
+# and shows LEVEL UP; the Run keeps the total and the Health that comes with it.
+func gain_experience(amount: int) -> void:
+	var before := level.max_health()
+	var gained := level.gain(amount)
+	var run := get_node_or_null("/root/RunState") if is_inside_tree() else null
+	if run != null:
+		run.set("player_experience", level.experience)
+	if gained == 0:
+		return
+	health.raise_maximum(level.max_health() - before)
+	if run != null:
+		run.set("player_health", health.current)
+	_sounds.play(PlayerSounds.LEVEL_UP)
+	_level_up.call("flash")
+
+
 # Whether the Player's Health has run out: it no longer answers the controls.
 func is_defeated() -> bool:
 	return _defeated
@@ -174,9 +195,8 @@ func _on_controller_stepped() -> void:
 	_sword_hitbox.position = Vector2(SWORD_OFFSET.x * controller.facing, SWORD_OFFSET.y)
 	var attacking := controller.state == PlayerController.State.ATTACK
 	if attacking:
-		_sword_hitbox.damage = (
-			CHARGED_DAMAGE if controller.charged_attack else Hitbox.DEFAULT_DAMAGE
-		)
+		var quick := Hitbox.DEFAULT_DAMAGE + level.strength()
+		_sword_hitbox.damage = quick * CHARGED_MULTIPLIER if controller.charged_attack else quick
 	if _sword_hitbox.active != attacking:
 		_sword_hitbox.active = attacking
 	var lit := (

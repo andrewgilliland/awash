@@ -8,6 +8,7 @@ const SWING := &"Swing"
 const HIT := &"Hit"
 const HURT := &"Hurt"
 const DEFEAT := &"Defeat"
+const LEVEL_UP := &"LevelUp"
 # A landing only sounds after a real fall; a frame in the air, as when the Player appears at
 # an Entry, lands quietly.
 const MIN_FALL_TIME := 0.08

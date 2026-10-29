@@ -4,11 +4,16 @@ extends CharacterBody2D
 # It flies through the world, crackles when the Player comes near, then arcs lightning all
 # around itself and rests, dim, before drifting on.
 
+# Its Health ran out; the Room hands its Experience to the Player.
+signal defeated(experience: int)
+
 const StormWispBrain := preload("res://scripts/enemies/storm_wisp_brain.gd")
 const Health := preload("res://scripts/combat/health.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const StormWispSounds := preload("res://scripts/enemies/storm_wisp_sounds.gd")
 const MAX_HEALTH := 20
+# What defeating a Storm Wisp earns the Player.
+const EXPERIENCE := 15
 const INVULNERABLE_TIME := 0.3
 const DEFEAT_TIME := 0.5
 const DEFEAT_BLINK := 0.08
@@ -102,6 +107,7 @@ func _on_hurtbox_hit(hitbox: Area2D) -> void:
 	_knocked_toward = toward if toward != 0.0 else -brain.facing
 	if health.is_defeated():
 		_hurtbox.set_deferred("monitorable", false)
+		defeated.emit(EXPERIENCE)
 
 
 func _show() -> void:

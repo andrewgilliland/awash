@@ -115,7 +115,9 @@ func _init() -> void:
 	await _run_playtest_async(
 		"Tidefen's well drops home through the undertow", _playtest_drops_home
 	)
-	await _run_playtest_async("Sword defeats the Scavenger", _playtest_sword_defeats_scavenger)
+	await _run_playtest_async(
+		"Sword defeats the Scavenger and earns its Experience", _playtest_sword_defeats_scavenger
+	)
 	await _run_playtest_async("Scavenger's lunge hurts the Player", _playtest_lunge_hurts_player)
 	await _run_playtest_async(
 		"Player defeat keeps the Run, back at the start", _playtest_defeat_keeps_run
@@ -719,11 +721,15 @@ func _playtest_climbs_cliffs() -> bool:
 
 
 # Swings at the Scavenger from the pool's edge until it is gone. Its lunges may knock the
-# Player away, so each swing starts back at the edge, facing the pool.
+# Player away, so each swing starts back at the edge, facing the pool. Its Experience goes to the
+# Player and into the Run.
 func _playtest_sword_defeats_scavenger() -> bool:
 	var player := await _enter_rune_shore()
 	var scavenger := current_scene.get_node_or_null(SCAVENGER_PATH) if player != null else null
 	var valid := scavenger != null
+	var worth: int = scavenger.get("EXPERIENCE") if valid else 0
+	var run := root.get_node("RunState")
+	var before: int = run.get("player_experience")
 	for swing in MAX_SWINGS:
 		if not valid or not is_instance_valid(scavenger):
 			break
@@ -735,6 +741,8 @@ func _playtest_sword_defeats_scavenger() -> bool:
 	valid = (
 		valid and await _frames_until(func() -> bool: return not is_instance_valid(scavenger), 90)
 	)
+	valid = valid and worth > 0 and run.get("player_experience") == before + worth
+	valid = valid and player.get("level").experience == before + worth
 	await _leave_scene()
 	return valid
 

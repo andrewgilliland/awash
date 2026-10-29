@@ -4,7 +4,9 @@ const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const Hurtbox := preload("res://scripts/combat/hurtbox.gd")
-const SOUNDS: Array[StringName] = [&"Jump", &"Land", &"Swing", &"Hit", &"Hurt", &"Defeat"]
+const SOUNDS: Array[StringName] = [
+	&"Jump", &"Land", &"Swing", &"Hit", &"Hurt", &"Defeat", &"LevelUp"
+]
 const SFX_BUS := &"SFX"
 
 # Needs a root that is already in the tree: sounds only play inside it.
