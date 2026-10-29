@@ -69,10 +69,10 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 ## Equipment
 
-- The Player has one Equipment slot so far, Armor, and it is never empty: a new Run starts in the Worn Leather Tunic. `scripts/items/equipment.gd` declares every Armor with its name and Defense.
+- The Player has one Equipment slot so far, Armor. A new Run owns and wears the Worn Leather Tunic; the slot can be emptied, which leaves no Defense. `scripts/items/equipment.gd` declares every Armor with its name, Defense and 8x8 icon (`assets/sprites/items/worn_leather_tunic.aseprite`), and holds the Armor owned and the one worn.
 - Defense is the Health the Armor takes off each hit that lands. A hit Defense lowers still costs at least 5, and a weaker hit costs what it is. The Worn Leather Tunic has Defense 0, so it changes nothing.
-- The Run carries the Armor worn from Room to Room and through a defeat; only a new Run puts the Worn Leather Tunic back on.
-- The Equipment Panel shows `Armor` on the left and the piece worn on the right; with only one Armor, nothing there takes focus. Stats shows the Defense after Strength.
+- The Run carries the Armor owned and the one worn, or none, from Room to Room and through a defeat; only a new Run puts the Worn Leather Tunic back on.
+- The Equipment Panel's Armor row shows `Armor` on the left and the piece worn on the right with its icon, or `None`. While the Armor row or its list has focus, the list under it shows every Armor owned with its icon, the worn one marked `Worn`; down from the Armor row moves into it. Choosing an Armor puts it on, choosing the one worn takes it off, and focus returns to the Armor row. Stats shows the Defense after Strength.
 
 ## Sound
 

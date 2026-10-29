@@ -39,7 +39,8 @@ var level: Level = Level.new()
 var health: Health = Health.new(level.max_health())
 # Read-only for callers: change it through collect() and use_supply().
 var supplies: Supplies = Supplies.new()
-# Read-only for callers: what the Player wears, whose Defense takes Health off each hit.
+# Read-only for callers: change it through wear_armor() and take_off_armor(). What the Player
+# wears, whose Defense takes Health off each hit.
 var equipment: Equipment = Equipment.new()
 # While true the Player ignores walk, jump and melee input: dialogue and the intro hold it
 # still.
@@ -65,7 +66,7 @@ func _ready() -> void:
 		level = Level.new(run.get("player_experience"))
 		health = Health.new(level.max_health(), run.get("player_health"))
 		supplies = Supplies.new(run.get("player_supplies"))
-		equipment = Equipment.new(run.get("player_armor"))
+		equipment = Equipment.new(run.get("player_armor"), run.get("player_owned_armor"))
 	controller.move_speed = move_speed
 	controller.acceleration = acceleration
 	controller.friction = friction
@@ -115,6 +116,26 @@ func use_supply(kind: StringName) -> bool:
 		run.set("player_health", health.current)
 	_sounds.play(PlayerSounds.EAT)
 	return true
+
+
+# Puts on Armor the Player owns, as chosen in the Equipment Panel; returns whether it could.
+func wear_armor(armor_id: StringName) -> bool:
+	if not equipment.wear(armor_id):
+		return false
+	_write_armor_to_run()
+	return true
+
+
+func take_off_armor() -> void:
+	equipment.take_off()
+	_write_armor_to_run()
+
+
+func _write_armor_to_run() -> void:
+	var run := _get_run()
+	if run != null:
+		run.set("player_armor", equipment.armor)
+		run.set("player_owned_armor", equipment.owned.duplicate())
 
 
 func _write_supplies_to_run() -> void:

@@ -11,7 +11,12 @@ func get_tests() -> Array:
 		["Defense takes its value off a hit", _test_defense_takes_off_hit],
 		["A hit always costs at least 5", _test_hit_costs_at_least_five],
 		["Defense never makes a weak hit cost more", _test_weak_hit_not_raised],
-		["Unknown Armor falls back to the Worn Leather Tunic", _test_unknown_armor_falls_back],
+		["A new Run owns only the Worn Leather Tunic", _test_owns_tunic],
+		["Taking Armor off leaves no Defense", _test_take_off],
+		["Only owned Armor can be worn", _test_wear_owned_only],
+		["Equipment starts from what the Run carried", _test_starts_from_run],
+		["Unknown Armor is neither owned nor worn", _test_unknown_armor_dropped],
+		["Every Armor has an icon", _test_every_armor_has_icon],
 	]
 
 
@@ -42,5 +47,45 @@ func _test_weak_hit_not_raised() -> bool:
 	return Equipment.cost_after_defense(3, 0) == 3 and Equipment.cost_after_defense(3, 5) == 3
 
 
-func _test_unknown_armor_falls_back() -> bool:
-	return Equipment.new(&"nothing").armor == TUNIC
+func _test_owns_tunic() -> bool:
+	return Equipment.new().owned == [TUNIC]
+
+
+func _test_take_off() -> bool:
+	var equipment := Equipment.new()
+	equipment.take_off()
+	return (
+		equipment.armor == &""
+		and equipment.defense() == 0
+		and equipment.armor_name() == "None"
+		and equipment.hit_cost(10) == 10
+		and equipment.owned == [TUNIC]
+	)
+
+
+func _test_wear_owned_only() -> bool:
+	var equipment := Equipment.new()
+	equipment.take_off()
+	var valid := not equipment.wear(&"nothing") and equipment.armor == &""
+	return valid and equipment.wear(TUNIC) and equipment.armor == TUNIC
+
+
+# Nothing worn is kept; whatever is worn is owned.
+func _test_starts_from_run() -> bool:
+	var bare := Equipment.new(&"", [TUNIC])
+	var valid := bare.armor == &"" and bare.owned == [TUNIC]
+	var worn := Equipment.new(TUNIC, [])
+	return valid and worn.armor == TUNIC and worn.owned == [TUNIC]
+
+
+func _test_unknown_armor_dropped() -> bool:
+	var equipment := Equipment.new(&"nothing", [&"nothing", TUNIC])
+	return equipment.armor == &"" and equipment.owned == [TUNIC]
+
+
+func _test_every_armor_has_icon() -> bool:
+	var valid := true
+	for id in Equipment.ARMOR:
+		var icon: String = Equipment.ARMOR[id].get("icon", "")
+		valid = valid and ResourceLoader.exists(icon)
+	return valid

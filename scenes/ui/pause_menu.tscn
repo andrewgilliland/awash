@@ -112,9 +112,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Body" type="GridContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel"]
+[node name="Body" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel"]
 layout_mode = 2
-columns = 2
 script = ExtResource("11_equipment")
 
 [node name="MapPanel" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"]
