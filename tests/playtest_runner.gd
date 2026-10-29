@@ -57,6 +57,8 @@ const PlayerController := preload("res://scripts/player/player_controller.gd")
 const POOL_EDGE := Vector2(122, 96)
 const SCAVENGER_PATH := "Enemies/Scavenger"
 const MAX_SWINGS := 8
+# What any enemy hit costs the Player.
+const ONE_HIT := 10
 
 
 func _init() -> void:
@@ -564,7 +566,7 @@ func _playtest_arc_hurts_player() -> bool:
 	var health = player.get("health")
 	var hurt := await _frames_until(func() -> bool: return health.current < health.maximum, 180)
 	await _frames(6)
-	var valid: bool = hurt and health.current == health.maximum - 1
+	var valid: bool = hurt and health.current == health.maximum - ONE_HIT
 	await _leave_scene()
 	return valid
 
@@ -640,7 +642,7 @@ func _playtest_lunge_hurts_player() -> bool:
 	var health = player.get("health")
 	var hurt := await _frames_until(func() -> bool: return health.current < health.maximum, 180)
 	await _frames(6)
-	var valid: bool = hurt and health.current == health.maximum - 1
+	var valid: bool = hurt and health.current == health.maximum - ONE_HIT
 	valid = valid and player.global_position.x < POOL_EDGE.x
 	await _leave_scene()
 	return valid
@@ -700,11 +702,11 @@ func _playtest_health_carries() -> bool:
 	blow.queue_free()
 	var valid := await _walk_until_scene(&"move_left", FIRST_ROOM_PATH)
 	var health = _current_player().get("health")
-	valid = valid and health.current == health.maximum - 1
+	valid = valid and health.current == health.maximum - ONE_HIT
 	await _frames(2)
 	var bar := current_scene.get_node("CanvasLayer/HealthBar")
-	var full: Array = bar.call("segments").filter(func(s: int) -> bool: return s == 0)
-	valid = valid and full.size() == health.maximum - 1
+	var fill: float = bar.call("fill_fraction")
+	valid = valid and is_equal_approx(fill, float(health.current) / health.maximum)
 	await _leave_scene()
 	return valid
 

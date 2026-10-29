@@ -4,7 +4,7 @@ const ScavengerBrain := preload("res://scripts/enemies/scavenger_brain.gd")
 const Health := preload("res://scripts/combat/health.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const ScavengerSounds := preload("res://scripts/enemies/scavenger_sounds.gd")
-const MAX_HEALTH := 3
+const MAX_HEALTH := 30
 const INVULNERABLE_TIME := 0.3
 const DEFEAT_TIME := 0.6
 const DEFEAT_BLINK := 0.1
@@ -94,7 +94,7 @@ func _read_frame() -> ScavengerBrain.Frame:
 
 # A hit costs Health and pushes the Scavenger away from the hitbox, unless invulnerable.
 func _on_hurtbox_hit(hitbox: Area2D) -> void:
-	var damage: int = hitbox.damage if hitbox is Hitbox else 1
+	var damage: int = hitbox.damage if hitbox is Hitbox else Hitbox.DEFAULT_DAMAGE
 	if not health.hurt(damage, INVULNERABLE_TIME):
 		return
 	var toward := signf(global_position.x - hitbox.global_position.x)

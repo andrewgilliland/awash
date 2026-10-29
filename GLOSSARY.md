@@ -131,11 +131,11 @@ _Avoid_: Memory shard, flashback item
 ## Combat
 
 **Health**:
-How many more hits something can take, in whole points. Reaching 0 is defeat. The Player's carries from Room to Room for the whole Run.
+How much more harm something can take, counted in tens: a hit costs 10. Reaching 0 is defeat. The Player's carries from Room to Room for the whole Run.
 _Avoid_: HP, hit points, life
 
 **Health bar**:
-The Player's Health on screen: a framed bar in the top-left corner with one segment per point. A segment lost to a hit flashes, then empties.
+The Player's Health on screen: a framed bar in the top-left corner, filled to the share of Health left. A hit drops the fill at once, and the Health it took lingers as a pale trail that drains away after it.
 _Avoid_: HP bar, life bar, hearts
 
 **Defeat**:
