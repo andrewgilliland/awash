@@ -240,6 +240,10 @@ _Avoid_: Supplies Panel, items menu, bag
 The Panel showing each Equipment slot with its piece above a divider, and below it the pieces owned for the slot last focused, the one equipped marked. Choosing a slot moves into its pieces; choosing one equips it, and None empties a slot that can be empty. Defense shows above the divider, with what it would become while an Armor is focused.
 _Avoid_: Equip screen, gear menu, loadout
 
+**Description**:
+A line or two at the foot of the Inventory and the Equipment Panel saying what the focused Supply, or piece of Equipment, is. Each Supply and piece has its own.
+_Avoid_: Tooltip, flavor text, help text
+
 **Map**:
 The Panel that draws each visited Room as a block, sized in screens, with the name of the Region or Safe spoke the Player is in and a dot where the Player stands. Unvisited Rooms stay hidden.
 _Avoid_: Minimap, world map, atlas

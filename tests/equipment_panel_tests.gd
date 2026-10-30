@@ -7,6 +7,9 @@ const MENU_ROOT := "CenterContainer/MenuPanel/MarginContainer/VBoxContainer/"
 const BODY := MENU_ROOT + "ContentRoot/EquipmentPanel/Body/"
 const SWORD_ICON := "res://assets/sprites/items/short_sword.png"
 const TUNIC_ICON := "res://assets/sprites/items/worn_leather_tunic.png"
+const PANEL := MENU_ROOT + "ContentRoot/EquipmentPanel/"
+const SWORD_TEXT := "A plain blade Mara pulled from the sand."
+const TUNIC_TEXT := "Faded by salt. Light, but gives no Defense."
 
 # Needs a root that is already in the tree: the Player reads the Run from /root in _ready.
 var _root: Window
@@ -33,6 +36,7 @@ func get_tests() -> Array:
 		["Choosing None takes the Armor off; choosing the Armor puts it on", _test_choose_none],
 		["Choosing the piece equipped goes back and changes nothing", _test_choose_equipped],
 		["Defense shows, with what it would become while an Armor is focused", _test_defense],
+		["At the Panel's foot, a slot describes its piece and a piece itself", _test_descriptions],
 	]
 
 
@@ -162,6 +166,44 @@ func _test_defense() -> bool:
 	valid = valid and defense.text == "DEF 5"
 	_close(menu)
 	return valid
+
+
+func _test_descriptions() -> bool:
+	var menu := _equipment_menu()
+	var strip := menu.get_node_or_null(PANEL + "Description") as Label
+	var valid := strip != null and _strip_at_foot(menu.get_node(PANEL), strip)
+	valid = valid and strip.text == ""
+	var steps := [
+		[&"ui_down", SWORD_TEXT],
+		[&"ui_down", TUNIC_TEXT],
+		[&"ui_accept", TUNIC_TEXT],
+		[&"ui_up", ""],
+		[&"ui_up", TUNIC_TEXT],
+		[&"ui_down", ""],
+	]
+	for step in steps:
+		if valid:
+			_navigate(menu, step[0])
+			valid = strip.text == step[1]
+	_close(menu)
+	return valid
+
+
+# Whether the strip sits under a divider at the foot of the Panel, below its Body, in two lines,
+# and keeps its height with one line or none.
+static func _strip_at_foot(panel: Node, strip: Label) -> bool:
+	var body := panel.get_node("Body") as Control
+	var divider := panel.get_node_or_null("Divider")
+	var two_lines := strip.get_line_height() * 2 + strip.get_theme_constant(&"line_spacing")
+	return (
+		strip.custom_minimum_size.y == two_lines
+		and divider is HSeparator
+		and body.get_index() < divider.get_index()
+		and divider.get_index() < strip.get_index()
+		and body.size_flags_vertical & Control.SIZE_EXPAND != 0
+		and strip.autowrap_mode == TextServer.AUTOWRAP_WORD
+		and strip.max_lines_visible == 2
+	)
 
 
 # The Pause menu, on the Equipment tab, with a Player in a fresh Run, in the given Equipment if

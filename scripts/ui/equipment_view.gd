@@ -4,7 +4,8 @@ extends VBoxContainer
 # name on the left and the piece equipped on the right with its icon, and the Defense. Below it,
 # the pieces owned for the slot last focused, the equipped one marked. Choosing a slot moves focus
 # into its pieces; choosing one equips it and goes back to the slot, as does up from the top.
-# None leads the pieces of a slot that can be empty.
+# None leads the pieces of a slot that can be empty. The strip at the Panel's foot describes the
+# piece a focused slot holds, or the piece focused.
 
 const Equipment := preload("res://scripts/items/equipment.gd")
 const PLAYER_GROUP := &"player"
@@ -19,6 +20,8 @@ const ICON_ROOM := 11.0
 # Tall enough for an 8x8 icon, so a row keeps its height with nothing equipped.
 const ROW_HEIGHT := 10.0
 const ICON_SIZE := 8
+
+@export var description: Label
 
 var _slot_rows: Array[Button] = []
 var _defense: Label
@@ -74,6 +77,8 @@ func _refresh() -> void:
 		return
 	_show_equipped()
 	_show_choices(WEAPON)
+	if description != null:
+		description.text = ""
 
 
 # What each slot row says about the piece equipped, the Defense, and which piece is marked.
@@ -162,6 +167,14 @@ func _on_focus_changed(focused: Control) -> void:
 	if slot != -1 and slot != _shown_slot:
 		_show_choices(slot)
 	var choosing := focused != null and focused.get_parent() == _choices
+	var described: StringName = &""
+	if slot != -1:
+		described = _equipped(slot)
+	elif choosing:
+		described = _shown_ids[focused.get_index()]
+	if description != null:
+		var pieces := _pieces(_shown_slot)
+		description.text = pieces[described].description if not described.is_empty() else ""
 	if not choosing:
 		for row in _choices.get_children():
 			(row as Button).focus_mode = Control.FOCUS_NONE
