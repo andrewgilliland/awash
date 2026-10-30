@@ -4,20 +4,24 @@ extends RefCounted
 # empty, and the Armor worn, if any, whose Defense takes Health off each hit that lands.
 
 const STARTING_WEAPON := &"short_sword"
-# Every Weapon: its name and its 8x8 icon. None adds to a hit yet.
+# Every Weapon: its name, a description of two lines at most, and its 8x8 icon. None adds to a
+# hit yet.
 const WEAPONS := {
 	STARTING_WEAPON:
 	{
 		name = "Short Sword",
+		description = "A plain blade Mara pulled from the sand.",
 		icon = "res://assets/sprites/items/short_sword.png",
 	},
 }
 const STARTING_ARMOR := &"worn_leather_tunic"
-# Every Armor: its name, its Defense (the Health it takes off each hit), and its 8x8 icon.
+# Every Armor: its name, a description of two lines at most, its Defense (the Health it takes
+# off each hit), and its 8x8 icon.
 const ARMOR := {
 	STARTING_ARMOR:
 	{
 		name = "Worn Leather Tunic",
+		description = "Faded by salt. Light, but gives no Defense.",
 		defense = 0,
 		icon = "res://assets/sprites/items/worn_leather_tunic.png",
 	},

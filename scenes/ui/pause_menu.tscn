@@ -92,16 +92,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Body" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/InventoryPanel" node_paths=PackedStringArray("note")]
+[node name="Body" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/InventoryPanel" node_paths=PackedStringArray("description")]
 layout_mode = 2
+size_flags_vertical = 3
 script = ExtResource("10_inventory")
-note = NodePath("../Note")
+description = NodePath("../Description")
 
-[node name="Note" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/InventoryPanel"]
-visible = false
+[node name="Divider" type="HSeparator" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/InventoryPanel"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 0.545098, 1)
-horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/InventoryPanel"]
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+autowrap_mode = 2
+max_lines_visible = 2
 
 [node name="EquipmentPanel" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"]
 visible = false
@@ -112,9 +116,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Body" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel"]
+[node name="Body" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel" node_paths=PackedStringArray("description")]
 layout_mode = 2
+size_flags_vertical = 3
 script = ExtResource("11_equipment")
+description = NodePath("../Description")
+
+[node name="Divider" type="HSeparator" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel"]
+layout_mode = 2
+
+[node name="Description" type="Label" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot/EquipmentPanel"]
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+autowrap_mode = 2
+max_lines_visible = 2
 
 [node name="MapPanel" type="VBoxContainer" parent="CenterContainer/MenuPanel/MarginContainer/VBoxContainer/ContentRoot"]
 visible = false

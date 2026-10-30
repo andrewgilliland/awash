@@ -5,6 +5,8 @@ const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const MENU_ROOT := "CenterContainer/MenuPanel/MarginContainer/VBoxContainer/"
 const PANEL := MENU_ROOT + "ContentRoot/InventoryPanel/"
 const BRINECAP := &"brinecap"
+const BRINECAP_TEXT := "A salt-crusted cave mushroom. Restores 10 Health."
+const EquipmentPanelTests := preload("res://tests/equipment_panel_tests.gd")
 
 # Needs a root that is already in the tree: the Panel finds the Player through its group.
 var _root: Window
@@ -22,6 +24,7 @@ func get_tests() -> Array:
 		["Choosing a Brinecap eats it, with play still paused", _test_choosing_eats],
 		["At full Health, choosing one keeps it and says so", _test_full_health_keeps],
 		["Eating the last one goes back to the Inventory tab", _test_last_one_returns_focus],
+		["At the Panel's foot, the Inventory describes the focused Supply", _test_describes],
 	]
 
 
@@ -89,13 +92,32 @@ func _test_choosing_eats() -> bool:
 func _test_full_health_keeps() -> bool:
 	var player := _player(2)
 	var menu := _supplies_menu()
-	var note := menu.get_node(PANEL + "Note") as Label
-	var valid := not note.visible
+	var strip := menu.get_node(PANEL + "Description") as Label
 	_navigate(menu, &"ui_down")
 	_navigate(menu, &"ui_accept")
 	var row := _rows(menu)[0] as Button
-	valid = valid and (row.get_node("Count") as Label).text == "2"
-	valid = valid and note.visible and note.text == "Health is full"
+	var valid := (row.get_node("Count") as Label).text == "2"
+	# The note takes the strip's place, in its own colour, until it is done.
+	valid = valid and strip.text == "Health is full"
+	valid = valid and strip.has_theme_color_override(&"font_color")
+	menu.get_node(PANEL + "Body").call("_end_note", "Health is full")
+	valid = valid and strip.text == BRINECAP_TEXT
+	valid = valid and not strip.has_theme_color_override(&"font_color")
+	_close(menu, player)
+	return valid
+
+
+func _test_describes() -> bool:
+	var player := _player(2)
+	var menu := _supplies_menu()
+	var strip := menu.get_node_or_null(PANEL + "Description") as Label
+	var valid := strip != null
+	valid = valid and EquipmentPanelTests._strip_at_foot(menu.get_node(PANEL), strip)
+	valid = valid and strip.text == ""
+	_navigate(menu, &"ui_down")
+	valid = valid and strip.text == BRINECAP_TEXT
+	_navigate(menu, &"ui_down")
+	valid = valid and strip.text == ""
 	_close(menu, player)
 	return valid
 
