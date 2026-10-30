@@ -1,25 +1,33 @@
 extends VBoxContainer
 
-# The Equipment Panel's readout: the Armor row, "Armor" on the left and the piece worn on the
-# right with its icon, read each time the Panel opens. While the Armor row or the list under it
-# has focus, the list shows every Armor the Player owns, the worn one marked; choosing one puts
-# it on, and choosing the one worn takes it off.
-
-# The rows focus moves through changed, so the Pause menu relinks them.
-signal focus_rows_changed
+# The Equipment Panel, read each time it opens. Above a divider, one row per Equipment slot, its
+# name on the left and the piece equipped on the right with its icon, and the Defense. Below it,
+# the pieces owned for the slot last focused, the equipped one marked. Choosing a slot moves focus
+# into its pieces; choosing one equips it and goes back to the slot, as does up from the top.
+# None leads the pieces of a slot that can be empty.
 
 const Equipment := preload("res://scripts/items/equipment.gd")
 const PLAYER_GROUP := &"player"
-const SLOT := "Armor"
-const WORN := "Worn"
-# Room on the right of the Armor row for the worn piece's icon.
+const WEAPON := 0
+const ARMOR := 1
+const SLOT_NAMES := ["Weapon", "Armor"]
+const EQUIPPED := "Equipped"
+const DEFENSE := "DEF %d"
+const DEFENSE_PREVIEW := "DEF %d > %d"
+# Room on the right of a slot row for the piece's icon.
 const ICON_ROOM := 11.0
-# Tall enough for an 8x8 icon, so the Armor row keeps its height with nothing worn.
+# Tall enough for an 8x8 icon, so a row keeps its height with nothing equipped.
 const ROW_HEIGHT := 10.0
+const ICON_SIZE := 8
 
-var _armor_row: Button
-var _armor_list: VBoxContainer
-var _list_rows: Array[Button] = []
+var _slot_rows: Array[Button] = []
+var _defense: Label
+var _choices: VBoxContainer
+# The slot whose pieces show below the divider, and those pieces' ids in order (&"" for None).
+var _shown_slot := WEAPON
+var _shown_ids: Array[StringName] = []
+# Keeps None's name in line with the pieces' names beside their icons.
+var _no_icon: Texture2D
 
 
 func _ready() -> void:
@@ -30,88 +38,163 @@ func _ready() -> void:
 	_refresh()
 
 
-# The rows focus moves through, top to bottom: the Armor row, then its list while it shows.
+# The rows focus moves through, top to bottom: the slots. Their pieces are reached by choosing one.
 func focus_rows() -> Array[Button]:
-	var rows: Array[Button] = [_armor_row]
-	if _armor_list.visible:
-		rows.append_array(_list_rows)
-	return rows
+	return _slot_rows.duplicate()
 
 
 func _build() -> void:
-	_armor_row = Button.new()
-	_armor_row.name = "ArmorRow"
-	_armor_row.text = SLOT
-	_armor_row.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_armor_row.icon_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_armor_row.custom_minimum_size.y = ROW_HEIGHT
-	_armor_row.add_child(_right_label("Piece", ICON_ROOM))
-	add_child(_armor_row)
-	_armor_list = VBoxContainer.new()
-	_armor_list.name = "ArmorList"
-	_armor_list.hide()
-	add_child(_armor_list)
+	for slot in SLOT_NAMES.size():
+		var row := Button.new()
+		row.name = SLOT_NAMES[slot] + "Row"
+		row.text = SLOT_NAMES[slot]
+		row.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		row.icon_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		row.custom_minimum_size.y = ROW_HEIGHT
+		row.add_child(_right_label("Piece", ICON_ROOM))
+		row.pressed.connect(_choose_from.bind(slot))
+		add_child(row)
+		_slot_rows.append(row)
+	_defense = Label.new()
+	_defense.name = "Defense"
+	_defense.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	add_child(_defense)
+	var divider := HSeparator.new()
+	divider.name = "Divider"
+	add_child(divider)
+	_choices = VBoxContainer.new()
+	_choices.name = "Choices"
+	add_child(_choices)
+	var blank := Image.create(ICON_SIZE, ICON_SIZE, false, Image.FORMAT_RGBA8)
+	_no_icon = ImageTexture.create_from_image(blank)
 
 
 func _refresh() -> void:
 	if not is_visible_in_tree():
 		return
-	for row in _list_rows:
-		_armor_list.remove_child(row)
+	_show_equipped()
+	_show_choices(WEAPON)
+
+
+# What each slot row says about the piece equipped, the Defense, and which piece is marked.
+func _show_equipped() -> void:
+	var equipment := _equipment()
+	for slot in _slot_rows.size():
+		var row := _slot_rows[slot]
+		var id := _equipped(slot)
+		(row.get_node("Piece") as Label).text = (
+			_pieces(slot)[id].name if not id.is_empty() else Equipment.NO_ARMOR
+		)
+		row.icon = load(_pieces(slot)[id].icon) if not id.is_empty() else null
+	_defense.text = DEFENSE % (equipment.defense() if equipment != null else 0)
+	var equipped := _equipped(_shown_slot)
+	for index in _shown_ids.size():
+		var mark := _choices.get_child(index).get_node("Mark") as Label
+		mark.text = EQUIPPED if _shown_ids[index] == equipped else ""
+
+
+# Lists the slot's pieces below the divider, None first if it can be empty.
+func _show_choices(slot: int) -> void:
+	for row in _choices.get_children():
+		_choices.remove_child(row)
 		row.queue_free()
-	_list_rows.clear()
-	var equipment := _equipment()
-	for armor_id: StringName in equipment.owned if equipment != null else []:
+	_shown_slot = slot
+	_shown_ids.clear()
+	if slot == ARMOR:
+		_shown_ids.append(&"")
+	_shown_ids.append_array(_owned(slot))
+	for id in _shown_ids:
 		var row := Button.new()
-		row.text = Equipment.ARMOR[armor_id].name
-		row.icon = load(Equipment.ARMOR[armor_id].icon)
+		row.text = _pieces(slot)[id].name if not id.is_empty() else Equipment.NO_ARMOR
+		row.icon = load(_pieces(slot)[id].icon) if not id.is_empty() else _no_icon
 		row.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		row.add_child(_right_label("Worn", 0.0))
-		row.pressed.connect(_on_armor_chosen.bind(armor_id))
-		_armor_list.add_child(row)
-		_list_rows.append(row)
-	_show_worn()
-	_set_list_shown(false)
+		row.focus_mode = Control.FOCUS_NONE
+		row.add_child(_right_label("Mark", 0.0))
+		row.pressed.connect(_on_piece_chosen.bind(id))
+		_choices.add_child(row)
+	_link_choices()
+	_show_equipped()
 
 
-# What each row says about the Armor worn: the piece and its icon on the Armor row, and which row
-# of the list it is.
-func _show_worn() -> void:
-	var equipment := _equipment()
-	var worn: StringName = equipment.armor if equipment != null else &""
-	(_armor_row.get_node("Piece") as Label).text = (
-		equipment.armor_name() if equipment != null else Equipment.NO_ARMOR
-	)
-	_armor_row.icon = load(Equipment.ARMOR[worn].icon) if not worn.is_empty() else null
-	var owned: Array = equipment.owned if equipment != null else []
-	for index in _list_rows.size():
-		var label := _list_rows[index].get_node("Worn") as Label
-		label.text = WORN if owned[index] == worn else ""
+# Up from the top piece goes back to the slot; down from the last, and left and right, stay put.
+func _link_choices() -> void:
+	var rows := _choices.get_children()
+	for index in rows.size():
+		var row := rows[index] as Button
+		var above: Control = rows[index - 1] if index > 0 else _slot_rows[_shown_slot]
+		var below: Control = rows[mini(index + 1, rows.size() - 1)]
+		row.focus_neighbor_top = row.get_path_to(above)
+		row.focus_neighbor_bottom = row.get_path_to(below)
+		row.focus_neighbor_left = row.get_path_to(row)
+		row.focus_neighbor_right = row.get_path_to(row)
 
 
-func _on_armor_chosen(armor_id: StringName) -> void:
+# Moves focus into the slot's pieces, onto the one equipped, the slot staying lit meanwhile.
+func _choose_from(slot: int) -> void:
+	if _shown_slot != slot:
+		_show_choices(slot)
+	for row in _choices.get_children():
+		(row as Button).focus_mode = Control.FOCUS_ALL
+	var slot_row := _slot_rows[slot]
+	slot_row.add_theme_color_override(&"font_color", slot_row.get_theme_color(&"font_focus_color"))
+	var index := _shown_ids.find(_equipped(slot))
+	(_choices.get_child(maxi(index, 0)) as Button).grab_focus()
+
+
+# Equips the piece chosen, unless it is equipped already, and goes back to its slot. Only Armor
+# can change for now: the Short Sword is the only Weapon.
+func _on_piece_chosen(id: StringName) -> void:
 	var player := _player()
-	if player == null:
-		return
-	if player.get("equipment").armor == armor_id:
-		player.call("take_off_armor")
-	else:
-		player.call("wear_armor", armor_id)
-	_show_worn()
-	_armor_row.grab_focus()
+	if player != null and _shown_slot == ARMOR and id != _equipped(ARMOR):
+		if id.is_empty():
+			player.call("take_off_armor")
+		else:
+			player.call("wear_armor", id)
+	_show_equipped()
+	_slot_rows[_shown_slot].grab_focus()
 
 
-# The list shows while the Armor row or one of its own rows has focus.
+# A slot row shows its pieces; a piece previews its Defense; leaving the pieces closes them.
 func _on_focus_changed(focused: Control) -> void:
-	if is_visible_in_tree():
-		_set_list_shown(focused == _armor_row or _list_rows.has(focused))
-
-
-func _set_list_shown(shown: bool) -> void:
-	if _armor_list.visible == shown:
+	if not is_visible_in_tree():
 		return
-	_armor_list.visible = shown
-	focus_rows_changed.emit()
+	var slot := _slot_rows.find(focused)
+	if slot != -1 and slot != _shown_slot:
+		_show_choices(slot)
+	var choosing := focused != null and focused.get_parent() == _choices
+	if not choosing:
+		for row in _choices.get_children():
+			(row as Button).focus_mode = Control.FOCUS_NONE
+		_slot_rows[_shown_slot].remove_theme_color_override(&"font_color")
+	_show_defense(_shown_ids[focused.get_index()] if choosing and _shown_slot == ARMOR else null)
+
+
+# The Defense, with what it would become with the given Armor (&"" for none), if any.
+func _show_defense(preview: Variant) -> void:
+	var equipment := _equipment()
+	var now: int = equipment.defense() if equipment != null else 0
+	if preview == null or equipment == null:
+		_defense.text = DEFENSE % now
+	else:
+		_defense.text = DEFENSE_PREVIEW % [now, equipment.defense_with(preview)]
+
+
+func _equipped(slot: int) -> StringName:
+	var equipment := _equipment()
+	if equipment == null:
+		return &""
+	return equipment.weapon if slot == WEAPON else equipment.armor
+
+
+func _owned(slot: int) -> Array:
+	var equipment := _equipment()
+	if equipment == null:
+		return []
+	return equipment.owned_weapons if slot == WEAPON else equipment.owned
+
+
+func _pieces(slot: int) -> Dictionary:
+	return Equipment.WEAPONS if slot == WEAPON else Equipment.ARMOR
 
 
 func _right_label(label_name: String, room: float) -> Label:
