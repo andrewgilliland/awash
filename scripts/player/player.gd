@@ -265,6 +265,7 @@ func _on_controller_stepped() -> void:
 	if attacking:
 		var quick := Hitbox.DEFAULT_DAMAGE + level.strength()
 		_sword_hitbox.damage = quick * CHARGED_MULTIPLIER if controller.charged_attack else quick
+		_sword_hitbox.charged = controller.charged_attack
 	if _sword_hitbox.active != attacking:
 		_sword_hitbox.active = attacking
 	var lit := (

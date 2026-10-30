@@ -14,6 +14,7 @@ func get_tests() -> Array:
 		["Run carries the Player's Experience, even through a defeat", _test_carries_experience],
 		["Run carries the Player's Supplies, even through a defeat", _test_carries_supplies],
 		["Run carries the Player's Armor, even through a defeat", _test_carries_armor],
+		["Run remembers each Boss defeated, even through a defeat", _test_remembers_bosses],
 	]
 
 
@@ -121,5 +122,20 @@ func _test_carries_armor() -> bool:
 	run.start_run()
 	valid = valid and run.player_armor == &"worn_leather_tunic"
 	valid = valid and run.player_owned_armor == [&"worn_leather_tunic"]
+	run.free()
+	return valid
+
+
+func _test_remembers_bosses() -> bool:
+	var run := RunStateScript.new()
+	var valid: bool = not run.has_defeated_boss(&"nameless_warden")
+	run.defeat_boss(&"nameless_warden")
+	run.enter_room(&"waking_coast_8", &"west")
+	valid = valid and run.has_defeated_boss(&"nameless_warden")
+	valid = valid and not run.has_defeated_boss(&"someone_else")
+	run.recover_from_defeat()
+	valid = valid and run.has_defeated_boss(&"nameless_warden")
+	run.start_run()
+	valid = valid and not run.has_defeated_boss(&"nameless_warden")
 	run.free()
 	return valid

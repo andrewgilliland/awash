@@ -165,6 +165,24 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
         sweep(0.6, 440, 110, duty=0.5, vibrato_hz=6, vibrato_depth=0.05),
         bubbles(5, 0.06, 160, 420, seed=14),
     ),
+    # Nameless Warden: a deep swell as it sets its shield, then the move it makes.
+    "warden_windup": lambda: growl(0.6, 70, 140, tremolo_hz=12),
+    # The shield bash: a heavy rush.
+    "warden_bash": lambda: mix(noise(0.15, 3000, 400, seed=20), sweep(0.12, 160, 70, duty=0.25)),
+    # The slam: a low boom that rolls out with the shockwave.
+    "warden_slam": lambda: mix(noise(0.35, 1500, 120, seed=21), sweep(0.3, 110, 40, duty=0.5)),
+    # A quick Attack on the Ward: a bright clang that does nothing.
+    "warden_clang": lambda: mix(sweep(0.12, 1800, 1700, duty=0.125), sweep(0.12, 2400, 2300, duty=0.25)),
+    # A Charged Attack breaks the Ward: shattering glass and a falling chime.
+    "warden_ward_break": lambda: mix(
+        noise(0.3, 9000, 2000, seed=22), notes([1568, 1175, 880, 659], 0.06, duty=0.125)
+    ),
+    # Struck while staggered: stone and iron.
+    "warden_hurt": lambda: mix(sweep(0.14, 260, 120, duty=0.25), noise(0.08, 5000, 1000, seed=23)),
+    # Defeated: it kneels, and the light goes out of it.
+    "warden_defeat": lambda: mix(
+        notes([392, 330, 262, 196, 131], 0.16, duty=0.5), noise(0.9, 2500, 150, seed=24)
+    ),
     # Menus: a soft tick as the focus moves, and a rising chime when the game starts.
     "ui_move": lambda: sweep(0.04, 880, 820, duty=0.25),
     "ui_start": lambda: notes([392, 523, 659, 784], 0.07, duty=0.5),

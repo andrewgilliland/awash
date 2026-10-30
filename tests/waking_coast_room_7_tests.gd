@@ -4,7 +4,7 @@ const ROOM_PATH := "res://scenes/rooms/waking_coast_7.tscn"
 const TILESET_PATH := "res://assets/tilesets/waking_coast_2.tres"
 const RoomReach := preload("res://tests/room_reach.gd")
 const LAYER_ORDER := [&"Backdrop", &"Terrain", &"Props", &"Entries", &"Player"]
-# One screen: the arena the Nameless Warden will hold.
+# One screen: the arena the Nameless Warden holds.
 const ROOM_SIZE := Vector2i(160, 144)
 const CELLS := Rect2i(0, 0, 10, 9)
 const TILE := 16
@@ -121,7 +121,8 @@ func _test_climbs_back() -> bool:
 	return RoomReach.span_at(reached, Vector2i(WEST_ENTRY / TILE)) != null
 
 
-# Until the Warden exists the way on to Tidefen is open.
+# Exits lead west to the road and east to Tidefen. The Gate across the road east is tested in
+# tests/wardens_gate_tests.gd.
 func _test_edges() -> bool:
 	var room := _room()
 	if room == null:

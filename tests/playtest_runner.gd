@@ -52,6 +52,7 @@ const SALT_CLIFFS_CLIMB := [
 ]
 const CLIFF_TOP_Y := 64.0
 const PlayerController := preload("res://scripts/player/player_controller.gd")
+const WardenPlaytests := preload("res://tests/warden_playtests.gd")
 const WRAITH_PATH := "Enemies/Wraith"
 const UNDERTOW_FLOOR_Y := 96.0
 # Where to stand by the Wraith: near enough to draw out its lash, clear of the lash while it
@@ -102,7 +103,7 @@ func _init() -> void:
 		"A charged Attack disperses the Storm Wisp in one blow", _playtest_charged_wisp
 	)
 	await _run_playtest_async(
-		"Player walks through the Warden's gate into Tidefen", _playtest_walks_to_tidefen
+		"Past the defeated Warden, Player walks on into Tidefen", _playtest_walks_to_tidefen
 	)
 	await _run_playtest_async("Player climbs onto Tidefen's walkway", _playtest_climbs_tidefen)
 	await _run_playtest_async(
@@ -128,6 +129,9 @@ func _init() -> void:
 	)
 	await _run_playtest_async("A new game opens on Mara's intro", _playtest_new_game_intro)
 	await _run_playtest_async("Interact talks to Mara again", _playtest_talk_to_mara)
+	var warden_playtests := WardenPlaytests.new(self)
+	for playtest in warden_playtests.get_playtests():
+		await _run_playtest_async(playtest[0], playtest[1])
 
 	if _failures > 0:
 		push_error("%d playtest(s) failed" % _failures)
@@ -496,12 +500,13 @@ func _playtest_climbs_rune_road() -> bool:
 
 
 # From the rune road's heights east through the Warden's gate, down into its arena and on into
-# Tidefen.
+# Tidefen, the Warden already defeated this Run.
 func _playtest_walks_to_tidefen() -> bool:
 	var run := root.get_node_or_null("RunState")
 	if run == null:
 		return false
 	run.call("start_run")
+	run.call("defeat_boss", &"nameless_warden")
 	run.call("enter_room", &"waking_coast_6", &"east")
 	change_scene_to_file(RUNE_ROAD_PATH)
 	var valid := await _walk_until_scene(&"move_right", WARDENS_GATE_PATH)
