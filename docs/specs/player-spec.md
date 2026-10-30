@@ -69,10 +69,10 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 ## Equipment
 
-- The Player has one Equipment slot so far, Armor. A new Run owns and wears the Worn Leather Tunic; the slot can be emptied, which leaves no Defense. `scripts/items/equipment.gd` declares every Armor with its name, Defense and 8x8 icon (`assets/sprites/items/worn_leather_tunic.aseprite`), and holds the Armor owned and the one worn.
+- The Player has two Equipment slots, Weapon and Armor. The Weapon is the Short Sword, the only one so far; it adds nothing to a hit, and the slot is never empty, so it is not carried by the Run. A new Run owns and wears the Worn Leather Tunic; the Armor slot can be emptied, which leaves no Defense. `scripts/items/equipment.gd` declares every Weapon with its name and 8x8 icon (`assets/sprites/items/short_sword.aseprite`) and every Armor with its name, Defense and icon (`assets/sprites/items/worn_leather_tunic.aseprite`), and holds the pieces owned and the ones equipped.
 - Defense is the Health the Armor takes off each hit that lands. A hit Defense lowers still costs at least 5, and a weaker hit costs what it is. The Worn Leather Tunic has Defense 0, so it changes nothing.
 - The Run carries the Armor owned and the one worn, or none, from Room to Room and through a defeat; only a new Run puts the Worn Leather Tunic back on.
-- The Equipment Panel's Armor row shows `Armor` on the left and the piece worn on the right with its icon, or `None`. While the Armor row or its list has focus, the list under it shows every Armor owned with its icon, the worn one marked `Worn`; down from the Armor row moves into it. Choosing an Armor puts it on, choosing the one worn takes it off, and focus returns to the Armor row. Stats shows the Defense after Strength.
+- The Equipment Panel is split by a divider. Above it, a row per slot shows `Weapon` or `Armor` on the left and the piece equipped on the right with its icon, or `None`, then `DEF` and the Defense. Below it are the pieces owned for the slot last focused (the Weapon when the Panel opens), each with its icon, the equipped one marked `Equipped`; the Armor's start with `None`. Down from the tab runs Weapon, Armor, Resume. Choosing a slot moves focus onto its equipped piece, the slot staying lit; while an Armor is focused, `DEF now > then` previews it. Choosing a piece equips it, `None` takes the Armor off, choosing the one equipped changes nothing, and each goes back to the slot, as does up from the top piece. Stats shows the Defense after Strength.
 
 ## Sound
 
