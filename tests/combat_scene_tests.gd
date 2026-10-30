@@ -29,7 +29,10 @@ func get_tests() -> Array:
 		["A hit costs the Player Health and knocks it away", _test_player_hit],
 		["Health counts in tens: 50 for Vael, a hit costs 10", _test_health_in_tens],
 		["Enemy hits differ: a spear costs 10, an arc 15", _test_enemy_hit_strengths],
-		["A charged Attack costs 20, a quick one 10", _test_charged_sword_strength],
+		[
+			"A charged Attack costs 20 and strikes charged; a quick one 10",
+			_test_charged_sword_strength
+		],
 		["A full Charge makes the sword blink", _test_full_charge_blinks],
 		["Scavenger has a body, hurtbox and spear", _test_scavenger_boxes],
 		["Rune shore keeps a Scavenger in its tidal pool", _test_scavenger_in_pool],
@@ -179,17 +182,17 @@ func _test_charged_sword_strength() -> bool:
 
 	_step(controller, {"melee_held": true})
 	_step(controller, {})
-	var valid := sword.active and sword.damage == 10
+	var valid := sword.active and sword.damage == 10 and not sword.charged
 	_step(controller, {"attack_finished": true})
 
 	_hold_melee(controller)
 	_step(controller, {})
-	valid = valid and sword.active and sword.damage == 20
+	valid = valid and sword.active and sword.damage == 20 and sword.charged
 	_step(controller, {"attack_finished": true})
 
 	_step(controller, {"melee_held": true})
 	_step(controller, {})
-	valid = valid and sword.active and sword.damage == 10
+	valid = valid and sword.active and sword.damage == 10 and not sword.charged
 	player.free()
 	return valid
 

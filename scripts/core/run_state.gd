@@ -22,6 +22,8 @@ var player_supplies: Dictionary = {}
 var player_armor: StringName = Equipment.STARTING_ARMOR
 var player_owned_armor: Array[StringName] = [Equipment.STARTING_ARMOR]
 var _visited_rooms: Dictionary = {FIRST_ROOM_ID: true}
+# Every Boss defeated this Run, by id.
+var _defeated_bosses: Dictionary = {}
 
 
 # Begins a new Run: in the first Room at its default Entry, with only that Room visited.
@@ -35,10 +37,12 @@ func start_run() -> void:
 	player_armor = Equipment.STARTING_ARMOR
 	player_owned_armor = [Equipment.STARTING_ARMOR]
 	_visited_rooms = {FIRST_ROOM_ID: true}
+	_defeated_bosses = {}
 
 
 # After a defeat the Run carries on: back at the first Room's default Entry with full Health,
-# keeping every Room visited and all the Player's Experience, Supplies and Equipment.
+# keeping every Room visited, every Boss defeated, and all the Player's Experience, Supplies and
+# Equipment.
 func recover_from_defeat() -> void:
 	room_id = FIRST_ROOM_ID
 	entry_id = DEFAULT_ENTRY_ID
@@ -59,3 +63,12 @@ func enter_room(next_room_id: StringName, next_entry_id: StringName) -> void:
 
 func has_visited_room(visited_room_id: StringName) -> bool:
 	return _visited_rooms.has(visited_room_id)
+
+
+# A Boss stays defeated for the rest of the Run.
+func defeat_boss(boss_id: StringName) -> void:
+	_defeated_bosses[boss_id] = true
+
+
+func has_defeated_boss(boss_id: StringName) -> bool:
+	return _defeated_bosses.has(boss_id)

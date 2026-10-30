@@ -3,6 +3,7 @@ extends Node2D
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
 const HEALTH_BAR_SCENE := preload("res://scenes/ui/health_bar.tscn")
+const BOSS_BAR_SCENE := preload("res://scenes/ui/boss_bar.tscn")
 const BRINECAP_SCENE := preload("res://scenes/items/brinecap.tscn")
 const RunStateScript := preload("res://scripts/core/run_state.gd")
 const WorldMap := preload("res://scripts/core/world_map.gd")
@@ -25,6 +26,7 @@ func _ready() -> void:
 	_ensure_pause_menu()
 	_ensure_dialogue_box()
 	_ensure_health_bar()
+	_ensure_boss_bar()
 	_place_player_at_entry()
 	_play_region_music()
 	if _player != null and not _player.is_connected(&"defeated", _on_player_defeated):
@@ -38,8 +40,9 @@ func _hand_enemy_defeats_to_player() -> void:
 	if _player == null or not is_inside_tree():
 		return
 	for enemy in get_tree().get_nodes_in_group(ENEMY_GROUP):
-		if is_ancestor_of(enemy) and not enemy.has_connections(&"defeated"):
-			enemy.connect(&"defeated", _on_enemy_defeated.bind(enemy))
+		var hand_over := _on_enemy_defeated.bind(enemy)
+		if is_ancestor_of(enemy) and not enemy.is_connected(&"defeated", hand_over):
+			enemy.connect(&"defeated", hand_over)
 
 
 func _on_enemy_defeated(experience: int, enemy: Node2D) -> void:
@@ -121,6 +124,17 @@ func _ensure_health_bar() -> void:
 		return
 	var bar := HEALTH_BAR_SCENE.instantiate()
 	bar.name = "HealthBar"
+	_canvas_layer.add_child(bar)
+	_canvas_layer.move_child(bar, 0)
+
+
+# The Boss Health bar sits under the Pause menu and the dialogue box too; it shows only while a
+# Boss in the Room is fighting.
+func _ensure_boss_bar() -> void:
+	if _canvas_layer == null or _canvas_layer.get_node_or_null("BossBar") != null:
+		return
+	var bar := BOSS_BAR_SCENE.instantiate()
+	bar.name = "BossBar"
 	_canvas_layer.add_child(bar)
 	_canvas_layer.move_child(bar, 0)
 
