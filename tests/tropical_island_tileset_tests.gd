@@ -4,7 +4,7 @@ const TILESET_PATH := "res://assets/tilesets/tropical_island_1.tres"
 const SHEET_PATH := "res://assets/tilesets/tropical_island_1.png"
 const SOURCE_ID := 0
 const COLUMNS := 8
-const ROWS := 6
+const ROWS := 11
 const WORLD_LAYER := 1
 const FULL_SQUARE := [Vector2(-8, -8), Vector2(8, -8), Vector2(8, 8), Vector2(-8, 8)]
 # Slopes rise 45 degrees across one tile: up to the right, and down to the right.
@@ -13,9 +13,21 @@ const SLOPE_DOWN := [Vector2(-8, -8), Vector2(8, 8), Vector2(-8, 8)]
 # Beach slopes sit in row 0 and jungle slopes in row 2.
 const SLOPES_UP := [Vector2i(3, 0), Vector2i(3, 2)]
 const SLOPES_DOWN := [Vector2i(4, 0), Vector2i(4, 2)]
-# Planks and the rope bridge collide along their top 7 pixels, like the Waking Coast's ledges.
+# Planks, the rope bridge, branch platforms and floating logs collide along their top 7 pixels,
+# like the Waking Coast's ledges.
 const LEDGE_TOP := [Vector2(-8, -8), Vector2(8, -8), Vector2(8, -1), Vector2(-8, -1)]
-const ONE_WAY := [Vector2i(0, 4), Vector2i(1, 4), Vector2i(2, 4), Vector2i(3, 4)]
+const ONE_WAY := [
+	Vector2i(0, 4),
+	Vector2i(1, 4),
+	Vector2i(2, 4),
+	Vector2i(3, 4),
+	Vector2i(0, 9),
+	Vector2i(1, 9),
+	Vector2i(2, 9),
+	Vector2i(0, 10),
+	Vector2i(1, 10),
+	Vector2i(2, 10),
+]
 
 
 func get_tests() -> Array:
@@ -23,7 +35,10 @@ func get_tests() -> Array:
 		["Tropical island tileset holds every sheet tile", _test_holds_every_tile],
 		["Tropical island beach and jungle ground is solid", _test_ground_is_solid],
 		["Tropical island slopes collide along their surface", _test_slopes_collide],
-		["Tropical island planks and bridge are one-way", _test_planks_are_one_way],
+		[
+			"Tropical island planks, bridge, branches and logs are one-way",
+			_test_planks_are_one_way,
+		],
 		["Tropical island scenery does not collide", _test_scenery_does_not_collide],
 	]
 
