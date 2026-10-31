@@ -10,6 +10,7 @@ const PlayerRigTests := preload("res://tests/player_rig_tests.gd")
 const RunStateTests := preload("res://tests/run_state_tests.gd")
 const PauseMenuTests := preload("res://tests/pause_menu_tests.gd")
 const WakingCoastTilesetTests := preload("res://tests/waking_coast_tileset_tests.gd")
+const TropicalIslandTilesetTests := preload("res://tests/tropical_island_tileset_tests.gd")
 const WakingCoastRoomTests := preload("res://tests/waking_coast_room_tests.gd")
 const WorldMapTests := preload("res://tests/world_map_tests.gd")
 const WakingCoastRoom2Tests := preload("res://tests/waking_coast_room_2_tests.gd")
@@ -70,6 +71,9 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var tileset_tests := WakingCoastTilesetTests.new()
 	for test in tileset_tests.get_tests():
+		_run_test(test[0], test[1])
+	var tropical_tileset_tests := TropicalIslandTilesetTests.new()
+	for test in tropical_tileset_tests.get_tests():
 		_run_test(test[0], test[1])
 	var room_tests := WakingCoastRoomTests.new()
 	for test in room_tests.get_tests():
