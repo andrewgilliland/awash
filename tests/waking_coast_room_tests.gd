@@ -36,10 +36,10 @@ const HORIZON_SHIP := Vector2i(3, 10)
 const SEA := Vector2i(7, 10)
 const HAZE_ROW := 4
 const HORIZON_ROW := 5
-# The wreck's deck and the ledges up to the cliff top stay one-way platforms.
-const PLATFORM_CELLS := [
-	Vector2i(0, 4), Vector2i(1, 4), Vector2i(2, 4), Vector2i(6, 5), Vector2i(9, 1)
-]
+# The plank step and the high branch stay one-way platforms.
+const PLATFORM_CELLS := [Vector2i(6, 5), Vector2i(9, 1)]
+# The beach runs open from the west wall to the plank step: nothing stands on the sand to climb.
+const OPEN_BEACH := Rect2i(0, 0, 6, 6)
 const SCREEN := Rect2i(0, 0, 10, 9)
 # Vael starts in the middle of the beach, in the surf.
 const START_ENTRY := Vector2(80, 96)
@@ -72,26 +72,27 @@ const LANDMARKS := {
 		Vector2i(2, 1): Vector2i(6, 6),
 		Vector2i(3, 1): Vector2i(7, 6),
 	},
-	# A palm behind the beach: crown middle, then its trunk bending down to the sand.
+	# Two palms behind the beach: crown middles, then their trunks down to the sand.
 	&"FarTrees":
 	{
 		Vector2i(4, 2): Vector2i(1, 6),
 		Vector2i(4, 3): Vector2i(1, 7),
 		Vector2i(4, 4): Vector2i(2, 8),
 		Vector2i(4, 5): Vector2i(1, 8),
+		Vector2i(1, 2): Vector2i(1, 6),
+		Vector2i(1, 4): Vector2i(0, 8),
+		Vector2i(1, 5): Vector2i(3, 13),
 	},
-	# The wreck: a mast and the posts under its deck.
+	# What's left of the wreck, washed up on the sand: a half-buried crate, a rope coil and
+	# driftwood.
 	&"Wreck":
 	{
-		Vector2i(1, 0): Vector2i(6, 4),
-		Vector2i(0, 5): Vector2i(6, 4),
-		Vector2i(2, 5): Vector2i(6, 4),
+		Vector2i(0, 5): Vector2i(0, 17),
+		Vector2i(1, 5): Vector2i(1, 17),
+		Vector2i(2, 5): Vector2i(2, 17),
 	},
 	&"Terrain":
 	{
-		# the wreck's deck of planks
-		Vector2i(0, 4): Vector2i(1, 4),
-		Vector2i(2, 4): Vector2i(2, 4),
 		# the sand Vael wakes on
 		Vector2i(0, 6): Vector2i(1, 0),
 		Vector2i(5, 6): Vector2i(1, 0),
@@ -104,7 +105,6 @@ const LANDMARKS := {
 	},
 	&"Props":
 	{
-		Vector2i(0, 3): Vector2i(7, 4),
 		Vector2i(9, 0): Vector2i(7, 4),
 	},
 }
@@ -119,7 +119,8 @@ func get_tests() -> Array:
 		["Waking Coast west wall holds; east leads on", _test_walls_keep_player_on_screen],
 		["The first Room is an open surf beach", _test_open_surf_beach],
 		["The first Room is a daytime tropical shore", _test_daytime_backdrop],
-		["The wreck's deck and the ledges stay one-way", _test_platforms_one_way],
+		["The plank step and the high branch stay one-way", _test_platforms_one_way],
+		["The beach runs open from the west wall", _test_open_beach],
 		["A tall jungle tree on the cliff top holds the high branch", _test_tall_tree],
 		["A hazy jungle stands behind the cliff", _test_far_jungle],
 		["Blacktide stands in the sand, shown only by the intro", _test_blacktide_prop],
@@ -241,7 +242,7 @@ func _test_blacktide_prop() -> bool:
 	var valid := sword != null and not sword.visible
 	if valid:
 		valid = sword.texture.resource_path == BLACKTIDE_PATH
-		# on the wreck's side of Vael, where Mara comes in from
+		# west of Vael, where Mara comes in from
 		valid = valid and sword.position.x < START_ENTRY.x
 	room.free()
 	return valid
@@ -315,5 +316,18 @@ func _test_far_jungle() -> bool:
 			valid = valid and far.get_cell_source_id(cell) == CANOPY_SOURCE
 			valid = valid and far.get_cell_atlas_coords(cell).y in FAR_JUNGLE_ROWS
 			valid = valid and cell.x >= FAR_JUNGLE_FROM_COLUMN
+	room.free()
+	return valid
+
+
+func _test_open_beach() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var valid := true
+	for row in range(OPEN_BEACH.position.y, OPEN_BEACH.end.y):
+		for column in range(OPEN_BEACH.position.x, OPEN_BEACH.end.x):
+			valid = valid and terrain.get_cell_source_id(Vector2i(column, row)) == -1
 	room.free()
 	return valid

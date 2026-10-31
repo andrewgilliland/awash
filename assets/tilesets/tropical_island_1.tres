@@ -193,6 +193,14 @@ texture = ExtResource("1_tropical")
 5:16/0 = 0
 6:16/0 = 0
 7:16/0 = 0
+0:17/0 = 0
+1:17/0 = 0
+2:17/0 = 0
+3:17/0 = 0
+4:17/0 = 0
+5:17/0 = 0
+6:17/0 = 0
+7:17/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_canopy"]
 texture = ExtResource("2_canopy")
