@@ -4,7 +4,7 @@ const TILESET_PATH := "res://assets/tilesets/tropical_island_1.tres"
 const SHEET_PATH := "res://assets/tilesets/tropical_island_1.png"
 const SOURCE_ID := 0
 const COLUMNS := 8
-const ROWS := 11
+const ROWS := 17
 const WORLD_LAYER := 1
 const FULL_SQUARE := [Vector2(-8, -8), Vector2(8, -8), Vector2(8, 8), Vector2(-8, 8)]
 # Slopes rise 45 degrees across one tile: up to the right, and down to the right.
