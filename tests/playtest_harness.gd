@@ -33,20 +33,20 @@ var _failures: int = 0
 
 
 func _run_playtest(name: String, playtest_callable: Callable) -> void:
-	var result = playtest_callable.call()
-	if result:
-		print("PASS: %s" % name)
-	else:
-		_failures += 1
-		push_error("FAIL: %s" % name)
+	if not playtest_callable.is_valid():
+		_fail("%s (its playtest cannot be called)" % name)
+		return
+	_report(name, playtest_callable.call())
 
 
 # Plays one scenario on a fresh Room once the Player has landed, then resets input and pause.
 func _run_room_scenario(name: String, room_path: String, scenario: Callable) -> void:
+	if not scenario.is_valid():
+		_fail("%s (its scenario cannot be called)" % name)
+		return
 	var packed_scene := load(room_path) as PackedScene
 	if packed_scene == null:
-		_failures += 1
-		push_error("FAIL: %s (cannot load %s)" % [name, room_path])
+		_fail("%s (cannot load %s)" % [name, room_path])
 		return
 	var main_scene := packed_scene.instantiate() as Node2D
 	root.add_child(main_scene)
@@ -54,30 +54,37 @@ func _run_room_scenario(name: String, room_path: String, scenario: Callable) -> 
 	var landed := await _frames_until(
 		func() -> bool: return player.is_on_floor(), SETTLE_FRAME_LIMIT
 	)
-	var result: bool = landed and await scenario.call(player)
+	var result: Variant = (await scenario.call(player)) if landed else false
 	for action in SCENARIO_ACTIONS:
 		Input.action_release(action)
 	paused = false
 	main_scene.free()
 	await process_frame
-
-	if result:
-		print("PASS: %s" % name)
-	else:
-		_failures += 1
-		push_error("FAIL: %s" % name)
+	_report(name, result)
 
 
 # Like _run_playtest, for playtests that wait on frames.
 func _run_playtest_async(name: String, playtest: Callable) -> void:
-	var result: bool = await playtest.call()
+	if not playtest.is_valid():
+		_fail("%s (its playtest cannot be called)" % name)
+		return
+	var result: Variant = await playtest.call()
 	for action in SCENARIO_ACTIONS:
 		Input.action_release(action)
-	if result:
+	_report(name, result)
+
+
+# Only a true passes: a script error or a freed object hands back null, and that must fail.
+func _report(name: String, result: Variant) -> void:
+	if result is bool and result:
 		print("PASS: %s" % name)
 	else:
-		_failures += 1
-		push_error("FAIL: %s" % name)
+		_fail(name)
+
+
+func _fail(description: String) -> void:
+	_failures += 1
+	push_error("FAIL: %s" % description)
 
 
 # Starts a fresh Run in a Room at an Entry and waits for the Player to land.

@@ -10,6 +10,8 @@ signal struck(hurtbox: Area2D)
 const DEFAULT_DAMAGE := 10
 
 @export var damage: int = DEFAULT_DAMAGE
+# Whether this hit is a Charged Attack's, which breaks a Ward.
+var charged: bool = false
 
 var active: bool = false:
 	set(value):

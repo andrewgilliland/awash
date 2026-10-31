@@ -2,6 +2,7 @@ extends RefCounted
 
 const Equipment := preload("res://scripts/items/equipment.gd")
 const TUNIC := &"worn_leather_tunic"
+const SHORT_SWORD := &"short_sword"
 
 
 func get_tests() -> Array:
@@ -17,6 +18,9 @@ func get_tests() -> Array:
 		["Equipment starts from what the Run carried", _test_starts_from_run],
 		["Unknown Armor is neither owned nor worn", _test_unknown_armor_dropped],
 		["Every Armor has an icon", _test_every_armor_has_icon],
+		["A new Run holds the Short Sword, its only Weapon", _test_holds_short_sword],
+		["Every Weapon has an icon", _test_every_weapon_has_icon],
+		["The Defense with any Armor, or none, can be read", _test_defense_with],
 	]
 
 
@@ -89,3 +93,26 @@ func _test_every_armor_has_icon() -> bool:
 		var icon: String = Equipment.ARMOR[id].get("icon", "")
 		valid = valid and ResourceLoader.exists(icon)
 	return valid
+
+
+func _test_holds_short_sword() -> bool:
+	var equipment := Equipment.new()
+	return (
+		Equipment.STARTING_WEAPON == SHORT_SWORD
+		and equipment.weapon == SHORT_SWORD
+		and equipment.weapon_name() == "Short Sword"
+		and equipment.owned_weapons == [SHORT_SWORD]
+	)
+
+
+func _test_every_weapon_has_icon() -> bool:
+	var valid := not Equipment.WEAPONS.is_empty()
+	for id in Equipment.WEAPONS:
+		var icon: String = Equipment.WEAPONS[id].get("icon", "")
+		valid = valid and ResourceLoader.exists(icon)
+	return valid
+
+
+func _test_defense_with() -> bool:
+	var equipment := Equipment.new()
+	return equipment.defense_with(TUNIC) == 0 and equipment.defense_with(&"") == 0

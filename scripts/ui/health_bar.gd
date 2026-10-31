@@ -16,7 +16,9 @@ const FILL_COLOUR := Color("e05040")
 const FILL_SHINE := Color("f8a080")
 const TRAIL_COLOUR := Color("f8f8f8")
 
-# Both -1 until the bar first reads the Player's Health.
+# How big the fill is when full; a wider bar sets its own before it is ready.
+var fill_size: Vector2 = FILL_SIZE
+# Both -1 until the bar first reads its Health.
 var _fill: float = -1.0
 var _trail: float = -1.0
 var _hold_left: float = 0.0
@@ -24,12 +26,11 @@ var _drain_speed: float = 0.0
 
 
 func _ready() -> void:
-	custom_minimum_size = FILL_SIZE + Vector2(PADDING, PADDING) * 2.0
+	custom_minimum_size = fill_size + Vector2(PADDING, PADDING) * 2.0
 
 
 func _process(delta: float) -> void:
-	var player := get_tree().get_first_node_in_group(PLAYER_GROUP) if is_inside_tree() else null
-	var health: Object = player.get("health") if player != null else null
+	var health := _health()
 	visible = health != null
 	if health == null:
 		return
@@ -48,6 +49,12 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 
+# The Health the bar shows, or null to hide it: the Player's.
+func _health() -> Object:
+	var player := get_tree().get_first_node_in_group(PLAYER_GROUP) if is_inside_tree() else null
+	return player.get("health") if player != null else null
+
+
 # The share of Health left, which the fill shows.
 func fill_fraction() -> float:
 	return maxf(_fill, 0.0)
@@ -63,10 +70,10 @@ func _draw() -> void:
 	draw_rect(outer, BACK_COLOUR)
 	draw_rect(outer.grow(-0.5), FRAME_COLOUR, false, 1.0)
 	var at := Vector2(PADDING, PADDING)
-	var trail_width := roundf(FILL_SIZE.x * trail_fraction())
-	var fill_width := roundf(FILL_SIZE.x * fill_fraction())
+	var trail_width := roundf(fill_size.x * trail_fraction())
+	var fill_width := roundf(fill_size.x * fill_fraction())
 	if trail_width > fill_width:
-		draw_rect(Rect2(at, Vector2(trail_width, FILL_SIZE.y)), TRAIL_COLOUR)
+		draw_rect(Rect2(at, Vector2(trail_width, fill_size.y)), TRAIL_COLOUR)
 	if fill_width > 0.0:
-		draw_rect(Rect2(at, Vector2(fill_width, FILL_SIZE.y)), FILL_COLOUR)
+		draw_rect(Rect2(at, Vector2(fill_width, fill_size.y)), FILL_COLOUR)
 		draw_rect(Rect2(at, Vector2(fill_width, 1)), FILL_SHINE)

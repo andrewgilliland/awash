@@ -105,7 +105,7 @@ An Exit the Player falls through into a Room below, with no way back up. A sinkh
 _Avoid_: Pit, sinkhole, chute, hole (as the general term)
 
 **Gate**:
-A place on a route that stays shut until an ability unlock or a defeated boss opens it, such as the ledge above the salt cliffs that double jump will reach.
+A place on a route that stays shut until an ability unlock or a defeated Boss opens it, such as the ledge above the salt cliffs that double jump will reach, or the column of rune light across the road east of the Warden's gate.
 _Avoid_: Lock, barrier, door
 
 **Cache**:
@@ -174,6 +174,22 @@ _Avoid_: Ghost, specter, phantom
 The glowing stone lodged in a Wraith's chest, binding it to the coast. It is the only part of a Wraith the sword can hit, and only while it shows.
 _Avoid_: Core, weak point, heart
 
+**Boss**:
+An enemy that guards a Region's end, with its own Health bar along the bottom of the screen while it fights. Defeating it opens a Gate, and it stays defeated for the Run, through the Player's own defeat; a new Run brings it back.
+_Avoid_: Miniboss, guardian (as the general term)
+
+**Nameless Warden**:
+The Waking Coast's Boss: an armored spirit with a blank stone mask and a salt-crusted shield, guarding the Warden's gate on the road to Tidefen. It wakes when the Player crosses into the arena, then bashes with its shield and slams rune shockwaves along the floor, hurrying once half its Health is gone.
+_Avoid_: Warden (alone), sentinel, guardian
+
+**Ward**:
+The Nameless Warden's guard of pale rune light. Quick Attacks glance off it; a Charged Attack breaks it, and it returns after the Stagger.
+_Avoid_: Shield, barrier, armor
+
+**Stagger**:
+The moments after a Ward breaks, when the Boss takes any hit and does not harm the Player by touch.
+_Avoid_: Stun, daze
+
 ## Growth
 
 **Level**:
@@ -193,6 +209,14 @@ _Avoid_: Attack (the Player state), power, damage
 **Equipment**:
 What the Player wears or wields, one piece in each slot, kept for the whole Run rather than spent like a Supply. A defeat keeps it.
 _Avoid_: Gear, outfit, loadout
+
+**Weapon**:
+The Equipment slot for what the Player wields: the sword each Attack swings. It is never empty; a new Run holds the Short Sword.
+_Avoid_: Blade, arm, main hand
+
+**Short Sword**:
+The Weapon Mara pulls from the sand on the Waking Coast and hands to Vael: a plain blade that adds nothing to a hit yet.
+_Avoid_: Starting weapon, default weapon
 
 **Armor**:
 The Equipment slot for what the Player wears, chosen in the Equipment Panel from the Armor the Player owns, or left empty for no Defense. A new Run owns and wears the Worn Leather Tunic.
@@ -227,6 +251,14 @@ _Avoid_: Tab, screen, page
 **Inventory**:
 The Panel listing each kind of Supply the Player carries and how many. Choosing one there uses it, with play paused: a Restorative restores its Health, and nothing is spent while Health is full.
 _Avoid_: Supplies Panel, items menu, bag
+
+**Equipment Panel**:
+The Panel showing each Equipment slot with its piece above a divider, and below it the pieces owned for the slot last focused, the one equipped marked. Choosing a slot moves into its pieces; choosing one equips it, and None empties a slot that can be empty. Defense shows above the divider, with what it would become while an Armor is focused.
+_Avoid_: Equip screen, gear menu, loadout
+
+**Description**:
+A line or two at the foot of the Inventory and the Equipment Panel saying what the focused Supply, or piece of Equipment, is. Each Supply and piece has its own.
+_Avoid_: Tooltip, flavor text, help text
 
 **Map**:
 The Panel that draws each visited Room as a block, sized in screens, with the name of the Region or Safe spoke the Player is in and a dot where the Player stands. Unvisited Rooms stay hidden.
