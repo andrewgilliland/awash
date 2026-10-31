@@ -1,9 +1,22 @@
 extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
-const TILESET_PATH := "res://assets/tilesets/waking_coast_2.tres"
+const TILESET_PATH := "res://assets/tilesets/tropical_island_1.tres"
 const LAYER_ORDER := [
-	&"Backdrop", &"FarTrees", &"Wreck", &"Terrain", &"Props", &"Entries", &"Player"
+	&"Backdrop", &"Clouds", &"FarTrees", &"Wreck", &"Terrain", &"Props", &"Entries", &"Player"
+]
+const TILE_LAYERS := [&"Backdrop", &"Clouds", &"FarTrees", &"Wreck", &"Terrain", &"Props"]
+# A daytime sky over the sea: sky, a hazy band, the horizon, then sea, from the top down.
+const SKY := Vector2i(7, 7)
+const HAZE := Vector2i(7, 8)
+const HORIZON := Vector2i(7, 9)
+const HORIZON_SHIP := Vector2i(3, 10)
+const SEA := Vector2i(7, 10)
+const HAZE_ROW := 4
+const HORIZON_ROW := 5
+# The wreck's deck and the ledges up to the cliff top stay one-way platforms.
+const PLATFORM_CELLS := [
+	Vector2i(0, 4), Vector2i(1, 4), Vector2i(2, 4), Vector2i(6, 5), Vector2i(8, 1), Vector2i(9, 1)
 ]
 const SCREEN := Rect2i(0, 0, 10, 9)
 # Vael starts in the middle of the beach, in the surf.
@@ -13,46 +26,64 @@ const BLACKTIDE_PATH := "res://assets/sprites/weapons/blacktide_stuck.png"
 const CLEARED_PROPS := [
 	Vector2i(7, 2), Vector2i(7, 3), Vector2i(8, 2), Vector2i(9, 2), Vector2i(9, 3)
 ]
-# The tidal pool's water and shallows.
-const POOL_TILES := [Vector2i(3, 5), Vector2i(4, 5), Vector2i(5, 5)]
+# Water tiles: the beach is open sand, with no tidal pool.
+const POOL_TILES := [Vector2i(5, 5), Vector2i(6, 5)]
 const WORLD_LAYER := 1
 # On the cliff top, clear of the east Exit.
 const EAST_ENTRY := Vector2(148, 64)
-# Landmark cells from assets/waking_shores_2.aseprite: layer -> {cell: atlas coords}.
+# Landmark cells from assets/tilesets/tropical_island_1.png: layer -> {cell: atlas coords}.
 const LANDMARKS := {
-	# Far palms on the headland: crown middle, trunk and base.
+	&"Backdrop":
+	{
+		Vector2i(0, 0): SKY,
+		Vector2i(0, 4): HAZE,
+		Vector2i(0, 5): HORIZON,
+		Vector2i(3, 5): HORIZON_SHIP,
+		Vector2i(0, 6): SEA,
+	},
+	# The sun (2x2) and a cloud (left, middle, right).
+	&"Clouds":
+	{
+		Vector2i(5, 0): Vector2i(5, 7),
+		Vector2i(6, 1): Vector2i(6, 8),
+		Vector2i(2, 1): Vector2i(5, 6),
+		Vector2i(3, 1): Vector2i(6, 6),
+		Vector2i(4, 1): Vector2i(7, 6),
+	},
+	# A palm behind the beach: crown middle, then its trunk bending down to the sand.
 	&"FarTrees":
 	{
-		Vector2i(4, 1): Vector2i(5, 10),
-		Vector2i(4, 2): Vector2i(7, 9),
-		Vector2i(4, 4): Vector2i(7, 10),
-		Vector2i(7, 1): Vector2i(5, 10),
+		Vector2i(4, 2): Vector2i(1, 6),
+		Vector2i(4, 3): Vector2i(1, 7),
+		Vector2i(4, 4): Vector2i(2, 8),
+		Vector2i(4, 5): Vector2i(1, 8),
 	},
+	# The wreck: a mast and the posts under its deck.
 	&"Wreck":
 	{
-		Vector2i(1, 0): Vector2i(7, 6),
-		Vector2i(1, 5): Vector2i(1, 6),
-		Vector2i(2, 5): Vector2i(2, 6),
+		Vector2i(1, 0): Vector2i(6, 4),
+		Vector2i(0, 5): Vector2i(6, 4),
+		Vector2i(2, 5): Vector2i(6, 4),
 	},
 	&"Terrain":
 	{
-		Vector2i(0, 4): Vector2i(5, 6),
+		# the wreck's deck of planks
+		Vector2i(0, 4): Vector2i(1, 4),
+		Vector2i(2, 4): Vector2i(2, 4),
+		# the sand Vael wakes on
 		Vector2i(0, 6): Vector2i(1, 0),
-		Vector2i(2, 6): Vector2i(1, 0),
-		# the surf: foam washing over wet sand where Vael lies, between soft edges
-		Vector2i(3, 6): Vector2i(2, 8),
-		Vector2i(4, 6): Vector2i(6, 5),
-		Vector2i(5, 6): Vector2i(6, 5),
-		Vector2i(6, 6): Vector2i(5, 8),
-		Vector2i(6, 5): Vector2i(3, 4),
+		Vector2i(5, 6): Vector2i(1, 0),
+		# the plank step and the jungle cliff
+		Vector2i(6, 5): Vector2i(0, 4),
 		Vector2i(7, 4): Vector2i(0, 2),
-		Vector2i(8, 6): Vector2i(0, 4),
-		Vector2i(8, 1): Vector2i(3, 4),
+		Vector2i(7, 6): Vector2i(0, 3),
+		# the high branch
+		Vector2i(8, 1): Vector2i(0, 9),
 	},
 	&"Props":
 	{
-		Vector2i(0, 3): Vector2i(0, 7),
-		Vector2i(9, 0): Vector2i(0, 7),
+		Vector2i(0, 3): Vector2i(7, 4),
+		Vector2i(9, 0): Vector2i(7, 4),
 	},
 }
 
@@ -65,6 +96,8 @@ func get_tests() -> Array:
 		["Waking Coast camera stays on the screen", _test_camera_stays_on_screen],
 		["Waking Coast west wall holds; east leads on", _test_walls_keep_player_on_screen],
 		["The first Room is an open surf beach", _test_open_surf_beach],
+		["The first Room is a daytime tropical shore", _test_daytime_backdrop],
+		["The wreck's deck and the ledges stay one-way", _test_platforms_one_way],
 		["Blacktide stands in the sand, shown only by the intro", _test_blacktide_prop],
 	]
 
@@ -85,11 +118,7 @@ func _test_draws_layers_in_order() -> bool:
 		if child.name in LAYER_ORDER:
 			names.append(child.name)
 	var valid := names == LAYER_ORDER
-	var backdrop := room.get_node_or_null("Backdrop") as AnimatedSprite2D
-	valid = valid and backdrop != null and backdrop.sprite_frames != null
-	valid = valid and backdrop.sprite_frames.get_frame_count(&"default") == 4
-	valid = valid and backdrop.autoplay == "default" and not backdrop.centered
-	for layer_name in [&"Wreck", &"Terrain", &"Props"]:
+	for layer_name in TILE_LAYERS:
 		var layer := room.get_node_or_null(NodePath(layer_name)) as TileMapLayer
 		valid = valid and layer != null and layer.tile_set != null
 		valid = valid and layer.tile_set.resource_path == TILESET_PATH
@@ -190,5 +219,41 @@ func _test_blacktide_prop() -> bool:
 		valid = sword.texture.resource_path == BLACKTIDE_PATH
 		# on the wreck's side of Vael, where Mara comes in from
 		valid = valid and sword.position.x < START_ENTRY.x
+	room.free()
+	return valid
+
+
+func _test_daytime_backdrop() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var backdrop := room.get_node_or_null("Backdrop") as TileMapLayer
+	var valid := backdrop != null
+	if valid:
+		for row in range(SCREEN.size.y):
+			for column in range(SCREEN.size.x):
+				var coords := backdrop.get_cell_atlas_coords(Vector2i(column, row))
+				if row < HAZE_ROW:
+					valid = valid and coords == SKY
+				elif row == HAZE_ROW:
+					valid = valid and coords == HAZE
+				elif row == HORIZON_ROW:
+					valid = valid and coords in [HORIZON, HORIZON_SHIP]
+				else:
+					valid = valid and coords == SEA
+	room.free()
+	return valid
+
+
+func _test_platforms_one_way() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var valid := true
+	for cell in PLATFORM_CELLS:
+		var data := terrain.get_cell_tile_data(cell)
+		valid = valid and data != null and data.get_collision_polygons_count(0) == 1
+		valid = valid and data.is_collision_polygon_one_way(0, 0)
 	room.free()
 	return valid
