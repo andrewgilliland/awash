@@ -128,14 +128,14 @@ func _test_carries_armor() -> bool:
 
 func _test_remembers_bosses() -> bool:
 	var run := RunStateScript.new()
-	var valid: bool = not run.has_defeated_boss(&"nameless_warden")
-	run.defeat_boss(&"nameless_warden")
+	var valid: bool = not run.has_defeated_boss(&"reefback")
+	run.defeat_boss(&"reefback")
 	run.enter_room(&"waking_coast_8", &"west")
-	valid = valid and run.has_defeated_boss(&"nameless_warden")
+	valid = valid and run.has_defeated_boss(&"reefback")
 	valid = valid and not run.has_defeated_boss(&"someone_else")
 	run.recover_from_defeat()
-	valid = valid and run.has_defeated_boss(&"nameless_warden")
+	valid = valid and run.has_defeated_boss(&"reefback")
 	run.start_run()
-	valid = valid and not run.has_defeated_boss(&"nameless_warden")
+	valid = valid and not run.has_defeated_boss(&"reefback")
 	run.free()
 	return valid

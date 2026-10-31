@@ -4,7 +4,7 @@ const ROOM_PATH := "res://scenes/rooms/waking_coast_7.tscn"
 const TILESET_PATH := "res://assets/tilesets/waking_coast_2.tres"
 const RoomReach := preload("res://tests/room_reach.gd")
 const LAYER_ORDER := [&"Backdrop", &"Terrain", &"Props", &"Entries", &"Player"]
-# One screen: the arena the Nameless Warden holds.
+# One screen: the arena the Reefback holds.
 const ROOM_SIZE := Vector2i(160, 144)
 const CELLS := Rect2i(0, 0, 10, 9)
 const TILE := 16

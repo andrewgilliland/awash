@@ -38,6 +38,7 @@ Each linked file stores the entity's `name`, `type`, `category`, `size`, `moveme
 
 ### Boss
 
+- [Reefback](reefback.md)
 - [Nameless Warden](nameless-warden.md)
 
 ## Low Canopy Jungle

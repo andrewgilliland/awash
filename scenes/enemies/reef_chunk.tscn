@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/reef_chunk.gd" id="1_chunk"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/reefback_props.png" id="2_props"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_chunk"]
+size = Vector2(10, 8)
+
+[node name="ReefChunk" type="Area2D"]
+collision_layer = 16
+collision_mask = 4
+monitoring = false
+monitorable = false
+script = ExtResource("1_chunk")
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_chunk")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_props")
+hframes = 4

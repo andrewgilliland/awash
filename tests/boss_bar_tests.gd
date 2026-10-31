@@ -38,13 +38,13 @@ func _test_fights() -> bool:
 	var room := _room()
 	var bar := _wake(room)
 	var name := bar.get_node_or_null("Name") as Label
-	var valid := bar.visible and name != null and name.text == "Nameless Warden"
+	var valid := bar.visible and name != null and name.text == "Reefback"
 	valid = valid and is_equal_approx(bar.call("fill_fraction"), 1.0)
 	# Wide, along the bottom of the screen.
 	valid = valid and bar.get_combined_minimum_size().x >= SCREEN.x * 0.75
 	valid = valid and bar.position.y > SCREEN.y * 0.8
 	valid = valid and bar.position.y + bar.get_combined_minimum_size().y <= SCREEN.y
-	room.get_node("NamelessWarden").get("health").hurt(60, 0.0)
+	room.get_node("Reefback").get("health").hurt(70, 0.0)
 	for i in int((HealthBar.HOLD_TIME + HealthBar.DRAIN_TIME) / FRAME) + 2:
 		bar.call("_process", FRAME)
 	valid = valid and is_equal_approx(bar.call("fill_fraction"), 0.5)
@@ -56,18 +56,18 @@ func _test_hides_on_defeat() -> bool:
 	var room := _room()
 	var bar := _wake(room)
 	var valid := bar.visible
-	room.get_node("NamelessWarden").get("health").hurt(120, 0.0)
+	room.get_node("Reefback").get("health").hurt(140, 0.0)
 	bar.call("_process", FRAME)
 	valid = valid and not bar.visible
 	_close(room)
 	return valid
 
 
-# Brings the Player up to the Warden so it wakes, and lets the bar look.
+# Brings the Player up to the Reefback so it wakes, and lets the bar look.
 func _wake(room: Node2D) -> Control:
-	var warden := room.get_node("NamelessWarden") as Node2D
-	(room.get_node("Player") as Node2D).global_position = warden.global_position - Vector2(50, 0)
-	warden.call("_physics_process", FRAME)
+	var boss := room.get_node("Reefback") as Node2D
+	(room.get_node("Player") as Node2D).global_position = boss.global_position - Vector2(50, 0)
+	boss.call("_physics_process", FRAME)
 	var bar := room.get_node("CanvasLayer/BossBar") as Control
 	bar.call("_process", FRAME)
 	return bar

@@ -41,7 +41,7 @@ const StormWispBrainTests := preload("res://tests/storm_wisp_brain_tests.gd")
 const StormWispSoundsTests := preload("res://tests/storm_wisp_sounds_tests.gd")
 const StormWispSceneTests := preload("res://tests/storm_wisp_scene_tests.gd")
 const WraithBrainTests := preload("res://tests/wraith_brain_tests.gd")
-const WardenBrainTests := preload("res://tests/warden_brain_tests.gd")
+const ReefbackBrainTests := preload("res://tests/reefback_brain_tests.gd")
 const WraithSoundsTests := preload("res://tests/wraith_sounds_tests.gd")
 const WraithSceneTests := preload("res://tests/wraith_scene_tests.gd")
 const HealthBarTests := preload("res://tests/health_bar_tests.gd")
@@ -51,7 +51,7 @@ const PlayerSuppliesTests := preload("res://tests/player_supplies_tests.gd")
 const InventoryTests := preload("res://tests/inventory_tests.gd")
 const PlayerArmorTests := preload("res://tests/player_armor_tests.gd")
 const EquipmentPanelTests := preload("res://tests/equipment_panel_tests.gd")
-const NamelessWardenTests := preload("res://tests/nameless_warden_tests.gd")
+const ReefbackTests := preload("res://tests/reefback_tests.gd")
 const WardensGateTests := preload("res://tests/wardens_gate_tests.gd")
 const BossBarTests := preload("res://tests/boss_bar_tests.gd")
 const STEP_DELTA := 0.1
@@ -140,8 +140,8 @@ func _init() -> void:
 	var wraith_brain_tests := WraithBrainTests.new()
 	for test in wraith_brain_tests.get_tests():
 		_run_test(test[0], test[1])
-	var warden_brain_tests := WardenBrainTests.new()
-	for test in warden_brain_tests.get_tests():
+	var reefback_brain_tests := ReefbackBrainTests.new()
+	for test in reefback_brain_tests.get_tests():
 		_run_test(test[0], test[1])
 	var wraith_sounds_tests := WraithSoundsTests.new()
 	for test in wraith_sounds_tests.get_tests():
@@ -209,8 +209,8 @@ func _init() -> void:
 	var equipment_panel_tests := EquipmentPanelTests.new(root)
 	for test in equipment_panel_tests.get_tests():
 		_run_test(test[0], test[1])
-	var nameless_warden_tests := NamelessWardenTests.new(root)
-	for test in nameless_warden_tests.get_tests():
+	var reefback_tests := ReefbackTests.new(root)
+	for test in reefback_tests.get_tests():
 		_run_test(test[0], test[1])
 	var wardens_gate_tests := WardensGateTests.new(root)
 	for test in wardens_gate_tests.get_tests():

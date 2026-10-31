@@ -165,23 +165,37 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
         sweep(0.6, 440, 110, duty=0.5, vibrato_hz=6, vibrato_depth=0.05),
         bubbles(5, 0.06, 160, 420, seed=14),
     ),
-    # Nameless Warden: a deep swell as it sets its shield, then the move it makes.
-    "warden_windup": lambda: growl(0.6, 70, 140, tremolo_hz=12),
-    # The shield bash: a heavy rush.
-    "warden_bash": lambda: mix(noise(0.15, 3000, 400, seed=20), sweep(0.12, 160, 70, duty=0.25)),
-    # The slam: a low boom that rolls out with the shockwave.
-    "warden_slam": lambda: mix(noise(0.35, 1500, 120, seed=21), sweep(0.3, 110, 40, duty=0.5)),
+    # Reefback: a roar for every Tell, then the attack it warned of.
+    "reefback_roar": lambda: growl(0.7, 60, 120, tremolo_hz=16),
+    # The knuckle charge: a run of heavy thuds.
+    "reefback_charge": lambda: mix(
+        noise(0.6, 900, 200, seed=30), notes([70, 60, 70, 60, 70, 60], 0.1, duty=0.5)
+    ),
+    # The lunge swipe: a rush of air.
+    "reefback_swipe": lambda: mix(noise(0.18, 7000, 900, seed=31), sweep(0.14, 600, 200, duty=0.25)),
+    # The ground pound: a low boom that rolls out with the shockwaves.
+    "reefback_pound": lambda: mix(noise(0.4, 1500, 120, seed=32), sweep(0.35, 110, 40, duty=0.5)),
+    # The leap: air rushing up.
+    "reefback_leap": lambda: mix(noise(0.3, 1500, 5000, seed=33), sweep(0.3, 180, 420, duty=0.25)),
+    # The landing: a heavy thud.
+    "reefback_land": lambda: mix(noise(0.3, 1200, 100, seed=34), sweep(0.25, 90, 35, duty=0.5)),
+    # The reef throw: a heave, then rock tearing loose.
+    "reefback_throw": lambda: mix(noise(0.25, 4000, 600, seed=35), sweep(0.2, 300, 120, duty=0.25)),
+    # The chest-beat: drumming on its chest.
+    "reefback_beat": lambda: mix(
+        notes([90, 80, 90, 80, 90, 80, 90, 80], 0.14, duty=0.5), noise(1.1, 600, 150, seed=36)
+    ),
     # A quick Attack on the Ward: a bright clang that does nothing.
-    "warden_clang": lambda: mix(sweep(0.12, 1800, 1700, duty=0.125), sweep(0.12, 2400, 2300, duty=0.25)),
+    "reefback_clang": lambda: mix(sweep(0.12, 1800, 1700, duty=0.125), sweep(0.12, 2400, 2300, duty=0.25)),
     # A Charged Attack breaks the Ward: shattering glass and a falling chime.
-    "warden_ward_break": lambda: mix(
+    "reefback_ward_break": lambda: mix(
         noise(0.3, 9000, 2000, seed=22), notes([1568, 1175, 880, 659], 0.06, duty=0.125)
     ),
-    # Struck while staggered: stone and iron.
-    "warden_hurt": lambda: mix(sweep(0.14, 260, 120, duty=0.25), noise(0.08, 5000, 1000, seed=23)),
-    # Defeated: it kneels, and the light goes out of it.
-    "warden_defeat": lambda: mix(
-        notes([392, 330, 262, 196, 131], 0.16, duty=0.5), noise(0.9, 2500, 150, seed=24)
+    # Struck while staggered: a grunt and a crack of coral.
+    "reefback_hurt": lambda: mix(sweep(0.16, 200, 90, duty=0.5), noise(0.08, 5000, 1000, seed=23)),
+    # Defeated: it slumps with a last long breath.
+    "reefback_defeat": lambda: mix(
+        growl(0.5, 120, 50, tremolo_hz=8), noise(0.9, 2500, 150, seed=24)
     ),
     # Menus: a soft tick as the focus moves, and a rising chime when the game starts.
     "ui_move": lambda: sweep(0.04, 880, 820, duty=0.25),

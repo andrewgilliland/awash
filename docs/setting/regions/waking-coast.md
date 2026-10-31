@@ -11,7 +11,7 @@ enemies:
     ../../enemies/scavenger.md,
     ../../enemies/storm-wisp.md,
   ]
-bosses: [../../enemies/nameless-warden.md]
+bosses: [../../enemies/reefback.md]
 key_areas:
   - Black Surf
   - rune shore
@@ -58,6 +58,6 @@ Once the ceremonial landing site for wardens sworn to protect forbidden knowledg
 
 ### Boss Test
 
-- The Nameless Warden combines shield counters, ground shockwaves, and a magical guard.
-- Guarding answers its predictable strikes, jumping avoids its shockwaves, and Special Attack breaks its ward.
-- Throwing Knives provide a safe option during brief periods when the Warden controls the ground nearby.
+- The Reefback, a great sea-ape crusted with coral, shows each attack with a Tell before it comes: from afar a knuckle charge, a leap slam or a thrown chunk of reef; up close a lunge swipe or a ground pound.
+- Moving on the Tell answers the charge, leap and throw, jumping clears the pound's shockwaves, and a Charged Attack breaks its Ward for a Stagger.
+- At half Health it beats its chest and brings rubble down on marked spots, then hurries.

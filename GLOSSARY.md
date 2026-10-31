@@ -178,12 +178,16 @@ _Avoid_: Core, weak point, heart
 An enemy that guards a Region's end, with its own Health bar along the bottom of the screen while it fights. Defeating it opens a Gate, and it stays defeated for the Run, through the Player's own defeat; a new Run brings it back.
 _Avoid_: Miniboss, guardian (as the general term)
 
-**Nameless Warden**:
-The Waking Coast's Boss: an armored spirit with a blank stone mask and a salt-crusted shield, guarding the Warden's gate on the road to Tidefen. It wakes when the Player crosses into the arena, then bashes with its shield and slams rune shockwaves along the floor, hurrying once half its Health is gone.
-_Avoid_: Warden (alone), sentinel, guardian
+**Reefback**:
+The Waking Coast's Boss: a great sea-ape with a coral-crusted back, guarding the Warden's gate on the road to Tidefen. It wakes when the Player comes near and stomps toward them between attacks, each shown first by a Tell: from afar it charges on its knuckles, leaps to where the Player stood, or throws a chunk of reef; up close it swipes or pounds the floor. Once half its Health is gone it beats its chest, bringing rubble down, and hurries from then on.
+_Avoid_: Gorilla, ape (as its name), Nameless Warden
+
+**Tell**:
+How a Boss shows which attack is coming: a pose held for a moment, flashing, before the attack itself.
+_Avoid_: Wind-up, telegraph, warning
 
 **Ward**:
-The Nameless Warden's guard of pale rune light. Quick Attacks glance off it; a Charged Attack breaks it, and it returns after the Stagger.
+The Reefback's guard of pale rune light. Quick Attacks glance off it; a Charged Attack breaks it, and it returns after the Stagger.
 _Avoid_: Shield, barrier, armor
 
 **Stagger**:

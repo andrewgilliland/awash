@@ -5,7 +5,7 @@
 [ext_resource type="TileSet" uid="uid://87k8wahvc2uo" path="res://assets/tilesets/waking_coast_2.tres" id="3_mbfww"]
 [ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="4_ea865"]
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="5_xtuqj"]
-[ext_resource type="PackedScene" path="res://scenes/enemies/nameless_warden.tscn" id="6_warden"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/reefback.tscn" id="6_reefback"]
 [ext_resource type="Script" path="res://scripts/core/boss_gate.gd" id="7_gate"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_u8o8n"]
@@ -95,14 +95,14 @@ entry_id = &"west"
 [node name="Edge" type="CollisionShape2D" parent="Exits/east"]
 shape = SubResource("RectangleShape2D_d7f6o")
 
-[node name="NamelessWarden" parent="." instance=ExtResource("6_warden")]
-position = Vector2(136, 112)
+[node name="Reefback" parent="." instance=ExtResource("6_reefback")]
+position = Vector2(132, 112)
 
 [node name="Gate" type="StaticBody2D" parent="." node_paths=PackedStringArray("boss")]
 position = Vector2(156, 112)
 script = ExtResource("7_gate")
-boss = NodePath("../NamelessWarden")
-boss_id = &"nameless_warden"
+boss = NodePath("../Reefback")
+boss_id = &"reefback"
 
 [node name="Shape" type="CollisionShape2D" parent="Gate"]
 position = Vector2(0, -56)
