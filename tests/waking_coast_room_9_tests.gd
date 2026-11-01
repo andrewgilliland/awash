@@ -4,7 +4,7 @@ const ROOM_PATH := "res://scenes/rooms/waking_coast_9.tscn"
 const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tres"
 const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 const RoomReach := preload("res://tests/room_reach.gd")
-const LAYER_ORDER := [&"Back", &"Terrain", &"Props", &"Entries", &"Player"]
+const LAYER_ORDER := [&"Background", &"Back", &"Terrain", &"Props", &"Entries", &"Player"]
 # Four screens wide, under the rune road, the Warden's gate and Tidefen's west end.
 const ROOM_SIZE := Vector2i(640, 144)
 const CELLS := Rect2i(0, 0, 40, 9)

@@ -4,7 +4,7 @@ const ROOM_PATH := "res://scenes/rooms/waking_coast_5.tscn"
 const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tres"
 const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 const RoomReach := preload("res://tests/room_reach.gd")
-const LAYER_ORDER := [&"Back", &"Terrain", &"Props", &"Entries", &"Player"]
+const LAYER_ORDER := [&"Background", &"Back", &"Terrain", &"Props", &"Entries", &"Player"]
 # Two screens wide, under the wreck graveyard.
 const ROOM_SIZE := Vector2i(320, 144)
 const CELLS := Rect2i(0, 0, 20, 9)
