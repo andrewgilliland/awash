@@ -277,10 +277,10 @@ func _scenario_walks_waking_coast_sand(player: CharacterBody2D) -> bool:
 # Walking off the screen's west edge would drop the Player out of the world.
 func _scenario_stops_at_west_edge(player: CharacterBody2D) -> bool:
 	_press(&"move_left")
-	await _frames(100)
+	await _frames(220)
 	_release(&"move_left")
 	await _frames(2)
-	# Walking from the middle of the beach reaches the wall, and stops there.
+	# Walking from where Vael wakes, across the open beach, reaches the wall and stops there.
 	var valid := player.is_on_floor() and player.global_position.x >= 0.0
 	valid = valid and player.global_position.x < 12.0
 	valid = valid and _is_on_sand(player)
@@ -319,7 +319,7 @@ func _playtest_walks_rooms() -> bool:
 	valid = valid and await _walk_until_scene(&"move_left", FIRST_ROOM_PATH)
 	valid = valid and run.get("room_id") == &"waking_coast_1"
 	player = _current_player()
-	valid = valid and player != null and player.global_position.x > 120.0
+	valid = valid and player != null and player.global_position.x > 280.0
 
 	run.call("start_run")
 	if current_scene != null:

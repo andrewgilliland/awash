@@ -29,6 +29,7 @@ func get_tests() -> Array:
 		["Dialogue box closes after its last line", _test_box_closes],
 		["Dialogue box calls out each line's cue as it opens", _test_box_cues],
 		["Mara stands in the first Room, ready to talk", _test_mara_in_first_room],
+		["Mara walks in from just off the screen Vael wakes on", _test_mara_walks_in],
 		["Mara is drawn from her sprite sheet", _test_mara_sprite],
 		["A fresh Run is not owed the intro", _test_start_run_clears_intro],
 		["Every line fits the dialogue box", _test_lines_fit_box],
@@ -92,6 +93,16 @@ func _test_mara_in_first_room() -> bool:
 		valid = valid and mara.position.distance_to(start.position) < 40.0
 	room.free()
 	return valid
+
+
+# The camera opens on Vael, half a screen from its west edge; Mara starts just past that edge.
+func _test_mara_walks_in() -> bool:
+	var room := FIRST_ROOM.instantiate()
+	var start := (room.get_node("Entries/start") as Marker2D).position
+	room.free()
+	var screen_west := start.x - 80.0
+	var from_x: float = IntroScript.mara_start_x(start.x)
+	return from_x < screen_west and from_x > screen_west - 16.0
 
 
 func _test_mara_sprite() -> bool:

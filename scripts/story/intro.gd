@@ -1,12 +1,14 @@
 extends Node
 
 # Chapter 1's opening, in the first Room on a new game: Vael lies in the surf, gets up, and Mara
-# comes in from the wreck, pulls his sword out of the sand and brings it over to talk. It plays
+# comes in along the beach, pulls his sword out of the sand and brings it over to talk. It plays
 # once, when the Run is owed it.
 
 const LIE_TIME := 1.2
-# Mara walks in from behind the wreck, off the west edge of the screen.
-const MARA_START_X := -12.0
+# The camera opens on Vael, half a screen in from the screen's west edge; Mara walks in from
+# just past that edge.
+const HALF_SCREEN := 80.0
+const MARA_OFF_SCREEN := 12.0
 const PICK_UP_TIME := 0.5
 # She holds Blacktide out in front of her, lifted clear of its sand mound.
 const HELD_OFFSET := Vector2(7, -9)
@@ -59,7 +61,7 @@ func _play() -> void:
 	player.set("controls_locked", true)
 	player.call("set_lying", true)
 	_sword.visible = true
-	_mara.position.x = MARA_START_X
+	_mara.position.x = mara_start_x(player.position.x)
 	await get_tree().create_timer(LIE_TIME).timeout
 	player.call("set_lying", false)
 	await _mara.call("walk_to", _sword.position.x)
@@ -71,6 +73,11 @@ func _play() -> void:
 	var box := get_tree().get_first_node_in_group(DIALOGUE_GROUP)
 	box.connect(&"cued", _on_cued)
 	box.call("show_lines", LINES)
+
+
+# Where Mara starts, just off the west edge of the screen the camera opens on Vael at vael_x.
+static func mara_start_x(vael_x: float) -> float:
+	return vael_x - HALF_SCREEN - MARA_OFF_SCREEN
 
 
 func _on_cued(cue: StringName) -> void:

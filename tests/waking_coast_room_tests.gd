@@ -3,78 +3,81 @@ extends RefCounted
 const ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
 const LAYER_ORDER := [
 	&"Background",
-	&"FarJungle",
 	&"FarTrees",
-	&"Wreck",
 	&"Terrain",
 	&"Props",
 	&"Entries",
 	&"Player",
 ]
-const TILE_LAYERS := [&"FarJungle", &"FarTrees", &"Wreck", &"Terrain", &"Props"]
+const TILE_LAYERS := [&"FarTrees", &"Terrain", &"Props"]
+# Two screens wide: an open beach, then the beach Vael wakes on below the jungle cliff. On the Map
+# it sits west of the rune shore.
+const ROOM_ID := &"waking_coast_1"
+const MAP_CELL := Vector2i(-1, 0)
+const MAP_SIZE := Vector2i(2, 1)
+const CELLS := Rect2i(0, 0, 20, 9)
 # A tall tree, two tiles wide, stands on the cliff top: its top-left cell, and the jungle canopy
 # rows of the scenery sheet it is built from, top to bottom (leafy top, hollow, vine, roots).
-const TALL_TREE := Vector2i(7, 0)
+const TALL_TREE := Vector2i(17, 0)
 const TALL_TREE_ROWS := [29, 31, 32, 33]
 # Its branch, reaching east from the trunk and on off the screen, is the high ledge.
-const HIGH_BRANCH := {Vector2i(9, 1): Vector2i(4, 29)}
-# The hazy background jungle comes from these jungle canopy rows of the scenery sheet, and stays
-# over the cliff and the plank step, clear of the open sea.
-const FAR_JUNGLE_ROWS := [35, 36]
-const FAR_JUNGLE_FROM_COLUMN := 6
+const HIGH_BRANCH := {Vector2i(19, 1): Vector2i(4, 29)}
 # The plank step and the high branch stay one-way platforms.
-const PLATFORM_CELLS := [Vector2i(6, 5), Vector2i(9, 1)]
+const PLATFORM_CELLS := [Vector2i(16, 5), Vector2i(19, 1)]
 # The beach runs open from the west wall to the plank step: nothing stands on the sand to climb.
-const OPEN_BEACH := Rect2i(0, 0, 6, 6)
-const SCREEN := Rect2i(0, 0, 10, 9)
-# Vael starts in the middle of the beach, in the surf.
-const START_ENTRY := Vector2(80, 96)
+const OPEN_BEACH := Rect2i(0, 0, 16, 6)
+# The sand's surface row, where nothing but the palms' trunks stands.
+const SAND_ROW := 5
+# Vael starts on the beach below the cliff, in the surf.
+const START_ENTRY := Vector2(240, 96)
 const BLACKTIDE_PATH := "res://assets/regions/waking_coast/props/blacktide_stuck.png"
 # Where the rune stone, knot cord and rune ward used to stand.
 const CLEARED_PROPS := [
-	Vector2i(7, 2), Vector2i(7, 3), Vector2i(8, 2), Vector2i(9, 2), Vector2i(9, 3)
+	Vector2i(17, 2), Vector2i(17, 3), Vector2i(18, 2), Vector2i(19, 2), Vector2i(19, 3)
 ]
 # Water tiles: the beach is open sand, with no tidal pool.
 const POOL_TILES := [Vector2i(5, 16), Vector2i(6, 16)]
 const WORLD_LAYER := 1
 # On the cliff top, clear of the east Exit.
-const EAST_ENTRY := Vector2(148, 64)
+const EAST_ENTRY := Vector2(308, 64)
+const WorldMap := preload("res://scripts/core/world_map.gd")
 # Landmark cells: layer -> {cell: atlas coords on the Waking Coast's terrain or scenery sheet}.
 const LANDMARKS := {
-	# Two palms behind the beach: crown middles, then their trunks down to the sand.
+	# Three palms behind the beach, one on the open beach and two by the cliff: crown middles,
+	# then their trunks down to the sand.
 	&"FarTrees":
 	{
 		Vector2i(4, 2): Vector2i(1, 17),
 		Vector2i(4, 3): Vector2i(1, 18),
-		Vector2i(4, 4): Vector2i(2, 19),
-		Vector2i(4, 5): Vector2i(1, 19),
-		Vector2i(1, 2): Vector2i(1, 17),
-		Vector2i(1, 4): Vector2i(0, 19),
-		Vector2i(1, 5): Vector2i(3, 24),
-	},
-	# What's left of the wreck, washed up on the sand: a half-buried crate, a rope coil and
-	# driftwood.
-	&"Wreck":
-	{
-		Vector2i(0, 5): Vector2i(0, 28),
-		Vector2i(1, 5): Vector2i(1, 28),
-		Vector2i(2, 5): Vector2i(2, 28),
+		Vector2i(4, 4): Vector2i(0, 19),
+		Vector2i(4, 5): Vector2i(3, 24),
+		Vector2i(14, 2): Vector2i(1, 17),
+		Vector2i(14, 3): Vector2i(1, 18),
+		Vector2i(14, 4): Vector2i(2, 19),
+		Vector2i(14, 5): Vector2i(1, 19),
+		Vector2i(11, 2): Vector2i(1, 17),
+		Vector2i(11, 4): Vector2i(0, 19),
+		Vector2i(11, 5): Vector2i(3, 24),
 	},
 	&"Terrain":
 	{
-		# the sand Vael wakes on
+		# the sand, from the west wall to the sand Vael wakes on
 		Vector2i(0, 6): Vector2i(1, 11),
-		Vector2i(5, 6): Vector2i(1, 11),
+		Vector2i(9, 6): Vector2i(1, 11),
+		Vector2i(10, 6): Vector2i(1, 11),
+		Vector2i(15, 6): Vector2i(1, 11),
 		# the plank step and the jungle cliff
-		Vector2i(6, 5): Vector2i(0, 15),
-		Vector2i(7, 4): Vector2i(0, 13),
-		Vector2i(7, 6): Vector2i(0, 14),
+		Vector2i(16, 5): Vector2i(0, 15),
+		Vector2i(17, 4): Vector2i(0, 13),
+		Vector2i(17, 6): Vector2i(0, 14),
 		# the high branch, growing from the tall tree
-		Vector2i(9, 1): Vector2i(4, 29),
+		Vector2i(19, 1): Vector2i(4, 29),
 	},
+	# A bush on the tall tree, and a crate on its branch.
 	&"Props":
 	{
-		Vector2i(9, 0): Vector2i(7, 15),
+		Vector2i(18, 3): Vector2i(3, 22),
+		Vector2i(19, 0): Vector2i(7, 15),
 	},
 }
 
@@ -82,15 +85,17 @@ const LANDMARKS := {
 func get_tests() -> Array:
 	return [
 		["Waking Coast Room draws its layers in order", _test_draws_layers_in_order],
-		["Waking Coast Room lays out the screen", _test_lays_out_the_screen],
+		["The first Room is two screens wide, west of the rune shore", _test_two_screens],
+		["Waking Coast Room lays out its two screens", _test_lays_out_the_screen],
 		["Waking Coast start Entry stands on the sand", _test_start_entry_on_sand],
-		["Waking Coast camera stays on the screen", _test_camera_stays_on_screen],
+		["Waking Coast camera stays inside the Room", _test_camera_stays_on_screen],
 		["Waking Coast west wall holds; east leads on", _test_walls_keep_player_on_screen],
 		["The first Room is an open surf beach", _test_open_surf_beach],
 		["The plank step and the high branch stay one-way", _test_platforms_one_way],
 		["The beach runs open from the west wall", _test_open_beach],
 		["A tall jungle tree on the cliff top holds the high branch", _test_tall_tree],
-		["A hazy jungle stands behind the cliff", _test_far_jungle],
+		["Nothing stands on the sand but the palms", _test_clear_sand],
+		["Behind the cliff is only the Background and the tall tree", _test_no_haze],
 		["Blacktide stands in the sand, shown only by the intro", _test_blacktide_prop],
 	]
 
@@ -118,6 +123,11 @@ func _test_draws_layers_in_order() -> bool:
 	return valid
 
 
+func _test_two_screens() -> bool:
+	var room: Dictionary = WorldMap.ROOMS.get(ROOM_ID, {})
+	return room.get("cell") == MAP_CELL and room.get("size") == MAP_SIZE
+
+
 func _test_lays_out_the_screen() -> bool:
 	var room := _room()
 	if room == null:
@@ -128,12 +138,12 @@ func _test_lays_out_the_screen() -> bool:
 		if layer == null:
 			room.free()
 			return false
-		valid = valid and SCREEN.encloses(layer.get_used_rect())
+		valid = valid and CELLS.encloses(layer.get_used_rect())
 		var cells: Dictionary = LANDMARKS[layer_name]
 		for cell in cells:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
 	var terrain := room.get_node("Terrain") as TileMapLayer
-	for column in range(SCREEN.size.x):
+	for column in range(CELLS.size.x):
 		valid = valid and terrain.get_cell_source_id(Vector2i(column, 6)) == 0
 	room.free()
 	return valid
@@ -157,7 +167,8 @@ func _test_camera_stays_on_screen() -> bool:
 	var valid := camera != null
 	if valid:
 		valid = camera.limit_left == 0 and camera.limit_top == 0
-		valid = valid and camera.limit_right == 160 and camera.limit_bottom == 144
+		valid = valid and camera.limit_right == CELLS.size.x * 16
+		valid = valid and camera.limit_bottom == CELLS.size.y * 16
 	room.free()
 	return valid
 
@@ -248,16 +259,34 @@ func _test_tall_tree() -> bool:
 	return valid
 
 
-func _test_far_jungle() -> bool:
+# The sand is open from the west wall to the cliff: only the palms' trunks stand on it.
+func _test_clear_sand() -> bool:
 	var room := _room()
 	if room == null:
 		return false
-	var far := room.get_node_or_null("FarJungle") as TileMapLayer
-	var valid := far != null and far.get_used_cells().size() > 0
-	if valid:
-		for cell in far.get_used_cells():
-			valid = valid and far.get_cell_atlas_coords(cell).y in FAR_JUNGLE_ROWS
-			valid = valid and cell.x >= FAR_JUNGLE_FROM_COLUMN
+	var trunks: Dictionary = LANDMARKS[&"FarTrees"]
+	var valid := room.get_node_or_null("Wreck") == null
+	for layer: TileMapLayer in room.find_children("*", "TileMapLayer", false, false):
+		if layer.name == &"Terrain":
+			continue
+		for cell in layer.get_used_cells():
+			if cell.y >= SAND_ROW:
+				valid = valid and layer.name == &"FarTrees" and trunks.has(cell)
+	room.free()
+	return valid
+
+
+# No hazy jungle behind the cliff: the Background shows there, around the tall tree.
+func _test_no_haze() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var trees := room.get_node("FarTrees") as TileMapLayer
+	var tall_tree := Rect2i(TALL_TREE, Vector2i(2, TALL_TREE_ROWS.size()))
+	var valid := room.get_node_or_null("FarJungle") == null
+	for cell in trees.get_used_cells():
+		if cell.x >= OPEN_BEACH.end.x:
+			valid = valid and tall_tree.has_point(cell)
 	room.free()
 	return valid
 
