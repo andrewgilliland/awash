@@ -26,6 +26,7 @@ var _brinecaps_due: Array[Vector2] = []
 
 func _ready() -> void:
 	_find_self_in_world()
+	_fit_camera_to_room()
 	_ensure_pause_menu()
 	_ensure_dialogue_box()
 	_ensure_health_bar()
@@ -41,6 +42,18 @@ func _find_self_in_world() -> void:
 	_room_id = World.room_for_scene(scene_file_path)
 	if _room_id.is_empty():
 		push_error("Scene '%s' is not a Room in the World." % scene_file_path)
+
+
+# The camera stays inside the Room: its size in screens, from the World.
+func _fit_camera_to_room() -> void:
+	var camera := get_node_or_null("Player/Camera2D") as Camera2D
+	if camera == null or _room_id.is_empty():
+		return
+	var room_size := Vector2(World.size(_room_id)) * World.SCREEN_SIZE
+	camera.limit_left = 0
+	camera.limit_top = 0
+	camera.limit_right = int(room_size.x)
+	camera.limit_bottom = int(room_size.y)
 
 
 # Every enemy defeated in this Room earns the Player its Experience, whatever struck it down, and

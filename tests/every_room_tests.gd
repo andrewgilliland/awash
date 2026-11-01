@@ -10,6 +10,13 @@ const SCREEN_CELLS := Vector2i(10, 9)
 const TRIGGER_LAYER := 1 << 7
 const PLAYER_LAYER := 1 << 1
 
+# Needs a root that is already in the tree: a Room sets itself up from the World in _ready.
+var _root: Window
+
+
+func _init(root: Window) -> void:
+	_root = root
+
 
 func get_tests() -> Array:
 	return [
@@ -17,6 +24,7 @@ func get_tests() -> Array:
 		["Every Room is found in the World by its scene", _test_found_by_scene],
 		["Every Room's Region is in the World", _test_region_held],
 		["Every Room's Exits lead to Entries in the World", _test_exits_lead_to_entries],
+		["No Room scene sets its own camera limits", _test_scene_leaves_camera],
 		["Every Room keeps its camera inside its size", _test_camera_inside],
 		["Every Room draws its layers in order", _test_layer_order],
 		["Every Room keeps its tiles inside its size", _test_tiles_inside],
@@ -36,6 +44,21 @@ static func _every_room(check: Callable) -> bool:
 			valid = false
 		if room != null:
 			room.free()
+	return valid
+
+
+# Enters each Room in the World at its first Entry, as an Exit would, and asks the check of it.
+func _every_entered_room(check: Callable) -> bool:
+	var run := _root.get_node("RunState")
+	var valid := _every_room(
+		func(room_id: StringName, room: Node2D) -> bool:
+			run.call("enter_room", room_id, room.get_node("Entries").get_child(0).name)
+			_root.add_child(room)
+			var passed: bool = check.call(room_id, room)
+			_root.remove_child(room)
+			return passed
+	)
+	run.call("start_run")
 	return valid
 
 
@@ -90,8 +113,23 @@ static func _exits_lead_to_entries(_room_id: StringName, room: Node2D) -> bool:
 	return valid
 
 
+func _test_scene_leaves_camera() -> bool:
+	return _every_room(_leaves_camera)
+
+
+# The camera's limits are the Room's to set from the World, so the scene keeps Godot's own.
+static func _leaves_camera(_room_id: StringName, room: Node2D) -> bool:
+	var camera := room.get_node_or_null("Player/Camera2D") as Camera2D
+	var unset := Camera2D.new()
+	var valid := camera != null
+	for side in [SIDE_LEFT, SIDE_TOP, SIDE_RIGHT, SIDE_BOTTOM]:
+		valid = valid and camera.get_limit(side) == unset.get_limit(side)
+	unset.free()
+	return valid
+
+
 func _test_camera_inside() -> bool:
-	return _every_room(_camera_inside)
+	return _every_entered_room(_camera_inside)
 
 
 static func _camera_inside(room_id: StringName, room: Node2D) -> bool:

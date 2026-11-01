@@ -122,9 +122,6 @@ func _init() -> void:
 	var room_exit_tests := RoomExitTests.new()
 	for test in room_exit_tests.get_tests():
 		_run_test(test[0], test[1])
-	var every_room_tests := EveryRoomTests.new()
-	for test in every_room_tests.get_tests():
-		_run_test(test[0], test[1])
 	var health_tests := HealthTests.new()
 	for test in health_tests.get_tests():
 		_run_test(test[0], test[1])
@@ -240,6 +237,9 @@ func _init() -> void:
 	for test in boss_bar_tests.get_tests():
 		_run_test(test[0], test[1])
 
+	var every_room_tests := EveryRoomTests.new(root)
+	for test in every_room_tests.get_tests():
+		_run_test(test[0], test[1])
 	var region_background_tests := RegionBackgroundTests.new(root)
 	for test in region_background_tests.get_tests():
 		_run_test(test[0], test[1])
