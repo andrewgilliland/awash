@@ -3,8 +3,7 @@ extends RefCounted
 const ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
 const TILESET_PATH := "res://assets/regions/waking_coast/tiles/tropical_island_1.tres"
 const LAYER_ORDER := [
-	&"Backdrop",
-	&"Clouds",
+	&"Background",
 	&"FarJungle",
 	&"FarTrees",
 	&"Wreck",
@@ -13,9 +12,7 @@ const LAYER_ORDER := [
 	&"Entries",
 	&"Player",
 ]
-const TILE_LAYERS := [
-	&"Backdrop", &"Clouds", &"FarJungle", &"FarTrees", &"Wreck", &"Terrain", &"Props"
-]
+const TILE_LAYERS := [&"FarJungle", &"FarTrees", &"Wreck", &"Terrain", &"Props"]
 # The jungle canopy sheet, the TileSet's second atlas.
 const CANOPY_SOURCE := 1
 # A tall tree, two tiles wide, stands on the cliff top: its top-left cell, and the canopy sheet
@@ -28,14 +25,6 @@ const HIGH_BRANCH := {Vector2i(9, 1): Vector2i(4, 0)}
 # cliff and the plank step, clear of the open sea.
 const FAR_JUNGLE_ROWS := [6, 7]
 const FAR_JUNGLE_FROM_COLUMN := 6
-# A daytime sky over the sea: sky, a hazy band, the horizon, then sea, from the top down.
-const SKY := Vector2i(7, 7)
-const HAZE := Vector2i(7, 8)
-const HORIZON := Vector2i(7, 9)
-const HORIZON_SHIP := Vector2i(3, 10)
-const SEA := Vector2i(7, 10)
-const HAZE_ROW := 4
-const HORIZON_ROW := 5
 # The plank step and the high branch stay one-way platforms.
 const PLATFORM_CELLS := [Vector2i(6, 5), Vector2i(9, 1)]
 # The beach runs open from the west wall to the plank step: nothing stands on the sand to climb.
@@ -56,23 +45,6 @@ const EAST_ENTRY := Vector2(148, 64)
 # Landmark cells from assets/regions/waking_coast/tiles/tropical_island_1.png:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
-	&"Backdrop":
-	{
-		Vector2i(0, 0): SKY,
-		Vector2i(0, 4): HAZE,
-		Vector2i(0, 5): HORIZON,
-		Vector2i(3, 5): HORIZON_SHIP,
-		Vector2i(0, 6): SEA,
-	},
-	# The sun (2x2) and a cloud (left, middle, right).
-	&"Clouds":
-	{
-		Vector2i(4, 0): Vector2i(5, 7),
-		Vector2i(5, 1): Vector2i(6, 8),
-		Vector2i(1, 1): Vector2i(5, 6),
-		Vector2i(2, 1): Vector2i(6, 6),
-		Vector2i(3, 1): Vector2i(7, 6),
-	},
 	# Two palms behind the beach: crown middles, then their trunks down to the sand.
 	&"FarTrees":
 	{
@@ -119,7 +91,6 @@ func get_tests() -> Array:
 		["Waking Coast camera stays on the screen", _test_camera_stays_on_screen],
 		["Waking Coast west wall holds; east leads on", _test_walls_keep_player_on_screen],
 		["The first Room is an open surf beach", _test_open_surf_beach],
-		["The first Room is a daytime tropical shore", _test_daytime_backdrop],
 		["The plank step and the high branch stay one-way", _test_platforms_one_way],
 		["The beach runs open from the west wall", _test_open_beach],
 		["A tall jungle tree on the cliff top holds the high branch", _test_tall_tree],
@@ -245,28 +216,6 @@ func _test_blacktide_prop() -> bool:
 		valid = sword.texture.resource_path == BLACKTIDE_PATH
 		# west of Vael, where Mara comes in from
 		valid = valid and sword.position.x < START_ENTRY.x
-	room.free()
-	return valid
-
-
-func _test_daytime_backdrop() -> bool:
-	var room := _room()
-	if room == null:
-		return false
-	var backdrop := room.get_node_or_null("Backdrop") as TileMapLayer
-	var valid := backdrop != null
-	if valid:
-		for row in range(SCREEN.size.y):
-			for column in range(SCREEN.size.x):
-				var coords := backdrop.get_cell_atlas_coords(Vector2i(column, row))
-				if row < HAZE_ROW:
-					valid = valid and coords == SKY
-				elif row == HAZE_ROW:
-					valid = valid and coords == HAZE
-				elif row == HORIZON_ROW:
-					valid = valid and coords in [HORIZON, HORIZON_SHIP]
-				else:
-					valid = valid and coords == SEA
 	room.free()
 	return valid
 

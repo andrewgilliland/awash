@@ -6,6 +6,7 @@ const START_SCREEN_PATH := "res://scenes/ui/start_screen.tscn"
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const AssetPathTests := preload("res://tests/asset_path_tests.gd")
+const RegionBackgroundTests := preload("res://tests/region_background_tests.gd")
 const PlayerControllerTests := preload("res://tests/player_controller_tests.gd")
 const PlayerRigTests := preload("res://tests/player_rig_tests.gd")
 const RunStateTests := preload("res://tests/run_state_tests.gd")
@@ -229,6 +230,10 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var boss_bar_tests := BossBarTests.new(root)
 	for test in boss_bar_tests.get_tests():
+		_run_test(test[0], test[1])
+
+	var region_background_tests := RegionBackgroundTests.new(root)
+	for test in region_background_tests.get_tests():
 		_run_test(test[0], test[1])
 
 	if _failures > 0:

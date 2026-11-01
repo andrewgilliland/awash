@@ -3,7 +3,7 @@ extends RefCounted
 const ROOM_PATH := "res://scenes/rooms/waking_coast_7.tscn"
 const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tres"
 const RoomReach := preload("res://tests/room_reach.gd")
-const LAYER_ORDER := [&"Backdrop", &"Terrain", &"Props", &"Entries", &"Player"]
+const LAYER_ORDER := [&"Background", &"Terrain", &"Props", &"Entries", &"Player"]
 # One screen: the arena the Nameless Warden holds.
 const ROOM_SIZE := Vector2i(160, 144)
 const CELLS := Rect2i(0, 0, 10, 9)
@@ -61,12 +61,6 @@ func _test_draws_layers_in_order() -> bool:
 		if child.name in LAYER_ORDER:
 			names.append(child.name)
 	var valid := names == LAYER_ORDER
-	var backdrop := room.get_node_or_null("Backdrop") as AnimatedSprite2D
-	valid = valid and backdrop != null and backdrop.sprite_frames != null
-	valid = valid and backdrop.sprite_frames.get_frame_count(&"default") == 4
-	if valid:
-		var frame := backdrop.sprite_frames.get_frame_texture(&"default", 0)
-		valid = Vector2i(frame.get_size()) == ROOM_SIZE
 	for layer_name in [&"Terrain", &"Props"]:
 		var layer := room.get_node_or_null(NodePath(layer_name)) as TileMapLayer
 		valid = valid and layer != null and layer.tile_set != null

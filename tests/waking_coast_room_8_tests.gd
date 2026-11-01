@@ -5,7 +5,7 @@ const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tr
 const LANTERN_PATH := "res://assets/regions/waking_coast/props/tidefen_lantern.png"
 const RoomReach := preload("res://tests/room_reach.gd")
 const LAYER_ORDER := [
-	&"Backdrop",
+	&"Background",
 	&"Village",
 	&"Terrain",
 	&"Props",
@@ -91,12 +91,6 @@ func _test_draws_layers_in_order() -> bool:
 		if child.name in LAYER_ORDER:
 			names.append(child.name)
 	var valid := names == LAYER_ORDER
-	var backdrop := room.get_node_or_null("Backdrop") as AnimatedSprite2D
-	valid = valid and backdrop != null and backdrop.sprite_frames != null
-	valid = valid and backdrop.sprite_frames.get_frame_count(&"default") == 4
-	if valid:
-		var frame := backdrop.sprite_frames.get_frame_texture(&"default", 0)
-		valid = Vector2i(frame.get_size()) == ROOM_SIZE
 	for layer_name in [&"Village", &"Terrain", &"Props"]:
 		var layer := room.get_node_or_null(NodePath(layer_name)) as TileMapLayer
 		valid = valid and layer != null and layer.tile_set != null

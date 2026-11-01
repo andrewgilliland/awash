@@ -78,6 +78,10 @@ _Avoid_: Hub, village, town (as a kind of place)
 A place in a Safe spoke where the Player recovers, and which a defeat returns them to without ending the Run.
 _Avoid_: Checkpoint, save point, bonfire
 
+**Background**:
+The distant layers of a Region drawn behind its Rooms, each scrolling slower the farther back it is: for the Waking Coast, a sky, drifting clouds and the sea. Every Room in the Region shows the same Background, set by where the Room sits in the world, so it carries on across Exits; the caves show a dark rock wall instead.
+_Avoid_: Backdrop, skybox, parallax (as a thing)
+
 **Region theme**:
 The music of a Region, such as the Waking Coast's. It plays in each of the Region's Rooms outside its Safe spoke, which has a theme of its own, and carries on unbroken through Exits between them.
 _Avoid_: Level music, BGM, soundtrack
