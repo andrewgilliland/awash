@@ -5,9 +5,6 @@ extends RefCounted
 
 const World := preload("res://scripts/core/world.gd")
 const RoomExitScript := preload("res://scripts/core/room_exit.gd")
-const BACKGROUND := "res://scenes/regions/waking_coast/background.tscn"
-const CAVE_BACKGROUND := "res://scenes/regions/waking_coast/cave_background.tscn"
-const CAVE_ROOMS: Array[StringName] = [&"waking_coast_5", &"waking_coast_9"]
 # One screen in tiles.
 const SCREEN_CELLS := Vector2i(10, 9)
 const TRIGGER_LAYER := 1 << 7
@@ -17,6 +14,7 @@ const PLAYER_LAYER := 1 << 1
 func get_tests() -> Array:
 	return [
 		["Every Room in the World has a scene", _test_has_scene],
+		["Every Room's Region is in the World", _test_region_held],
 		["Every Room's Exits lead to Entries in the World", _test_exits_lead_to_entries],
 		["Every Room keeps its camera inside its size", _test_camera_inside],
 		["Every Room draws its layers in order", _test_layer_order],
@@ -54,6 +52,13 @@ static func _size_in_cells(room_id: StringName) -> Vector2i:
 
 func _test_has_scene() -> bool:
 	return _every_room(func(_room_id: StringName, _room: Node2D) -> bool: return true)
+
+
+func _test_region_held() -> bool:
+	return _every_room(
+		func(room_id: StringName, _room: Node2D) -> bool:
+			return World.has_region(World.region(room_id))
+	)
 
 
 func _test_exits_lead_to_entries() -> bool:
@@ -129,11 +134,10 @@ func _test_region_sheets() -> bool:
 	return _every_room(_draws_from_region_sheets)
 
 
-# A Room's Terrain layer comes from its Region's terrain sheet; every other layer, its Background's
-# included, from the scenery sheet.
+# A Room's Terrain layer comes from its Region's terrain sheet, in the folder named by the Region's
+# id; every other layer, its Background's included, from the scenery sheet.
 static func _draws_from_region_sheets(room_id: StringName, room: Node2D) -> bool:
-	var region := World.region_name(room_id)
-	var tiles := "res://assets/regions/%s/tiles/" % region.to_lower().replace(" ", "_")
+	var tiles := "res://assets/regions/%s/tiles/" % World.region(room_id)
 	var terrain := room.get_node_or_null("Terrain")
 	var valid := terrain is TileMapLayer
 	for layer: TileMapLayer in room.find_children("*", "TileMapLayer", true, false):
@@ -149,12 +153,11 @@ func _test_background() -> bool:
 	return _every_room(_shows_region_background)
 
 
-# The caves show the cave Background; the rest of the coast its sky and sea. It is drawn first of
-# everything in the Room's world.
+# The Background the World names for the Room, drawn first of everything in the Room's world.
 static func _shows_region_background(room_id: StringName, room: Node2D) -> bool:
 	var background := room.get_node_or_null("Background")
-	var expected := CAVE_BACKGROUND if CAVE_ROOMS.has(room_id) else BACKGROUND
-	if background == null or background.scene_file_path != expected:
+	var expected := World.background(room_id)
+	if background == null or expected.is_empty() or background.scene_file_path != expected:
 		return false
 	var valid := true
 	for child in room.get_children():
