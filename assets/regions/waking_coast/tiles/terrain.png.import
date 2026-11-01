@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://8rffaobsccgq"
-path="res://.godot/imported/jungle_canopy_1.png-9a4742530ffb3902d8848bfde0356c70.ctex"
+uid="uid://drbj2daknuxrp"
+path="res://.godot/imported/terrain.png-a821b0d111c1975b71d37d903b51b573.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/regions/waking_coast/tiles/jungle_canopy_1.png"
-dest_files=["res://.godot/imported/jungle_canopy_1.png-9a4742530ffb3902d8848bfde0356c70.ctex"]
+source_file="res://assets/regions/waking_coast/tiles/terrain.png"
+dest_files=["res://.godot/imported/terrain.png-a821b0d111c1975b71d37d903b51b573.ctex"]
 
 [params]
 

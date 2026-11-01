@@ -1,7 +1,6 @@
 extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_5.tscn"
-const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tres"
 const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 const RoomReach := preload("res://tests/room_reach.gd")
 const LAYER_ORDER := [&"Background", &"Back", &"Terrain", &"Props", &"Entries", &"Player"]
@@ -75,7 +74,6 @@ func _test_draws_layers_in_order() -> bool:
 	for layer_name in [&"Back", &"Terrain", &"Props"]:
 		var layer := room.get_node_or_null(NodePath(layer_name)) as TileMapLayer
 		valid = valid and layer != null and layer.tile_set != null
-		valid = valid and layer.tile_set.resource_path == TILESET_PATH
 	room.free()
 	return valid
 

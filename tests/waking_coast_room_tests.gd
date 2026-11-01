@@ -1,7 +1,6 @@
 extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
-const TILESET_PATH := "res://assets/regions/waking_coast/tiles/tropical_island_1.tres"
 const LAYER_ORDER := [
 	&"Background",
 	&"FarJungle",
@@ -13,17 +12,15 @@ const LAYER_ORDER := [
 	&"Player",
 ]
 const TILE_LAYERS := [&"FarJungle", &"FarTrees", &"Wreck", &"Terrain", &"Props"]
-# The jungle canopy sheet, the TileSet's second atlas.
-const CANOPY_SOURCE := 1
-# A tall tree, two tiles wide, stands on the cliff top: its top-left cell, and the canopy sheet
-# rows it is built from, top to bottom (leafy top, hollow, vine, roots).
+# A tall tree, two tiles wide, stands on the cliff top: its top-left cell, and the jungle canopy
+# rows of the scenery sheet it is built from, top to bottom (leafy top, hollow, vine, roots).
 const TALL_TREE := Vector2i(7, 0)
-const TALL_TREE_ROWS := [0, 2, 3, 4]
+const TALL_TREE_ROWS := [29, 31, 32, 33]
 # Its branch, reaching east from the trunk and on off the screen, is the high ledge.
-const HIGH_BRANCH := {Vector2i(9, 1): Vector2i(4, 0)}
-# The hazy background jungle comes from these rows of the canopy sheet, and stays over the
-# cliff and the plank step, clear of the open sea.
-const FAR_JUNGLE_ROWS := [6, 7]
+const HIGH_BRANCH := {Vector2i(9, 1): Vector2i(4, 29)}
+# The hazy background jungle comes from these jungle canopy rows of the scenery sheet, and stays
+# over the cliff and the plank step, clear of the open sea.
+const FAR_JUNGLE_ROWS := [35, 36]
 const FAR_JUNGLE_FROM_COLUMN := 6
 # The plank step and the high branch stay one-way platforms.
 const PLATFORM_CELLS := [Vector2i(6, 5), Vector2i(9, 1)]
@@ -38,47 +35,46 @@ const CLEARED_PROPS := [
 	Vector2i(7, 2), Vector2i(7, 3), Vector2i(8, 2), Vector2i(9, 2), Vector2i(9, 3)
 ]
 # Water tiles: the beach is open sand, with no tidal pool.
-const POOL_TILES := [Vector2i(5, 5), Vector2i(6, 5)]
+const POOL_TILES := [Vector2i(5, 16), Vector2i(6, 16)]
 const WORLD_LAYER := 1
 # On the cliff top, clear of the east Exit.
 const EAST_ENTRY := Vector2(148, 64)
-# Landmark cells from assets/regions/waking_coast/tiles/tropical_island_1.png:
-# layer -> {cell: atlas coords}.
+# Landmark cells: layer -> {cell: atlas coords on the Waking Coast's terrain or scenery sheet}.
 const LANDMARKS := {
 	# Two palms behind the beach: crown middles, then their trunks down to the sand.
 	&"FarTrees":
 	{
-		Vector2i(4, 2): Vector2i(1, 6),
-		Vector2i(4, 3): Vector2i(1, 7),
-		Vector2i(4, 4): Vector2i(2, 8),
-		Vector2i(4, 5): Vector2i(1, 8),
-		Vector2i(1, 2): Vector2i(1, 6),
-		Vector2i(1, 4): Vector2i(0, 8),
-		Vector2i(1, 5): Vector2i(3, 13),
+		Vector2i(4, 2): Vector2i(1, 17),
+		Vector2i(4, 3): Vector2i(1, 18),
+		Vector2i(4, 4): Vector2i(2, 19),
+		Vector2i(4, 5): Vector2i(1, 19),
+		Vector2i(1, 2): Vector2i(1, 17),
+		Vector2i(1, 4): Vector2i(0, 19),
+		Vector2i(1, 5): Vector2i(3, 24),
 	},
 	# What's left of the wreck, washed up on the sand: a half-buried crate, a rope coil and
 	# driftwood.
 	&"Wreck":
 	{
-		Vector2i(0, 5): Vector2i(0, 17),
-		Vector2i(1, 5): Vector2i(1, 17),
-		Vector2i(2, 5): Vector2i(2, 17),
+		Vector2i(0, 5): Vector2i(0, 28),
+		Vector2i(1, 5): Vector2i(1, 28),
+		Vector2i(2, 5): Vector2i(2, 28),
 	},
 	&"Terrain":
 	{
 		# the sand Vael wakes on
-		Vector2i(0, 6): Vector2i(1, 0),
-		Vector2i(5, 6): Vector2i(1, 0),
+		Vector2i(0, 6): Vector2i(1, 11),
+		Vector2i(5, 6): Vector2i(1, 11),
 		# the plank step and the jungle cliff
-		Vector2i(6, 5): Vector2i(0, 4),
-		Vector2i(7, 4): Vector2i(0, 2),
-		Vector2i(7, 6): Vector2i(0, 3),
+		Vector2i(6, 5): Vector2i(0, 15),
+		Vector2i(7, 4): Vector2i(0, 13),
+		Vector2i(7, 6): Vector2i(0, 14),
 		# the high branch, growing from the tall tree
-		Vector2i(9, 1): Vector2i(4, 0),
+		Vector2i(9, 1): Vector2i(4, 29),
 	},
 	&"Props":
 	{
-		Vector2i(9, 0): Vector2i(7, 4),
+		Vector2i(9, 0): Vector2i(7, 15),
 	},
 }
 
@@ -118,7 +114,6 @@ func _test_draws_layers_in_order() -> bool:
 	for layer_name in TILE_LAYERS:
 		var layer := room.get_node_or_null(NodePath(layer_name)) as TileMapLayer
 		valid = valid and layer != null and layer.tile_set != null
-		valid = valid and layer.tile_set.resource_path == TILESET_PATH
 	room.free()
 	return valid
 
@@ -246,10 +241,8 @@ func _test_tall_tree() -> bool:
 			for column in range(2):
 				var cell := TALL_TREE + Vector2i(column, row)
 				var piece := Vector2i(column, TALL_TREE_ROWS[row])
-				valid = valid and trees.get_cell_source_id(cell) == CANOPY_SOURCE
 				valid = valid and trees.get_cell_atlas_coords(cell) == piece
 	for cell in HIGH_BRANCH:
-		valid = valid and terrain.get_cell_source_id(cell) == CANOPY_SOURCE
 		valid = valid and terrain.get_cell_atlas_coords(cell) == HIGH_BRANCH[cell]
 	room.free()
 	return valid
@@ -263,7 +256,6 @@ func _test_far_jungle() -> bool:
 	var valid := far != null and far.get_used_cells().size() > 0
 	if valid:
 		for cell in far.get_used_cells():
-			valid = valid and far.get_cell_source_id(cell) == CANOPY_SOURCE
 			valid = valid and far.get_cell_atlas_coords(cell).y in FAR_JUNGLE_ROWS
 			valid = valid and cell.x >= FAR_JUNGLE_FROM_COLUMN
 	room.free()

@@ -1,7 +1,8 @@
 extends RefCounted
 
 const START_SCREEN := preload("res://scenes/ui/start_screen.tscn")
-const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tres"
+const SCENERY_PATH := "res://assets/regions/waking_coast/tiles/scenery.tres"
+const TERRAIN_PATH := "res://assets/regions/waking_coast/tiles/terrain.tres"
 # A near palm's crown middle and base on each edge, standing on the beach row.
 const PALMS := {
 	Vector2i(0, 2): Vector2i(1, 10),
@@ -67,7 +68,8 @@ func _test_palms_frame_beach() -> bool:
 	var beach := screen.get_node_or_null("Beach") as TileMapLayer
 	var valid := trees != null and beach != null
 	if valid:
-		valid = trees.tile_set.resource_path == TILESET_PATH
+		valid = trees.tile_set.resource_path == SCENERY_PATH
+		valid = valid and beach.tile_set.resource_path == TERRAIN_PATH
 		for cell in PALMS:
 			valid = valid and trees.get_cell_atlas_coords(cell) == PALMS[cell]
 		for column in range(SCREEN_COLUMNS):
