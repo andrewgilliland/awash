@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bvgxrf12drmf6"
-path="res://.godot/imported/vael_1.png-25c6ee2021385f202dcdcdd078de29bc.ctex"
+path="res://.godot/imported/vael_1.png-c8cf80fc9935815fe849891bed93c6b8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/vael_1.png"
-dest_files=["res://.godot/imported/vael_1.png-25c6ee2021385f202dcdcdd078de29bc.ctex"]
+source_file="res://assets/player/vael_1.png"
+dest_files=["res://.godot/imported/vael_1.png-c8cf80fc9935815fe849891bed93c6b8.ctex"]
 
 [params]
 

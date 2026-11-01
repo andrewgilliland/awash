@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpl37ef5pi6s5"
-path="res://.godot/imported/storm_wisp_1.png-1360aeb26b20f8a964685e586d3147d7.ctex"
+path="res://.godot/imported/storm_wisp_1.png-eabf50e621f23d21e9a1d7621d70ffaa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/enemies/storm_wisp_1.png"
-dest_files=["res://.godot/imported/storm_wisp_1.png-1360aeb26b20f8a964685e586d3147d7.ctex"]
+source_file="res://assets/enemies/storm_wisp/storm_wisp_1.png"
+dest_files=["res://.godot/imported/storm_wisp_1.png-eabf50e621f23d21e9a1d7621d70ffaa.ctex"]
 
 [params]
 

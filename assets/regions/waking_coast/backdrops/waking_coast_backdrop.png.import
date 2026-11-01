@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cvaltcq38nce8"
-path="res://.godot/imported/waking_coast_backdrop.png-db121e91c59f45a4382e112140b115f9.ctex"
+path="res://.godot/imported/waking_coast_backdrop.png-277111a49999ac05a07d6d5d57bd89f0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/backgrounds/waking_coast_backdrop.png"
-dest_files=["res://.godot/imported/waking_coast_backdrop.png-db121e91c59f45a4382e112140b115f9.ctex"]
+source_file="res://assets/regions/waking_coast/backdrops/waking_coast_backdrop.png"
+dest_files=["res://.godot/imported/waking_coast_backdrop.png-277111a49999ac05a07d6d5d57bd89f0.ctex"]
 
 [params]
 

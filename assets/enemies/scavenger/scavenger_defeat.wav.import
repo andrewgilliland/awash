@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://fq1telygdugx"
-path="res://.godot/imported/scavenger_defeat.wav-373dd029dd6d7ab17dd44fbfd79bc2a5.sample"
+path="res://.godot/imported/scavenger_defeat.wav-e70c1a8e5c535655fb0932c19f5b4805.sample"
 
 [deps]
 
-source_file="res://assets/audio/sfx/scavenger_defeat.wav"
-dest_files=["res://.godot/imported/scavenger_defeat.wav-373dd029dd6d7ab17dd44fbfd79bc2a5.sample"]
+source_file="res://assets/enemies/scavenger/scavenger_defeat.wav"
+dest_files=["res://.godot/imported/scavenger_defeat.wav-e70c1a8e5c535655fb0932c19f5b4805.sample"]
 
 [params]
 

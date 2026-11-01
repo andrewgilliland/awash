@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://dpqfsiv3fhla3"
-path="res://.godot/imported/storm_wisp_defeat.wav-c4af91e85b1d06664d7fdb3fb84dc590.sample"
+path="res://.godot/imported/storm_wisp_defeat.wav-dd468bf2718119875cb934b1379ea8de.sample"
 
 [deps]
 
-source_file="res://assets/audio/sfx/storm_wisp_defeat.wav"
-dest_files=["res://.godot/imported/storm_wisp_defeat.wav-c4af91e85b1d06664d7fdb3fb84dc590.sample"]
+source_file="res://assets/enemies/storm_wisp/storm_wisp_defeat.wav"
+dest_files=["res://.godot/imported/storm_wisp_defeat.wav-dd468bf2718119875cb934b1379ea8de.sample"]
 
 [params]
 

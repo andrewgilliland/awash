@@ -1,7 +1,7 @@
 [gd_resource type="TileSet" load_steps=5 format=3 uid="uid://cvyy6us23x725"]
 
-[ext_resource type="Texture2D" uid="uid://2klvjujuktq6" path="res://assets/tilesets/tropical_island_1.png" id="1_tropical"]
-[ext_resource type="Texture2D" uid="uid://8rffaobsccgq" path="res://assets/tilesets/jungle_canopy_1.png" id="2_canopy"]
+[ext_resource type="Texture2D" uid="uid://2klvjujuktq6" path="res://assets/regions/waking_coast/tiles/tropical_island_1.png" id="1_tropical"]
+[ext_resource type="Texture2D" uid="uid://8rffaobsccgq" path="res://assets/regions/waking_coast/tiles/jungle_canopy_1.png" id="2_canopy"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tropical"]
 texture = ExtResource("1_tropical")

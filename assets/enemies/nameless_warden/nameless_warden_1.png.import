@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c5coagy6jom88"
-path="res://.godot/imported/nameless_warden_1.png-e8bdfa7c91eede4348a3684e02c48452.ctex"
+path="res://.godot/imported/nameless_warden_1.png-99fb2752ed01c8a51180325fe924bc51.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/enemies/nameless_warden_1.png"
-dest_files=["res://.godot/imported/nameless_warden_1.png-e8bdfa7c91eede4348a3684e02c48452.ctex"]
+source_file="res://assets/enemies/nameless_warden/nameless_warden_1.png"
+dest_files=["res://.godot/imported/nameless_warden_1.png-99fb2752ed01c8a51180325fe924bc51.ctex"]
 
 [params]
 

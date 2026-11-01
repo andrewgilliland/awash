@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://c2njlpqyqyfg"
-path="res://.godot/imported/wraith_hurt.wav-a258694c1392c4fc86b97f4775b85f64.sample"
+path="res://.godot/imported/wraith_hurt.wav-49987fb30dcd35786c3949469f75a669.sample"
 
 [deps]
 
-source_file="res://assets/audio/sfx/wraith_hurt.wav"
-dest_files=["res://.godot/imported/wraith_hurt.wav-a258694c1392c4fc86b97f4775b85f64.sample"]
+source_file="res://assets/enemies/wraith/wraith_hurt.wav"
+dest_files=["res://.godot/imported/wraith_hurt.wav-49987fb30dcd35786c3949469f75a669.sample"]
 
 [params]
 

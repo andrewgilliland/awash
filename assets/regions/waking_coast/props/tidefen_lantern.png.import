@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://br6u01tkjwoq6"
-path="res://.godot/imported/tidefen_lantern.png-788603dcffde35b5e10ff67ef61b0daa.ctex"
+path="res://.godot/imported/tidefen_lantern.png-c3b727b22742100660b063beb4fabeaa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/props/tidefen_lantern.png"
-dest_files=["res://.godot/imported/tidefen_lantern.png-788603dcffde35b5e10ff67ef61b0daa.ctex"]
+source_file="res://assets/regions/waking_coast/props/tidefen_lantern.png"
+dest_files=["res://.godot/imported/tidefen_lantern.png-c3b727b22742100660b063beb4fabeaa.ctex"]
 
 [params]
 

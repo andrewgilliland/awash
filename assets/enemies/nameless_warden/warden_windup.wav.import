@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://bg13fnc17w6yw"
-path="res://.godot/imported/warden_windup.wav-07e0c49553d1469364a6a50922f3756a.sample"
+path="res://.godot/imported/warden_windup.wav-1942d690d0e6c5aec554e0ed2039f91a.sample"
 
 [deps]
 
-source_file="res://assets/audio/sfx/warden_windup.wav"
-dest_files=["res://.godot/imported/warden_windup.wav-07e0c49553d1469364a6a50922f3756a.sample"]
+source_file="res://assets/enemies/nameless_warden/warden_windup.wav"
+dest_files=["res://.godot/imported/warden_windup.wav-1942d690d0e6c5aec554e0ed2039f91a.sample"]
 
 [params]
 

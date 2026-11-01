@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://dra3ydy8pita5"
-path="res://.godot/imported/warden_bash.wav-4366b78fdb420f4203c7a031398a3bb0.sample"
+path="res://.godot/imported/warden_bash.wav-d24e0face1dff918997881ab9f1519ec.sample"
 
 [deps]
 
-source_file="res://assets/audio/sfx/warden_bash.wav"
-dest_files=["res://.godot/imported/warden_bash.wav-4366b78fdb420f4203c7a031398a3bb0.sample"]
+source_file="res://assets/enemies/nameless_warden/warden_bash.wav"
+dest_files=["res://.godot/imported/warden_bash.wav-d24e0face1dff918997881ab9f1519ec.sample"]
 
 [params]
 

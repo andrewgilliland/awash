@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://bkbno6c6q03lp"
-path="res://.godot/imported/scavenger_lunge.wav-e30eb722060e54901e709d19575923b1.sample"
+path="res://.godot/imported/scavenger_lunge.wav-c847335e455c23dbef3cf2a19f661655.sample"
 
 [deps]
 
-source_file="res://assets/audio/sfx/scavenger_lunge.wav"
-dest_files=["res://.godot/imported/scavenger_lunge.wav-e30eb722060e54901e709d19575923b1.sample"]
+source_file="res://assets/enemies/scavenger/scavenger_lunge.wav"
+dest_files=["res://.godot/imported/scavenger_lunge.wav-c847335e455c23dbef3cf2a19f661655.sample"]
 
 [params]
 

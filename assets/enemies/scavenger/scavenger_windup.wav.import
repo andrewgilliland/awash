@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://cec0jmkysrq0d"
-path="res://.godot/imported/scavenger_windup.wav-08a2e879d1d5bfe77effb2a050519e6d.sample"
+path="res://.godot/imported/scavenger_windup.wav-bbf4e8d7eeccc78dc559a5aa5c71b5dc.sample"
 
 [deps]
 
-source_file="res://assets/audio/sfx/scavenger_windup.wav"
-dest_files=["res://.godot/imported/scavenger_windup.wav-08a2e879d1d5bfe77effb2a050519e6d.sample"]
+source_file="res://assets/enemies/scavenger/scavenger_windup.wav"
+dest_files=["res://.godot/imported/scavenger_windup.wav-bbf4e8d7eeccc78dc559a5aa5c71b5dc.sample"]
 
 [params]
 

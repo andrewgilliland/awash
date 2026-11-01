@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://cf80m0fh75olv"
-path="res://.godot/imported/wraith_defeat.wav-408d0bf14e8ef1bff8782480dda1527e.sample"
+path="res://.godot/imported/wraith_defeat.wav-3796a80dbda142f2353605d685f9cc4a.sample"
 
 [deps]
 
-source_file="res://assets/audio/sfx/wraith_defeat.wav"
-dest_files=["res://.godot/imported/wraith_defeat.wav-408d0bf14e8ef1bff8782480dda1527e.sample"]
+source_file="res://assets/enemies/wraith/wraith_defeat.wav"
+dest_files=["res://.godot/imported/wraith_defeat.wav-3796a80dbda142f2353605d685f9cc4a.sample"]
 
 [params]
 

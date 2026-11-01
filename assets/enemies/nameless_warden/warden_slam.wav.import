@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://cfk7aai8co2of"
-path="res://.godot/imported/warden_slam.wav-e50f4e510de00b5039477caf48dbc1df.sample"
+path="res://.godot/imported/warden_slam.wav-942e8b486dfa6373d58d3ac85c963bac.sample"
 
 [deps]
 
-source_file="res://assets/audio/sfx/warden_slam.wav"
-dest_files=["res://.godot/imported/warden_slam.wav-e50f4e510de00b5039477caf48dbc1df.sample"]
+source_file="res://assets/enemies/nameless_warden/warden_slam.wav"
+dest_files=["res://.godot/imported/warden_slam.wav-942e8b486dfa6373d58d3ac85c963bac.sample"]
 
 [params]
 

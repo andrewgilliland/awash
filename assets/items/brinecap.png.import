@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dcts8d21bc5ao"
-path="res://.godot/imported/brinecap.png-00ea09329e202eba602bd67dc40395f6.ctex"
+path="res://.godot/imported/brinecap.png-1d9d4b04fffc8cf6dfdde91436d29f38.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/items/brinecap.png"
-dest_files=["res://.godot/imported/brinecap.png-00ea09329e202eba602bd67dc40395f6.ctex"]
+source_file="res://assets/items/brinecap.png"
+dest_files=["res://.godot/imported/brinecap.png-1d9d4b04fffc8cf6dfdde91436d29f38.ctex"]
 
 [params]
 

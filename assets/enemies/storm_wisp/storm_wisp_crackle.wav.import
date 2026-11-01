@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://cx6gc4it40f7n"
-path="res://.godot/imported/storm_wisp_crackle.wav-9d1439a0a1840158993dd8c39d2879dc.sample"
+path="res://.godot/imported/storm_wisp_crackle.wav-ca021bc3d61f02fcb9c5af40334d1395.sample"
 
 [deps]
 
-source_file="res://assets/audio/sfx/storm_wisp_crackle.wav"
-dest_files=["res://.godot/imported/storm_wisp_crackle.wav-9d1439a0a1840158993dd8c39d2879dc.sample"]
+source_file="res://assets/enemies/storm_wisp/storm_wisp_crackle.wav"
+dest_files=["res://.godot/imported/storm_wisp_crackle.wav-ca021bc3d61f02fcb9c5af40334d1395.sample"]
 
 [params]
 

@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://cirxtkaunnpmk"
-path="res://.godot/imported/player_eat.wav-c339bc25dfd50b65f17392db808fbe80.sample"
+path="res://.godot/imported/player_eat.wav-c1567ab61894f4abcfe4438a6a4ae067.sample"
 
 [deps]
 
-source_file="res://assets/audio/sfx/player_eat.wav"
-dest_files=["res://.godot/imported/player_eat.wav-c339bc25dfd50b65f17392db808fbe80.sample"]
+source_file="res://assets/player/player_eat.wav"
+dest_files=["res://.godot/imported/player_eat.wav-c1567ab61894f4abcfe4438a6a4ae067.sample"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0ulfxcgl5n32"
-path="res://.godot/imported/worn_leather_tunic.png-c99cdb5cca9c155df1a89b3002ade67a.ctex"
+path="res://.godot/imported/worn_leather_tunic.png-b29cda855cbb62d103d102756fcddbc5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/items/worn_leather_tunic.png"
-dest_files=["res://.godot/imported/worn_leather_tunic.png-c99cdb5cca9c155df1a89b3002ade67a.ctex"]
+source_file="res://assets/items/worn_leather_tunic.png"
+dest_files=["res://.godot/imported/worn_leather_tunic.png-b29cda855cbb62d103d102756fcddbc5.ctex"]
 
 [params]
 
