@@ -3,7 +3,6 @@ extends RefCounted
 const WorldMap := preload("res://scripts/core/world_map.gd")
 const BACKGROUND := "res://scenes/regions/waking_coast/background.tscn"
 const CAVE_BACKGROUND := "res://scenes/regions/waking_coast/cave_background.tscn"
-const CAVE_ROOMS: Array[StringName] = [&"waking_coast_5", &"waking_coast_9"]
 # The Waking Coast's layers, back to front, and how fast each scrolls with the camera.
 const LAYERS := {Sky = 0.1, Clouds = 0.2, Sea = 0.6}
 const CAVE_LAYERS := {Wall = 0.3, Glints = 0.6}
@@ -38,31 +37,12 @@ func _init(root: Window) -> void:
 
 func get_tests() -> Array:
 	return [
-		["Every Room draws its Region's Background behind all else", _test_every_room],
 		["The Waking Coast's layers each scroll slower the farther back", _test_layers],
 		["The cave Background is a rock wall with glints before it", _test_cave_layers],
 		["The Waking Coast's Background is a daytime tropical shore", _test_daytime_shore],
 		["A Room sets its Background by where it sits in the world", _test_offsets],
 		["Every Exit meets its Entry in the world, so Backgrounds carry on", _test_seams],
 	]
-
-
-func _test_every_room() -> bool:
-	var valid := true
-	for room_id: StringName in WorldMap.ROOMS:
-		var room := (load(WorldMap.ROOMS[room_id].scene) as PackedScene).instantiate()
-		var background := room.get_node_or_null("Background")
-		var expected := CAVE_BACKGROUND if CAVE_ROOMS.has(room_id) else BACKGROUND
-		if background == null or background.scene_file_path != expected:
-			push_error("%s does not show %s" % [room_id, expected])
-			valid = false
-		else:
-			# Drawn first of everything in the Room's world.
-			for child in room.get_children():
-				if child is CanvasItem and child != background:
-					valid = valid and child.get_index() > background.get_index()
-		room.free()
-	return valid
 
 
 func _test_layers() -> bool:

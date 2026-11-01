@@ -1,15 +1,6 @@
 extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
-const LAYER_ORDER := [
-	&"Background",
-	&"FarTrees",
-	&"Terrain",
-	&"Props",
-	&"Entries",
-	&"Player",
-]
-const TILE_LAYERS := [&"FarTrees", &"Terrain", &"Props"]
 # Two screens wide: an open beach, then the beach Vael wakes on below the jungle cliff. On the Map
 # it sits west of the rune shore.
 const ROOM_ID := &"waking_coast_1"
@@ -84,11 +75,9 @@ const LANDMARKS := {
 
 func get_tests() -> Array:
 	return [
-		["Waking Coast Room draws its layers in order", _test_draws_layers_in_order],
 		["The first Room is two screens wide, west of the rune shore", _test_two_screens],
 		["Waking Coast Room lays out its two screens", _test_lays_out_the_screen],
 		["Waking Coast start Entry stands on the sand", _test_start_entry_on_sand],
-		["Waking Coast camera stays inside the Room", _test_camera_stays_on_screen],
 		["Waking Coast west wall holds; east leads on", _test_walls_keep_player_on_screen],
 		["The first Room is an open surf beach", _test_open_surf_beach],
 		["The plank step and the high branch stay one-way", _test_platforms_one_way],
@@ -107,22 +96,6 @@ static func _room() -> Node2D:
 	return packed_scene.instantiate() as Node2D
 
 
-func _test_draws_layers_in_order() -> bool:
-	var room := _room()
-	if room == null:
-		return false
-	var names: Array = []
-	for child in room.get_children():
-		if child.name in LAYER_ORDER:
-			names.append(child.name)
-	var valid := names == LAYER_ORDER
-	for layer_name in TILE_LAYERS:
-		var layer := room.get_node_or_null(NodePath(layer_name)) as TileMapLayer
-		valid = valid and layer != null and layer.tile_set != null
-	room.free()
-	return valid
-
-
 func _test_two_screens() -> bool:
 	var room: Dictionary = WorldMap.ROOMS.get(ROOM_ID, {})
 	return room.get("cell") == MAP_CELL and room.get("size") == MAP_SIZE
@@ -138,7 +111,6 @@ func _test_lays_out_the_screen() -> bool:
 		if layer == null:
 			room.free()
 			return false
-		valid = valid and CELLS.encloses(layer.get_used_rect())
 		var cells: Dictionary = LANDMARKS[layer_name]
 		for cell in cells:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
@@ -155,20 +127,6 @@ func _test_start_entry_on_sand() -> bool:
 		return false
 	var entry := room.get_node_or_null("Entries/start") as Marker2D
 	var valid := entry != null and entry.position == START_ENTRY
-	room.free()
-	return valid
-
-
-func _test_camera_stays_on_screen() -> bool:
-	var room := _room()
-	if room == null:
-		return false
-	var camera := room.get_node_or_null("Player/Camera2D") as Camera2D
-	var valid := camera != null
-	if valid:
-		valid = camera.limit_left == 0 and camera.limit_top == 0
-		valid = valid and camera.limit_right == CELLS.size.x * 16
-		valid = valid and camera.limit_bottom == CELLS.size.y * 16
 	room.free()
 	return valid
 

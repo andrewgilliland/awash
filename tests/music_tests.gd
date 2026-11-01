@@ -1,7 +1,6 @@
 extends RefCounted
 
 const MusicScript := preload("res://scripts/core/music.gd")
-const WorldMap := preload("res://scripts/core/world_map.gd")
 const FIRST_ROOM := preload("res://scenes/rooms/waking_coast_1.tscn")
 const COAST_THEME_PATH := "res://assets/regions/waking_coast/music/theme.wav"
 const START_THEME_PATH := "res://assets/ui/start_theme.wav"
@@ -19,7 +18,6 @@ func get_tests() -> Array:
 		["Music plays a track on the Music bus", _test_plays_on_music_bus],
 		["Music keeps going when asked for the same track", _test_same_track_continues],
 		["Music switches to a new track, and stops", _test_switches_and_stops],
-		["Every Room's region has a looping theme", _test_regions_have_themes],
 		["A Room starts its region's theme", _test_room_starts_theme],
 	]
 
@@ -55,14 +53,6 @@ func _test_switches_and_stops() -> bool:
 	music.stop()
 	valid = valid and music.current() == null
 	music.free()
-	return valid
-
-
-func _test_regions_have_themes() -> bool:
-	var valid := true
-	for room_id in WorldMap.ROOMS:
-		var theme := load(WorldMap.music_for(room_id)) as AudioStreamWAV
-		valid = valid and theme != null and theme.loop_mode == AudioStreamWAV.LOOP_FORWARD
 	return valid
 
 

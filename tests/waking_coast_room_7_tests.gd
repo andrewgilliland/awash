@@ -2,7 +2,6 @@ extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_7.tscn"
 const RoomReach := preload("res://tests/room_reach.gd")
-const LAYER_ORDER := [&"Background", &"Terrain", &"Props", &"Entries", &"Player"]
 # One screen: the arena the Nameless Warden holds.
 const ROOM_SIZE := Vector2i(160, 144)
 const CELLS := Rect2i(0, 0, 10, 9)
@@ -35,12 +34,10 @@ const LANDMARKS := {
 
 func get_tests() -> Array:
 	return [
-		["Warden's gate Room draws its layers in order", _test_draws_layers_in_order],
 		["Warden's gate Room lays out one screen", _test_lays_out_one_screen],
 		["Warden's gate arena is a flat, open floor", _test_arena_is_open],
 		["Warden's gate floor climbs back to the road's end", _test_climbs_back],
 		["Warden's gate leads west to the road and east to Tidefen", _test_edges],
-		["Warden's gate camera holds the arena", _test_camera_limits],
 	]
 
 
@@ -49,22 +46,6 @@ static func _room() -> Node2D:
 	if packed_scene == null:
 		return null
 	return packed_scene.instantiate() as Node2D
-
-
-func _test_draws_layers_in_order() -> bool:
-	var room := _room()
-	if room == null:
-		return false
-	var names: Array = []
-	for child in room.get_children():
-		if child.name in LAYER_ORDER:
-			names.append(child.name)
-	var valid := names == LAYER_ORDER
-	for layer_name in [&"Terrain", &"Props"]:
-		var layer := room.get_node_or_null(NodePath(layer_name)) as TileMapLayer
-		valid = valid and layer != null and layer.tile_set != null
-	room.free()
-	return valid
 
 
 func _test_lays_out_one_screen() -> bool:
@@ -77,7 +58,6 @@ func _test_lays_out_one_screen() -> bool:
 		if layer == null:
 			room.free()
 			return false
-		valid = valid and CELLS.encloses(layer.get_used_rect())
 		var cells: Dictionary = LANDMARKS[layer_name]
 		for cell in cells:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
@@ -130,18 +110,5 @@ func _test_edges() -> bool:
 	var east := room.get_node_or_null("Exits/east") as Area2D
 	valid = valid and east != null and east.position.x > ROOM_SIZE.x
 	valid = valid and east.get("room_id") == &"waking_coast_8" and east.get("entry_id") == &"west"
-	room.free()
-	return valid
-
-
-func _test_camera_limits() -> bool:
-	var room := _room()
-	if room == null:
-		return false
-	var camera := room.get_node_or_null("Player/Camera2D") as Camera2D
-	var valid := camera != null
-	if valid:
-		valid = camera.limit_left == 0 and camera.limit_top == 0
-		valid = valid and camera.limit_right == ROOM_SIZE.x and camera.limit_bottom == ROOM_SIZE.y
 	room.free()
 	return valid

@@ -2,15 +2,6 @@ extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_4.tscn"
 const RoomReach := preload("res://tests/room_reach.gd")
-const LAYER_ORDER := [
-	&"Background",
-	&"FarTrees",
-	&"Wreck",
-	&"Terrain",
-	&"Props",
-	&"Entries",
-	&"Player",
-]
 # Two screens wide.
 const ROOM_SIZE := Vector2i(320, 144)
 const CELLS := Rect2i(0, 0, 20, 9)
@@ -73,10 +64,8 @@ const LANDMARKS := {
 
 func get_tests() -> Array:
 	return [
-		["Wreck graveyard Room draws its layers in order", _test_draws_layers_in_order],
 		["Wreck graveyard Room lays out two screens", _test_lays_out_two_screens],
 		["Wreck graveyard west Entry stands on the cliff", _test_west_entry_on_cliff],
-		["Wreck graveyard camera scrolls inside the Room", _test_camera_limits],
 		["Wreck graveyard leads east over the sinkhole", _test_leads_east],
 		["Wreck graveyard beach runs east without the decks", _test_beach_runs_east],
 		["Wreck decks lead up to the stern's crate", _test_decks_reach_stern],
@@ -92,22 +81,6 @@ static func _room() -> Node2D:
 	return packed_scene.instantiate() as Node2D
 
 
-func _test_draws_layers_in_order() -> bool:
-	var room := _room()
-	if room == null:
-		return false
-	var names: Array = []
-	for child in room.get_children():
-		if child.name in LAYER_ORDER:
-			names.append(child.name)
-	var valid := names == LAYER_ORDER
-	for layer_name in [&"FarTrees", &"Wreck", &"Terrain", &"Props"]:
-		var layer := room.get_node_or_null(NodePath(layer_name)) as TileMapLayer
-		valid = valid and layer != null and layer.tile_set != null
-	room.free()
-	return valid
-
-
 func _test_lays_out_two_screens() -> bool:
 	var room := _room()
 	if room == null:
@@ -118,7 +91,6 @@ func _test_lays_out_two_screens() -> bool:
 		if layer == null:
 			room.free()
 			return false
-		valid = valid and CELLS.encloses(layer.get_used_rect())
 		var cells: Dictionary = LANDMARKS[layer_name]
 		for cell in cells:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
@@ -141,19 +113,6 @@ func _test_west_entry_on_cliff() -> bool:
 		var below := Vector2i(entry.position / TILE)
 		valid = terrain.get_cell_source_id(below) == 0
 		valid = valid and terrain.get_cell_source_id(below + Vector2i.UP) == -1
-	room.free()
-	return valid
-
-
-func _test_camera_limits() -> bool:
-	var room := _room()
-	if room == null:
-		return false
-	var camera := room.get_node_or_null("Player/Camera2D") as Camera2D
-	var valid := camera != null
-	if valid:
-		valid = camera.limit_left == 0 and camera.limit_top == 0
-		valid = valid and camera.limit_right == ROOM_SIZE.x and camera.limit_bottom == ROOM_SIZE.y
 	room.free()
 	return valid
 
