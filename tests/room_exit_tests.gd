@@ -1,6 +1,6 @@
 extends RefCounted
 
-const WorldMap := preload("res://scripts/core/world_map.gd")
+const World := preload("res://scripts/core/world.gd")
 const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 
 
@@ -11,8 +11,8 @@ func get_tests() -> Array:
 
 
 static func _load_room(room_id: StringName) -> Node2D:
-	var room: Dictionary = WorldMap.ROOMS.get(room_id, {})
-	var packed_scene := load(room.get("scene", "")) as PackedScene if room.has("scene") else null
+	var path := World.scene(room_id)
+	var packed_scene := load(path) as PackedScene if not path.is_empty() else null
 	if packed_scene == null:
 		return null
 	return packed_scene.instantiate() as Node2D

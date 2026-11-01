@@ -3,7 +3,7 @@ extends Node2D
 # A Region's Background: layers that scroll slower the farther back they are. Each is set by
 # where the Room showing it sits in the world, so it carries on across Exits.
 
-const WorldMap := preload("res://scripts/core/world_map.gd")
+const World := preload("res://scripts/core/world.gd")
 
 
 func _ready() -> void:
@@ -16,8 +16,7 @@ func _ready() -> void:
 # Where the Room showing this Background sits in the world, from its place on the Map.
 func room_origin() -> Vector2:
 	var room_scene := owner.scene_file_path if owner != null else ""
-	for room_id: StringName in WorldMap.ROOMS:
-		var room: Dictionary = WorldMap.ROOMS[room_id]
-		if room.scene == room_scene:
-			return Vector2(room.cell) * WorldMap.SCREEN_SIZE
+	for room_id in World.room_ids():
+		if World.scene(room_id) == room_scene:
+			return Vector2(World.cell(room_id)) * World.SCREEN_SIZE
 	return Vector2.ZERO

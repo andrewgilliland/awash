@@ -3,7 +3,7 @@ extends RefCounted
 # What holds for every Room in the World. Each Room's own tests keep only what is its own:
 # landmarks, Entries, walls and Exits, enemies and props.
 
-const WorldMap := preload("res://scripts/core/world_map.gd")
+const World := preload("res://scripts/core/world.gd")
 const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 const BACKGROUND := "res://scenes/regions/waking_coast/background.tscn"
 const CAVE_BACKGROUND := "res://scenes/regions/waking_coast/cave_background.tscn"
@@ -29,8 +29,8 @@ func get_tests() -> Array:
 
 # Loads each Room in the World and asks the check of it, naming each Room that fails.
 static func _every_room(check: Callable) -> bool:
-	var valid := not WorldMap.ROOMS.is_empty()
-	for room_id: StringName in WorldMap.ROOMS:
+	var valid := not World.room_ids().is_empty()
+	for room_id in World.room_ids():
 		var room := _load_room(room_id)
 		if room == null or not check.call(room_id, room):
 			push_error("Room '%s' fails this check." % room_id)
@@ -41,15 +41,15 @@ static func _every_room(check: Callable) -> bool:
 
 
 static func _load_room(room_id: StringName) -> Node2D:
-	var room: Dictionary = WorldMap.ROOMS.get(room_id, {})
-	var packed_scene := load(room.get("scene", "")) as PackedScene if room.has("scene") else null
+	var path := World.scene(room_id)
+	var packed_scene := load(path) as PackedScene if not path.is_empty() else null
 	if packed_scene == null:
 		return null
 	return packed_scene.instantiate() as Node2D
 
 
 static func _size_in_cells(room_id: StringName) -> Vector2i:
-	return WorldMap.ROOMS[room_id].size * SCREEN_CELLS
+	return World.size(room_id) * SCREEN_CELLS
 
 
 func _test_has_scene() -> bool:
@@ -83,7 +83,7 @@ func _test_camera_inside() -> bool:
 
 static func _camera_inside(room_id: StringName, room: Node2D) -> bool:
 	var camera := room.get_node_or_null("Player/Camera2D") as Camera2D
-	var size := Vector2i(Vector2(WorldMap.ROOMS[room_id].size) * WorldMap.SCREEN_SIZE)
+	var size := Vector2i(Vector2(World.size(room_id)) * World.SCREEN_SIZE)
 	if camera == null:
 		return false
 	var valid := camera.limit_left == 0 and camera.limit_top == 0
@@ -132,7 +132,7 @@ func _test_region_sheets() -> bool:
 # A Room's Terrain layer comes from its Region's terrain sheet; every other layer, its Background's
 # included, from the scenery sheet.
 static func _draws_from_region_sheets(room_id: StringName, room: Node2D) -> bool:
-	var region: String = WorldMap.ROOMS[room_id].region
+	var region := World.region_name(room_id)
 	var tiles := "res://assets/regions/%s/tiles/" % region.to_lower().replace(" ", "_")
 	var terrain := room.get_node_or_null("Terrain")
 	var valid := terrain is TileMapLayer
@@ -168,6 +168,6 @@ func _test_region_theme() -> bool:
 
 
 static func _region_has_theme(room_id: StringName, _room: Node2D) -> bool:
-	var path := WorldMap.music_for(room_id)
+	var path := World.theme(room_id)
 	var theme := load(path) as AudioStreamWAV if not path.is_empty() else null
 	return theme != null and theme.loop_mode == AudioStreamWAV.LOOP_FORWARD

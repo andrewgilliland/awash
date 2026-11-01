@@ -6,7 +6,7 @@ const HEALTH_BAR_SCENE := preload("res://scenes/ui/health_bar.tscn")
 const BOSS_BAR_SCENE := preload("res://scenes/ui/boss_bar.tscn")
 const BRINECAP_SCENE := preload("res://scenes/items/brinecap.tscn")
 const RunStateScript := preload("res://scripts/core/run_state.gd")
-const WorldMap := preload("res://scripts/core/world_map.gd")
+const World := preload("res://scripts/core/world.gd")
 const ENEMY_GROUP := &"enemy"
 # Long enough to see the Player fall and hear the defeat sound before the Room is replaced.
 const DEFEAT_PAUSE := 1.2
@@ -69,8 +69,7 @@ func _on_player_defeated() -> void:
 	var run := _get_run()
 	if run != null:
 		run.recover_from_defeat()
-	var first_room: Dictionary = WorldMap.ROOMS[RunStateScript.FIRST_ROOM_ID]
-	get_tree().change_scene_to_file.call_deferred(first_room.scene)
+	get_tree().change_scene_to_file.call_deferred(World.scene(RunStateScript.FIRST_ROOM_ID))
 
 
 # The Run says which Entry the Player came through; this Room says where it is.
@@ -93,7 +92,7 @@ func _play_region_music() -> void:
 	var music := get_node_or_null("/root/Music")
 	var run := _get_run()
 	var room_id := run.room_id if run != null else RunStateScript.FIRST_ROOM_ID
-	var theme := WorldMap.music_for(room_id)
+	var theme := World.theme(room_id)
 	if music != null and not theme.is_empty():
 		music.call("play", load(theme))
 
