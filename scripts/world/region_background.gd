@@ -15,8 +15,7 @@ func _ready() -> void:
 
 # Where the Room showing this Background sits in the world, from its place on the Map.
 func room_origin() -> Vector2:
-	var room_scene := owner.scene_file_path if owner != null else ""
-	for room_id in World.room_ids():
-		if World.scene(room_id) == room_scene:
-			return Vector2(World.cell(room_id)) * World.SCREEN_SIZE
-	return Vector2.ZERO
+	var room_id := World.room_for_scene(owner.scene_file_path if owner != null else "")
+	if room_id.is_empty():
+		return Vector2.ZERO
+	return Vector2(World.cell(room_id)) * World.SCREEN_SIZE

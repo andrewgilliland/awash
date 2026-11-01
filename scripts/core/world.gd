@@ -104,6 +104,14 @@ static func has_room(room_id: StringName) -> bool:
 	return ROOMS.has(room_id)
 
 
+# The Room a scene is, or &"" when the World holds no Room with that scene.
+static func room_for_scene(scene_path: String) -> StringName:
+	for room_id: StringName in ROOMS:
+		if ROOMS[room_id].scene == scene_path:
+			return room_id
+	return &""
+
+
 # The Room's scene, or "" when the World doesn't hold it.
 static func scene(room_id: StringName) -> String:
 	return ROOMS.get(room_id, {}).get("scene", "")

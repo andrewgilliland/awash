@@ -14,6 +14,8 @@ const DEFEAT_PAUSE := 1.2
 # Rolled once per enemy defeat, from 0 up to 1; under the enemy's DROP_CHANCE leaves a
 # Brinecap. Tests swap it for a fixed roll.
 var drop_roll: Callable = randf
+# Which Room this is, found in the World by its own scene; &"" when the World doesn't hold it.
+var _room_id: StringName = &""
 # Where defeated enemies left a Brinecap, waiting for the Room's next physics step.
 var _brinecaps_due: Array[Vector2] = []
 
@@ -23,6 +25,7 @@ var _brinecaps_due: Array[Vector2] = []
 
 
 func _ready() -> void:
+	_find_self_in_world()
 	_ensure_pause_menu()
 	_ensure_dialogue_box()
 	_ensure_health_bar()
@@ -32,6 +35,12 @@ func _ready() -> void:
 	if _player != null and not _player.is_connected(&"defeated", _on_player_defeated):
 		_player.connect(&"defeated", _on_player_defeated)
 	_hand_enemy_defeats_to_player()
+
+
+func _find_self_in_world() -> void:
+	_room_id = World.room_for_scene(scene_file_path)
+	if _room_id.is_empty():
+		push_error("Scene '%s' is not a Room in the World." % scene_file_path)
 
 
 # Every enemy defeated in this Room earns the Player its Experience, whatever struck it down, and
@@ -78,8 +87,7 @@ func _place_player_at_entry() -> void:
 	var entry_id := run.entry_id if run != null else RunStateScript.DEFAULT_ENTRY_ID
 	var entry := _entries.get_node_or_null(NodePath(entry_id)) as Marker2D
 	if entry == null:
-		var room_id := run.room_id if run != null else RunStateScript.FIRST_ROOM_ID
-		push_error("Room '%s' has no Entry '%s'." % [room_id, entry_id])
+		push_error("Room '%s' has no Entry '%s'." % [_room_id, entry_id])
 		return
 
 	_player.global_position = entry.global_position
@@ -90,9 +98,7 @@ func _play_region_music() -> void:
 	if not is_inside_tree():
 		return
 	var music := get_node_or_null("/root/Music")
-	var run := _get_run()
-	var room_id := run.room_id if run != null else RunStateScript.FIRST_ROOM_ID
-	var theme := World.theme(room_id)
+	var theme := World.theme(_room_id)
 	if music != null and not theme.is_empty():
 		music.call("play", load(theme))
 

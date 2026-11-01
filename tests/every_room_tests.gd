@@ -14,6 +14,7 @@ const PLAYER_LAYER := 1 << 1
 func get_tests() -> Array:
 	return [
 		["Every Room in the World has a scene", _test_has_scene],
+		["Every Room is found in the World by its scene", _test_found_by_scene],
 		["Every Room's Region is in the World", _test_region_held],
 		["Every Room's Exits lead to Entries in the World", _test_exits_lead_to_entries],
 		["Every Room keeps its camera inside its size", _test_camera_inside],
@@ -52,6 +53,13 @@ static func _size_in_cells(room_id: StringName) -> Vector2i:
 
 func _test_has_scene() -> bool:
 	return _every_room(func(_room_id: StringName, _room: Node2D) -> bool: return true)
+
+
+func _test_found_by_scene() -> bool:
+	return _every_room(
+		func(room_id: StringName, room: Node2D) -> bool:
+			return World.room_for_scene(room.scene_file_path) == room_id
+	)
 
 
 func _test_region_held() -> bool:
