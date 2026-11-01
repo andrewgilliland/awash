@@ -3,8 +3,8 @@ extends RefCounted
 const MusicScript := preload("res://scripts/core/music.gd")
 const WorldMap := preload("res://scripts/core/world_map.gd")
 const FIRST_ROOM := preload("res://scenes/rooms/waking_coast_1.tscn")
-const COAST_THEME_PATH := "res://assets/audio/music/waking_coast_theme.wav"
-const START_THEME_PATH := "res://assets/audio/music/start_theme.wav"
+const COAST_THEME_PATH := "res://assets/regions/waking_coast/music/theme.wav"
+const START_THEME_PATH := "res://assets/ui/start_theme.wav"
 
 # Needs a root that is already in the tree: music only plays, and fades, inside it.
 var _root: Window

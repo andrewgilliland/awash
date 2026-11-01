@@ -1,9 +1,9 @@
 [gd_scene load_steps=35 format=4 uid="uid://bo2pll780fo42"]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_ltjx2"]
-[ext_resource type="Texture2D" uid="uid://df6yx4ak5xo7u" path="res://assets/backgrounds/waking_coast_2_backdrop.png" id="2_7nr2o"]
-[ext_resource type="TileSet" uid="uid://87k8wahvc2uo" path="res://assets/tilesets/waking_coast_2.tres" id="3_0bp3x"]
-[ext_resource type="Texture2D" uid="uid://br6u01tkjwoq6" path="res://assets/sprites/props/tidefen_lantern.png" id="4_r86vo"]
+[ext_resource type="Texture2D" uid="uid://df6yx4ak5xo7u" path="res://assets/regions/waking_coast/backdrops/waking_coast_2_backdrop.png" id="2_7nr2o"]
+[ext_resource type="TileSet" uid="uid://87k8wahvc2uo" path="res://assets/regions/waking_coast/tiles/waking_coast_2.tres" id="3_0bp3x"]
+[ext_resource type="Texture2D" uid="uid://br6u01tkjwoq6" path="res://assets/regions/waking_coast/props/tidefen_lantern.png" id="4_r86vo"]
 [ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="5_usmxo"]
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="6_a2duh"]
 

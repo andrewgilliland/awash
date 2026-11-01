@@ -6,8 +6,11 @@ melody, a thin pulse arpeggio through the chords, a soft bass, and noise for the
 surf, a light hi-hat and, where a song asks, a snare. Each song is plain data
 below, so a tune can be edited and regenerated.
 
+Each song is written where the game plays it from: the start screen's beside the UI, each
+Region's theme in that Region's music folder.
+
 Example:
-  python scripts/tools/make_music.py --out assets/audio/music
+  python scripts/tools/make_music.py
 """
 
 from __future__ import annotations
@@ -252,14 +255,22 @@ def write(path: Path, samples: List[float]) -> None:
         out.writeframes(frames)
 
 
+# Where each song is written.
+HOMES = {
+    "start_theme": Path("assets/ui/start_theme.wav"),
+    "waking_coast_theme": Path("assets/regions/waking_coast/music/theme.wav"),
+}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--out", type=Path, default=Path("assets/audio/music"))
+    parser.add_argument("--root", type=Path, default=Path("."), help="the project's root")
     args = parser.parse_args()
-    args.out.mkdir(parents=True, exist_ok=True)
     for song in SONGS:
-        write(args.out / f"{song.name}.wav", render(song))
-        print(f"{song.name}.wav  {song.length / RATE:.2f}s, {song.bars} bars at {song.bpm} BPM")
+        path = args.root / HOMES[song.name]
+        path.parent.mkdir(parents=True, exist_ok=True)
+        write(path, render(song))
+        print(f"{path}  {song.length / RATE:.2f}s, {song.bars} bars at {song.bpm} BPM")
 
 
 if __name__ == "__main__":

@@ -298,7 +298,7 @@ func _playtest_walks_rooms() -> bool:
 	change_scene_to_file(FIRST_ROOM_PATH)
 
 	var music := root.get_node_or_null("Music")
-	var theme_path := "res://assets/audio/music/waking_coast_theme.wav"
+	var theme_path := "res://assets/regions/waking_coast/music/theme.wav"
 	var theme_playing := func() -> bool:
 		var current = music.call("current") if music != null else null
 		return current != null and current.resource_path == theme_path

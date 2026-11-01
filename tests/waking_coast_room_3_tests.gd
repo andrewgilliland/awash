@@ -1,7 +1,7 @@
 extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_3.tscn"
-const TILESET_PATH := "res://assets/tilesets/waking_coast_2.tres"
+const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tres"
 const RoomReach := preload("res://tests/room_reach.gd")
 const LAYER_ORDER := [&"Backdrop", &"Wreck", &"Terrain", &"Props", &"Entries", &"Player"]
 # Two screens tall.
@@ -21,7 +21,8 @@ const SHALLOW := Vector2i(5, 5)
 # The cliff top the climb ends on, and the high ledge left for a double jump.
 const CLIFF_TOP := Vector2i(8, 4)
 const HIGH_LEDGE := Vector2i(5, 1)
-# Landmark cells from assets/waking_shores_4.aseprite: layer -> {cell: atlas coords}.
+# Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_3.aseprite:
+# layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	# A broken mast holds up the wreck decks on the west side of the climb.
 	&"Wreck": {Vector2i(0, 6): Vector2i(7, 6), Vector2i(0, 14): Vector2i(7, 6)},

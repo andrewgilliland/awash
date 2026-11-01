@@ -19,7 +19,7 @@ const PLAYER_GROUP := &"player"
 # The spear's reach, in front of the Scavenger when facing right.
 const SPEAR_OFFSET := Vector2(10.0, -9.0)
 # One row of 16x16 cells: stride, stride, wind-up, lunge, hurt.
-const SHEET := preload("res://assets/sprites/enemies/scavenger_1.png")
+const SHEET := preload("res://assets/enemies/scavenger/scavenger_1.png")
 const FRAME_SIZE := Vector2i(16, 16)
 const ANIMATIONS := {
 	&"patrol": {frames = [0, 1], fps = 4.0, loop = true},

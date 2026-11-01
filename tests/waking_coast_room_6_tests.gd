@@ -1,7 +1,7 @@
 extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_6.tscn"
-const TILESET_PATH := "res://assets/tilesets/waking_coast_2.tres"
+const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tres"
 const RoomReach := preload("res://tests/room_reach.gd")
 const LAYER_ORDER := [&"Backdrop", &"Trees", &"Terrain", &"Props", &"Entries", &"Player"]
 # Two screens wide.
@@ -17,7 +17,8 @@ const WORLD_LAYER := 1
 const EAST_END := Vector2i(19, 3)
 const RUNE_STONE := Vector2i(5, 7)
 const RUNE_STONE_BASE := Vector2i(6, 7)
-# Landmark cells from assets/waking_shores_7.aseprite: layer -> {cell: atlas coords}.
+# Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_6.aseprite:
+# layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	# a palm on the beach before the road: crown middle and base
 	&"Trees": {Vector2i(2, 2): Vector2i(1, 10), Vector2i(2, 5): Vector2i(3, 10)},

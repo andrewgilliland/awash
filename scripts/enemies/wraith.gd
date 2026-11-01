@@ -26,7 +26,7 @@ const PLAYER_GROUP := &"player"
 const LASH_OFFSET := Vector2(14.0, 0.0)
 # One row of 32x32 cells, facing right: drift, drift, manifest, manifest, lash, lash, exposed,
 # hurt.
-const SHEET := preload("res://assets/sprites/enemies/wraith_1.png")
+const SHEET := preload("res://assets/enemies/wraith/wraith_1.png")
 const FRAME_SIZE := Vector2i(32, 32)
 const ANIMATIONS := {
 	&"drift": {frames = [0, 1], fps = 3.0, loop = true},

@@ -1,8 +1,8 @@
 [gd_scene load_steps=16 format=4 uid="uid://dbp6lkmnqsjo"]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_wngve"]
-[ext_resource type="Texture2D" uid="uid://cvaltcq38nce8" path="res://assets/backgrounds/waking_coast_backdrop.png" id="2_k6xr3"]
-[ext_resource type="TileSet" uid="uid://87k8wahvc2uo" path="res://assets/tilesets/waking_coast_2.tres" id="3_mbfww"]
+[ext_resource type="Texture2D" uid="uid://cvaltcq38nce8" path="res://assets/regions/waking_coast/backdrops/waking_coast_backdrop.png" id="2_k6xr3"]
+[ext_resource type="TileSet" uid="uid://87k8wahvc2uo" path="res://assets/regions/waking_coast/tiles/waking_coast_2.tres" id="3_mbfww"]
 [ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="4_ea865"]
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="5_xtuqj"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/nameless_warden.tscn" id="6_warden"]

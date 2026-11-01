@@ -1,7 +1,7 @@
 extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_4.tscn"
-const TILESET_PATH := "res://assets/tilesets/waking_coast_2.tres"
+const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tres"
 const RoomReach := preload("res://tests/room_reach.gd")
 const LAYER_ORDER := [
 	&"Backdrop",
@@ -34,7 +34,8 @@ const SINKHOLE_COLUMN := 19
 const STERN_DECK := Vector2i(17, 1)
 const STERN_CRATE := Vector2i(18, 0)
 const CRATE := Vector2i(0, 7)
-# Landmark cells from assets/waking_shores_5.aseprite: layer -> {cell: atlas coords}.
+# Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_4.aseprite:
+# layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	# a far palm behind the beach: crown middle and base
 	&"FarTrees": {Vector2i(5, 1): Vector2i(5, 10), Vector2i(5, 5): Vector2i(7, 10)},

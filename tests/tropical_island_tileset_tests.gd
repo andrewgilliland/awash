@@ -1,7 +1,7 @@
 extends RefCounted
 
-const TILESET_PATH := "res://assets/tilesets/tropical_island_1.tres"
-const SHEET_PATH := "res://assets/tilesets/tropical_island_1.png"
+const TILESET_PATH := "res://assets/regions/waking_coast/tiles/tropical_island_1.tres"
+const SHEET_PATH := "res://assets/regions/waking_coast/tiles/tropical_island_1.png"
 const SOURCE_ID := 0
 const COLUMNS := 8
 const ROWS := 18

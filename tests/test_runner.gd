@@ -5,6 +5,7 @@ const FIRST_ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
 const START_SCREEN_PATH := "res://scenes/ui/start_screen.tscn"
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 const PlayerController := preload("res://scripts/player/player_controller.gd")
+const AssetPathTests := preload("res://tests/asset_path_tests.gd")
 const PlayerControllerTests := preload("res://tests/player_controller_tests.gd")
 const PlayerRigTests := preload("res://tests/player_rig_tests.gd")
 const RunStateTests := preload("res://tests/run_state_tests.gd")
@@ -61,6 +62,9 @@ var _failures: int = 0
 
 
 func _init() -> void:
+	var asset_path_tests := AssetPathTests.new()
+	for test in asset_path_tests.get_tests():
+		_run_test(test[0], test[1])
 	var controller_tests := PlayerControllerTests.new()
 	for test in controller_tests.get_tests():
 		_run_test(test[0], test[1])

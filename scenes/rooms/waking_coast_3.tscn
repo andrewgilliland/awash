@@ -1,8 +1,8 @@
 [gd_scene load_steps=14 format=4 uid="uid://bu0ridvl83phg"]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_pxe2u"]
-[ext_resource type="Texture2D" uid="uid://c6kq4me0d2ekg" path="res://assets/backgrounds/waking_coast_3_backdrop.png" id="2_omasr"]
-[ext_resource type="TileSet" uid="uid://87k8wahvc2uo" path="res://assets/tilesets/waking_coast_2.tres" id="3_yyn30"]
+[ext_resource type="Texture2D" uid="uid://c6kq4me0d2ekg" path="res://assets/regions/waking_coast/backdrops/waking_coast_3_backdrop.png" id="2_omasr"]
+[ext_resource type="TileSet" uid="uid://87k8wahvc2uo" path="res://assets/regions/waking_coast/tiles/waking_coast_2.tres" id="3_yyn30"]
 [ext_resource type="PackedScene" uid="uid://b7jkme67anbk7" path="res://scenes/enemies/scavenger.tscn" id="4_dpgvy"]
 [ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="5_xwav4"]
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="6_hk227"]

@@ -1,8 +1,8 @@
 extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_8.tscn"
-const TILESET_PATH := "res://assets/tilesets/waking_coast_2.tres"
-const LANTERN_PATH := "res://assets/sprites/props/tidefen_lantern.png"
+const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tres"
+const LANTERN_PATH := "res://assets/regions/waking_coast/props/tidefen_lantern.png"
 const RoomReach := preload("res://tests/room_reach.gd")
 const LAYER_ORDER := [
 	&"Backdrop",
@@ -32,7 +32,8 @@ const WELL_COLUMN := 9
 const BELL := Vector2i(3, 7)
 const CRATE := Vector2i(0, 7)
 const BARREL := Vector2i(1, 7)
-# Landmark cells from assets/waking_shores_9.aseprite: layer -> {cell: atlas coords}.
+# Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_8.aseprite:
+# layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	&"Village":
 	{

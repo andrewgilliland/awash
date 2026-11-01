@@ -2,8 +2,8 @@ extends RefCounted
 
 # The jungle canopy sheet is the tropical TileSet's second atlas, so a Room can mix its tall
 # trees, treehouse and rope bridge with the tropical ground on one layer.
-const TILESET_PATH := "res://assets/tilesets/tropical_island_1.tres"
-const SHEET_PATH := "res://assets/tilesets/jungle_canopy_1.png"
+const TILESET_PATH := "res://assets/regions/waking_coast/tiles/tropical_island_1.tres"
+const SHEET_PATH := "res://assets/regions/waking_coast/tiles/jungle_canopy_1.png"
 const SOURCE_ID := 1
 const COLUMNS := 8
 const ROWS := 8

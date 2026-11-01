@@ -4,8 +4,11 @@
 Each effect is built from square waves and noise, like a handheld sound chip, so
 the sounds can be tuned here and regenerated rather than edited by hand.
 
+Each effect is written beside what makes it: the Player's in assets/player, each enemy's in
+its own folder under assets/enemies, the menus' in assets/ui.
+
 Example:
-  python scripts/tools/make_sfx.py --out assets/audio/sfx
+  python scripts/tools/make_sfx.py
 """
 
 from __future__ import annotations
@@ -201,15 +204,34 @@ def write(path: Path, samples: List[float]) -> None:
         out.writeframes(frames)
 
 
+# The folder each effect is written to, by the start of its name.
+HOMES = {
+    "player_": "assets/player",
+    "scavenger_": "assets/enemies/scavenger",
+    "storm_wisp_": "assets/enemies/storm_wisp",
+    "wraith_": "assets/enemies/wraith",
+    "warden_": "assets/enemies/nameless_warden",
+    "ui_": "assets/ui",
+}
+
+
+def home(name: str) -> Path:
+    for prefix, folder in HOMES.items():
+        if name.startswith(prefix):
+            return Path(folder)
+    raise ValueError(f"no home for the effect {name!r}: add its prefix to HOMES")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--out", type=Path, default=Path("assets/audio/sfx"))
+    parser.add_argument("--root", type=Path, default=Path("."), help="the project's root")
     args = parser.parse_args()
-    args.out.mkdir(parents=True, exist_ok=True)
     for name, make in EFFECTS.items():
         samples = make()
-        write(args.out / f"{name}.wav", samples)
-        print(f"{name}.wav  {len(samples) / RATE:.2f}s")
+        folder = args.root / home(name)
+        folder.mkdir(parents=True, exist_ok=True)
+        write(folder / f"{name}.wav", samples)
+        print(f"{folder / name}.wav  {len(samples) / RATE:.2f}s")
 
 
 if __name__ == "__main__":

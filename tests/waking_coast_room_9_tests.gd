@@ -1,7 +1,7 @@
 extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_9.tscn"
-const TILESET_PATH := "res://assets/tilesets/waking_coast_2.tres"
+const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tres"
 const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 const RoomReach := preload("res://tests/room_reach.gd")
 const LAYER_ORDER := [&"Back", &"Terrain", &"Props", &"Entries", &"Player"]
@@ -15,7 +15,8 @@ const SHALLOW := Vector2i(5, 5)
 const WELL_ENTRY := Vector2(632, 24)
 const WELL_FLOOR := Vector2i(39, 6)
 const WEST_ENTRY := Vector2(12, 96)
-# Landmark cells from assets/waking_shores_10.aseprite: layer -> {cell: atlas coords}.
+# Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_9.aseprite:
+# layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	&"Back": {Vector2i(0, 2): Vector2i(6, 4), Vector2i(39, 0): Vector2i(6, 4)},
 	&"Terrain":
