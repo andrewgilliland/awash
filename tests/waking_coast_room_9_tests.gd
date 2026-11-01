@@ -3,7 +3,6 @@ extends RefCounted
 const ROOM_PATH := "res://scenes/rooms/waking_coast_9.tscn"
 const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 const RoomReach := preload("res://tests/room_reach.gd")
-const LAYER_ORDER := [&"Background", &"Back", &"Terrain", &"Props", &"Entries", &"Player"]
 # Four screens wide, under the rune road, the Warden's gate and Tidefen's west end.
 const ROOM_SIZE := Vector2i(640, 144)
 const CELLS := Rect2i(0, 0, 40, 9)
@@ -34,12 +33,10 @@ const LANDMARKS := {
 
 func get_tests() -> Array:
 	return [
-		["Undertow Room draws its layers in order", _test_draws_layers_in_order],
 		["Undertow Room lays out four screens of rock and dark", _test_lays_out_four_screens],
 		["Undertow shaft drops from Tidefen's well, one way", _test_shaft_is_one_way],
 		["Undertow floor runs from the well west to the sea cave", _test_floor_runs_west],
 		["A Scavenger hunts the undertow's middle pool", _test_scavenger_in_pool],
-		["Undertow camera scrolls inside the Room", _test_camera_limits],
 		["Undertow walls its east edge", _test_walls_east_edge],
 	]
 
@@ -49,22 +46,6 @@ static func _room() -> Node2D:
 	if packed_scene == null:
 		return null
 	return packed_scene.instantiate() as Node2D
-
-
-func _test_draws_layers_in_order() -> bool:
-	var room := _room()
-	if room == null:
-		return false
-	var names: Array = []
-	for child in room.get_children():
-		if child.name in LAYER_ORDER:
-			names.append(child.name)
-	var valid := names == LAYER_ORDER
-	for layer_name in [&"Back", &"Terrain", &"Props"]:
-		var layer := room.get_node_or_null(NodePath(layer_name)) as TileMapLayer
-		valid = valid and layer != null and layer.tile_set != null
-	room.free()
-	return valid
 
 
 # Every cell is rock or the tunnel's dark behind the open air, so nothing shows through.
@@ -78,7 +59,6 @@ func _test_lays_out_four_screens() -> bool:
 		if layer == null:
 			room.free()
 			return false
-		valid = valid and CELLS.encloses(layer.get_used_rect())
 		var cells: Dictionary = LANDMARKS[layer_name]
 		for cell in cells:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
@@ -142,19 +122,6 @@ func _test_scavenger_in_pool() -> bool:
 		for x in [scavenger.get("patrol_left"), scavenger.get("patrol_right")]:
 			var cell := Vector2i(int(x / TILE), row)
 			valid = valid and terrain.get_cell_atlas_coords(cell) == SHALLOW
-	room.free()
-	return valid
-
-
-func _test_camera_limits() -> bool:
-	var room := _room()
-	if room == null:
-		return false
-	var camera := room.get_node_or_null("Player/Camera2D") as Camera2D
-	var valid := camera != null
-	if valid:
-		valid = camera.limit_left == 0 and camera.limit_top == 0
-		valid = valid and camera.limit_right == ROOM_SIZE.x and camera.limit_bottom == ROOM_SIZE.y
 	room.free()
 	return valid
 

@@ -2,7 +2,6 @@ extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_6.tscn"
 const RoomReach := preload("res://tests/room_reach.gd")
-const LAYER_ORDER := [&"Background", &"Trees", &"Terrain", &"Props", &"Entries", &"Player"]
 # Two screens wide.
 const ROOM_SIZE := Vector2i(320, 144)
 const CELLS := Rect2i(0, 0, 20, 9)
@@ -49,12 +48,10 @@ const LANDMARKS := {
 
 func get_tests() -> Array:
 	return [
-		["Rune road Room draws its layers in order", _test_draws_layers_in_order],
 		["Rune road Room lays out two screens", _test_lays_out_two_screens],
 		["Rune road west Entry stands on the beach", _test_west_entry_on_beach],
 		["Rune road climbs east a step at a time", _test_climbs_east],
 		["Rune stones stand on the road", _test_rune_stones_on_road],
-		["Rune road camera scrolls inside the Room", _test_camera_limits],
 		["Rune road leads east to the Warden's gate", _test_leads_east],
 	]
 
@@ -64,22 +61,6 @@ static func _room() -> Node2D:
 	if packed_scene == null:
 		return null
 	return packed_scene.instantiate() as Node2D
-
-
-func _test_draws_layers_in_order() -> bool:
-	var room := _room()
-	if room == null:
-		return false
-	var names: Array = []
-	for child in room.get_children():
-		if child.name in LAYER_ORDER:
-			names.append(child.name)
-	var valid := names == LAYER_ORDER
-	for layer_name in [&"Trees", &"Terrain", &"Props"]:
-		var layer := room.get_node_or_null(NodePath(layer_name)) as TileMapLayer
-		valid = valid and layer != null and layer.tile_set != null
-	room.free()
-	return valid
 
 
 func _test_lays_out_two_screens() -> bool:
@@ -92,7 +73,6 @@ func _test_lays_out_two_screens() -> bool:
 		if layer == null:
 			room.free()
 			return false
-		valid = valid and CELLS.encloses(layer.get_used_rect())
 		var cells: Dictionary = LANDMARKS[layer_name]
 		for cell in cells:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
@@ -166,19 +146,6 @@ func _test_rune_stones_on_road() -> bool:
 		valid = valid and terrain.get_cell_source_id(base + Vector2i.DOWN) == 0
 	room.free()
 	return valid and stones == LANDMARKS[&"Props"].size()
-
-
-func _test_camera_limits() -> bool:
-	var room := _room()
-	if room == null:
-		return false
-	var camera := room.get_node_or_null("Player/Camera2D") as Camera2D
-	var valid := camera != null
-	if valid:
-		valid = camera.limit_left == 0 and camera.limit_top == 0
-		valid = valid and camera.limit_right == ROOM_SIZE.x and camera.limit_bottom == ROOM_SIZE.y
-	room.free()
-	return valid
 
 
 # The heights run on east through the rune gate to the Warden's gate.

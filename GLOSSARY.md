@@ -50,6 +50,10 @@ _Avoid_: Power attack, heavy attack, charge shot
 
 ## World
 
+**World**:
+Every Region and every Room, with where each Room sits and how many screens it spans. The Map draws it.
+_Avoid_: World map, level list, Map (for what the Map draws)
+
 **Run**:
 One playthrough from a new game. It remembers where the Player is in the world and what they have done. Only START begins a new one; a defeat keeps it.
 _Avoid_: Session, save, runtime state

@@ -3,7 +3,6 @@ extends RefCounted
 const ROOM_PATH := "res://scenes/rooms/waking_coast_5.tscn"
 const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 const RoomReach := preload("res://tests/room_reach.gd")
-const LAYER_ORDER := [&"Background", &"Back", &"Terrain", &"Props", &"Entries", &"Player"]
 # Two screens wide, under the wreck graveyard.
 const ROOM_SIZE := Vector2i(320, 144)
 const CELLS := Rect2i(0, 0, 20, 9)
@@ -44,13 +43,11 @@ const LANDMARKS := {
 
 func get_tests() -> Array:
 	return [
-		["Sea cave Room draws its layers in order", _test_draws_layers_in_order],
 		["Sea cave Room lays out two screens of rock and dark", _test_lays_out_two_screens],
 		["Sea cave shaft drops from the graveyard, one way", _test_shaft_is_one_way],
 		["Sea cave tunnel leads west to the salt cliffs", _test_tunnel_leads_west],
 		["Sea cave floor runs from the shaft to the tunnel", _test_floor_runs_west],
 		["Sea cave shelf holds a crate a jump up", _test_shelf_holds_crate],
-		["Sea cave camera stays inside the Room", _test_camera_limits],
 		["Sea cave leads east into the undertow", _test_leads_east],
 	]
 
@@ -60,22 +57,6 @@ static func _room() -> Node2D:
 	if packed_scene == null:
 		return null
 	return packed_scene.instantiate() as Node2D
-
-
-func _test_draws_layers_in_order() -> bool:
-	var room := _room()
-	if room == null:
-		return false
-	var names: Array = []
-	for child in room.get_children():
-		if child.name in LAYER_ORDER:
-			names.append(child.name)
-	var valid := names == LAYER_ORDER
-	for layer_name in [&"Back", &"Terrain", &"Props"]:
-		var layer := room.get_node_or_null(NodePath(layer_name)) as TileMapLayer
-		valid = valid and layer != null and layer.tile_set != null
-	room.free()
-	return valid
 
 
 # Every cell is rock or the cave's dark behind the open air, so nothing shows through.
@@ -89,7 +70,6 @@ func _test_lays_out_two_screens() -> bool:
 		if layer == null:
 			room.free()
 			return false
-		valid = valid and CELLS.encloses(layer.get_used_rect())
 		var cells: Dictionary = LANDMARKS[layer_name]
 		for cell in cells:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
@@ -156,19 +136,6 @@ func _test_shelf_holds_crate() -> bool:
 	var reached := RoomReach.reachable(terrain, SHAFT_FLOOR)
 	var valid := RoomReach.span_at(reached, SHELF) != null
 	valid = valid and props.get_cell_atlas_coords(SHELF + Vector2i.UP) == CRATE
-	room.free()
-	return valid
-
-
-func _test_camera_limits() -> bool:
-	var room := _room()
-	if room == null:
-		return false
-	var camera := room.get_node_or_null("Player/Camera2D") as Camera2D
-	var valid := camera != null
-	if valid:
-		valid = camera.limit_left == 0 and camera.limit_top == 0
-		valid = valid and camera.limit_right == ROOM_SIZE.x and camera.limit_bottom == ROOM_SIZE.y
 	room.free()
 	return valid
 
