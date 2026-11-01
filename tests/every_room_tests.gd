@@ -29,6 +29,7 @@ func get_tests() -> Array:
 		["Every Room draws its layers in order", _test_layer_order],
 		["Every Room keeps its tiles inside its size", _test_tiles_inside],
 		["Every Room draws only from its Region's sheets", _test_region_sheets],
+		["No Room scene holds its own Background", _test_scene_leaves_background],
 		["Every Room draws its Region's Background behind all else", _test_background],
 		["Every Room's Region has a looping theme", _test_region_theme],
 	]
@@ -177,7 +178,7 @@ static func _tiles_inside(room_id: StringName, room: Node2D) -> bool:
 
 
 func _test_region_sheets() -> bool:
-	return _every_room(_draws_from_region_sheets)
+	return _every_entered_room(_draws_from_region_sheets)
 
 
 # A Room's Terrain layer comes from its Region's terrain sheet, in the folder named by the Region's
@@ -195,8 +196,15 @@ static func _draws_from_region_sheets(room_id: StringName, room: Node2D) -> bool
 	return valid
 
 
+func _test_scene_leaves_background() -> bool:
+	return _every_room(
+		func(_room_id: StringName, room: Node2D) -> bool:
+			return room.get_node_or_null("Background") == null
+	)
+
+
 func _test_background() -> bool:
-	return _every_room(_shows_region_background)
+	return _every_entered_room(_shows_region_background)
 
 
 # The Background the World names for the Room, drawn first of everything in the Room's world.

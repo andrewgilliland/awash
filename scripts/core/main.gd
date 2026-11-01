@@ -27,6 +27,7 @@ var _brinecaps_due: Array[Vector2] = []
 func _ready() -> void:
 	_find_self_in_world()
 	_fit_camera_to_room()
+	_add_background()
 	_ensure_pause_menu()
 	_ensure_dialogue_box()
 	_ensure_health_bar()
@@ -54,6 +55,18 @@ func _fit_camera_to_room() -> void:
 	camera.limit_top = 0
 	camera.limit_right = int(room_size.x)
 	camera.limit_bottom = int(room_size.y)
+
+
+# The Room's Background, from the World, drawn behind everything and told where the Room sits.
+func _add_background() -> void:
+	var path := World.background(_room_id)
+	if path.is_empty() or has_node(^"Background"):
+		return
+	var background := (load(path) as PackedScene).instantiate()
+	background.name = "Background"
+	background.set("room_origin", Vector2(World.cell(_room_id)) * World.SCREEN_SIZE)
+	add_child(background)
+	move_child(background, 0)
 
 
 # Every enemy defeated in this Room earns the Player its Experience, whatever struck it down, and

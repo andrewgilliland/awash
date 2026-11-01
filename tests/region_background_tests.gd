@@ -3,6 +3,7 @@ extends RefCounted
 const World := preload("res://scripts/core/world.gd")
 const BACKGROUND := "res://scenes/regions/waking_coast/background.tscn"
 const CAVE_BACKGROUND := "res://scenes/regions/waking_coast/cave_background.tscn"
+const CAVE_ROOMS: Array[StringName] = [&"waking_coast_5", &"waking_coast_9"]
 # The Waking Coast's layers, back to front, and how fast each scrolls with the camera.
 const LAYERS := {Sky = 0.1, Clouds = 0.2, Sea = 0.6}
 const CAVE_LAYERS := {Wall = 0.3, Glints = 0.6}
@@ -40,6 +41,8 @@ func get_tests() -> Array:
 		["The Waking Coast's layers each scroll slower the farther back", _test_layers],
 		["The cave Background is a rock wall with glints before it", _test_cave_layers],
 		["The Waking Coast's Background is a daytime tropical shore", _test_daytime_shore],
+		["The caves show the cave Background; the rest of the coast its sky and sea", _test_caves],
+		["A Background sets its layers by the place it is told", _test_told_place],
 		["A Room sets its Background by where it sits in the world", _test_offsets],
 		["Every Exit meets its Entry in the world, so Backgrounds carry on", _test_seams],
 	]
@@ -77,6 +80,32 @@ func _test_daytime_shore() -> bool:
 	valid = valid and sea.get_cell_atlas_coords(Vector2i(0, SCREEN_CELLS.y + 4)) == SEA
 	for cell: Vector2i in CLOUDS:
 		valid = valid and clouds.get_cell_atlas_coords(cell) == CLOUDS[cell]
+	background.free()
+	return valid
+
+
+func _test_caves() -> bool:
+	var valid := true
+	for room_id in World.room_ids():
+		if World.region(room_id) == &"waking_coast":
+			var expected := CAVE_BACKGROUND if CAVE_ROOMS.has(room_id) else BACKGROUND
+			if World.background(room_id) != expected:
+				push_error("%s shows %s" % [room_id, World.background(room_id)])
+				valid = false
+	return valid
+
+
+# Any place will do: the Background knows nothing of the World.
+func _test_told_place() -> bool:
+	var origin := Vector2(480, -144)
+	var background := (load(BACKGROUND) as PackedScene).instantiate()
+	background.set("room_origin", origin)
+	_root.add_child(background)
+	var valid := true
+	for layer in background.get_children():
+		if layer is Parallax2D:
+			var expected: Vector2 = -origin * (layer as Parallax2D).scroll_scale
+			valid = valid and (layer as Parallax2D).scroll_offset.is_equal_approx(expected)
 	background.free()
 	return valid
 
