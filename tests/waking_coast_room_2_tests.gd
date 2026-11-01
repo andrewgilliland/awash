@@ -1,7 +1,7 @@
 extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_2.tscn"
-const TILESET_PATH := "res://assets/tilesets/waking_coast_2.tres"
+const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tres"
 const LAYER_ORDER := [
 	&"Backdrop",
 	&"FarTrees",
@@ -20,7 +20,8 @@ const WEST_ENTRY := Vector2(12, 64)
 # On the sand, clear of the east Exit.
 const EAST_ENTRY := Vector2(308, 96)
 const WORLD_LAYER := 1
-# Landmark cells from assets/waking_shores_3.aseprite: layer -> {cell: atlas coords}.
+# Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_2.aseprite:
+# layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	# Far palms on the headland, near palms on the beach: crown middle and base.
 	&"FarTrees": {Vector2i(5, 1): Vector2i(5, 10), Vector2i(18, 4): Vector2i(7, 10)},

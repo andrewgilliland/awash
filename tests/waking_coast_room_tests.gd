@@ -1,7 +1,7 @@
 extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
-const TILESET_PATH := "res://assets/tilesets/tropical_island_1.tres"
+const TILESET_PATH := "res://assets/regions/waking_coast/tiles/tropical_island_1.tres"
 const LAYER_ORDER := [
 	&"Backdrop",
 	&"Clouds",
@@ -43,7 +43,7 @@ const OPEN_BEACH := Rect2i(0, 0, 6, 6)
 const SCREEN := Rect2i(0, 0, 10, 9)
 # Vael starts in the middle of the beach, in the surf.
 const START_ENTRY := Vector2(80, 96)
-const BLACKTIDE_PATH := "res://assets/sprites/weapons/blacktide_stuck.png"
+const BLACKTIDE_PATH := "res://assets/regions/waking_coast/props/blacktide_stuck.png"
 # Where the rune stone, knot cord and rune ward used to stand.
 const CLEARED_PROPS := [
 	Vector2i(7, 2), Vector2i(7, 3), Vector2i(8, 2), Vector2i(9, 2), Vector2i(9, 3)
@@ -53,7 +53,8 @@ const POOL_TILES := [Vector2i(5, 5), Vector2i(6, 5)]
 const WORLD_LAYER := 1
 # On the cliff top, clear of the east Exit.
 const EAST_ENTRY := Vector2(148, 64)
-# Landmark cells from assets/tilesets/tropical_island_1.png: layer -> {cell: atlas coords}.
+# Landmark cells from assets/regions/waking_coast/tiles/tropical_island_1.png:
+# layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	&"Backdrop":
 	{

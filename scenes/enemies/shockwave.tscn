@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/shockwave.gd" id="1_wave"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/shockwave.png" id="2_sheet"]
+[ext_resource type="Texture2D" path="res://assets/enemies/nameless_warden/shockwave.png" id="2_sheet"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wave"]
 size = Vector2(12, 6)

@@ -1,6 +1,6 @@
 extends RefCounted
 
-const TILESET_PATH := "res://assets/tilesets/waking_coast_2.tres"
+const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tres"
 const SOURCE_ID := 0
 const COLUMNS := 8
 const ROWS := 11

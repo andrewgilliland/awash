@@ -69,7 +69,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 ## Equipment
 
-- The Player has two Equipment slots, Weapon and Armor. The Weapon is the Short Sword, the only one so far; it adds nothing to a hit, and the slot is never empty, so it is not carried by the Run. A new Run owns and wears the Worn Leather Tunic; the Armor slot can be emptied, which leaves no Defense. `scripts/items/equipment.gd` declares every Weapon with its name and 8x8 icon (`assets/sprites/items/short_sword.aseprite`) and every Armor with its name, Defense and icon (`assets/sprites/items/worn_leather_tunic.aseprite`), and holds the pieces owned and the ones equipped.
+- The Player has two Equipment slots, Weapon and Armor. The Weapon is the Short Sword, the only one so far; it adds nothing to a hit, and the slot is never empty, so it is not carried by the Run. A new Run owns and wears the Worn Leather Tunic; the Armor slot can be emptied, which leaves no Defense. `scripts/items/equipment.gd` declares every Weapon with its name and 8x8 icon (`assets/items/short_sword.aseprite`) and every Armor with its name, Defense and icon (`assets/items/worn_leather_tunic.aseprite`), and holds the pieces owned and the ones equipped.
 - Defense is the Health the Armor takes off each hit that lands. A hit Defense lowers still costs at least 5, and a weaker hit costs what it is. The Worn Leather Tunic has Defense 0, so it changes nothing.
 - The Run carries the Armor owned and the one worn, or none, from Room to Room and through a defeat; only a new Run puts the Worn Leather Tunic back on.
 - The Equipment Panel is split by a divider. Above it, a row per slot shows `Weapon` or `Armor` on the left and the piece equipped on the right with its icon, or `None`, then `DEF` and the Defense. Below it are the pieces owned for the slot last focused (the Weapon when the Panel opens), each with its icon, the equipped one marked `Equipped`; the Armor's start with `None`. Down from the tab runs Weapon, Armor, Resume. Choosing a slot moves focus onto its equipped piece, the slot staying lit; while an Armor is focused, `DEF now > then` previews it. Choosing a piece equips it, `None` takes the Armor off, choosing the one equipped changes nothing, and each goes back to the slot, as does up from the top piece. A strip of up to two lines at the Panel's foot, under a divider, describes the piece a focused slot holds or the piece focused (`scripts/items/equipment.gd` holds each description); it is empty on None, the tab and Resume. Stats shows the Defense after Strength.
@@ -82,7 +82,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - `swing` plays when `ATTACK` begins, and `hit` when the sword strikes a Hurtbox.
 - `level_up` plays on reaching a Level, `pickup` on collecting a Supply and `eat` on using one.
 - `hurt` plays when a hit lands, or `defeat` instead when it takes the last Health; the Room waits 1.2 seconds, to see the Player fall and hear the sound, before it moves the Player back to the start.
-- The sounds are chiptune effects made by `scripts/tools/make_sfx.py` into `assets/audio/sfx/`; change them there and rerun it.
+- The sounds are chiptune effects made by `scripts/tools/make_sfx.py` into `assets/player/`; change them there and rerun it.
 
 ## Animation
 

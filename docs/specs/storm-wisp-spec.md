@@ -19,7 +19,7 @@ The Storm Wisp is the Waking Coast's second enemy (see `docs/enemies/storm-wisp.
 - It crackles with static that thickens over the whole crackle, so the arc can be heard coming. Its arc snaps, it fizzes when hurt, and it hisses away on the wind when defeated.
 - Resting and drifting are quiet.
 - Its sounds are positional `AudioStreamPlayer2D`s on the `SFX` bus under its `Sounds` node. They fade out 240 pixels from the Player's camera.
-- They are chiptune effects made by `scripts/tools/make_sfx.py` into `assets/audio/sfx/storm_wisp_*.wav`.
+- They are chiptune effects made by `scripts/tools/make_sfx.py` into `assets/enemies/storm_wisp/storm_wisp_*.wav`.
 
 ## Placement
 
@@ -30,4 +30,4 @@ The Storm Wisp is the Waking Coast's second enemy (see `docs/enemies/storm-wisp.
 - `scripts/enemies/storm_wisp_brain.gd` (the Storm Wisp brain) owns the Behavior rules from one frame of facts: its position, where the Player is, and whether a hit landed or defeated it.
 - `scripts/enemies/storm_wisp.gd` (the Storm Wisp body) owns its Health and movement, reads the Player through the `player` group, and shows the brain's state: its animation and whether the arc is live.
 - `scripts/enemies/storm_wisp_sounds.gd` (the Storm Wisp sounds) owns which state changes make a sound. The body plays one whenever the brain's state changes.
-- `assets/sprites/enemies/storm_wisp_1.aseprite` holds its 32x32 frames: two drift, two crackle, two arc, rest and hurt.
+- `assets/enemies/storm_wisp/storm_wisp_1.aseprite` holds its 32x32 frames: two drift, two crackle, two arc, rest and hurt.

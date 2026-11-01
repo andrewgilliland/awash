@@ -17,11 +17,11 @@ The Scavenger is the Waking Coast's first enemy (see `docs/enemies/scavenger.md`
 - It growls as it winds up, rising over the whole wind-up so the lunge can be heard coming; its spear sounds as it lunges; it croaks when hurt; and it burbles back into the pool when defeated.
 - Recovering and returning to patrol are quiet.
 - Its sounds are positional `AudioStreamPlayer2D`s on the `SFX` bus under its `Sounds` node, fading out 240 pixels from the Player's camera, so they pan with where it stands.
-- They are chiptune effects made by `scripts/tools/make_sfx.py` into `assets/audio/sfx/scavenger_*.wav`.
+- They are chiptune effects made by `scripts/tools/make_sfx.py` into `assets/enemies/scavenger/scavenger_*.wav`.
 
 ## Ownership
 
 - `scripts/enemies/scavenger_brain.gd` (the Scavenger brain) owns the Behavior rules from one frame of facts: its position, where the Player is, and whether a hit landed or defeated it.
 - `scripts/enemies/scavenger.gd` (the Scavenger body) owns its Health, gravity and movement, reads the Player through the `player` group, and shows the brain's state: its animation, facing and whether the spear is live.
 - `scripts/enemies/scavenger_sounds.gd` (the Scavenger sounds) owns which state changes make a sound; the body plays one whenever the brain's state changes.
-- `assets/sprites/enemies/scavenger_1.aseprite` holds its frames: two patrol strides, wind-up, lunge and hurt.
+- `assets/enemies/scavenger/scavenger_1.aseprite` holds its frames: two patrol strides, wind-up, lunge and hurt.

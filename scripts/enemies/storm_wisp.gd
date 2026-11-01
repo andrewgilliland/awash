@@ -21,7 +21,7 @@ const DEFEAT_TIME := 0.5
 const DEFEAT_BLINK := 0.08
 const PLAYER_GROUP := &"player"
 # One row of 32x32 cells: drift, drift, crackle, crackle, arc, arc, rest, hurt.
-const SHEET := preload("res://assets/sprites/enemies/storm_wisp_1.png")
+const SHEET := preload("res://assets/enemies/storm_wisp/storm_wisp_1.png")
 const FRAME_SIZE := Vector2i(32, 32)
 const ANIMATIONS := {
 	&"drift": {frames = [0, 1], fps = 4.0, loop = true},

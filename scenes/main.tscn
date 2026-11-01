@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=4 uid="uid://cd7y8g7l5y8wn"]
 
-[ext_resource type="Texture2D" uid="uid://nf8iqa60w0jg" path="res://assets/tilesets/waking_coast_1.png" id="2_sugp2"]
+[ext_resource type="Texture2D" uid="uid://nf8iqa60w0jg" path="res://assets/regions/waking_coast/tiles/waking_coast_1.png" id="2_sugp2"]
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="3_gtf0b"]
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="3_jyhfs"]
 

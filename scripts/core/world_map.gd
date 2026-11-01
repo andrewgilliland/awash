@@ -76,7 +76,7 @@ const ROOMS := {
 }
 # Each region's theme, played in its Rooms.
 const REGION_MUSIC := {
-	"Waking Coast": "res://assets/audio/music/waking_coast_theme.wav",
+	"Waking Coast": "res://assets/regions/waking_coast/music/theme.wav",
 }
 const SCREEN_SIZE := Vector2(160, 144)
 # One screen on the Map, keeping the screen's shape.

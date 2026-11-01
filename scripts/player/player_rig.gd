@@ -8,8 +8,8 @@ const PlayerController := preload("res://scripts/player/player_controller.gd")
 # sword offsets are per frame, from the body sprite, for a Player facing right.
 const FRAME_SIZE := Vector2i(16, 16)
 const BLINK_ALPHA := 0.25
-const BODY_SHEET := preload("res://assets/sprites/player_1.png")
-const SWORD_SHEET := preload("res://assets/sprites/weapons/sword_1.png")
+const BODY_SHEET := preload("res://assets/player/player_1.png")
+const SWORD_SHEET := preload("res://assets/player/sword_1.png")
 const BODY_ANIMATIONS := {
 	&"idle": {frames = [0], fps = 1.0, loop = true},
 	&"walk": {frames = [0, 1], fps = 8.0, loop = true},

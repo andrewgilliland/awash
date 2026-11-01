@@ -1,7 +1,7 @@
 extends RefCounted
 
 const START_SCREEN := preload("res://scenes/ui/start_screen.tscn")
-const TILESET_PATH := "res://assets/tilesets/waking_coast_2.tres"
+const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tres"
 # A near palm's crown middle and base on each edge, standing on the beach row.
 const PALMS := {
 	Vector2i(0, 2): Vector2i(1, 10),

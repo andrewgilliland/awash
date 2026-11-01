@@ -1,7 +1,7 @@
 extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_7.tscn"
-const TILESET_PATH := "res://assets/tilesets/waking_coast_2.tres"
+const TILESET_PATH := "res://assets/regions/waking_coast/tiles/waking_coast_2.tres"
 const RoomReach := preload("res://tests/room_reach.gd")
 const LAYER_ORDER := [&"Backdrop", &"Terrain", &"Props", &"Entries", &"Player"]
 # One screen: the arena the Nameless Warden holds.
@@ -16,7 +16,8 @@ const EAST_ENTRY := Vector2(148, 112)
 const ARENA_FLOOR_ROW := 7
 const ARENA := Rect2i(4, 0, 6, 7)
 const RUNE_STONE := Vector2i(5, 7)
-# Landmark cells from assets/waking_shores_8.aseprite: layer -> {cell: atlas coords}.
+# Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_7.aseprite:
+# layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	&"Terrain":
 	{

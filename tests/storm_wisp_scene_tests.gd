@@ -2,7 +2,7 @@ extends RefCounted
 
 const STORM_WISP_SCENE := preload("res://scenes/enemies/storm_wisp.tscn")
 const RUNE_ROAD_PATH := "res://scenes/rooms/waking_coast_6.tscn"
-const SHEET_PATH := "res://assets/sprites/enemies/storm_wisp_1.png"
+const SHEET_PATH := "res://assets/enemies/storm_wisp/storm_wisp_1.png"
 const StormWispBrain := preload("res://scripts/enemies/storm_wisp_brain.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const PLAYER_HITBOX_LAYER := 1 << 2
