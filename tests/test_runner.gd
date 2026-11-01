@@ -7,6 +7,7 @@ const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const AssetPathTests := preload("res://tests/asset_path_tests.gd")
 const RegionBackgroundTests := preload("res://tests/region_background_tests.gd")
+const RegionTileSheetsTests := preload("res://tests/region_tile_sheets_tests.gd")
 const PlayerControllerTests := preload("res://tests/player_controller_tests.gd")
 const PlayerRigTests := preload("res://tests/player_rig_tests.gd")
 const RunStateTests := preload("res://tests/run_state_tests.gd")
@@ -74,6 +75,9 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var run_state_tests := RunStateTests.new()
 	for test in run_state_tests.get_tests():
+		_run_test(test[0], test[1])
+	var region_tile_sheets_tests := RegionTileSheetsTests.new()
+	for test in region_tile_sheets_tests.get_tests():
 		_run_test(test[0], test[1])
 	var tileset_tests := WakingCoastTilesetTests.new()
 	for test in tileset_tests.get_tests():

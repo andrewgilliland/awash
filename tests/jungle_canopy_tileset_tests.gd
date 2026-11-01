@@ -1,10 +1,11 @@
 extends RefCounted
 
-# The jungle canopy sheet is the tropical TileSet's second atlas, so a Room can mix its tall
-# trees, treehouse and rope bridge with the tropical ground on one layer.
-const TILESET_PATH := "res://assets/regions/waking_coast/tiles/tropical_island_1.tres"
-const SHEET_PATH := "res://assets/regions/waking_coast/tiles/jungle_canopy_1.png"
-const SOURCE_ID := 1
+# This art, the jungle canopy's tall trees, treehouse and rope bridge, keeps its layout on the
+# Waking Coast's sheets: its ledges on the terrain sheet, all else on the scenery sheet, from
+# row 29.
+const TERRAIN_PATH := "res://assets/regions/waking_coast/tiles/terrain.tres"
+const SCENERY_PATH := "res://assets/regions/waking_coast/tiles/scenery.tres"
+const BAND := Vector2i(0, 29)
 const COLUMNS := 8
 const ROWS := 8
 # Branch platforms and the treehouse deck collide along their top 7 pixels.
@@ -37,26 +38,25 @@ const BRIDGE := [
 
 func get_tests() -> Array:
 	return [
-		["Jungle canopy is the tropical TileSet's second atlas", _test_second_atlas],
+		["Jungle canopy ledges are terrain; the rest is scenery", _test_ledges_are_terrain],
 		["Jungle branches and the treehouse deck are one-way ledges", _test_ledges],
 		["The treehouse roof is one-way and rises, runs flat, then falls", _test_roof],
 		["The rope bridge is one-way, unbroken and sags in the middle", _test_bridge],
-		["Jungle trees, walls and backdrop do not collide", _test_scenery_does_not_collide],
 	]
 
 
-static func _atlas() -> TileSetAtlasSource:
-	var tile_set := load(TILESET_PATH) as TileSet
-	if tile_set == null or not tile_set.has_source(SOURCE_ID):
+static func _atlas(path: String = TERRAIN_PATH) -> TileSetAtlasSource:
+	var tile_set := load(path) as TileSet
+	if tile_set == null or not tile_set.has_source(0):
 		return null
-	return tile_set.get_source(SOURCE_ID) as TileSetAtlasSource
+	return tile_set.get_source(0) as TileSetAtlasSource
 
 
 # The one-way polygon's top edge, from its left end to its right end, or null without one.
 static func _top(atlas: TileSetAtlasSource, coords: Vector2i) -> Variant:
-	if not atlas.has_tile(coords):
+	if not atlas.has_tile(coords + BAND):
 		return null
-	var data := atlas.get_tile_data(coords, 0)
+	var data := atlas.get_tile_data(coords + BAND, 0)
 	if data.get_collision_polygons_count(0) != 1 or not data.is_collision_polygon_one_way(0, 0):
 		return null
 	var points := data.get_collision_polygon_points(0, 0)
@@ -65,16 +65,19 @@ static func _top(atlas: TileSetAtlasSource, coords: Vector2i) -> Variant:
 	return Vector2(points[0].y, points[1].y)
 
 
-func _test_second_atlas() -> bool:
-	var atlas := _atlas()
-	if atlas == null:
+func _test_ledges_are_terrain() -> bool:
+	var terrain := _atlas()
+	var scenery := _atlas(SCENERY_PATH)
+	if terrain == null or scenery == null:
 		return false
-	var valid := atlas.texture != null and atlas.texture.resource_path == SHEET_PATH
-	valid = valid and atlas.texture_region_size == Vector2i(16, 16)
-	valid = valid and atlas.get_tiles_count() == COLUMNS * ROWS
+	var colliding := LEDGES + ROOF + BRIDGE
+	var valid := true
 	for row in range(ROWS):
 		for column in range(COLUMNS):
-			valid = valid and atlas.has_tile(Vector2i(column, row))
+			var coords := Vector2i(column, row)
+			var ledge := coords in colliding
+			valid = valid and terrain.has_tile(coords + BAND) == ledge
+			valid = valid and scenery.has_tile(coords + BAND) != ledge
 	return valid
 
 
@@ -84,7 +87,7 @@ func _test_ledges() -> bool:
 		return false
 	var valid := true
 	for coords in LEDGES:
-		var data := atlas.get_tile_data(coords, 0)
+		var data := atlas.get_tile_data(coords + BAND, 0)
 		valid = valid and data.get_collision_polygons_count(0) == 1
 		valid = valid and Array(data.get_collision_polygon_points(0, 0)) == LEDGE_TOP
 		valid = valid and data.is_collision_polygon_one_way(0, 0)
@@ -122,18 +125,3 @@ func _test_bridge() -> bool:
 	var ends := minf((tops[0] as Vector2).x, (tops[-1] as Vector2).y)
 	var middle := (tops[floori(tops.size() / 2.0)] as Vector2).x
 	return valid and middle > ends + 4.0
-
-
-func _test_scenery_does_not_collide() -> bool:
-	var atlas := _atlas()
-	if atlas == null:
-		return false
-	var colliding := LEDGES + ROOF + BRIDGE
-	var valid := true
-	for row in range(ROWS):
-		for column in range(COLUMNS):
-			var coords := Vector2i(column, row)
-			if coords in colliding or not atlas.has_tile(coords):
-				continue
-			valid = valid and atlas.get_tile_data(coords, 0).get_collision_polygons_count(0) == 0
-	return valid

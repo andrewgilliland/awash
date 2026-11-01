@@ -1,11 +1,12 @@
 extends RefCounted
 
-const TILESET_PATH := "res://assets/regions/waking_coast/tiles/tropical_island_1.tres"
-const SHEET_PATH := "res://assets/regions/waking_coast/tiles/tropical_island_1.png"
-const SOURCE_ID := 0
+# This art, the tropical beach and jungle of the first Room, keeps its layout on the Waking
+# Coast's sheets: its ground on the terrain sheet, all else on the scenery sheet, from row 11.
+const TERRAIN_PATH := "res://assets/regions/waking_coast/tiles/terrain.tres"
+const SCENERY_PATH := "res://assets/regions/waking_coast/tiles/scenery.tres"
+const BAND := Vector2i(0, 11)
 const COLUMNS := 8
 const ROWS := 18
-const WORLD_LAYER := 1
 const FULL_SQUARE := [Vector2(-8, -8), Vector2(8, -8), Vector2(8, 8), Vector2(-8, 8)]
 # Slopes rise 45 degrees across one tile: up to the right, and down to the right.
 const SLOPE_UP := [Vector2(-8, 8), Vector2(8, -8), Vector2(8, 8)]
@@ -32,14 +33,13 @@ const ONE_WAY := [
 
 func get_tests() -> Array:
 	return [
-		["Tropical island tileset holds every sheet tile", _test_holds_every_tile],
+		["Tropical island ground is terrain; the rest is scenery", _test_ground_is_terrain],
 		["Tropical island beach and jungle ground is solid", _test_ground_is_solid],
 		["Tropical island slopes collide along their surface", _test_slopes_collide],
 		[
 			"Tropical island planks, bridge, branches and logs are one-way",
 			_test_planks_are_one_way,
 		],
-		["Tropical island scenery does not collide", _test_scenery_does_not_collide],
 	]
 
 
@@ -53,44 +53,44 @@ static func _ground_tiles() -> Array:
 	return tiles
 
 
-static func _atlas() -> TileSetAtlasSource:
-	var tile_set := load(TILESET_PATH) as TileSet
-	if tile_set == null or not tile_set.has_source(SOURCE_ID):
+static func _atlas(path: String) -> TileSetAtlasSource:
+	var tile_set := load(path) as TileSet
+	if tile_set == null or not tile_set.has_source(0):
 		return null
-	return tile_set.get_source(SOURCE_ID) as TileSetAtlasSource
+	return tile_set.get_source(0) as TileSetAtlasSource
 
 
 static func _collides_with(atlas: TileSetAtlasSource, coords: Vector2i, points: Array) -> bool:
-	if not atlas.has_tile(coords):
+	if not atlas.has_tile(coords + BAND):
 		return false
-	var data := atlas.get_tile_data(coords, 0)
+	var data := atlas.get_tile_data(coords + BAND, 0)
 	if data.get_collision_polygons_count(0) != 1:
 		return false
 	return Array(data.get_collision_polygon_points(0, 0)) == points
 
 
 static func _is_one_way(atlas: TileSetAtlasSource, coords: Vector2i) -> bool:
-	return atlas.get_tile_data(coords, 0).is_collision_polygon_one_way(0, 0)
+	return atlas.get_tile_data(coords + BAND, 0).is_collision_polygon_one_way(0, 0)
 
 
-func _test_holds_every_tile() -> bool:
-	var tile_set := load(TILESET_PATH) as TileSet
-	var atlas := _atlas()
-	if tile_set == null or atlas == null:
+func _test_ground_is_terrain() -> bool:
+	var terrain := _atlas(TERRAIN_PATH)
+	var scenery := _atlas(SCENERY_PATH)
+	if terrain == null or scenery == null:
 		return false
-	var valid := tile_set.tile_size == Vector2i(16, 16)
-	valid = valid and atlas.texture != null and atlas.texture.resource_path == SHEET_PATH
-	valid = valid and tile_set.get_physics_layers_count() == 1
-	valid = valid and tile_set.get_physics_layer_collision_layer(0) == WORLD_LAYER
-	valid = valid and atlas.get_tiles_count() == COLUMNS * ROWS
+	var colliding := _ground_tiles() + SLOPES_UP + SLOPES_DOWN + ONE_WAY
+	var valid := true
 	for row in range(ROWS):
 		for column in range(COLUMNS):
-			valid = valid and atlas.has_tile(Vector2i(column, row))
+			var coords := Vector2i(column, row)
+			var ground := coords in colliding
+			valid = valid and terrain.has_tile(coords + BAND) == ground
+			valid = valid and scenery.has_tile(coords + BAND) != ground
 	return valid
 
 
 func _test_ground_is_solid() -> bool:
-	var atlas := _atlas()
+	var atlas := _atlas(TERRAIN_PATH)
 	if atlas == null:
 		return false
 	var valid := true
@@ -101,7 +101,7 @@ func _test_ground_is_solid() -> bool:
 
 
 func _test_slopes_collide() -> bool:
-	var atlas := _atlas()
+	var atlas := _atlas(TERRAIN_PATH)
 	if atlas == null:
 		return false
 	var valid := true
@@ -114,25 +114,10 @@ func _test_slopes_collide() -> bool:
 
 
 func _test_planks_are_one_way() -> bool:
-	var atlas := _atlas()
+	var atlas := _atlas(TERRAIN_PATH)
 	if atlas == null:
 		return false
 	var valid := true
 	for coords in ONE_WAY:
 		valid = valid and _collides_with(atlas, coords, LEDGE_TOP) and _is_one_way(atlas, coords)
-	return valid
-
-
-func _test_scenery_does_not_collide() -> bool:
-	var atlas := _atlas()
-	if atlas == null:
-		return false
-	var colliding := _ground_tiles() + SLOPES_UP + SLOPES_DOWN + ONE_WAY
-	var valid := true
-	for row in range(ROWS):
-		for column in range(COLUMNS):
-			var coords := Vector2i(column, row)
-			if coords in colliding or not atlas.has_tile(coords):
-				continue
-			valid = valid and atlas.get_tile_data(coords, 0).get_collision_polygons_count(0) == 0
 	return valid
