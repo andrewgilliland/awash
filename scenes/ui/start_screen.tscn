@@ -7,8 +7,8 @@
 [ext_resource type="AudioStream" uid="uid://be6nbsottdvrb" path="res://assets/ui/ui_move.wav" id="6_6h8hs"]
 [ext_resource type="AudioStream" uid="uid://5bny7qifhkai" path="res://assets/ui/ui_start.wav" id="7_r8v1o"]
 [ext_resource type="AudioStream" uid="uid://b3fm30x4ipdm8" path="res://assets/ui/start_theme.wav" id="8_theme"]
-[ext_resource type="TileSet" path="res://assets/regions/waking_coast/tiles/scenery.tres" id="scenery_tiles"]
-[ext_resource type="TileSet" path="res://assets/regions/waking_coast/tiles/terrain.tres" id="terrain_tiles"]
+[ext_resource type="TileSet" uid="uid://bysu7h6kisnbi" path="res://assets/regions/waking_coast/tiles/scenery.tres" id="scenery_tiles"]
+[ext_resource type="TileSet" uid="uid://bk0woevdr64it" path="res://assets/regions/waking_coast/tiles/terrain.tres" id="terrain_tiles"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v80uv"]
 atlas = ExtResource("2_wwlcm")
