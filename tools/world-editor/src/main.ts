@@ -29,6 +29,8 @@ let selected: string | null = null;
 let tool: Tool = "select";
 let region = "";
 let drop = false;
+// Unsaved paint on the open Room.
+let roomDirty = false;
 
 const dirty = () => serializeWorld(world) !== saved;
 
@@ -63,9 +65,14 @@ function render() {
     el("button", { type: "button", disabled: !dirty(), title: "Save the World's data (⌘S)", onclick: save }, dirty() ? "Save ●" : "Saved"),
   );
   if (view.kind === "room") {
-    void showRoom(world, view.id, stage, side, () => ((view = { kind: "world", planned: false }), render())).catch(
-      (error: Error) => stage.replaceChildren(el("p", {}, error.message)),
-    );
+    void showRoom(
+      world,
+      view.id,
+      stage,
+      side,
+      () => ((view = { kind: "world", planned: false }), render()),
+      (unsaved) => (roomDirty = unsaved),
+    ).catch((error: Error) => stage.replaceChildren(el("p", {}, error.message)));
     return;
   }
   const editor: WorldEditor = {
@@ -162,7 +169,7 @@ addEventListener("keydown", (event) => {
 });
 
 addEventListener("beforeunload", (event) => {
-  if (world && dirty()) {
+  if ((world && dirty()) || roomDirty) {
     event.preventDefault();
   }
 });

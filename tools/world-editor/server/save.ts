@@ -2,8 +2,8 @@ import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-// The files the World editor writes. Room scenes join when it paints their tiles.
-const WRITABLE = ["assets/world.json"];
+// The files the World editor writes: the World's data, and the Room scenes whose tiles it paints.
+const WRITABLE = [/^assets\/world\.json$/, /^scenes\/rooms\/[\w-]+\.tscn$/];
 
 export type SaveResult = { saved: true; version: string } | { saved: false; reason: "changed" | "not writable" };
 
@@ -15,7 +15,7 @@ export function versionOf(text: string): string {
 // Writes a file the editor owns, but only over the version it was loaded from: if it changed on
 // disk since (Godot saved it, or another edit), nothing is written.
 export async function saveFile(repo: string, path: string, base: string, text: string): Promise<SaveResult> {
-  if (!WRITABLE.includes(path)) {
+  if (!WRITABLE.some((pattern) => pattern.test(path))) {
     return { saved: false, reason: "not writable" };
   }
   const full = resolve(repo, path);

@@ -166,3 +166,44 @@ export function parseTileSet(text: string): TileSet {
   const size = resource?.properties.tile_size ? numbers(resource.properties.tile_size) : [16, 16];
   return { tileSize: [size[0], size[1]], sources };
 }
+
+export function encodeTileMapData(cells: Cell[]): string {
+  const bytes = new Uint8Array(HEADER_BYTES + cells.length * CELL_BYTES);
+  const view = new DataView(bytes.buffer);
+  cells.forEach((cell, i) => {
+    const at = HEADER_BYTES + i * CELL_BYTES;
+    view.setInt16(at, cell.x, true);
+    view.setInt16(at + 2, cell.y, true);
+    view.setUint16(at + 4, cell.source, true);
+    view.setUint16(at + 6, cell.atlas[0], true);
+    view.setUint16(at + 8, cell.atlas[1], true);
+    view.setUint16(at + 10, cell.alternative, true);
+  });
+  let binary = "";
+  bytes.forEach((byte) => (binary += String.fromCharCode(byte)));
+  return btoa(binary);
+}
+
+// The scene with one tile layer's cells replaced, and every other line as it was. The layer is
+// named as parseRoomScene names it.
+export function setLayerCells(text: string, layerName: string, cells: Cell[]): string {
+  const slash = layerName.lastIndexOf("/");
+  const name = slash === -1 ? layerName : layerName.slice(slash + 1);
+  const parent = slash === -1 ? "." : layerName.slice(0, slash);
+  const lines = text.split("\n");
+  const header = lines.findIndex(
+    (line) => line.startsWith(`[node name="${name}" type="TileMapLayer"`) && line.includes(`parent="${parent}"`),
+  );
+  if (header === -1) {
+    throw new Error(`The scene has no tile layer ${layerName}`);
+  }
+  const data = `tile_map_data = PackedByteArray("${encodeTileMapData(cells)}")`;
+  for (let i = header + 1; i < lines.length && !lines[i].startsWith("["); i++) {
+    if (lines[i].startsWith("tile_map_data = ")) {
+      lines[i] = data;
+      return lines.join("\n");
+    }
+  }
+  lines.splice(header + 1, 0, data);
+  return lines.join("\n");
+}
