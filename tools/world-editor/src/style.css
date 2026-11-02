@@ -213,7 +213,7 @@ main { display: grid; grid-template-columns: 1fr 340px; gap: 12px; min-height: 0
 #sidebar > .label { margin: 14px 0 2px; }
 
 /* A card: a bar down its left, an icon, a bold title and a grey line under it. The card for where
-   you are is lit, its bar white; hovering another lifts its background. */
+   you are is lit, its bar, title and icon amber; hovering another lifts its background. */
 .cards { display: grid; gap: 6px; margin-top: 10px; }
 #sidebar > .label + .cards { margin-top: 0; }
 .card {
@@ -240,8 +240,9 @@ main { display: grid; grid-template-columns: 1fr 340px; gap: 12px; min-height: 0
 .card-title { font-weight: 700; font-size: 12px; }
 .card-sub { font-weight: 400; font-size: 11px; color: var(--muted); text-transform: none; letter-spacing: 0; }
 .card.lit { background: #3b3b3b; }
-.card.lit::before { background: var(--fg); }
-.card.lit svg { opacity: 1; }
+.card.lit::before { background: var(--accent); }
+.card.lit .card-title { color: var(--accent); }
+.card.lit svg { opacity: 1; stroke: var(--accent); }
 .card:hover:not(.lit):not(:disabled) { background: #252525; }
 .card:disabled { opacity: 0.7; }
 
