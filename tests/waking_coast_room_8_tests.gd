@@ -10,9 +10,8 @@ const TILE := 16
 const WORLD_LAYER := 1
 # On the sand, at the height of the Warden's gate's floor.
 const WEST_ENTRY := Vector2(12, 112)
-const DECKS := [Vector2i(4, 6), Vector2i(5, 6), Vector2i(6, 6)]
-const STILT := Vector2i(7, 6)
-const CAVE_DARK := Vector2i(6, 4)
+const DECKS := [Vector2i(2, 33), Vector2i(3, 33), Vector2i(5, 33)]
+const STILT := Vector2i(6, 33)
 # The walkway on stilts over the pools, and the stilts under it.
 const WALKWAY_ROW := 4
 const WALKWAY := Vector2i(4, 17)
@@ -20,34 +19,41 @@ const STILT_COLUMNS := [6, 11, 16]
 # The old well in the shallows, down into the undertow.
 const WELL_COLUMN := 9
 const BELL := Vector2i(3, 7)
-const CRATE := Vector2i(0, 7)
-const BARREL := Vector2i(1, 7)
+const CRATE := Vector2i(7, 15)
+const BASKET := Vector2i(1, 28)
 # Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_8.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	&"Village":
 	{
-		# two stilt houses on the walkway, and the well's dark
-		Vector2i(6, 2): Vector2i(0, 6),
-		Vector2i(7, 3): Vector2i(1, 6),
-		Vector2i(14, 2): Vector2i(2, 6),
-		Vector2i(9, 7): CAVE_DARK,
+		# two stilt houses on the walkway
+		Vector2i(6, 2): Vector2i(2, 31),
+		Vector2i(7, 3): Vector2i(5, 31),
+		Vector2i(14, 2): Vector2i(4, 31),
+	},
+	# the jungle at the village's back: a tree at each end, crown and roots
+	&"Jungle":
+	{
+		Vector2i(0, 3): Vector2i(3, 17),
+		Vector2i(0, 6): Vector2i(3, 20),
+		Vector2i(18, 3): Vector2i(3, 17),
+		Vector2i(18, 6): Vector2i(3, 20),
 	},
 	&"Terrain":
 	{
-		Vector2i(0, 7): Vector2i(1, 0),
-		Vector2i(2, 5): Vector2i(3, 4),
-		Vector2i(4, 7): Vector2i(2, 8),
+		Vector2i(0, 7): Vector2i(1, 11),
+		Vector2i(2, 5): Vector2i(0, 15),
+		Vector2i(4, 7): Vector2i(1, 11),
 		Vector2i(5, 7): Vector2i(5, 5),
 		Vector2i(16, 7): Vector2i(5, 5),
-		Vector2i(17, 7): Vector2i(5, 8),
-		Vector2i(19, 7): Vector2i(1, 0),
+		Vector2i(17, 7): Vector2i(1, 11),
+		Vector2i(19, 7): Vector2i(1, 11),
 		# roofs over the houses
-		Vector2i(5, 1): Vector2i(4, 6),
-		Vector2i(15, 1): Vector2i(6, 6),
+		Vector2i(5, 1): Vector2i(2, 33),
+		Vector2i(15, 1): Vector2i(5, 33),
 	},
 	# the village bell, and the shop's stall by the east house
-	&"Props": {Vector2i(10, 3): BELL, Vector2i(16, 3): CRATE, Vector2i(17, 3): BARREL},
+	&"Props": {Vector2i(10, 3): BELL, Vector2i(16, 3): CRATE, Vector2i(17, 3): BASKET},
 }
 
 

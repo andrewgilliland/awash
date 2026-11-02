@@ -7,7 +7,7 @@ const ROOM_SIZE := Vector2i(160, 288)
 const CELLS := Rect2i(0, 0, 10, 18)
 const TILE := 16
 const SCREEN_HEIGHT := 144
-# On the beach, clear of the west Exit, at the height the rune shore's sand leaves off.
+# On the beach, clear of the west Exit, at the height the palm shore's sand leaves off.
 const WEST_ENTRY := Vector2(12, 240)
 # On the cliff top, clear of the east Exit.
 const EAST_ENTRY := Vector2(148, 64)
@@ -23,33 +23,35 @@ const HIGH_LEDGE := Vector2i(5, 1)
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	# A broken mast holds up the wreck decks on the west side of the climb.
-	&"Wreck": {Vector2i(0, 6): Vector2i(7, 6), Vector2i(0, 14): Vector2i(7, 6)},
+	&"Wreck": {Vector2i(0, 6): Vector2i(6, 33), Vector2i(0, 14): Vector2i(6, 33)},
+	# the jungle starting on the cliff top: a bush's crown and foot
+	&"Jungle": {Vector2i(7, 1): Vector2i(0, 22), Vector2i(7, 3): Vector2i(0, 24)},
 	&"Terrain":
 	{
-		# the beach, with a tidal pool between wet edges
-		Vector2i(0, 15): Vector2i(1, 0),
-		Vector2i(1, 15): Vector2i(2, 8),
+		# the beach, with a tidal pool
+		Vector2i(0, 15): Vector2i(1, 11),
+		Vector2i(1, 15): Vector2i(1, 11),
 		Vector2i(2, 15): Vector2i(5, 5),
 		Vector2i(3, 15): Vector2i(5, 5),
-		Vector2i(4, 15): Vector2i(5, 8),
+		Vector2i(4, 15): Vector2i(1, 11),
 		# the sea cliff, its top two screens up the climb
-		Vector2i(7, 4): Vector2i(0, 2),
-		Vector2i(9, 4): Vector2i(1, 2),
-		Vector2i(7, 17): Vector2i(0, 3),
-		# salt-slick stone ledges on the cliff, wreck decks across from them
-		Vector2i(3, 13): Vector2i(3, 4),
-		Vector2i(5, 13): Vector2i(5, 4),
-		Vector2i(1, 11): Vector2i(4, 6),
-		Vector2i(3, 11): Vector2i(6, 6),
-		Vector2i(4, 9): Vector2i(3, 4),
-		Vector2i(1, 7): Vector2i(4, 6),
-		Vector2i(4, 5): Vector2i(3, 4),
-		Vector2i(4, 1): Vector2i(3, 4),
+		Vector2i(7, 4): Vector2i(0, 13),
+		Vector2i(9, 4): Vector2i(1, 13),
+		Vector2i(7, 17): Vector2i(0, 14),
+		# driftwood logs on the cliff, wreck decks across from them
+		Vector2i(3, 13): Vector2i(0, 15),
+		Vector2i(5, 13): Vector2i(2, 15),
+		Vector2i(1, 11): Vector2i(2, 33),
+		Vector2i(3, 11): Vector2i(5, 33),
+		Vector2i(4, 9): Vector2i(0, 15),
+		Vector2i(1, 7): Vector2i(2, 33),
+		Vector2i(4, 5): Vector2i(0, 15),
+		Vector2i(4, 1): Vector2i(0, 15),
 	},
 	&"Props":
 	{
 		# a crate on the high ledge, Tidefen's bell on the cliff top
-		Vector2i(5, 0): Vector2i(0, 7),
+		Vector2i(5, 0): Vector2i(7, 15),
 		Vector2i(8, 3): Vector2i(3, 7),
 	},
 }
@@ -132,7 +134,7 @@ func _test_west_entry_on_beach() -> bool:
 
 
 # The cliff top's east edge is the Exit on to the wreck graveyard; below it the cliff is solid
-# rock. On the west, the bottom screen is the Exit back to the rune shore and the top screen is
+# rock. On the west, the bottom screen is the Exit back to the palm shore and the top screen is
 # walled.
 func _test_edges() -> bool:
 	var room := _room()

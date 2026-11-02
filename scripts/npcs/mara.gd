@@ -9,7 +9,7 @@ const WALK_SPEED := 30.0
 const DIALOGUE_GROUP := &"dialogue_box"
 # What she says when the Player talks to her again.
 const REMINDER := [
-	["MARA", "Tidefen is east, past the rune shore."],
+	["MARA", "Tidefen is east, past the palm shore."],
 	["MARA", "Mind the Scavengers in the shallows."],
 ]
 

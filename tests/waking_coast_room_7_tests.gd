@@ -6,29 +6,35 @@ const RoomReach := preload("res://tests/room_reach.gd")
 const ROOM_SIZE := Vector2i(160, 144)
 const CELLS := Rect2i(0, 0, 10, 9)
 const TILE := 16
-# On the road's end, at the height of the rune road's heights; and on the arena floor by the
+# On the trail's end, at the height of the jungle trail's heights; and on the arena floor by the
 # way on to Tidefen.
 const WEST_ENTRY := Vector2(12, 48)
 const EAST_ENTRY := Vector2(148, 112)
-# The arena: a flat floor, open above, from the ledge up to the road's end to the east edge.
+# The arena: a flat floor, open above, from the ledge up to the trail's end to the east edge.
 const ARENA_FLOOR_ROW := 7
 const ARENA := Rect2i(4, 0, 6, 7)
-const RUNE_STONE := Vector2i(5, 7)
 # Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_7.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	&"Terrain":
 	{
-		# the road's end, a ledge down from it, and the arena's stone floor
-		Vector2i(0, 3): Vector2i(1, 2),
-		Vector2i(1, 3): Vector2i(2, 2),
-		Vector2i(2, 5): Vector2i(3, 4),
-		Vector2i(2, 7): Vector2i(1, 2),
-		Vector2i(9, 7): Vector2i(1, 2),
-		Vector2i(0, 6): Vector2i(1, 4),
+		# the trail's end, a branch down from it, and the arena's floor
+		Vector2i(0, 3): Vector2i(1, 13),
+		Vector2i(1, 3): Vector2i(2, 13),
+		Vector2i(2, 5): Vector2i(2, 29),
+		Vector2i(2, 7): Vector2i(1, 13),
+		Vector2i(9, 7): Vector2i(1, 13),
+		Vector2i(0, 6): Vector2i(1, 14),
 	},
-	# rune stones at the gate on to Tidefen
-	&"Props": {Vector2i(6, 5): RUNE_STONE, Vector2i(9, 5): RUNE_STONE},
+	# a jungle tree behind the arena: crown and roots
+	&"Jungle": {Vector2i(4, 3): Vector2i(3, 17), Vector2i(4, 6): Vector2i(3, 20)},
+	# a sapling on the trail's end, and a fern and a sapling by the gate on to Tidefen
+	&"Props":
+	{
+		Vector2i(0, 1): Vector2i(3, 22),
+		Vector2i(6, 5): Vector2i(6, 22),
+		Vector2i(9, 5): Vector2i(3, 22),
+	},
 }
 
 
@@ -36,8 +42,8 @@ func get_tests() -> Array:
 	return [
 		["Warden's gate Room lays out one screen", _test_lays_out_one_screen],
 		["Warden's gate arena is a flat, open floor", _test_arena_is_open],
-		["Warden's gate floor climbs back to the road's end", _test_climbs_back],
-		["Warden's gate leads west to the road and east to Tidefen", _test_edges],
+		["Warden's gate floor climbs back to the trail's end", _test_climbs_back],
+		["Warden's gate leads west to the trail and east to Tidefen", _test_edges],
 	]
 
 
@@ -83,7 +89,7 @@ func _test_arena_is_open() -> bool:
 	return valid
 
 
-# Dropping into the arena is not a trap: the ledge leads back up to the road's end.
+# Dropping into the arena is not a trap: the ledge leads back up to the trail's end.
 func _test_climbs_back() -> bool:
 	var room := _room()
 	if room == null:
@@ -94,7 +100,7 @@ func _test_climbs_back() -> bool:
 	return RoomReach.span_at(reached, Vector2i(WEST_ENTRY / TILE)) != null
 
 
-# Exits lead west to the road and east to Tidefen. The Gate across the road east is tested in
+# Exits lead west to the trail and east to Tidefen. The Gate across the trail east is tested in
 # tests/wardens_gate_tests.gd.
 func _test_edges() -> bool:
 	var room := _room()

@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-# The Nameless Warden, the Waking Coast's Boss: an armored spirit guarding the road to Tidefen.
+# The Nameless Warden, the Waking Coast's Boss: an armored spirit guarding the trail to Tidefen.
 # Its brain decides each move; this body shows it, holds its Ward and Health, and sends the
 # slam's shockwaves. While the Ward is up, a quick Attack glances off and a Charged Attack breaks
 # the Ward without costing Health; while staggered, any hit costs Health. Asleep, it takes no
@@ -19,7 +19,7 @@ const BOSS_NAME := "Nameless Warden"
 const MAX_HEALTH := 120
 # What defeating the Warden earns the Player.
 const EXPERIENCE := 100
-# A Boss leaves nothing where it falls; the road it opens is the reward.
+# A Boss leaves nothing where it falls; the trail it opens is the reward.
 const DROP_CHANCE := 0.0
 const INVULNERABLE_TIME := 0.3
 const TOUCH_DAMAGE := 10

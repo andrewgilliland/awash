@@ -12,10 +12,10 @@ const WRECK_GRAVEYARD_PATH := "res://scenes/rooms/waking_coast_4.tscn"
 const WRECK_DECKS := [[1, 92.0, 64.0], [1, 140.0, 48.0], [1, 180.0, 48.0], [1, 240.0, 16.0]]
 const STERN_X := Vector2(256, 304)
 const SEA_CAVE_PATH := "res://scenes/rooms/waking_coast_5.tscn"
-const RUNE_ROAD_PATH := "res://scenes/rooms/waking_coast_6.tscn"
-# Up the rune road's steps to the gate, jumping each one when the walk stops at it.
-const RUNE_ROAD_EAST: Array[float] = [56.0, 104.0, 168.0, 232.0, 300.0]
-const RUNE_ROAD_HEIGHTS_Y := 48.0
+const JUNGLE_TRAIL_PATH := "res://scenes/rooms/waking_coast_6.tscn"
+# Up the jungle trail's steps to the gate, jumping each one when the walk stops at it.
+const JUNGLE_TRAIL_EAST: Array[float] = [56.0, 104.0, 168.0, 232.0, 300.0]
+const JUNGLE_TRAIL_HEIGHTS_Y := 48.0
 const STORM_WISP_PATH := "Enemies/StormWisp"
 # Where to stand by the Storm Wisp: outside its arc but near enough to set it crackling, and
 # close enough for the sword to reach it.
@@ -94,9 +94,11 @@ func _init() -> void:
 		"Player drops into the sea cave and loops back to the cliffs", _playtest_cave_loop
 	)
 	await _run_playtest_async(
-		"Player jumps the sinkhole onto the rune road and back", _playtest_jumps_to_rune_road
+		"Player jumps the sinkhole onto the jungle trail and back", _playtest_jumps_to_jungle_trail
 	)
-	await _run_playtest_async("Player climbs the rune road to its gate", _playtest_climbs_rune_road)
+	await _run_playtest_async(
+		"Player climbs the jungle trail to its gate", _playtest_climbs_jungle_trail
+	)
 	await _run_playtest_async("Sword disperses the Storm Wisp", _playtest_sword_disperses_wisp)
 	await _run_playtest_async("Storm Wisp's arc hurts the Player", _playtest_arc_hurts_player)
 	await _run_playtest_async(
@@ -288,7 +290,7 @@ func _scenario_stops_at_west_edge(player: CharacterBody2D) -> bool:
 
 
 # Plays the real game flow: the Run starts on the first Room's cliff top, walks off its east
-# edge into the rune shore, then back west. Exits swap the current scene, as in the game.
+# edge into the palm shore, then back west. Exits swap the current scene, as in the game.
 func _playtest_walks_rooms() -> bool:
 	var run := root.get_node_or_null("RunState")
 	if run == null:
@@ -307,7 +309,7 @@ func _playtest_walks_rooms() -> bool:
 		SETTLE_FRAME_LIMIT
 	)
 	var starts_before: int = music.get("tracks_started") if music != null else -1
-	var valid := await _walk_until_scene(&"move_right", RUNE_SHORE_PATH)
+	var valid := await _walk_until_scene(&"move_right", PALM_SHORE_PATH)
 	# The coast theme plays on through the Exit rather than starting over.
 	var starts_after: int = music.get("tracks_started") if music != null else -2
 	valid = valid and theme_playing.call() and starts_after == starts_before
@@ -328,14 +330,14 @@ func _playtest_walks_rooms() -> bool:
 	return valid
 
 
-# From the rune shore's east end into the salt cliffs' beach, then back.
+# From the palm shore's east end into the salt cliffs' beach, then back.
 func _playtest_walks_to_cliffs() -> bool:
 	var run := root.get_node_or_null("RunState")
 	if run == null:
 		return false
 	run.call("start_run")
 	run.call("enter_room", &"waking_coast_2", &"east")
-	change_scene_to_file(RUNE_SHORE_PATH)
+	change_scene_to_file(PALM_SHORE_PATH)
 	await _frames_until(
 		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
 		SETTLE_FRAME_LIMIT
@@ -346,7 +348,7 @@ func _playtest_walks_to_cliffs() -> bool:
 	valid = valid and player != null and player.global_position.x < 40.0
 	valid = valid and player != null and absf(player.global_position.y - SALT_CLIFFS_BEACH_Y) < 1.0
 
-	valid = valid and await _walk_until_scene(&"move_left", RUNE_SHORE_PATH)
+	valid = valid and await _walk_until_scene(&"move_left", PALM_SHORE_PATH)
 	valid = valid and run.get("room_id") == &"waking_coast_2"
 	player = _current_player()
 	valid = valid and player != null and player.global_position.x > 280.0
@@ -439,9 +441,9 @@ func _playtest_cave_loop() -> bool:
 	return valid
 
 
-# From the graveyard's east end, a running jump over the sinkhole lands on the rune road;
+# From the graveyard's east end, a running jump over the sinkhole lands on the jungle trail;
 # walking back west lands short of the sinkhole.
-func _playtest_jumps_to_rune_road() -> bool:
+func _playtest_jumps_to_jungle_trail() -> bool:
 	var run := root.get_node_or_null("RunState")
 	if run == null:
 		return false
@@ -461,7 +463,7 @@ func _playtest_jumps_to_rune_road() -> bool:
 	_press(&"jump")
 	var arrived := await _frames_until(
 		func() -> bool:
-			return current_scene != null and current_scene.scene_file_path == RUNE_ROAD_PATH,
+			return current_scene != null and current_scene.scene_file_path == JUNGLE_TRAIL_PATH,
 		TRANSITION_FRAME_LIMIT
 	)
 	_release(&"jump")
@@ -484,22 +486,22 @@ func _playtest_jumps_to_rune_road() -> bool:
 	return valid
 
 
-# Up the road from the beach, a step at a time, to the heights by the rune gate. The Storm Wisp
+# Up the trail from the beach, a step at a time, to the heights by the rune gate. The Storm Wisp
 # over the heights is taken out first: this checks the route, not the fight.
-func _playtest_climbs_rune_road() -> bool:
-	var player := await _enter_room(&"waking_coast_6", &"west", RUNE_ROAD_PATH)
+func _playtest_climbs_jungle_trail() -> bool:
+	var player := await _enter_room(&"waking_coast_6", &"west", JUNGLE_TRAIL_PATH)
 	if player == null:
 		await _leave_scene()
 		return false
 	current_scene.get_node(STORM_WISP_PATH).free()
-	await _wade_to(player, RUNE_ROAD_EAST)
+	await _wade_to(player, JUNGLE_TRAIL_EAST)
 	var valid := player.is_on_floor() and player.global_position.x > 290.0
-	valid = valid and absf(player.global_position.y - RUNE_ROAD_HEIGHTS_Y) < 1.0
+	valid = valid and absf(player.global_position.y - JUNGLE_TRAIL_HEIGHTS_Y) < 1.0
 	await _leave_scene()
 	return valid
 
 
-# From the rune road's heights east through the Warden's gate, down into its arena and on into
+# From the jungle trail's heights east through the Warden's gate, down into its arena and on into
 # Tidefen, the Warden already defeated this Run.
 func _playtest_walks_to_tidefen() -> bool:
 	var run := root.get_node_or_null("RunState")
@@ -508,7 +510,7 @@ func _playtest_walks_to_tidefen() -> bool:
 	run.call("start_run")
 	run.call("defeat_boss", &"nameless_warden")
 	run.call("enter_room", &"waking_coast_6", &"east")
-	change_scene_to_file(RUNE_ROAD_PATH)
+	change_scene_to_file(JUNGLE_TRAIL_PATH)
 	var valid := await _walk_until_scene(&"move_right", WARDENS_GATE_PATH)
 	valid = valid and run.get("room_id") == &"waking_coast_7"
 	valid = valid and await _walk_until_scene(&"move_right", TIDEFEN_PATH)
@@ -577,7 +579,7 @@ func _playtest_drops_home() -> bool:
 # Waits out the Storm Wisp's crackle and arc just beyond its reach, then steps in while it rests
 # and swings, until it is gone.
 func _playtest_sword_disperses_wisp() -> bool:
-	var player := await _enter_room(&"waking_coast_6", &"east", RUNE_ROAD_PATH)
+	var player := await _enter_room(&"waking_coast_6", &"east", JUNGLE_TRAIL_PATH)
 	var wisp := current_scene.get_node_or_null(STORM_WISP_PATH) if player != null else null
 	var valid := wisp != null
 	var brain = wisp.get("brain") if valid else null
@@ -600,7 +602,7 @@ func _playtest_sword_disperses_wisp() -> bool:
 
 # Stands inside the Storm Wisp's reach until its arc lands.
 func _playtest_arc_hurts_player() -> bool:
-	var player := await _enter_room(&"waking_coast_6", &"east", RUNE_ROAD_PATH)
+	var player := await _enter_room(&"waking_coast_6", &"east", JUNGLE_TRAIL_PATH)
 	var wisp := (
 		current_scene.get_node_or_null(STORM_WISP_PATH) as Node2D if player != null else null
 	)
@@ -619,7 +621,7 @@ func _playtest_arc_hurts_player() -> bool:
 # Charges just beyond the Wisp's reach through its crackle and arc, then steps in while it rests
 # and lets go: one swing.
 func _playtest_charged_wisp() -> bool:
-	var player := await _enter_room(&"waking_coast_6", &"east", RUNE_ROAD_PATH)
+	var player := await _enter_room(&"waking_coast_6", &"east", JUNGLE_TRAIL_PATH)
 	var wisp := (
 		current_scene.get_node_or_null(STORM_WISP_PATH) as Node2D if player != null else null
 	)
@@ -709,7 +711,9 @@ func _stand_by_wisp(player: CharacterBody2D, wisp: Node2D, distance: float) -> v
 	_press(toward)
 	await _frames(1)
 	_release(toward)
-	player.global_position = Vector2(wisp.global_position.x + side * distance, RUNE_ROAD_HEIGHTS_Y)
+	player.global_position = Vector2(
+		wisp.global_position.x + side * distance, JUNGLE_TRAIL_HEIGHTS_Y
+	)
 	player.velocity = Vector2.ZERO
 	await _frames(2)
 
@@ -744,7 +748,7 @@ func _playtest_climbs_cliffs() -> bool:
 # Strikes the Scavenger down from the pool's edge; its Experience goes to the Player and into the
 # Run.
 func _playtest_sword_defeats_scavenger() -> bool:
-	var player := await _enter_rune_shore()
+	var player := await _enter_palm_shore()
 	var scavenger := current_scene.get_node_or_null(SCAVENGER_PATH) if player != null else null
 	var valid := scavenger != null
 	var worth: int = scavenger.get("EXPERIENCE") if valid else 0
@@ -763,7 +767,7 @@ func _playtest_sword_defeats_scavenger() -> bool:
 
 # Stands still at the pool's edge until the Scavenger's lunge lands.
 func _playtest_lunge_hurts_player() -> bool:
-	var player := await _enter_rune_shore()
+	var player := await _enter_palm_shore()
 	if player == null:
 		await _leave_scene()
 		return false
@@ -780,7 +784,7 @@ func _playtest_lunge_hurts_player() -> bool:
 # One Health left at the pool's edge: the next lunge defeats the Player. It falls where it lands
 # and stops answering the controls, then wakes in the first Room with full Health, the Run kept.
 func _playtest_defeat_keeps_run() -> bool:
-	var player := await _enter_rune_shore()
+	var player := await _enter_palm_shore()
 	if player == null:
 		await _leave_scene()
 		return false
@@ -817,10 +821,10 @@ func _playtest_defeat_keeps_run() -> bool:
 	return valid
 
 
-# A hit taken in the rune shore is still taken after walking west into the first Room, and the
+# A hit taken in the palm shore is still taken after walking west into the first Room, and the
 # Health bar there shows it.
 func _playtest_health_carries() -> bool:
-	var player := await _enter_rune_shore()
+	var player := await _enter_palm_shore()
 	if player == null:
 		await _leave_scene()
 		return false
@@ -840,7 +844,7 @@ func _playtest_health_carries() -> bool:
 	return valid
 
 
-# From a Run left in the rune shore: the start screen's START begins a fresh Run.
+# From a Run left in the palm shore: the start screen's START begins a fresh Run.
 func _playtest_start_begins_run() -> bool:
 	var run := root.get_node_or_null("RunState")
 	if run == null:
@@ -943,7 +947,7 @@ func _playtest_talk_to_mara() -> bool:
 # With the Room's roll fixed to drop: strikes the Scavenger down, walks onto the Brinecap it
 # leaves, then, hurt, pauses and chooses it in the Inventory to eat it back to 10 more Health.
 func _playtest_brinecap_drop() -> bool:
-	var player := await _enter_rune_shore()
+	var player := await _enter_palm_shore()
 	var scavenger := current_scene.get_node_or_null(SCAVENGER_PATH) if player != null else null
 	var valid := scavenger != null
 	if valid:

@@ -29,7 +29,7 @@ const LINES := [
 	["MARA", "Then the sea took more than your ship."],
 	["MARA", "I don't trust what the tide gives back."],
 	["MARA", "But I won't leave you to it."],
-	["MARA", "Tidefen is east, past the rune shore. Stay close."],
+	["MARA", "Tidefen is east, past the palm shore. Stay close."],
 ]
 
 var _mara: Node2D

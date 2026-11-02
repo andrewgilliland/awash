@@ -8,7 +8,7 @@ const CELLS := Rect2i(0, 0, 20, 9)
 const TILE := 16
 # On the cliff top, clear of the west Exit, at the height the salt cliffs' top leaves off.
 const WEST_ENTRY := Vector2(12, 64)
-# On the sand just short of the sinkhole, coming back from the rune road.
+# On the sand just short of the sinkhole, coming back from the jungle trail.
 const EAST_ENTRY := Vector2(296, 96)
 # The east edge: a wall from just under a standing Player's feet down, and the Exit from the
 # top down to just above a standing Player's head (it is 20 pixels tall).
@@ -16,47 +16,47 @@ const EAST_WALL_TOP := 88
 const EAST_EXIT_BOTTOM := 72
 const WORLD_LAYER := 1
 const SHALLOW := Vector2i(5, 5)
-const DECKS := [Vector2i(4, 6), Vector2i(5, 6), Vector2i(6, 6)]
+const DECKS := [Vector2i(2, 33), Vector2i(3, 33), Vector2i(5, 33)]
 # The beach's east end, where the sand gives way into the sea cave, and the stern
 # compartment's deck with its crate.
 const EAST_END := Vector2i(18, 6)
 const SINKHOLE_COLUMN := 19
 const STERN_DECK := Vector2i(17, 1)
 const STERN_CRATE := Vector2i(18, 0)
-const CRATE := Vector2i(0, 7)
+const CRATE := Vector2i(7, 15)
 # Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_4.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
-	# a far palm behind the beach: crown middle and base
-	&"FarTrees": {Vector2i(5, 1): Vector2i(5, 10), Vector2i(5, 5): Vector2i(7, 10)},
+	# a jungle tree on the cliff top, where the jungle starts: crown and roots
+	&"Jungle": {Vector2i(0, 0): Vector2i(3, 17), Vector2i(0, 3): Vector2i(3, 20)},
 	&"Wreck":
 	{
 		# a low hull, a broken mast, a taller hull, and the stern standing on end
-		Vector2i(7, 5): Vector2i(0, 6),
-		Vector2i(8, 0): Vector2i(7, 6),
-		Vector2i(11, 4): Vector2i(7, 6),
-		Vector2i(14, 4): Vector2i(1, 6),
-		Vector2i(16, 2): Vector2i(0, 6),
-		Vector2i(18, 5): Vector2i(2, 6),
+		Vector2i(7, 5): Vector2i(2, 31),
+		Vector2i(8, 0): Vector2i(6, 33),
+		Vector2i(11, 4): Vector2i(6, 33),
+		Vector2i(14, 4): Vector2i(5, 31),
+		Vector2i(16, 2): Vector2i(2, 31),
+		Vector2i(18, 5): Vector2i(4, 31),
 	},
 	&"Terrain":
 	{
 		# the cliff the salt cliffs' top runs on to, and a ledge down from it
-		Vector2i(0, 4): Vector2i(1, 2),
-		Vector2i(2, 4): Vector2i(2, 2),
-		Vector2i(3, 5): Vector2i(3, 4),
+		Vector2i(0, 4): Vector2i(1, 13),
+		Vector2i(2, 4): Vector2i(2, 13),
+		Vector2i(3, 5): Vector2i(0, 15),
 		# two tidal pools between wet edges, with a sand bar between them
-		Vector2i(6, 6): Vector2i(2, 8),
+		Vector2i(6, 6): Vector2i(1, 11),
 		Vector2i(8, 6): Vector2i(5, 5),
-		Vector2i(10, 6): Vector2i(5, 8),
-		Vector2i(11, 6): Vector2i(1, 0),
+		Vector2i(10, 6): Vector2i(1, 11),
+		Vector2i(11, 6): Vector2i(1, 11),
 		Vector2i(14, 6): Vector2i(5, 5),
-		Vector2i(16, 6): Vector2i(5, 8),
+		Vector2i(16, 6): Vector2i(1, 11),
 		# decks on the wrecks, up to the stern
-		Vector2i(7, 4): Vector2i(4, 6),
-		Vector2i(10, 3): Vector2i(4, 6),
-		Vector2i(15, 3): Vector2i(6, 6),
-		Vector2i(16, 1): Vector2i(4, 6),
+		Vector2i(7, 4): Vector2i(2, 33),
+		Vector2i(10, 3): Vector2i(2, 33),
+		Vector2i(15, 3): Vector2i(5, 33),
+		Vector2i(16, 1): Vector2i(2, 33),
 	},
 	&"Props": {STERN_CRATE: CRATE},
 }
@@ -117,7 +117,7 @@ func _test_west_entry_on_cliff() -> bool:
 	return valid
 
 
-# A jump over the sinkhole carries on east onto the rune road. Below the sand's height the east
+# A jump over the sinkhole carries on east onto the jungle trail. Below the sand's height the east
 # edge stays walled, and the Exit sits only above a standing Player's head, so walking off the
 # sand falls into the sinkhole rather than out east. The west edge is the Exit back to the salt
 # cliffs' top. Coming back, the Player lands short of the sinkhole.

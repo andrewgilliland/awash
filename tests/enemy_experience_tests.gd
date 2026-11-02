@@ -3,7 +3,7 @@ extends RefCounted
 const SCAVENGER_SCENE := preload("res://scenes/enemies/scavenger.tscn")
 const STORM_WISP_SCENE := preload("res://scenes/enemies/storm_wisp.tscn")
 const WRAITH_SCENE := preload("res://scenes/enemies/wraith.tscn")
-const RUNE_SHORE_SCENE := preload("res://scenes/rooms/waking_coast_2.tscn")
+const PALM_SHORE_SCENE := preload("res://scenes/rooms/waking_coast_2.tscn")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 # Each enemy kind and the Experience its defeat is worth, as its spec says.
 const WORTH := [[SCAVENGER_SCENE, 10], [STORM_WISP_SCENE, 15], [WRAITH_SCENE, 20]]
@@ -65,7 +65,7 @@ func _test_room_hands_defeat_to_player() -> bool:
 	var run := _root.get_node("RunState")
 	run.call("start_run")
 	run.call("enter_room", &"waking_coast_2", &"west")
-	var room := RUNE_SHORE_SCENE.instantiate()
+	var room := PALM_SHORE_SCENE.instantiate()
 	_root.add_child(room)
 	var scavenger := room.get_node("Enemies/Scavenger")
 	scavenger.emit_signal(&"defeated", _worth(scavenger))
@@ -92,7 +92,7 @@ func _test_each_kind_has_drop_chance() -> bool:
 
 
 func _test_lucky_roll_drops() -> bool:
-	var room := _rune_shore(0.0)
+	var room := _palm_shore(0.0)
 	var scavenger := room.get_node("Enemies/Scavenger") as Node2D
 	scavenger.emit_signal(&"defeated", _worth(scavenger))
 	# The Brinecap joins on the Room's next physics step, not mid-hit.
@@ -110,7 +110,7 @@ func _test_lucky_roll_drops() -> bool:
 
 
 func _test_unlucky_roll_leaves_nothing() -> bool:
-	var room := _rune_shore(0.99)
+	var room := _palm_shore(0.99)
 	var scavenger := room.get_node("Enemies/Scavenger")
 	scavenger.emit_signal(&"defeated", _worth(scavenger))
 	room.call("_physics_process", 0.0)
@@ -136,12 +136,12 @@ func _test_brinecap_scene() -> bool:
 	return valid
 
 
-# The rune shore, entered at its Entry, with its drop roll fixed at the given value.
-func _rune_shore(roll: float) -> Node:
+# The palm shore, entered at its Entry, with its drop roll fixed at the given value.
+func _palm_shore(roll: float) -> Node:
 	var run := _root.get_node("RunState")
 	run.call("start_run")
 	run.call("enter_room", &"waking_coast_2", &"west")
-	var room := RUNE_SHORE_SCENE.instantiate()
+	var room := PALM_SHORE_SCENE.instantiate()
 	room.set("drop_roll", func() -> float: return roll)
 	_root.add_child(room)
 	return room

@@ -31,7 +31,7 @@ const ROOMS := {
 		size = Vector2i(2, 1),
 		region = &"waking_coast",
 	},
-	# Two screens tall: its beach is level with the rune shore, its cliff top a screen above.
+	# Two screens tall: its beach is level with the palm shore, its cliff top a screen above.
 	&"waking_coast_3":
 	{
 		scene = "res://scenes/rooms/waking_coast_3.tscn",
@@ -64,7 +64,7 @@ const ROOMS := {
 		size = Vector2i(2, 1),
 		region = &"waking_coast",
 	},
-	# One screen: the arena at the road's end.
+	# One screen: the arena at the trail's end.
 	&"waking_coast_7":
 	{
 		scene = "res://scenes/rooms/waking_coast_7.tscn",
@@ -80,7 +80,7 @@ const ROOMS := {
 		size = Vector2i(2, 1),
 		region = &"waking_coast",
 	},
-	# Four screens of tunnel under the road, the gate and Tidefen's well, back to the sea cave.
+	# Four screens of tunnel under the trail, the gate and Tidefen's well, back to the sea cave.
 	&"waking_coast_9":
 	{
 		scene = "res://scenes/rooms/waking_coast_9.tscn",

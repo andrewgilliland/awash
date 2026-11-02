@@ -2,7 +2,7 @@ extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
 # Two screens wide: an open beach, then the beach Vael wakes on below the jungle cliff. On the Map
-# it sits west of the rune shore.
+# it sits west of the palm shore.
 const ROOM_ID := &"waking_coast_1"
 const MAP_CELL := Vector2i(-1, 0)
 const MAP_SIZE := Vector2i(2, 1)
@@ -75,7 +75,7 @@ const LANDMARKS := {
 
 func get_tests() -> Array:
 	return [
-		["The first Room is two screens wide, west of the rune shore", _test_two_screens],
+		["The first Room is two screens wide, west of the palm shore", _test_two_screens],
 		["Waking Coast Room lays out its two screens", _test_lays_out_the_screen],
 		["Waking Coast start Entry stands on the sand", _test_start_entry_on_sand],
 		["Waking Coast west wall holds; east leads on", _test_walls_keep_player_on_screen],
