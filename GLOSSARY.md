@@ -70,6 +70,10 @@ _Avoid_: Placeholder room, stub, draft room
 The layout agreed for the World ahead of building it: where each Planned Room goes, and where built Rooms are to move. The game plays the World as it is; the Map can draw it as planned. Each Room's plan folds into it as the Room is built or moved.
 _Avoid_: Blueprint, draft, roadmap
 
+**World editor**:
+The local web app for laying out the World, Region by Region and Room by Room, and for painting each Room's tiles from its Region's sheets. It draws the World as the Map does and leaves the rest of a Room to Godot.
+_Avoid_: Map editor, level editor
+
 **Entry**:
 A named place in a Room where the Player appears on entering it. A new Run begins at the first Room's `start` Entry.
 _Avoid_: Spawn point, start position, door

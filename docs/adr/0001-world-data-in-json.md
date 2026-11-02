@@ -1,0 +1,3 @@
+# The World's data lives in a JSON file
+
+The World's Regions and Rooms, with their Exits, markers and Plan, move out of GDScript constants in `scripts/core/world.gd` into `assets/world.json`, which `world.gd` reads. The World editor has to write them, and writing GDScript source back is fragile, while JSON is easy to read and write from both Godot and the editor. This reverses the earlier "the World stays as typed GDScript constants" decision (`docs/plans/world-and-regions.md`). The World's interface is unchanged: callers still ask it questions rather than reading its tables, and it is still no Resource and no `class_name`.
