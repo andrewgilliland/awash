@@ -9,11 +9,6 @@ const SHALLOWS_Y := 128.0
 const WEST_WALK_FRAMES := 240
 const START_SCREEN_PATH := "res://scenes/ui/start_screen.tscn"
 const SALT_CLIFFS_PATH := "res://scenes/rooms/waking_coast_3.tscn"
-const TIDE_POOLS_PATH := "res://scenes/rooms/waking_coast_10.tscn"
-# The sand between the tide pools, east and back west: points to walk to, jumping out of a pool
-# when the walk falls short.
-const TIDE_POOLS_EAST: Array[float] = [80.0, 112.0, 150.0, 200.0, 224.0, 256.0, 300.0]
-const TIDE_POOLS_WEST: Array[float] = [256.0, 224.0, 200.0, 150.0, 112.0, 80.0, 40.0]
 const WRECK_GRAVEYARD_PATH := "res://scenes/rooms/waking_coast_4.tscn"
 # Up the wreck decks from the beach: [direction, launch x, height landed on]. The first deck
 # (x 112-160), the mast's (x 160-192), the taller hull's (x 208-256), then the stern's.
@@ -62,6 +57,7 @@ const SALT_CLIFFS_CLIMB := [
 const CLIFF_TOP_Y := 64.0
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const WardenPlaytests := preload("res://tests/warden_playtests.gd")
+const CoastRoutePlaytests := preload("res://tests/coast_route_playtests.gd")
 const WRAITH_PATH := "Enemies/Wraith"
 const UNDERTOW_FLOOR_Y := 96.0
 # Where to stand by the Wraith: near enough to draw out its lash, clear of the lash while it
@@ -91,14 +87,10 @@ func _init() -> void:
 	await _run_scenario("Player walks the Waking Coast sand", _scenario_walks_waking_coast_sand)
 	await _run_scenario("Player stops at the west edge", _scenario_stops_at_west_edge)
 	await _run_playtest_async("Player walks between the Waking Coast Rooms", _playtest_walks_rooms)
-	await _run_playtest_async(
-		"Player wades the tide pools from the palm shore to the salt cliffs",
-		_playtest_walks_to_cliffs
-	)
 	await _run_playtest_async("Player climbs the salt cliffs to the top", _playtest_climbs_cliffs)
-	await _run_playtest_async(
-		"Player walks from the cliff top to the wreck graveyard", _playtest_walks_to_graveyard
-	)
+	var coast_route_playtests := CoastRoutePlaytests.new(self)
+	for playtest in coast_route_playtests.get_playtests():
+		await _run_playtest_async(playtest[0], playtest[1])
 	await _run_playtest_async("Player hops the wreck decks to the stern", _playtest_hops_to_stern)
 	await _run_playtest_async(
 		"Player walks into the sea cave from the cliffs' foot and back", _playtest_cave_and_back
@@ -343,71 +335,6 @@ func _playtest_walks_rooms() -> bool:
 	if current_scene != null:
 		current_scene.free()
 	await process_frame
-	return valid
-
-
-# From the palm shore's east end through the tide pools into the salt cliffs' beach, then back.
-func _playtest_walks_to_cliffs() -> bool:
-	var player := await _enter_room(&"waking_coast_2", &"east", PALM_SHORE_PATH)
-	if player == null:
-		await _leave_scene()
-		return false
-	var run := root.get_node("RunState")
-	var valid := await _walk_until_scene(&"move_right", TIDE_POOLS_PATH)
-	valid = valid and run.get("room_id") == &"waking_coast_10"
-	player = _current_player()
-	valid = valid and player != null and player.global_position.x < 40.0
-	valid = valid and absf(player.global_position.y - WAKING_COAST_SAND_Y) < 1.0
-	if not valid:
-		await _leave_scene()
-		return false
-	await _wade_to(player, TIDE_POOLS_EAST)
-	valid = valid and await _walk_until_scene(&"move_right", SALT_CLIFFS_PATH)
-	valid = valid and run.get("room_id") == &"waking_coast_3"
-	player = _current_player()
-	valid = valid and player != null and player.global_position.x < 40.0
-	valid = valid and absf(player.global_position.y - SALT_CLIFFS_BEACH_Y) < 1.0
-
-	valid = valid and await _walk_until_scene(&"move_left", TIDE_POOLS_PATH)
-	valid = valid and run.get("room_id") == &"waking_coast_10"
-	player = _current_player()
-	valid = valid and player != null and player.global_position.x > 280.0
-	if not valid:
-		await _leave_scene()
-		return false
-	await _wade_to(player, TIDE_POOLS_WEST)
-	valid = valid and await _walk_until_scene(&"move_left", PALM_SHORE_PATH)
-	valid = valid and run.get("room_id") == &"waking_coast_2"
-	player = _current_player()
-	valid = valid and player != null and player.global_position.x > 280.0
-	await _leave_scene()
-	return valid
-
-
-# From the salt cliffs' top on to the wreck graveyard's cliff, then back.
-func _playtest_walks_to_graveyard() -> bool:
-	var run := root.get_node_or_null("RunState")
-	if run == null:
-		return false
-	run.call("start_run")
-	run.call("enter_room", &"waking_coast_3", &"east")
-	change_scene_to_file(SALT_CLIFFS_PATH)
-	await _frames_until(
-		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
-		SETTLE_FRAME_LIMIT
-	)
-	var valid := await _walk_until_scene(&"move_right", WRECK_GRAVEYARD_PATH)
-	valid = valid and run.get("room_id") == &"waking_coast_4"
-	var player := _current_player()
-	valid = valid and player != null and player.global_position.x < 40.0
-	valid = valid and player != null and absf(player.global_position.y - CLIFF_TOP_Y) < 1.0
-
-	valid = valid and await _walk_until_scene(&"move_left", SALT_CLIFFS_PATH)
-	valid = valid and run.get("room_id") == &"waking_coast_3"
-	player = _current_player()
-	valid = valid and player != null and player.global_position.x > 120.0
-	valid = valid and player != null and absf(player.global_position.y - SALT_CLIFFS_TOP_Y) < 1.0
-	await _leave_scene()
 	return valid
 
 

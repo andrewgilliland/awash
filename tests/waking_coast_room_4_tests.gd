@@ -6,7 +6,7 @@ const RoomReach := preload("res://tests/room_reach.gd")
 const ROOM_SIZE := Vector2i(320, 144)
 const CELLS := Rect2i(0, 0, 20, 9)
 const TILE := 16
-# On the cliff top, clear of the west Exit, at the height the salt cliffs' top leaves off.
+# On the cliff top, clear of the west Exit, at the height the gull ledges' cliff top leaves off.
 const WEST_ENTRY := Vector2(12, 64)
 # On the sand at the beach's east end, coming back from the jungle trail.
 const EAST_ENTRY := Vector2(296, 96)
@@ -110,8 +110,9 @@ func _test_west_entry_on_cliff() -> bool:
 	return valid
 
 
-# The east edge is the Exit onto the jungle trail, its whole height, so the beach walks straight on.
-# The west edge is the Exit back to the salt cliffs' top. Coming back, the Player lands on the sand.
+# The east edge is the Exit onto the jungle trail, its whole height, so the beach walks straight
+# on. The west edge is the Exit back to the gull ledges' cliff top. Coming back, the Player lands
+# on the sand.
 func _test_leads_east() -> bool:
 	var room := _room()
 	if room == null:
@@ -132,7 +133,8 @@ func _test_leads_east() -> bool:
 		valid = terrain.get_cell_source_id(below) != -1
 	var exit := room.get_node_or_null("Exits/west") as Area2D
 	valid = valid and exit != null and exit.position.x < 0.0
-	valid = valid and exit.get("room_id") == &"waking_coast_3" and exit.get("entry_id") == &"east"
+	valid = valid and exit.get("room_id") == &"waking_coast_11"
+	valid = valid and exit.get("entry_id") == &"east"
 	room.free()
 	return valid
 

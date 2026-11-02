@@ -54,9 +54,9 @@
 			}
 		},
 		"waking_coast_4": {
-			"note": "Two screens wide, along from the salt cliffs' top.",
+			"note": "Two screens wide, along the cliff tops.",
 			"scene": "res://scenes/rooms/waking_coast_4.tscn",
-			"cell": [6, -1],
+			"cell": [7, -2],
 			"size": [2, 1],
 			"region": "waking_coast",
 			"exits": [
@@ -89,7 +89,7 @@
 		"waking_coast_6": {
 			"note": "Two screens wide, on from the graveyard's beach, climbing inland.",
 			"scene": "res://scenes/rooms/waking_coast_6.tscn",
-			"cell": [8, -1],
+			"cell": [9, -2],
 			"size": [2, 1],
 			"region": "waking_coast",
 			"exits": [
@@ -103,7 +103,7 @@
 		"waking_coast_7": {
 			"note": "One screen: the arena at the trail's end.",
 			"scene": "res://scenes/rooms/waking_coast_7.tscn",
-			"cell": [10, -1],
+			"cell": [11, -2],
 			"size": [1, 1],
 			"region": "waking_coast",
 			"exits": [
@@ -118,7 +118,7 @@
 		"waking_coast_8": {
 			"note": "Tidefen, at the end of the coast past the Warden's gate: its stilt houses, market square and harbour, two screens each.",
 			"scene": "res://scenes/rooms/waking_coast_8.tscn",
-			"cell": [11, -1],
+			"cell": [12, -2],
 			"size": [6, 1],
 			"region": "waking_coast",
 			"exits": [
@@ -133,7 +133,7 @@
 		"waking_coast_9": {
 			"note": "Four screens of tunnel under the trail, the gate and Tidefen's well, back to the sea cave.",
 			"scene": "res://scenes/rooms/waking_coast_9.tscn",
-			"cell": [8, 0],
+			"cell": [8, -1],
 			"size": [4, 1],
 			"region": "waking_coast",
 			"background": "cave",
@@ -163,6 +163,7 @@
 		},
 		"waking_coast_11": {
 			"note": "Ledges up from the salt cliffs' top to the cliff tops.",
+			"scene": "res://scenes/rooms/waking_coast_11.tscn",
 			"cell": [6, -2],
 			"size": [1, 2],
 			"region": "waking_coast",

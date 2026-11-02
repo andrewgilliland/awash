@@ -1,0 +1,77 @@
+[gd_scene load_steps=7 format=4]
+
+[ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_main"]
+
+[ext_resource type="TileSet" uid="uid://bk0woevdr64it" path="res://assets/regions/waking_coast/tiles/terrain.tres" id="terrain_tiles"]
+[ext_resource type="TileSet" uid="uid://bysu7h6kisnbi" path="res://assets/regions/waking_coast/tiles/scenery.tres" id="scenery_tiles"]
+
+[ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="4_exit"]
+
+[ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="5_player"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_edge"]
+size = Vector2(8, 144)
+
+[node name="WakingCoast11" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Jungle" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAGAAMAAQADAAIAAAAHAAMAAQACAAIAAAAIAAMAAQAEAAIAAAAJAAMAAQAGAAIAAAAAAAwAAQACAAIAAAABAAwAAQAEAAIAAAA=")
+tile_set = ExtResource("scenery_tiles")
+
+[node name="Vines" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAABAAgAAgACAAcAAAABAAkAAgACAAgAAAAEAAoAAgABAAcAAAAEAAsAAgABAAgAAAA=")
+tile_set = ExtResource("scenery_tiles")
+
+[node name="Terrain" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAGAAQAAAABAA0AAAAHAAQAAAADAA0AAAAIAAQAAAAEAA0AAAAJAAQAAAACAA0AAAADAAUAAgAEAAQAAAAEAAUAAgAHAAQAAAAGAAUAAAABAA4AAAAHAAUAAAACAA4AAAAIAAUAAAADAA8AAAAJAAUAAAAEABAAAAAGAAYAAAABAA8AAAAHAAYAAAADAA8AAAAIAAYAAAAEABAAAAAJAAYAAAACAA4AAAAAAAcAAgAEAAQAAAABAAcAAgAFAAQAAAACAAcAAgAHAAQAAAAGAAcAAAABABAAAAAHAAcAAAAEABAAAAAIAAcAAAACAA4AAAAJAAcAAAADAA8AAAAGAAgAAAABAA4AAAAHAAgAAAACAA4AAAAIAAgAAAADAA8AAAAJAAgAAAAEABAAAAADAAkAAgAEAAQAAAAEAAkAAgAFAAQAAAAFAAkAAgAHAAQAAAAGAAkAAAABAA8AAAAHAAkAAAADAA8AAAAIAAkAAAAEABAAAAAJAAkAAAACAA4AAAAGAAoAAAABABAAAAAHAAoAAAAEABAAAAAIAAoAAAACAA4AAAAJAAoAAAADAA8AAAAAAAsAAgAEAAQAAAABAAsAAgAFAAQAAAACAAsAAgAHAAQAAAAGAAsAAAABAA4AAAAHAAsAAAACAA4AAAAIAAsAAAADAA8AAAAJAAsAAAAEABAAAAAGAAwAAAABAA8AAAAHAAwAAAADAA8AAAAIAAwAAAAEABAAAAAJAAwAAAACAA4AAAAAAA0AAAACAA0AAAABAA0AAAADAA0AAAACAA0AAAAEAA0AAAADAA0AAAACAA0AAAAEAA0AAAADAA0AAAAFAA0AAAAEAA0AAAAGAA0AAAADAA8AAAAHAA0AAAAEABAAAAAIAA0AAAACAA4AAAAJAA0AAAADAA8AAAAAAA4AAAAEABAAAAABAA4AAAACAA4AAAACAA4AAAADAA8AAAADAA4AAAAEABAAAAAEAA4AAAACAA4AAAAFAA4AAAADAA8AAAAGAA4AAAAEABAAAAAHAA4AAAACAA4AAAAIAA4AAAADAA8AAAAJAA4AAAAEABAAAAAAAA8AAAACAA4AAAABAA8AAAADAA8AAAACAA8AAAAEABAAAAADAA8AAAACAA4AAAAEAA8AAAADAA8AAAAFAA8AAAAEABAAAAAGAA8AAAACAA4AAAAHAA8AAAADAA8AAAAIAA8AAAAEABAAAAAJAA8AAAACAA4AAAAAABAAAAADAA8AAAABABAAAAAEABAAAAACABAAAAACAA4AAAADABAAAAADAA8AAAAEABAAAAAEABAAAAAFABAAAAACAA4AAAAGABAAAAADAA8AAAAHABAAAAAEABAAAAAIABAAAAACAA4AAAAJABAAAAADAA8AAAAAABEAAAAEABAAAAABABEAAAACAA4AAAACABEAAAADAA8AAAADABEAAAAEABAAAAAEABEAAAACAA4AAAAFABEAAAADAA8AAAAGABEAAAAEABAAAAAHABEAAAACAA4AAAAIABEAAAADAA8AAAAJABEAAAAEABAAAAA=")
+tile_set = ExtResource("terrain_tiles")
+
+[node name="Props" type="TileMapLayer" parent="."]
+tile_set = ExtResource("scenery_tiles")
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Bounds" type="StaticBody2D" parent="."]
+collision_mask = 0
+
+[node name="WestTop" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(-4, 72)
+shape = SubResource("RectangleShape2D_edge")
+
+[node name="Exits" type="Node2D" parent="."]
+
+[node name="west" type="Area2D" parent="Exits"]
+position = Vector2(-4, 216)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_exit")
+room_id = &"waking_coast_3"
+entry_id = &"east"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/west"]
+shape = SubResource("RectangleShape2D_edge")
+
+[node name="east" type="Area2D" parent="Exits"]
+position = Vector2(164, 72)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_exit")
+room_id = &"waking_coast_4"
+entry_id = &"west"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/east"]
+shape = SubResource("RectangleShape2D_edge")
+
+[node name="Entries" type="Node2D" parent="."]
+
+[node name="west" type="Marker2D" parent="Entries"]
+position = Vector2(12, 208)
+
+[node name="east" type="Marker2D" parent="Entries"]
+position = Vector2(148, 64)
+
+[node name="Player" parent="." instance=ExtResource("5_player")]
+position = Vector2(12, 208)
