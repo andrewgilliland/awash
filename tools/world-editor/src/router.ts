@@ -3,6 +3,7 @@
 //   /world, /world/<region>     the World as it is, all of it or one Region
 //   /plan, /plan/<region>       the Plan, likewise
 //   /rooms/<room>               a Room, to paint
+//   /tests                      the game's tests, run by the Check
 //   ?room=<room>                the Room selected on the map
 //
 // "/" is the World as it is. Anything else is unknown. Whether a Room or Region by that name exists
@@ -29,6 +30,9 @@ export function parseRoute(pathname: string, search = ""): Route {
   if (top === "rooms" && name !== undefined) {
     return { view: { kind: "room", id: name }, selected: null };
   }
+  if (top === "tests" && name === undefined) {
+    return { view: { kind: "tests" }, selected: null };
+  }
   return { unknown: pathname };
 }
 
@@ -36,6 +40,9 @@ export function formatRoute(route: { view: View; selected: string | null }): str
   const { view, selected } = route;
   if (view.kind === "room") {
     return `/rooms/${encodeURIComponent(view.id)}`;
+  }
+  if (view.kind === "tests") {
+    return "/tests";
   }
   const path = `/${view.planned ? "plan" : "world"}${view.region ? `/${encodeURIComponent(view.region)}` : ""}`;
   return selected ? `${path}?room=${encodeURIComponent(selected)}` : path;

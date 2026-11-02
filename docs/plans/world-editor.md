@@ -38,6 +38,7 @@ Where you are is the address, so Back, Forward, Refresh and links work:
 | `/world`, `/world/<region>` | The World as it is: all of it, or one Region |
 | `/plan`, `/plan/<region>` | The Plan, likewise |
 | `/rooms/<room>` | A built Room, to paint |
+| `/tests` | The game's tests from the last Check, failures first; the Check card goes here and runs them |
 | `?room=<room>` | The Room selected on the map |
 
 - **Navigation:** moving between views adds history. Selecting a Room only rewrites the address.

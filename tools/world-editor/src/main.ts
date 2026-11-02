@@ -9,6 +9,7 @@ import { buildRoom } from "./build";
 import { showRoom } from "./roomView";
 import { formatRoute, parseRoute, type Route } from "./router";
 import { showSidebar } from "./sidebar";
+import { showTests, type CheckRun } from "./testsView";
 import type { WorldData } from "./world";
 import { serializeWorld } from "./worldFile";
 import { showWorld, type Tool, type WorldEditor, type WorldViewHandle } from "./worldView";
@@ -47,8 +48,9 @@ let drop = false;
 let pictures = readPictures();
 // Unsaved paint on the open Room.
 let roomDirty = false;
-// Whether the Check is running the game's tests.
+// Whether the Check is running the game's tests, and what it found last.
 let checking = false;
+let lastRun: CheckRun | null = null;
 // The World view on show, if it is, for the sidebar to light Rooms on.
 let worldView: WorldViewHandle | null = null;
 
@@ -90,10 +92,10 @@ function mayLeave(next: View | null): boolean {
   return true;
 }
 
-// Goes somewhere: a new history entry, so Back returns here.
-function go(next: View, select: string | null = null) {
+// Goes somewhere: a new history entry, so Back returns here. False if you chose to stay.
+function go(next: View, select: string | null = null): boolean {
   if (!mayLeave(next)) {
-    return;
+    return false;
   }
   view = next;
   selected = select;
@@ -102,6 +104,7 @@ function go(next: View, select: string | null = null) {
     history.pushState(null, "", here());
   }
   render();
+  return true;
 }
 
 function follow(route: Route) {
@@ -130,7 +133,12 @@ function drawSidebar() {
     view,
     checking,
     show: (next) => go(next),
-    check: () => void check(),
+    // to the tests, and runs them
+    check: () => {
+      if (go({ kind: "tests" })) {
+        void check();
+      }
+    },
     hover: (id) => worldView?.highlight(id),
   });
 }
@@ -165,6 +173,16 @@ function render() {
   const plan: View = { kind: "world", planned: true };
   if (unknown !== null) {
     nowhere("Nothing here", `There's nothing at ${unknown}.`, ["The World", world_, null], ["The Plan", plan, null]);
+    return;
+  }
+  if (view.kind === "tests") {
+    worldView = null;
+    if (!lastRun && !checking) {
+      // landed here with nothing to show: run them
+      void check();
+      return;
+    }
+    showTests(stage, side, { run: lastRun, checking, unsaved: dirty(), check: () => void check() });
     return;
   }
   if (view.kind === "room") {
@@ -364,34 +382,22 @@ addEventListener("beforeunload", (event) => {
   }
 });
 
-// Runs the game's tests, the one home of the World's rules, and lists their results beside the view.
+// Runs the game's tests, the one home of the World's rules; the tests view shows what they found.
 async function check() {
+  if (checking) {
+    return;
+  }
   checking = true;
   render();
-  side.replaceChildren(
-    el("h2", {}, "Check"),
-    el("p", { className: "muted" }, dirty() ? "Running the game's tests on the saved World (save first to check your edits)…" : "Running the game's tests…"),
-  );
   try {
     const response = await fetch("/api/check", { method: "POST" });
-    const result: { passed: boolean; tests: { name: string; passed: boolean }[]; errors: string[] } = await response.json();
-    const failed = result.tests.filter((test) => !test.passed);
-    side.replaceChildren(
-      el("h2", {}, result.passed ? `All ${result.tests.length} tests pass` : `${failed.length} of ${result.tests.length} tests fail`),
-      el(
-        "ul",
-        { className: "results" },
-        ...[...failed, ...result.tests.filter((test) => test.passed)].map((test) =>
-          el("li", { className: test.passed ? "pass" : "fail" }, `${test.passed ? "✓" : "✗"} ${test.name}`),
-        ),
-      ),
-      ...(result.errors.length
-        ? [el("h2", {}, "What failed said"), el("ul", { className: "results" }, ...result.errors.map((e) => el("li", { className: "fail" }, e)))]
-        : []),
-    );
+    const result: Omit<CheckRun, "at"> = await response.json();
+    lastRun = { ...result, at: new Date() };
+  } catch {
+    say("The tests couldn't be run.", "fail");
   } finally {
     checking = false;
-    drawSidebar();
+    render();
   }
 }
 

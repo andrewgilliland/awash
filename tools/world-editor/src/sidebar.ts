@@ -57,7 +57,7 @@ export function showSidebar(into: HTMLElement, sidebar: Sidebar) {
   const built = rooms.filter(([, room]) => room.scene !== undefined);
   const planned = view.kind === "world" && view.planned;
   // The Region on show: the one picked, or the open Room's.
-  const focus = view.kind === "world" ? view.region : world.rooms[view.id]?.region;
+  const focus = view.kind === "world" ? view.region : view.kind === "room" ? world.rooms[view.id]?.region : undefined;
   into.replaceChildren(
     el("div", { className: "brand-box" }, el("span", {}, "Awash"), el("strong", {}, "World editor")),
     info("Rooms", `${built.length} built`),
@@ -69,7 +69,7 @@ export function showSidebar(into: HTMLElement, sidebar: Sidebar) {
       // the whole of it; a Region card narrows whichever is on show
       card("world", "The World", "As it is today", view.kind === "world" && !view.planned, () => show({ kind: "world", planned: false })),
       card("plan", "The Plan", "As planned, to edit", view.kind === "world" && view.planned, () => show({ kind: "world", planned: true })),
-      card("check", "Check", sidebar.checking ? "Running the game's tests…" : "Run the game's tests", false, sidebar.check, sidebar.checking),
+      card("check", "Check", sidebar.checking ? "Running the game's tests…" : "Run the game's tests", view.kind === "tests", sidebar.check, sidebar.checking),
     ),
     el("p", { className: "label" }, "Regions"),
     el(

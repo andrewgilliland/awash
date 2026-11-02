@@ -19,6 +19,12 @@ describe("reading a URL", () => {
     expect(parseRoute("/rooms/waking_coast_4")).toEqual({ view: { kind: "room", id: "waking_coast_4" }, selected: null });
   });
 
+  it("knows the tests", () => {
+    expect(parseRoute("/tests")).toEqual({ view: { kind: "tests" }, selected: null });
+    expect(parseRoute("/tests/")).toEqual(parseRoute("/tests"));
+    expect(parseRoute("/tests/one")).toEqual({ unknown: "/tests/one" });
+  });
+
   it("knows the Room selected on the map", () => {
     expect(parseRoute("/plan", "?room=waking_coast_4")).toEqual({
       view: { kind: "world", planned: true },
@@ -47,6 +53,7 @@ describe("writing a URL", () => {
       { view: { kind: "world" as const, planned: true, region: "undertow" }, selected: null },
       { view: { kind: "world" as const, planned: false, region: "waking_coast" }, selected: "waking_coast_1" },
       { view: { kind: "room" as const, id: "waking_coast_8" }, selected: null },
+      { view: { kind: "tests" as const }, selected: null },
     ];
     for (const route of routes) {
       const url = new URL(formatRoute(route), "http://localhost");
