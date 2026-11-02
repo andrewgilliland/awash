@@ -93,7 +93,8 @@ export function asPlanned(room: RoomRecord): Required<Pick<RoomRecord, "cell" | 
 
 // Lays out the whole World: as it is, every built Room where it sits; or as planned, every Room,
 // built and planned, where the World's plan puts it. Pad leaves that many empty screens round it.
-export function layoutWorld(world: WorldData, planned: boolean, pad = 0): WorldLayout {
+// Given a Region, only the Rooms in it, as it is or as planned.
+export function layoutWorld(world: WorldData, planned: boolean, pad = 0, region?: string): WorldLayout {
   const shown = Object.entries(world.rooms)
     .filter(([, room]) => planned || room.scene !== undefined)
     .map(([id, room]) => {
@@ -101,7 +102,8 @@ export function layoutWorld(world: WorldData, planned: boolean, pad = 0): WorldL
         ? asPlanned(room)
         : { cell: room.cell, size: room.size, region: room.region, exits: room.exits ?? [], markers: room.markers ?? {} };
       return { id, built: room.scene !== undefined, ...laid };
-    });
+    })
+    .filter((room) => region === undefined || room.region === region);
   const cells = shown.length ? shown : [{ cell: [0, 0] as Vec, size: [1, 1] as Vec }];
   const corner = [Math.min(...cells.map((r) => r.cell[0])) - pad, Math.min(...cells.map((r) => r.cell[1])) - pad];
   const far = [

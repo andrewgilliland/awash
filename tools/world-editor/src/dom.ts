@@ -8,7 +8,10 @@ export const MARKERS: Record<string, { colour: string; rows: string[] }> = {
 };
 
 // What the page shows: the World, as it is or as planned, or one Room.
-export type View = { kind: "world"; planned: boolean } | { kind: "room"; id: string };
+export type View =
+  // The World as it is, or as planned; all of it, or one Region.
+  | { kind: "world"; planned: boolean; region?: string }
+  | { kind: "room"; id: string };
 
 export type Rect = { x: number; y: number; w: number; h: number };
 

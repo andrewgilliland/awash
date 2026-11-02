@@ -62,6 +62,20 @@ describe("the World as planned", () => {
   });
 });
 
+describe("one Region", () => {
+  it("shows only that Region's Rooms, by where they are today or where the Plan puts them", () => {
+    const plannedUndertow = layoutWorld(world, true, 0, "undertow");
+    const ids = plannedUndertow.rooms.map((room) => room.id);
+    expect(ids).toContain("undertow_1");
+    expect(ids).toContain("waking_coast_9");
+    expect(ids).not.toContain("waking_coast_1");
+    expect(plannedUndertow.labels.map((label) => label.text)).toEqual(["Undertow"]);
+    // today the undertow tunnel is still on the Waking Coast
+    expect(layoutWorld(world, false, 0, "undertow").rooms).toEqual([]);
+    expect(layoutWorld(world, false, 0, "waking_coast").rooms.map((room) => room.id)).toContain("waking_coast_9");
+  });
+});
+
 describe("a Room on the Map", () => {
   const layout = layoutWorld(MADE_UP, true);
   const cove = layout.rooms.find((room) => room.id === "cove")!;

@@ -15,6 +15,7 @@ export interface Sidebar {
 }
 
 const ICONS: Record<string, string> = {
+  region: "M3 18l5-9 4 6 3-4 6 7z",
   world: "M3 5h18v14H3z M3 12h18 M12 5v14",
   plan: "M4 4h7v7H4z M13 13h7v7h-7z M11 7.5h4.5V13",
   check: "M4 12l5 5L20 6",
@@ -54,6 +55,9 @@ export function showSidebar(into: HTMLElement, sidebar: Sidebar) {
   const { world, view, show } = sidebar;
   const rooms = Object.entries(world.rooms);
   const built = rooms.filter(([, room]) => room.scene !== undefined);
+  const planned = view.kind === "world" && view.planned;
+  // The Region on show: the one picked, or the open Room's.
+  const focus = view.kind === "world" ? view.region : world.rooms[view.id]?.region;
   into.replaceChildren(
     el("div", { className: "brand-box" }, el("span", {}, "Awash"), el("strong", {}, "World editor")),
     info("Rooms", `${built.length} built`),
@@ -62,15 +66,29 @@ export function showSidebar(into: HTMLElement, sidebar: Sidebar) {
     el(
       "nav",
       { className: "cards", ariaLabel: "Views" },
-      card("world", "The World", "As it is today", view.kind === "world" && !view.planned, () => show({ kind: "world", planned: false })),
-      card("plan", "The Plan", "As planned, to edit", view.kind === "world" && view.planned, () => show({ kind: "world", planned: true })),
+      card("world", "The World", "As it is today", view.kind === "world" && !view.planned, () => show({ kind: "world", planned: false, region: focusOf(view) })),
+      card("plan", "The Plan", "As planned, to edit", view.kind === "world" && view.planned, () => show({ kind: "world", planned: true, region: focusOf(view) })),
       card("check", "Check", sidebar.checking ? "Running the game's tests…" : "Run the game's tests", false, sidebar.check, sidebar.checking),
     ),
-    el("p", { className: "label" }, "Rooms"),
+    el("p", { className: "label" }, "Regions"),
+    el(
+      "nav",
+      { className: "cards", ariaLabel: "Regions" },
+      ...Object.entries(world.regions).map(([id, region]) => {
+        const inIt = rooms.filter(([, room]) => (room.plan?.region ?? room.region) === id);
+        const builtHere = inIt.filter(([, room]) => room.scene !== undefined).length;
+        const lit = view.kind === "world" && view.region === id;
+        // a second click shows the whole World again
+        return card("region", region.name, `${builtHere} built · ${inIt.length - builtHere} planned`, lit, () =>
+          show({ kind: "world", planned, region: lit ? undefined : id }),
+        );
+      }),
+    ),
+    el("p", { className: "label" }, focus ? `Rooms in ${world.regions[focus]?.name ?? focus}` : "Rooms"),
     el(
       "nav",
       { className: "cards", ariaLabel: "Rooms" },
-      ...built.map(([id, room]) => {
+      ...built.filter(([, room]) => !focus || room.region === focus).map(([id, room]) => {
         const roomCard = card(
           "room",
           id.replace(/_/g, " "),
@@ -86,4 +104,9 @@ export function showSidebar(into: HTMLElement, sidebar: Sidebar) {
       }),
     ),
   );
+}
+
+// The Region a view shows, if one.
+function focusOf(view: View): string | undefined {
+  return view.kind === "world" ? view.region : undefined;
 }

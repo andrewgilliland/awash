@@ -1,11 +1,13 @@
 // The World editor's page: the World view (as it is, or as planned, where the Plan is edited), the
-// read-only Room view, saving the World's data, and the Check, which runs the game's tests.
+// Room view, saving the World's data, and the Check, which runs the game's tests. Where you are is
+// the address (see router.ts), so Back, Forward, Refresh and links all work.
 
 import "@fontsource/jetbrains-mono/400.css";
 import "@fontsource/jetbrains-mono/700.css";
 import { el, readRepo, versionOf, type View } from "./dom";
 import { buildRoom } from "./build";
 import { showRoom } from "./roomView";
+import { formatRoute, parseRoute, type Route } from "./router";
 import { showSidebar } from "./sidebar";
 import type { WorldData } from "./world";
 import { serializeWorld } from "./worldFile";
@@ -22,7 +24,6 @@ function readPictures(): boolean {
   }
 }
 
-
 const stage = document.querySelector<HTMLElement>("#stage")!;
 const side = document.querySelector<HTMLElement>("#side")!;
 const sidebar = document.querySelector<HTMLElement>("#sidebar")!;
@@ -37,6 +38,8 @@ const undone: WorldData[] = [];
 const redone: WorldData[] = [];
 let view: View = { kind: "world", planned: false };
 let selected: string | null = null;
+// An address that leads nowhere, shown as such until you go somewhere else.
+let unknown: string | null = null;
 let tool: Tool = "select";
 let region = "";
 let drop = false;
@@ -62,15 +65,89 @@ function edit(next: WorldData) {
   world = next;
 }
 
+// The address for where you are.
+function here(): string {
+  return formatRoute({ view, selected: view.kind === "world" ? selected : null });
+}
+
+// Records a change that isn't a move, such as a Room selected on the map, without adding history.
+function replaceAddress() {
+  if (location.pathname + location.search !== here()) {
+    history.replaceState(null, "", here());
+  }
+}
+
+// Leaving a Room with unsaved paint asks first; true if it's fine to go.
+function mayLeave(next: View | null): boolean {
+  const staying = next?.kind === "room" && view.kind === "room" && next.id === view.id;
+  if (view.kind !== "room" || !roomDirty || staying) {
+    return true;
+  }
+  if (!confirm("Leave without saving the paint on this Room?")) {
+    return false;
+  }
+  roomDirty = false;
+  return true;
+}
+
+// Goes somewhere: a new history entry, so Back returns here.
+function go(next: View, select: string | null = null) {
+  if (!mayLeave(next)) {
+    return;
+  }
+  view = next;
+  selected = select;
+  unknown = null;
+  if (location.pathname + location.search !== here()) {
+    history.pushState(null, "", here());
+  }
+  render();
+}
+
+function follow(route: Route) {
+  if ("unknown" in route) {
+    unknown = route.unknown;
+  } else {
+    unknown = null;
+    view = route.view;
+    selected = route.selected && world.rooms[route.selected] ? route.selected : null;
+  }
+  render();
+}
+
+addEventListener("popstate", () => {
+  if (!mayLeave(null)) {
+    // stay, and put the address back
+    history.pushState(null, "", here());
+    return;
+  }
+  follow(parseRoute(location.pathname, location.search));
+});
+
 function drawSidebar() {
   showSidebar(sidebar, {
     world,
     view,
     checking,
-    show: (next) => ((view = next), render()),
+    show: (next) => go(next),
     check: () => void check(),
     hover: (id) => worldView?.highlight(id),
   });
+}
+
+// A page saying an address leads nowhere, with ways back.
+function nowhere(title: string, why: string, ...ways: [string, View, string | null][]) {
+  worldView = null;
+  stage.replaceChildren(
+    el("h2", {}, title),
+    el("p", { className: "muted" }, why),
+    el(
+      "div",
+      { className: "toolbar" },
+      ...ways.map(([label, to, select]) => el("button", { type: "button", onclick: () => go(to, select) }, label)),
+    ),
+  );
+  side.replaceChildren(el("h2", {}, "Nowhere"), el("p", { className: "muted" }, "Pick where to go in the sidebar."));
 }
 
 function render() {
@@ -84,24 +161,47 @@ function render() {
     ),
   );
   drawSidebar();
+  const world_: View = { kind: "world", planned: false };
+  const plan: View = { kind: "world", planned: true };
+  if (unknown !== null) {
+    nowhere("Nothing here", `There's nothing at ${unknown}.`, ["The World", world_, null], ["The Plan", plan, null]);
+    return;
+  }
   if (view.kind === "room") {
+    const id = view.id;
+    const record = world.rooms[id];
+    if (!record) {
+      nowhere("No such Room", `The World has no Room called ${id}.`, ["The World", world_, null], ["The Plan", plan, null]);
+      return;
+    }
+    if (record.scene === undefined) {
+      nowhere("Not built yet", `${id} is a Planned Room: it has no scene to paint until it's built.`, ["See it in The Plan", plan, id]);
+      return;
+    }
     worldView = null;
     void showRoom(
       world,
-      view.id,
+      id,
       stage,
       side,
-      () => ((view = { kind: "world", planned: false }), render()),
+      () => go({ kind: "world", planned: false }, id),
       (unsaved) => (roomDirty = unsaved),
     ).catch((error: Error) => stage.replaceChildren(el("p", {}, error.message)));
     return;
   }
+  if (view.region !== undefined && !world.regions[view.region]) {
+    nowhere("No such Region", `The World has no Region called ${view.region}.`, ["The World", world_, null], ["The Plan", plan, null]);
+    return;
+  }
+  const focus = view.region;
   const editor: WorldEditor = {
     world,
     planned: view.planned,
+    focus,
     selected,
     tool,
-    region,
+    // a new Room is in the Region on show, if one is
+    region: focus ?? region,
     drop,
     pictures,
     apply(next, refused, select) {
@@ -112,11 +212,13 @@ function render() {
       }
       edit(next);
       selected = select && next.rooms[select] ? select : null;
+      replaceAddress();
       say("");
       render();
     },
     select(id) {
       selected = id;
+      replaceAddress();
       render();
     },
     set(changes) {
@@ -132,15 +234,20 @@ function render() {
       render();
     },
     open(id) {
-      view = { kind: "room", id };
-      render();
+      go({ kind: "room", id });
     },
     build(id) {
       void build(id);
     },
   };
   // the World view keeps its own selection as you click, and hands it back here
-  Object.defineProperty(editor, "selected", { get: () => selected, set: (id: string | null) => (selected = id) });
+  Object.defineProperty(editor, "selected", {
+    get: () => selected,
+    set: (id: string | null) => {
+      selected = id;
+      replaceAddress();
+    },
+  });
   worldView = showWorld(editor, stage, side);
 }
 
@@ -207,6 +314,7 @@ async function build(id: string) {
   version = saved_.version;
   saved = text;
   selected = id;
+  replaceAddress();
   say(`Built ${id} at ${result.path}. Open it to paint; the Check shows what its neighbours still need.`, "pass");
   render();
 }
@@ -295,5 +403,10 @@ void readRepo(WORLD_PATH).then((file) => {
   if (serializeWorld(world) !== file.text) {
     say(`${WORLD_PATH} isn't laid out as the editor writes it; saving will lay it out again.`);
   }
-  render();
+  const route = parseRoute(location.pathname, location.search);
+  follow(route);
+  if (!("unknown" in route)) {
+    // "/" and other spellings settle on the address for where they lead
+    replaceAddress();
+  }
 });
