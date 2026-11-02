@@ -1,6 +1,6 @@
 # Plan: The World, Region records and every-Room tests
 
-Agreed 2026-11-01. Nothing here is built yet; this is the order and shape of the work.
+Agreed 2026-11-01. PR 1 and PR 2 are built; this is the order and shape the work took.
 
 ## Decisions
 

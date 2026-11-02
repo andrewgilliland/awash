@@ -16,7 +16,7 @@ const WakingCoastTilesetTests := preload("res://tests/waking_coast_tileset_tests
 const TropicalIslandTilesetTests := preload("res://tests/tropical_island_tileset_tests.gd")
 const JungleCanopyTilesetTests := preload("res://tests/jungle_canopy_tileset_tests.gd")
 const WakingCoastRoomTests := preload("res://tests/waking_coast_room_tests.gd")
-const WorldMapTests := preload("res://tests/world_map_tests.gd")
+const MapLayoutTests := preload("res://tests/map_layout_tests.gd")
 const WakingCoastRoom2Tests := preload("res://tests/waking_coast_room_2_tests.gd")
 const WakingCoastRoom3Tests := preload("res://tests/waking_coast_room_3_tests.gd")
 const WakingCoastRoom4Tests := preload("res://tests/waking_coast_room_4_tests.gd")
@@ -92,8 +92,8 @@ func _init() -> void:
 	var room_tests := WakingCoastRoomTests.new()
 	for test in room_tests.get_tests():
 		_run_test(test[0], test[1])
-	var world_map_tests := WorldMapTests.new()
-	for test in world_map_tests.get_tests():
+	var map_layout_tests := MapLayoutTests.new()
+	for test in map_layout_tests.get_tests():
 		_run_test(test[0], test[1])
 	var room_2_tests := WakingCoastRoom2Tests.new()
 	for test in room_2_tests.get_tests():
@@ -121,9 +121,6 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var room_exit_tests := RoomExitTests.new()
 	for test in room_exit_tests.get_tests():
-		_run_test(test[0], test[1])
-	var every_room_tests := EveryRoomTests.new()
-	for test in every_room_tests.get_tests():
 		_run_test(test[0], test[1])
 	var health_tests := HealthTests.new()
 	for test in health_tests.get_tests():
@@ -240,6 +237,9 @@ func _init() -> void:
 	for test in boss_bar_tests.get_tests():
 		_run_test(test[0], test[1])
 
+	var every_room_tests := EveryRoomTests.new(root)
+	for test in every_room_tests.get_tests():
+		_run_test(test[0], test[1])
 	var region_background_tests := RegionBackgroundTests.new(root)
 	for test in region_background_tests.get_tests():
 		_run_test(test[0], test[1])

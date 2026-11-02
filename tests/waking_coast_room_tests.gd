@@ -31,7 +31,7 @@ const POOL_TILES := [Vector2i(5, 16), Vector2i(6, 16)]
 const WORLD_LAYER := 1
 # On the cliff top, clear of the east Exit.
 const EAST_ENTRY := Vector2(308, 64)
-const WorldMap := preload("res://scripts/core/world_map.gd")
+const World := preload("res://scripts/core/world.gd")
 # Landmark cells: layer -> {cell: atlas coords on the Waking Coast's terrain or scenery sheet}.
 const LANDMARKS := {
 	# Three palms behind the beach, one on the open beach and two by the cliff: crown middles,
@@ -97,8 +97,7 @@ static func _room() -> Node2D:
 
 
 func _test_two_screens() -> bool:
-	var room: Dictionary = WorldMap.ROOMS.get(ROOM_ID, {})
-	return room.get("cell") == MAP_CELL and room.get("size") == MAP_SIZE
+	return World.cell(ROOM_ID) == MAP_CELL and World.size(ROOM_ID) == MAP_SIZE
 
 
 func _test_lays_out_the_screen() -> bool:

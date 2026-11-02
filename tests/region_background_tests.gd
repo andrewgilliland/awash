@@ -1,8 +1,9 @@
 extends RefCounted
 
-const WorldMap := preload("res://scripts/core/world_map.gd")
+const World := preload("res://scripts/core/world.gd")
 const BACKGROUND := "res://scenes/regions/waking_coast/background.tscn"
 const CAVE_BACKGROUND := "res://scenes/regions/waking_coast/cave_background.tscn"
+const CAVE_ROOMS: Array[StringName] = [&"waking_coast_5", &"waking_coast_9"]
 # The Waking Coast's layers, back to front, and how fast each scrolls with the camera.
 const LAYERS := {Sky = 0.1, Clouds = 0.2, Sea = 0.6}
 const CAVE_LAYERS := {Wall = 0.3, Glints = 0.6}
@@ -40,6 +41,8 @@ func get_tests() -> Array:
 		["The Waking Coast's layers each scroll slower the farther back", _test_layers],
 		["The cave Background is a rock wall with glints before it", _test_cave_layers],
 		["The Waking Coast's Background is a daytime tropical shore", _test_daytime_shore],
+		["The caves show the cave Background; the rest of the coast its sky and sea", _test_caves],
+		["A Background sets its layers by the place it is told", _test_told_place],
 		["A Room sets its Background by where it sits in the world", _test_offsets],
 		["Every Exit meets its Entry in the world, so Backgrounds carry on", _test_seams],
 	]
@@ -81,6 +84,32 @@ func _test_daytime_shore() -> bool:
 	return valid
 
 
+func _test_caves() -> bool:
+	var valid := true
+	for room_id in World.room_ids():
+		if World.region(room_id) == &"waking_coast":
+			var expected := CAVE_BACKGROUND if CAVE_ROOMS.has(room_id) else BACKGROUND
+			if World.background(room_id) != expected:
+				push_error("%s shows %s" % [room_id, World.background(room_id)])
+				valid = false
+	return valid
+
+
+# Any place will do: the Background knows nothing of the World.
+func _test_told_place() -> bool:
+	var origin := Vector2(480, -144)
+	var background := (load(BACKGROUND) as PackedScene).instantiate()
+	background.set("room_origin", origin)
+	_root.add_child(background)
+	var valid := true
+	for layer in background.get_children():
+		if layer is Parallax2D:
+			var expected: Vector2 = -origin * (layer as Parallax2D).scroll_scale
+			valid = valid and (layer as Parallax2D).scroll_offset.is_equal_approx(expected)
+	background.free()
+	return valid
+
+
 func _test_offsets() -> bool:
 	var valid := true
 	for room_id: StringName in [&"waking_coast_1", &"waking_coast_3", &"waking_coast_9"]:
@@ -97,12 +126,12 @@ func _test_offsets() -> bool:
 
 func _test_seams() -> bool:
 	var valid := true
-	for room_id: StringName in WorldMap.ROOMS:
-		var room := (load(WorldMap.ROOMS[room_id].scene) as PackedScene).instantiate()
-		var size := Vector2(WorldMap.ROOMS[room_id].size) * WorldMap.SCREEN_SIZE
+	for room_id in World.room_ids():
+		var room := (load(World.scene(room_id)) as PackedScene).instantiate()
+		var size := Vector2(World.size(room_id)) * World.SCREEN_SIZE
 		for exit in room.get_node("Exits").get_children():
 			var to: StringName = exit.get("room_id")
-			var there := (load(WorldMap.ROOMS[to].scene) as PackedScene).instantiate()
+			var there := (load(World.scene(to)) as PackedScene).instantiate()
 			var entry := there.get_node("Entries/%s" % exit.get("entry_id")) as Node2D
 			var from_world := _origin(room_id) + (exit as Node2D).position
 			var to_world := _origin(to) + entry.position
@@ -127,7 +156,7 @@ func _has_layers(path: String, layers: Dictionary, drifts: bool) -> bool:
 			names.append(parallax.name)
 			var speed: float = layers.get(parallax.name, -1.0)
 			valid = valid and parallax.scroll_scale.is_equal_approx(Vector2(speed, speed))
-			valid = valid and parallax.repeat_size.x == WorldMap.SCREEN_SIZE.x
+			valid = valid and parallax.repeat_size.x == World.SCREEN_SIZE.x
 			valid = valid and parallax.get_child_count() > 0
 	valid = valid and names == layers.keys()
 	if drifts:
@@ -140,14 +169,14 @@ func _has_layers(path: String, layers: Dictionary, drifts: bool) -> bool:
 func _enter(room_id: StringName) -> Node:
 	var run := _root.get_node("RunState")
 	run.call("start_run")
-	var entries := (load(WorldMap.ROOMS[room_id].scene) as PackedScene).instantiate()
+	var entries := (load(World.scene(room_id)) as PackedScene).instantiate()
 	var entry: String = entries.get_node("Entries").get_child(0).name
 	entries.free()
 	run.call("enter_room", room_id, StringName(entry))
-	var room := (load(WorldMap.ROOMS[room_id].scene) as PackedScene).instantiate()
+	var room := (load(World.scene(room_id)) as PackedScene).instantiate()
 	_root.add_child(room)
 	return room
 
 
 func _origin(room_id: StringName) -> Vector2:
-	return Vector2(WorldMap.ROOMS[room_id].cell) * WorldMap.SCREEN_SIZE
+	return Vector2(World.cell(room_id)) * World.SCREEN_SIZE

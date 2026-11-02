@@ -6,7 +6,7 @@ const HEALTH_BAR_SCENE := preload("res://scenes/ui/health_bar.tscn")
 const BOSS_BAR_SCENE := preload("res://scenes/ui/boss_bar.tscn")
 const BRINECAP_SCENE := preload("res://scenes/items/brinecap.tscn")
 const RunStateScript := preload("res://scripts/core/run_state.gd")
-const WorldMap := preload("res://scripts/core/world_map.gd")
+const World := preload("res://scripts/core/world.gd")
 const ENEMY_GROUP := &"enemy"
 # Long enough to see the Player fall and hear the defeat sound before the Room is replaced.
 const DEFEAT_PAUSE := 1.2
@@ -14,6 +14,8 @@ const DEFEAT_PAUSE := 1.2
 # Rolled once per enemy defeat, from 0 up to 1; under the enemy's DROP_CHANCE leaves a
 # Brinecap. Tests swap it for a fixed roll.
 var drop_roll: Callable = randf
+# Which Room this is, found in the World by its own scene; &"" when the World doesn't hold it.
+var _room_id: StringName = &""
 # Where defeated enemies left a Brinecap, waiting for the Room's next physics step.
 var _brinecaps_due: Array[Vector2] = []
 
@@ -23,6 +25,9 @@ var _brinecaps_due: Array[Vector2] = []
 
 
 func _ready() -> void:
+	_find_self_in_world()
+	_fit_camera_to_room()
+	_add_background()
 	_ensure_pause_menu()
 	_ensure_dialogue_box()
 	_ensure_health_bar()
@@ -32,6 +37,36 @@ func _ready() -> void:
 	if _player != null and not _player.is_connected(&"defeated", _on_player_defeated):
 		_player.connect(&"defeated", _on_player_defeated)
 	_hand_enemy_defeats_to_player()
+
+
+func _find_self_in_world() -> void:
+	_room_id = World.room_for_scene(scene_file_path)
+	if _room_id.is_empty():
+		push_error("Scene '%s' is not a Room in the World." % scene_file_path)
+
+
+# The camera stays inside the Room: its size in screens, from the World.
+func _fit_camera_to_room() -> void:
+	var camera := get_node_or_null("Player/Camera2D") as Camera2D
+	if camera == null or _room_id.is_empty():
+		return
+	var room_size := Vector2(World.size(_room_id)) * World.SCREEN_SIZE
+	camera.limit_left = 0
+	camera.limit_top = 0
+	camera.limit_right = int(room_size.x)
+	camera.limit_bottom = int(room_size.y)
+
+
+# The Room's Background, from the World, drawn behind everything and told where the Room sits.
+func _add_background() -> void:
+	var path := World.background(_room_id)
+	if path.is_empty() or has_node(^"Background"):
+		return
+	var background := (load(path) as PackedScene).instantiate()
+	background.name = "Background"
+	background.set("room_origin", Vector2(World.cell(_room_id)) * World.SCREEN_SIZE)
+	add_child(background)
+	move_child(background, 0)
 
 
 # Every enemy defeated in this Room earns the Player its Experience, whatever struck it down, and
@@ -69,8 +104,7 @@ func _on_player_defeated() -> void:
 	var run := _get_run()
 	if run != null:
 		run.recover_from_defeat()
-	var first_room: Dictionary = WorldMap.ROOMS[RunStateScript.FIRST_ROOM_ID]
-	get_tree().change_scene_to_file.call_deferred(first_room.scene)
+	get_tree().change_scene_to_file.call_deferred(World.scene(RunStateScript.FIRST_ROOM_ID))
 
 
 # The Run says which Entry the Player came through; this Room says where it is.
@@ -79,8 +113,7 @@ func _place_player_at_entry() -> void:
 	var entry_id := run.entry_id if run != null else RunStateScript.DEFAULT_ENTRY_ID
 	var entry := _entries.get_node_or_null(NodePath(entry_id)) as Marker2D
 	if entry == null:
-		var room_id := run.room_id if run != null else RunStateScript.FIRST_ROOM_ID
-		push_error("Room '%s' has no Entry '%s'." % [room_id, entry_id])
+		push_error("Room '%s' has no Entry '%s'." % [_room_id, entry_id])
 		return
 
 	_player.global_position = entry.global_position
@@ -91,9 +124,7 @@ func _play_region_music() -> void:
 	if not is_inside_tree():
 		return
 	var music := get_node_or_null("/root/Music")
-	var run := _get_run()
-	var room_id := run.room_id if run != null else RunStateScript.FIRST_ROOM_ID
-	var theme := WorldMap.music_for(room_id)
+	var theme := World.theme(_room_id)
 	if music != null and not theme.is_empty():
 		music.call("play", load(theme))
 

@@ -1,7 +1,7 @@
 extends Node2D
 
 const RunStateScript := preload("res://scripts/core/run_state.gd")
-const WorldMap := preload("res://scripts/core/world_map.gd")
+const World := preload("res://scripts/core/world.gd")
 const BLINK_TIME := 0.5
 # Long enough for the start chime to finish before the first Room loads.
 const START_PAUSE := 0.35
@@ -79,8 +79,7 @@ func _on_start_pressed() -> void:
 		run.start_run()
 		run.intro_pending = true
 	await get_tree().create_timer(START_PAUSE).timeout
-	var first_room: Dictionary = WorldMap.ROOMS[RunStateScript.FIRST_ROOM_ID]
-	get_tree().change_scene_to_file(first_room.scene)
+	get_tree().change_scene_to_file(World.scene(RunStateScript.FIRST_ROOM_ID))
 
 
 func _on_quit_pressed() -> void:

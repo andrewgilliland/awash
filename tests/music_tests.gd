@@ -19,6 +19,7 @@ func get_tests() -> Array:
 		["Music keeps going when asked for the same track", _test_same_track_continues],
 		["Music switches to a new track, and stops", _test_switches_and_stops],
 		["A Room starts its region's theme", _test_room_starts_theme],
+		["A scene the World doesn't hold plays no theme", _test_unheld_scene_is_silent],
 	]
 
 
@@ -67,6 +68,20 @@ func _test_room_starts_theme() -> bool:
 	var valid := music.current() != null and music.current().resource_path == COAST_THEME_PATH
 	room.free()
 	music.stop()
+	return valid
+
+
+# Wherever the Run says the Player is, a Room finds itself in the World by its own scene.
+func _test_unheld_scene_is_silent() -> bool:
+	var music := _root.get_node_or_null("Music") as MusicScript
+	if music == null:
+		return false
+	music.stop()
+	var room := FIRST_ROOM.instantiate()
+	room.scene_file_path = "res://scenes/main.tscn"
+	_root.add_child(room)
+	var valid := music.current() == null
+	room.free()
 	return valid
 
 
