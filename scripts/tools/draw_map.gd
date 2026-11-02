@@ -1,8 +1,9 @@
 extends SceneTree
 
-# Draws the whole World as the Map draws it, every Room shown, the planned ones in outline, each
-# Region named: a picture to see the World's shape by before building it. Run it with
-# scripts/tools/draw_map.sh, which needs a window to draw in (a headless Godot draws nothing).
+# Draws the whole World as the Map draws it, every Room shown, each Region named. With --plan it
+# draws the World's plan instead, the Planned Rooms in outline: a picture to see the World's shape
+# by before building it. Run it with scripts/tools/draw_map.sh, which needs a window to draw in
+# (a headless Godot draws nothing).
 
 const World := preload("res://scripts/core/world.gd")
 const MapLayout := preload("res://scripts/ui/map_layout.gd")
@@ -13,21 +14,25 @@ const SCALE := 3
 const BACKDROP := Color("0e0e16")
 
 
-# Every Room in the World, built and planned, as the Map lays them out.
-static func map_rooms() -> Dictionary:
+# The World as the Map lays it out: every built Room as it is today, or, as planned, every Room
+# built and planned where the World's plan puts it.
+static func map_rooms(as_planned: bool) -> Dictionary:
 	var rooms := {}
-	for room_id in World.room_ids() + World.planned_ids():
-		rooms[room_id] = MapView.map_room(room_id)
+	var ids := World.room_ids() + World.planned_ids() if as_planned else World.room_ids()
+	for room_id in ids:
+		rooms[room_id] = MapView.map_room(room_id, as_planned)
 	return rooms
 
 
 func _initialize() -> void:
-	var args := OS.get_cmdline_user_args()
-	_draw.call_deferred(args[0] if not args.is_empty() else "map.png")
+	var args := Array(OS.get_cmdline_user_args())
+	var as_planned := args.has("--plan")
+	args.erase("--plan")
+	_draw.call_deferred(args[0] if not args.is_empty() else "map.png", as_planned)
 
 
-func _draw(out_path: String) -> void:
-	var layout := MapLayout.whole(map_rooms())
+func _draw(out_path: String, as_planned: bool) -> void:
+	var layout := MapLayout.whole(map_rooms(as_planned))
 	var size := Vector2i(layout.size)
 	var viewport := SubViewport.new()
 	viewport.size = size

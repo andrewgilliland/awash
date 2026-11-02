@@ -54,17 +54,21 @@ func _layout() -> Dictionary:
 	return MapLayout.layout(rooms, room_id, visited, _player_position(), size)
 
 
-# A Room as the Map lays it out, from the World.
-static func map_room(room_id: StringName) -> Dictionary:
-	return {
-		cell = World.cell(room_id),
-		size = World.size(room_id),
-		region = World.region_name(room_id),
-		colour = World.region_colour(room_id),
-		exits = World.exits(room_id),
-		markers = World.markers(room_id),
-		planned = room_id in World.planned_ids(),
-	}
+# A Room as the Map lays it out, from the World: as it is, or as the World's plan lays it out.
+static func map_room(room_id: StringName, as_planned := false) -> Dictionary:
+	var room := World.planned(room_id)
+	if not as_planned:
+		room = {
+			cell = World.cell(room_id),
+			size = World.size(room_id),
+			region = World.region(room_id),
+			exits = World.exits(room_id),
+			markers = World.markers(room_id),
+		}
+	room.colour = World.colour_of_region(room.region)
+	room.region = World.name_of_region(room.region)
+	room.planned = room_id in World.planned_ids()
+	return room
 
 
 # Null outside the tree or without the autoload (headless tests), which reads as a new Run.
