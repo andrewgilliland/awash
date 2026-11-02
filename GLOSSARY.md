@@ -83,7 +83,7 @@ A place in a Safe spoke where the Player recovers, and which a defeat returns th
 _Avoid_: Checkpoint, save point, bonfire
 
 **Background**:
-The distant layers of a Region drawn behind its Rooms, each scrolling slower the farther back it is: for the Waking Coast, a sky, drifting clouds and the sea. Every Room in the Region shows the same Background, set by where the Room sits in the world, so it carries on across Exits; the caves show a dark rock wall instead.
+The distant layers of a Region drawn behind its Rooms, each scrolling slower the farther back it is: for the Waking Coast, a sky with the sun and its beams fixed in it, clouds far and near, ships sailing on the horizon, and the sea. Every Room in the Region shows the same Background, set by where the Room sits in the world, so it carries on across Exits; the caves show a dark rock wall instead.
 _Avoid_: Backdrop, skybox, parallax (as a thing)
 
 **Region theme**:
