@@ -197,7 +197,8 @@ export function showWorld(editor: WorldEditor, stage: HTMLElement, side: HTMLEle
 
   draw();
   const tools = editing ? toolbar(editor) : [];
-  stage.replaceChildren(...tools, c);
+  const map = el("div", { className: "map-box" }, c);
+  stage.replaceChildren(...tools, map);
   side.replaceChildren(...details(editor));
   return {
     highlight(id) {
@@ -207,15 +208,15 @@ export function showWorld(editor: WorldEditor, stage: HTMLElement, side: HTMLEle
       if (!room) {
         return;
       }
-      // Scrolled into the middle of the stage if any of it is out of sight.
+      // Scrolled into the middle of the map if any of it is out of sight.
       const box = c.getBoundingClientRect();
-      const view = stage.getBoundingClientRect();
+      const view = map.getBoundingClientRect();
       const left = box.left + room.block.x * SCALE;
       const top = box.top + room.block.y * SCALE;
       const right = left + room.block.w * SCALE;
       const bottom = top + room.block.h * SCALE;
       if (left < view.left || right > view.right || top < view.top || bottom > view.bottom) {
-        stage.scrollBy({
+        map.scrollBy({
           left: (left + right) / 2 - (view.left + view.right) / 2,
           top: (top + bottom) / 2 - (view.top + view.bottom) / 2,
           behavior: "smooth",

@@ -152,26 +152,16 @@ ul.results li.pass { color: var(--muted); }
 #status.pass { color: var(--pass); }
 #actions { display: flex; gap: 6px; }
 
-/* The tools stay at the top of the stage as the World or Room under them scrolls. */
-.toolbar {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  flex-wrap: wrap;
-  position: sticky;
-  top: -18px;
-  left: 0;
-  z-index: 1;
-  margin: -18px -18px 12px;
-  padding: 18px 18px 8px;
-  background: var(--panel);
-}
+/* The tools sit at the top of the stage; only the World or Room under them scrolls. */
+.toolbar { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; flex: none; margin-bottom: 12px; }
 .toolbar label { color: var(--muted); font-size: 11px; display: flex; gap: 6px; align-items: center; }
 label.field { display: grid; gap: 4px; color: var(--accent); font-weight: 700; font-size: 11px; margin: 10px 0; }
 dd.size input { width: 4em; }
 #side button { margin-top: 10px; width: 100%; }
 .layer { display: flex; gap: 8px; align-items: center; padding: 4px 0; border-bottom: 1px dashed var(--line); }
-.palette-box, .room-box { overflow: auto; max-width: 100%; }
+.palette-box { overflow: auto; max-width: 100%; }
+/* The World or a Room, scrolling both ways inside the stage. */
+.map-box, .room-box { flex: 1; min-height: 0; min-width: 0; overflow: auto; }
 .palette-box { max-height: 360px; border: 1px solid var(--line-strong); margin: 6px 0; }
 canvas.palette { cursor: crosshair; }
 .room-box canvas { cursor: crosshair; }
@@ -180,21 +170,25 @@ canvas.palette { cursor: crosshair; }
 ::-webkit-scrollbar-track { background: #000; }
 ::-webkit-scrollbar-thumb { background: var(--line-strong); }
 
-/* The page: the sidebar down the left, the status and actions across the top, then the stage and
-   the details panel. */
+/* The page fills the window and no more: the sidebar down the left, the status and actions across
+   the top, then the stage and the details panel. The sidebar and details panel each scroll up and
+   down; the stage keeps its tools in place and scrolls the World or Room under them both ways. */
 body {
   display: grid;
-  grid-template-columns: 260px 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-columns: 260px minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 12px;
   padding: 12px;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
 }
-#sidebar { grid-row: 1 / span 2; padding: 16px; overflow: auto; display: flex; flex-direction: column; gap: 8px; }
+#sidebar { grid-row: 1 / span 2; padding: 16px; overflow: hidden auto; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
 header { display: flex; gap: 12px; align-items: center; min-height: 30px; }
 #status { flex: 1; }
-main { display: grid; grid-template-columns: 1fr 340px; gap: 12px; min-height: 0; }
-#stage, #side { padding: 18px; overflow: auto; }
+main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; grid-template-rows: minmax(0, 1fr); gap: 12px; min-height: 0; }
+#stage { padding: 18px; display: flex; flex-direction: column; overflow: hidden; min-height: 0; min-width: 0; }
+#side { padding: 18px; overflow: hidden auto; min-height: 0; }
 
 /* The title, framed like a sign: a small kicker over a bold name. */
 .brand-box {
@@ -246,8 +240,10 @@ main { display: grid; grid-template-columns: 1fr 340px; gap: 12px; min-height: 0
 .card:hover:not(.lit):not(:disabled) { background: #252525; }
 .card:disabled { opacity: 0.7; }
 
+/* Too narrow for three columns: they stack, and the page scrolls instead. */
 @media (max-width: 900px) {
-  body { grid-template-columns: 1fr; }
+  body { grid-template-columns: 1fr; height: auto; overflow: visible; }
+  #stage { height: 70vh; }
   #sidebar { grid-row: auto; }
   main { grid-template-columns: 1fr; }
 }
