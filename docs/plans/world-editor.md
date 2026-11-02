@@ -33,4 +33,4 @@ Each step is its own PR, built test-first.
 2. The editor's skeleton: `npm run world-editor`, a read-only World view and Room view, and the Check button. *(Done.)*
 3. Editing the World. *(Done.)*
 4. Painting tiles, and saving safely. *(Done.)*
-5. Building a Planned Room.
+5. Building a Planned Room. *(Done.)* Each Region names its ground tile (`floor`) for a new Room's starter floor, which runs along the Room's bottom row, not every screen's, so a tall Room's screens stay open to each other.

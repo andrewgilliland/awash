@@ -1,7 +1,8 @@
 // The World editor's page: the World view (as it is, or as planned, where the Plan is edited), the
 // read-only Room view, saving the World's data, and the Check, which runs the game's tests.
 
-import { el, readRepo } from "./dom";
+import { el, readRepo, versionOf } from "./dom";
+import { buildRoom } from "./build";
 import { showRoom } from "./roomView";
 import type { WorldData } from "./world";
 import { serializeWorld } from "./worldFile";
@@ -105,6 +106,9 @@ function render() {
       view = { kind: "room", id };
       render();
     },
+    build(id) {
+      void build(id);
+    },
   };
   // the World view keeps its own selection as you click, and hands it back here
   Object.defineProperty(editor, "selected", { get: () => selected, set: (id: string | null) => (selected = id) });
@@ -127,6 +131,55 @@ function redo() {
     world = next;
     render();
   }
+}
+
+// Writes a file the editor owns over the version it stands on; null if it was written.
+async function write(path: string, base: string, text: string): Promise<{ version?: string; reason?: string }> {
+  const response = await fetch("/api/save", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ path, base, text }),
+  });
+  return response.json();
+}
+
+// Builds a Planned Room: its scene first, written only where no file is yet, then the World with the
+// Room given that scene, along with any edits not yet saved.
+async function build(id: string) {
+  const result = buildRoom(world, id);
+  if ("error" in result) {
+    say(result.error, "fail");
+    return;
+  }
+  const region = world.rooms[id].region;
+  for (const sheet of ["terrain", "scenery"]) {
+    const found = await fetch(`/repo/assets/regions/${region}/tiles/${sheet}.tres`, { method: "HEAD" });
+    if (!found.ok) {
+      say(`${world.regions[region]?.name ?? region} has no tile sheets yet, so its Rooms can't be built.`, "fail");
+      return;
+    }
+  }
+  const edits = dirty() ? " It also saves your other edits to the World." : "";
+  if (!confirm(`Build ${id}? This writes ${result.path} and puts the Room in the game.${edits}`)) {
+    return;
+  }
+  const scene = await write(result.path, await versionOf(""), result.scene);
+  if (!scene.version) {
+    say(scene.reason === "changed" ? `There's a file at ${result.path} already, so nothing was built.` : `${result.path} can't be written.`, "fail");
+    return;
+  }
+  const text = serializeWorld(result.world);
+  const saved_ = await write(WORLD_PATH, version, text);
+  if (!saved_.version) {
+    say(`Wrote ${result.path}, but ${WORLD_PATH} changed on disk since it was loaded, so the World doesn't name it yet. Reload, then give ${id} its scene.`, "fail");
+    return;
+  }
+  edit(result.world);
+  version = saved_.version;
+  saved = text;
+  selected = id;
+  say(`Built ${id} at ${result.path}. Open it to paint; the Check shows what its neighbours still need.`, "pass");
+  render();
 }
 
 async function save() {

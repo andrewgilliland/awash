@@ -31,6 +31,8 @@ export interface RegionRecord {
   note?: string;
   name: string;
   colour: string;
+  // The ground a new Room's starter floor is painted with: a source and atlas tile in its terrain.
+  floor?: [number, number, number];
   theme?: string;
   background?: string;
   backgrounds?: Record<string, string>;

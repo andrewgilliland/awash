@@ -3,6 +3,7 @@
 		"waking_coast": {
 			"name": "Waking Coast",
 			"colour": "#183931",
+			"floor": [0, 2, 1],
 			"theme": "res://assets/regions/waking_coast/music/theme.wav",
 			"background": "res://scenes/regions/waking_coast/background.tscn",
 			"backgrounds": {"cave": "res://scenes/regions/waking_coast/cave_background.tscn"}
