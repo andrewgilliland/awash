@@ -9,13 +9,10 @@ const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 const SCREEN_CELLS := Vector2i(10, 9)
 const TRIGGER_LAYER := 1 << 7
 const PLAYER_LAYER := 1 << 1
-# The coast is drawn from the tropical island and jungle art, which starts at this row on both
-# sheets. Two older tiles stay until they are drawn in its style: the shallows, kept for how a
-# pool sinks underfoot and always hidden under water, and Tidefen's bell, its rest point.
-const PACK_FIRST_ROW := 11
-const SHALLOW := Vector2i(5, 5)
-const BELL := Vector2i(3, 7)
-const WATER := [Vector2i(5, 16), Vector2i(6, 16)]
+# Every Room is drawn from the Tropical Island pack's sheets, but for the coast's own props: the
+# Caches' crate and Tidefen's bell, which the pack has none of.
+const PACK_DIR := "res://assets/packs/tropical_island/"
+const OWN_PROPS := "res://assets/regions/waking_coast/props/coast_props.png"
 
 # Needs a root that is already in the tree: a Room sets itself up from the World in _ready.
 var _root: Window
@@ -36,8 +33,7 @@ func get_tests() -> Array:
 		["Every Room draws its layers in order", _test_layer_order],
 		["Every Room keeps its tiles inside its size", _test_tiles_inside],
 		["Every Room draws only from its Region's sheets", _test_region_sheets],
-		["Every Room draws from the coast's tropical art", _test_tropical_art],
-		["Every shallow lies under water", _test_shallows_under_water],
+		["Every Room draws from the Tropical Island pack", _test_pack_art],
 		["No Room scene holds its own Background", _test_scene_leaves_background],
 		["Every Room draws its Region's Background behind all else", _test_background],
 		["Every Room's Region has a looping theme", _test_region_theme],
@@ -205,36 +201,21 @@ static func _draws_from_region_sheets(room_id: StringName, room: Node2D) -> bool
 	return valid
 
 
-func _test_tropical_art() -> bool:
-	return _every_room(_draws_tropical_art)
+func _test_pack_art() -> bool:
+	return _every_room(_draws_pack_art)
 
 
-static func _draws_tropical_art(room_id: StringName, room: Node2D) -> bool:
+static func _draws_pack_art(room_id: StringName, room: Node2D) -> bool:
 	var valid := true
 	for layer in _tile_layers(room):
-		var kept := SHALLOW if layer.name == "Terrain" else BELL
 		for cell in layer.get_used_cells():
-			var coords := layer.get_cell_atlas_coords(cell)
-			if coords.y < PACK_FIRST_ROW and coords != kept:
-				push_error("%s/%s %s draws %s" % [room_id, layer.name, cell, coords])
+			var source := layer.get_cell_source_id(cell)
+			var atlas := layer.tile_set.get_source(source) as TileSetAtlasSource
+			var sheet := atlas.texture.resource_path if atlas != null else ""
+			var drawn := atlas != null and atlas.has_tile(layer.get_cell_atlas_coords(cell))
+			if not drawn or (not sheet.begins_with(PACK_DIR) and sheet != OWN_PROPS):
+				push_error("%s/%s %s draws from %s" % [room_id, layer.name, cell, sheet])
 				valid = false
-	return valid
-
-
-func _test_shallows_under_water() -> bool:
-	return _every_room(_shallows_under_water)
-
-
-static func _shallows_under_water(room_id: StringName, room: Node2D) -> bool:
-	var terrain := room.get_node_or_null("Terrain") as TileMapLayer
-	var props := room.get_node_or_null("Props") as TileMapLayer
-	if terrain == null or props == null:
-		return false
-	var valid := true
-	for cell in terrain.get_used_cells_by_id(0, SHALLOW):
-		if props.get_cell_atlas_coords(cell) not in WATER:
-			push_error("%s shallow %s is not under water" % [room_id, cell])
-			valid = false
 	return valid
 
 

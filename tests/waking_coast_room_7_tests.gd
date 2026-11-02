@@ -19,21 +19,21 @@ const LANDMARKS := {
 	&"Terrain":
 	{
 		# the trail's end, a branch down from it, and the arena's floor
-		Vector2i(0, 3): Vector2i(1, 13),
-		Vector2i(1, 3): Vector2i(2, 13),
-		Vector2i(2, 5): Vector2i(2, 29),
-		Vector2i(2, 7): Vector2i(1, 13),
-		Vector2i(9, 7): Vector2i(1, 13),
-		Vector2i(0, 6): Vector2i(1, 14),
+		Vector2i(0, 3): Vector2i(2, 13),
+		Vector2i(1, 3): Vector2i(5, 13),
+		Vector2i(2, 5): Vector2i(1, 7),
+		Vector2i(2, 7): Vector2i(2, 13),
+		Vector2i(9, 7): Vector2i(3, 13),
+		Vector2i(0, 6): Vector2i(2, 14),
 	},
 	# a jungle tree behind the arena: crown and roots
-	&"Jungle": {Vector2i(4, 3): Vector2i(3, 17), Vector2i(4, 6): Vector2i(3, 20)},
+	&"Jungle": {Vector2i(4, 3): Vector2i(7, 1), Vector2i(4, 6): Vector2i(7, 4)},
 	# a sapling on the trail's end, and a fern and a sapling by the gate on to Tidefen
 	&"Props":
 	{
-		Vector2i(0, 1): Vector2i(3, 22),
-		Vector2i(6, 5): Vector2i(6, 22),
-		Vector2i(9, 5): Vector2i(3, 22),
+		Vector2i(0, 1): Vector2i(6, 5),
+		Vector2i(6, 5): Vector2i(7, 5),
+		Vector2i(9, 5): Vector2i(6, 5),
 	},
 }
 
@@ -69,7 +69,7 @@ func _test_lays_out_one_screen() -> bool:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	for column in range(CELLS.size.x):
-		valid = valid and terrain.get_cell_source_id(Vector2i(column, CELLS.end.y - 1)) == 0
+		valid = valid and terrain.get_cell_source_id(Vector2i(column, CELLS.end.y - 1)) != -1
 	room.free()
 	return valid
 
@@ -82,7 +82,7 @@ func _test_arena_is_open() -> bool:
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	var valid := true
 	for column in range(ARENA.position.x, ARENA.end.x):
-		valid = valid and terrain.get_cell_source_id(Vector2i(column, ARENA_FLOOR_ROW)) == 0
+		valid = valid and terrain.get_cell_source_id(Vector2i(column, ARENA_FLOOR_ROW)) != -1
 		for row in range(ARENA.position.y, ARENA.end.y):
 			valid = valid and terrain.get_cell_source_id(Vector2i(column, row)) == -1
 	room.free()

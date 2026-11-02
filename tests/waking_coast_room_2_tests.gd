@@ -15,29 +15,29 @@ const LANDMARKS := {
 	# Palms on the beach: crown middle and trunk.
 	&"Trees":
 	{
-		Vector2i(7, 2): Vector2i(1, 18),
-		Vector2i(7, 5): Vector2i(1, 19),
-		Vector2i(10, 2): Vector2i(1, 18),
-		Vector2i(10, 4): Vector2i(1, 19),
+		Vector2i(7, 2): Vector2i(5, 1),
+		Vector2i(7, 5): Vector2i(5, 4),
+		Vector2i(10, 2): Vector2i(8, 1),
+		Vector2i(10, 4): Vector2i(8, 3),
 	},
-	&"Wreck": {Vector2i(18, 4): Vector2i(4, 31)},
+	&"Wreck": {Vector2i(18, 4): Vector2i(4, 2)},
 	&"Terrain":
 	{
-		Vector2i(0, 4): Vector2i(1, 13),
-		Vector2i(3, 4): Vector2i(2, 13),
-		Vector2i(1, 6): Vector2i(3, 14),
-		Vector2i(4, 5): Vector2i(0, 15),
-		Vector2i(8, 6): Vector2i(5, 5),
-		Vector2i(13, 5): Vector2i(0, 13),
-		Vector2i(14, 4): Vector2i(7, 13),
-		Vector2i(15, 1): Vector2i(1, 15),
-		Vector2i(16, 6): Vector2i(1, 11),
+		Vector2i(0, 4): Vector2i(3, 13),
+		Vector2i(3, 4): Vector2i(5, 13),
+		Vector2i(1, 6): Vector2i(3, 15),
+		Vector2i(4, 5): Vector2i(4, 4),
+		Vector2i(8, 6): Vector2i(1, 1),
+		Vector2i(13, 5): Vector2i(1, 13),
+		Vector2i(14, 4): Vector2i(1, 5),
+		Vector2i(15, 1): Vector2i(5, 4),
+		Vector2i(16, 6): Vector2i(3, 1),
 	},
 	&"Props":
 	{
-		Vector2i(11, 5): Vector2i(2, 16),
-		Vector2i(15, 2): Vector2i(6, 30),
-		Vector2i(16, 0): Vector2i(7, 15),
+		Vector2i(11, 5): Vector2i(14, 7),
+		Vector2i(15, 2): Vector2i(3, 7),
+		Vector2i(16, 0): Vector2i(0, 0),
 	},
 }
 
@@ -72,7 +72,7 @@ func _test_lays_out_two_screens() -> bool:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	for column in range(CELLS.size.x):
-		valid = valid and terrain.get_cell_source_id(Vector2i(column, 8)) == 0
+		valid = valid and terrain.get_cell_source_id(Vector2i(column, 8)) != -1
 	room.free()
 	return valid
 

@@ -9,23 +9,20 @@ const LAYERS := {Sky = 0.1, Clouds = 0.2, Sea = 0.6}
 const CAVE_LAYERS := {Wall = 0.3, Glints = 0.6}
 # How far an Exit's edge may sit from the Entry it leads to, across the crossing, in the world.
 const SEAM_TOLERANCE := 24.0
-# A daytime sky over the sea, from the top of a screen down: sky, a hazy band, the horizon, then
-# sea; tile coords on the Waking Coast's scenery sheet.
-const SKY := Vector2i(7, 18)
-const HAZE := Vector2i(7, 19)
-const HORIZON := Vector2i(7, 20)
-const HORIZON_SHIP := Vector2i(3, 21)
-const SEA := Vector2i(7, 21)
-const HAZE_ROW := 4
+# A daytime sky over the sea, from the top of a screen down: sky, the horizon, then sea; the
+# pack's sky blue from its background sheet, and its water.
+const SKY := Vector2i(8, 1)
+const HORIZON := Vector2i(2, 2)
+const SEA := Vector2i(1, 2)
 const HORIZON_ROW := 5
 const SCREEN_CELLS := Vector2i(10, 9)
 # The sun (2x2) and a cloud (left, middle, right), where each screen of clouds holds them.
 const CLOUDS := {
-	Vector2i(4, 0): Vector2i(5, 18),
-	Vector2i(5, 1): Vector2i(6, 19),
-	Vector2i(1, 1): Vector2i(5, 17),
-	Vector2i(2, 1): Vector2i(6, 17),
-	Vector2i(3, 1): Vector2i(7, 17),
+	Vector2i(4, 0): Vector2i(6, 1),
+	Vector2i(5, 1): Vector2i(7, 2),
+	Vector2i(1, 1): Vector2i(3, 1),
+	Vector2i(2, 1): Vector2i(4, 1),
+	Vector2i(3, 1): Vector2i(5, 1),
 }
 
 # Needs a root that is already in the tree: a Room sets its Background up in _ready.
@@ -65,18 +62,16 @@ func _test_daytime_shore() -> bool:
 	for row in range(SCREEN_CELLS.y):
 		for column in range(SCREEN_CELLS.x):
 			var cell := Vector2i(column, row)
-			if row < HAZE_ROW:
+			if row < HORIZON_ROW:
 				valid = valid and sky.get_cell_atlas_coords(cell) == SKY
-			elif row == HAZE_ROW:
-				valid = valid and sky.get_cell_atlas_coords(cell) == HAZE
 			elif row == HORIZON_ROW:
-				valid = valid and sea.get_cell_atlas_coords(cell) in [HORIZON, HORIZON_SHIP]
+				valid = valid and sea.get_cell_atlas_coords(cell) == HORIZON
 			else:
 				valid = valid and sea.get_cell_atlas_coords(cell) == SEA
-	# The sky reaches up past the top of the screen, and down behind the sea as haze, so the two
-	# never part as the camera climbs; the sea reaches down past the foot of the screen.
+	# The sky reaches up past the top of the screen, and down behind the sea, so the two never
+	# part as the camera climbs; the sea reaches down past the foot of the screen.
 	valid = valid and sky.get_cell_atlas_coords(Vector2i(0, -2)) == SKY
-	valid = valid and sky.get_cell_atlas_coords(Vector2i(0, SCREEN_CELLS.y + 4)) == HAZE
+	valid = valid and sky.get_cell_atlas_coords(Vector2i(0, SCREEN_CELLS.y + 4)) == SKY
 	valid = valid and sea.get_cell_atlas_coords(Vector2i(0, SCREEN_CELLS.y + 4)) == SEA
 	for cell: Vector2i in CLOUDS:
 		valid = valid and clouds.get_cell_atlas_coords(cell) == CLOUDS[cell]

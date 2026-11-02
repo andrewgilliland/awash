@@ -15,48 +15,47 @@ const EAST_ENTRY := Vector2(296, 96)
 const EAST_WALL_TOP := 88
 const EAST_EXIT_BOTTOM := 72
 const WORLD_LAYER := 1
-const SHALLOW := Vector2i(5, 5)
-const DECKS := [Vector2i(2, 33), Vector2i(3, 33), Vector2i(5, 33)]
+const DECKS := [Vector2i(1, 6), Vector2i(2, 6), Vector2i(3, 6), Vector2i(4, 6)]
 # The beach's east end, where the sand gives way into the sea cave, and the stern
 # compartment's deck with its crate.
 const EAST_END := Vector2i(18, 6)
 const SINKHOLE_COLUMN := 19
 const STERN_DECK := Vector2i(17, 1)
 const STERN_CRATE := Vector2i(18, 0)
-const CRATE := Vector2i(7, 15)
+const CRATE := Vector2i(0, 0)
 # Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_4.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	# a jungle tree on the cliff top, where the jungle starts: crown and roots
-	&"Jungle": {Vector2i(0, 0): Vector2i(3, 17), Vector2i(0, 3): Vector2i(3, 20)},
+	&"Jungle": {Vector2i(0, 0): Vector2i(7, 1), Vector2i(0, 3): Vector2i(7, 4)},
 	&"Wreck":
 	{
 		# a low hull, a broken mast, a taller hull, and the stern standing on end
-		Vector2i(7, 5): Vector2i(2, 31),
-		Vector2i(8, 0): Vector2i(6, 33),
-		Vector2i(11, 4): Vector2i(6, 33),
-		Vector2i(14, 4): Vector2i(5, 31),
-		Vector2i(16, 2): Vector2i(2, 31),
-		Vector2i(18, 5): Vector2i(4, 31),
+		Vector2i(7, 5): Vector2i(2, 2),
+		Vector2i(8, 0): Vector2i(12, 9),
+		Vector2i(11, 4): Vector2i(12, 9),
+		Vector2i(14, 4): Vector2i(3, 2),
+		Vector2i(16, 2): Vector2i(2, 2),
+		Vector2i(18, 5): Vector2i(4, 2),
 	},
 	&"Terrain":
 	{
 		# the cliff the salt cliffs' top runs on to, and a ledge down from it
-		Vector2i(0, 4): Vector2i(1, 13),
-		Vector2i(2, 4): Vector2i(2, 13),
-		Vector2i(3, 5): Vector2i(0, 15),
+		Vector2i(0, 4): Vector2i(3, 13),
+		Vector2i(2, 4): Vector2i(5, 13),
+		Vector2i(3, 5): Vector2i(4, 4),
 		# two tidal pools between wet edges, with a sand bar between them
-		Vector2i(6, 6): Vector2i(1, 11),
-		Vector2i(8, 6): Vector2i(5, 5),
-		Vector2i(10, 6): Vector2i(1, 11),
-		Vector2i(11, 6): Vector2i(1, 11),
-		Vector2i(14, 6): Vector2i(5, 5),
-		Vector2i(16, 6): Vector2i(1, 11),
+		Vector2i(6, 6): Vector2i(2, 1),
+		Vector2i(8, 6): Vector2i(2, 1),
+		Vector2i(10, 6): Vector2i(3, 1),
+		Vector2i(11, 6): Vector2i(4, 1),
+		Vector2i(14, 6): Vector2i(2, 1),
+		Vector2i(16, 6): Vector2i(3, 1),
 		# decks on the wrecks, up to the stern
-		Vector2i(7, 4): Vector2i(2, 33),
-		Vector2i(10, 3): Vector2i(2, 33),
-		Vector2i(15, 3): Vector2i(5, 33),
-		Vector2i(16, 1): Vector2i(2, 33),
+		Vector2i(7, 4): Vector2i(1, 6),
+		Vector2i(10, 3): Vector2i(1, 6),
+		Vector2i(15, 3): Vector2i(4, 6),
+		Vector2i(16, 1): Vector2i(1, 6),
 	},
 	&"Props": {STERN_CRATE: CRATE},
 }
@@ -96,7 +95,7 @@ func _test_lays_out_two_screens() -> bool:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	for column in range(CELLS.size.x):
-		var filled := terrain.get_cell_source_id(Vector2i(column, CELLS.end.y - 1)) == 0
+		var filled := terrain.get_cell_source_id(Vector2i(column, CELLS.end.y - 1)) != -1
 		valid = valid and filled == (column != SINKHOLE_COLUMN)
 	room.free()
 	return valid
@@ -111,7 +110,7 @@ func _test_west_entry_on_cliff() -> bool:
 	if valid:
 		var terrain := room.get_node("Terrain") as TileMapLayer
 		var below := Vector2i(entry.position / TILE)
-		valid = terrain.get_cell_source_id(below) == 0
+		valid = terrain.get_cell_source_id(below) != -1
 		valid = valid and terrain.get_cell_source_id(below + Vector2i.UP) == -1
 	room.free()
 	return valid
@@ -142,7 +141,7 @@ func _test_leads_east() -> bool:
 	if valid:
 		var terrain := room.get_node("Terrain") as TileMapLayer
 		var below := Vector2i(entry.position / TILE)
-		valid = terrain.get_cell_source_id(below) == 0 and below.x < SINKHOLE_COLUMN
+		valid = terrain.get_cell_source_id(below) != -1 and below.x < SINKHOLE_COLUMN
 	var exit := room.get_node_or_null("Exits/west") as Area2D
 	valid = valid and exit != null and exit.position.x < 0.0
 	valid = valid and exit.get("room_id") == &"waking_coast_3" and exit.get("entry_id") == &"east"
@@ -188,7 +187,7 @@ func _test_scavenger_in_pool() -> bool:
 		var row := int(scavenger.position.y / TILE)
 		for x in [scavenger.get("patrol_left"), scavenger.get("patrol_right")]:
 			var cell := Vector2i(int(x / TILE), row)
-			valid = valid and terrain.get_cell_atlas_coords(cell) == SHALLOW
+			valid = valid and RoomReach.is_water(terrain, cell)
 		valid = valid and scavenger.position.x > ROOM_SIZE.x / 2.0
 	room.free()
 	return valid
