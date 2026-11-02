@@ -1,0 +1,9 @@
+{
+  "name": "awash",
+  "private": true,
+  "description": "Only to start the World editor from the repo root; its own package is tools/world-editor.",
+  "scripts": {
+    "world-editor": "npm --prefix tools/world-editor run dev",
+    "world-editor:test": "npm --prefix tools/world-editor test"
+  }
+}
