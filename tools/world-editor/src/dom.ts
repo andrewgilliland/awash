@@ -7,6 +7,9 @@ export const MARKERS: Record<string, { colour: string; rows: string[] }> = {
   boss: { colour: "#e8584c", rows: [".....", "#.#.#", "#####", "#####", "....."] },
 };
 
+// What the page shows: the World, as it is or as planned, or one Room.
+export type View = { kind: "world"; planned: boolean } | { kind: "room"; id: string };
+
 export type Rect = { x: number; y: number; w: number; h: number };
 
 export function el<K extends keyof HTMLElementTagNameMap>(

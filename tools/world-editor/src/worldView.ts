@@ -219,7 +219,7 @@ function details(editor: WorldEditor): Node[] {
         { className: "muted" },
         planned
           ? "Drag a Room to move it, drag out empty screens with New Room, or click a Room's edge with Exits. Double-click a built Room to open it."
-          : "Click a Room to see it; double-click a built Room to open it. Edit the Plan in As planned.",
+          : "Click a Room to see it; double-click a built Room to open it. Edit it in The Plan.",
       ),
     ];
   }

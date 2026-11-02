@@ -25,6 +25,10 @@ Agreed 2026-11-02. The World editor is a local web app for laying out the World,
 - **Saving safely.** The editor writes files directly, and git is the undo between sessions. It refuses to save a file that changed on disk since it was loaded. Keep a Room's scene closed in Godot while painting it.
 - **The Aseprite sketches** in `room_layouts/` are retired: no new ones, and the old ones and the test comments citing them go in a later tidy-up.
 
+## Look
+
+Black, with near-black hairline panels and square corners, JetBrains Mono (served from `node_modules`, not the web), uppercase bold headings and buttons, one pale amber accent, and amber `//` labels with dashed leaders to their values. A sidebar of cards moves between the World as it is, the Plan, the Check and each built Room, chosen over restyling the old header layout from two throwaway variants. The World and Room pictures keep the game's own pixel art and colours.
+
 ## Order of work
 
 Each step is its own PR, built test-first.
