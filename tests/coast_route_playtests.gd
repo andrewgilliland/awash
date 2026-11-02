@@ -16,6 +16,11 @@ const TIDE_POOLS_PATH := "res://scenes/rooms/waking_coast_10.tscn"
 # when the walk falls short.
 const TIDE_POOLS_EAST: Array[float] = [80.0, 112.0, 150.0, 200.0, 224.0, 256.0, 300.0]
 const TIDE_POOLS_WEST: Array[float] = [256.0, 224.0, 200.0, 150.0, 112.0, 80.0, 40.0]
+const CLIFF_TOPS_PATH := "res://scenes/rooms/waking_coast_12.tscn"
+# Along the cliff tops, east and back west: into the hollow and out, and over the mossy rock,
+# jumping whenever the walk stops short.
+const CLIFF_TOPS_EAST: Array[float] = [150.0, 176.0, 210.0, 280.0, 300.0]
+const CLIFF_TOPS_WEST: Array[float] = [210.0, 176.0, 150.0, 100.0, 40.0]
 const GULL_LEDGES_PATH := "res://scenes/rooms/waking_coast_11.tscn"
 # The gull ledges' ground, on from the salt cliffs' top, and the climb up its planks to the cliff
 # top, a jump at a time: [direction, launch x, height landed on].
@@ -39,9 +44,10 @@ func get_playtests() -> Array:
 	return [
 		["Player wades the tide pools from the palm shore to the salt cliffs", _walks_to_cliffs],
 		[
-			"Player climbs the gull ledges from the salt cliffs to the wreck graveyard",
+			"Player climbs the gull ledges from the salt cliffs to the cliff tops",
 			_climbs_gull_ledges
 		],
+		["Player walks the cliff tops from the gull ledges to the graveyard", _walks_cliff_tops],
 	]
 
 
@@ -86,8 +92,8 @@ func _walks_to_cliffs() -> bool:
 
 
 # From the salt cliffs' top onto the gull ledges' ground, up its planks to the cliff top and on
-# to the wreck graveyard's cliff; back west to the cliff top, and from the ledges' ground back to
-# the salt cliffs' top.
+# along the cliff tops; back west to the cliff top, and from the ledges' ground back to the salt
+# cliffs' top.
 func _climbs_gull_ledges() -> bool:
 	var player: CharacterBody2D = await _harness.call(
 		"_enter_room", &"waking_coast_3", &"east", SALT_CLIFFS_PATH
@@ -107,8 +113,8 @@ func _climbs_gull_ledges() -> bool:
 		await _harness.call("_walk_to_x", player, step[1])
 		await _harness.call("_jump_toward", player, step[0])
 		valid = player.is_on_floor() and absf(player.global_position.y - step[2]) < 1.0
-	valid = valid and await _harness.call("_walk_until_scene", &"move_right", WRECK_GRAVEYARD_PATH)
-	valid = valid and run.get("room_id") == &"waking_coast_4"
+	valid = valid and await _harness.call("_walk_until_scene", &"move_right", CLIFF_TOPS_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_12"
 	player = _harness.call("_current_player")
 	valid = valid and player != null and player.global_position.x < 40.0
 	valid = valid and absf(player.global_position.y - CLIFF_TOP_Y) < 1.0
@@ -127,5 +133,40 @@ func _climbs_gull_ledges() -> bool:
 	player = _harness.call("_current_player")
 	valid = valid and player != null and player.global_position.x > 120.0
 	valid = valid and absf(player.global_position.y - SALT_CLIFFS_TOP_Y) < 1.0
+	await _harness.call("_leave_scene")
+	return valid
+
+
+# From the gull ledges' cliff top along the cliff tops, through the hollow and over the rock, to
+# the wreck graveyard's cliff; then back west to the gull ledges.
+func _walks_cliff_tops() -> bool:
+	var player: CharacterBody2D = await _harness.call(
+		"_enter_room", &"waking_coast_12", &"west", CLIFF_TOPS_PATH
+	)
+	if player == null:
+		await _harness.call("_leave_scene")
+		return false
+	var run := _harness.root.get_node("RunState")
+	await _harness.call("_wade_to", player, CLIFF_TOPS_EAST)
+	var valid: bool = await _harness.call("_walk_until_scene", &"move_right", WRECK_GRAVEYARD_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_4"
+	player = _harness.call("_current_player")
+	valid = valid and player != null and player.global_position.x < 40.0
+	valid = valid and absf(player.global_position.y - CLIFF_TOP_Y) < 1.0
+
+	valid = valid and await _harness.call("_walk_until_scene", &"move_left", CLIFF_TOPS_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_12"
+	player = _harness.call("_current_player")
+	valid = valid and player != null and player.global_position.x > 280.0
+	valid = valid and absf(player.global_position.y - CLIFF_TOP_Y) < 1.0
+	if not valid:
+		await _harness.call("_leave_scene")
+		return false
+	await _harness.call("_wade_to", player, CLIFF_TOPS_WEST)
+	valid = valid and await _harness.call("_walk_until_scene", &"move_left", GULL_LEDGES_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_11"
+	player = _harness.call("_current_player")
+	valid = valid and player != null and player.global_position.x > 120.0
+	valid = valid and absf(player.global_position.y - CLIFF_TOP_Y) < 1.0
 	await _harness.call("_leave_scene")
 	return valid

@@ -115,7 +115,7 @@ func _test_exits() -> bool:
 		valid = _vertical_span(west.get_node("Edge")) == Vector2(SCREEN_HEIGHT, ROOM_SIZE.y)
 	var east := room.get_node_or_null("Exits/east") as Area2D
 	valid = valid and east != null and east.position.x > ROOM_SIZE.x
-	valid = valid and east.get("room_id") == &"waking_coast_4" and east.get("entry_id") == &"west"
+	valid = valid and east.get("room_id") == &"waking_coast_12" and east.get("entry_id") == &"west"
 	if valid:
 		valid = _vertical_span(east.get_node("Edge")) == Vector2(0, SCREEN_HEIGHT)
 	var terrain := room.get_node("Terrain") as TileMapLayer
