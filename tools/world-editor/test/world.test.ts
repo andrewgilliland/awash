@@ -97,6 +97,14 @@ describe("a Room on the Map", () => {
     expect(marker.x).toBeGreaterThanOrEqual(cliffs.block.x + CELL.w);
   });
 
+  it("tells which screen of the World a point in the picture is on, with room to add around it", () => {
+    const padded = layoutWorld(MADE_UP, true, 2);
+    expect(padded.screenAt(padded.rooms.find((room) => room.id === "cove")!.block.x + 1, padded.rooms[0].block.y + 1)).toEqual([0, 0]);
+    expect(padded.screenAt(5, 13)).toEqual([-2, -2]);
+    expect(padded.size.w).toBe(layout.size.w + 4 * CELL.w);
+    expect(padded.blockAt([1, 0], [2, 1])).toEqual(padded.rooms.find((room) => room.id === "cliffs")!.block);
+  });
+
   it("fits inside the picture", () => {
     for (const room of layout.rooms) {
       expect(room.block.x).toBeGreaterThanOrEqual(0);

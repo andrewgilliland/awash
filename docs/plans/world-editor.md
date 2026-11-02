@@ -31,6 +31,6 @@ Each step is its own PR, built test-first.
 
 1. The World's data into `assets/world.json`, with the ADR. No change in behaviour. *(Done.)*
 2. The editor's skeleton: `npm run world-editor`, a read-only World view and Room view, and the Check button. *(Done.)*
-3. Editing the World.
+3. Editing the World. *(Done.)*
 4. Painting tiles, and saving safely.
 5. Building a Planned Room.
