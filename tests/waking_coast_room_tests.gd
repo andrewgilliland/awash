@@ -80,11 +80,10 @@ const LANDMARKS := {
 		# the high branch, growing from the tall tree
 		Vector2i(19, 1): Vector2i(3, 7),
 	},
-	# A bush on the tall tree, and a crate on its branch.
+	# A bush on the tall tree; its branch is bare.
 	&"Props":
 	{
 		Vector2i(18, 3): Vector2i(6, 5),
-		Vector2i(18, 0): Vector2i(10, 3),
 	},
 }
 

@@ -35,7 +35,7 @@ tile_map_data = PackedByteArray("AAATAAEABAADAAcAAAARAAQAAAABAA0AAAASAAQAAAADAA0
 tile_set = ExtResource("terrain_tiles")
 
 [node name="Props" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAASAAAAEAAKAAMAAAATAAAAEAALAAMAAAASAAMAAQAGAAUAAAA=")
+tile_map_data = PackedByteArray("AAASAAMAAQAGAAUAAAA=")
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Bounds" type="StaticBody2D" parent="."]
