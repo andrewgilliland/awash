@@ -62,15 +62,10 @@
 			"region": "waking_coast",
 			"exits": [
 				{"screen": [0, 0], "side": "west"},
-				{"screen": [1, 0], "side": "east"},
-				{"screen": [1, 0], "side": "south"}
+				{"screen": [1, 0], "side": "east"}
 			],
 			"plan": {
-				"cell": [9, -2],
-				"exits": [
-					{"screen": [0, 0], "side": "west"},
-					{"screen": [1, 0], "side": "east"}
-				]
+				"cell": [9, -2]
 			}
 		},
 		"waking_coast_5": {
@@ -93,7 +88,7 @@
 			}
 		},
 		"waking_coast_6": {
-			"note": "Two screens wide, on from the graveyard over its sinkhole, climbing inland.",
+			"note": "Two screens wide, on from the graveyard's beach, climbing inland.",
 			"scene": "res://scenes/rooms/waking_coast_6.tscn",
 			"cell": [6, -1],
 			"size": [2, 1],

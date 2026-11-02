@@ -7,13 +7,11 @@ const RoomReach := preload("res://tests/room_reach.gd")
 const ROOM_SIZE := Vector2i(320, 144)
 const TILE := 16
 const WORLD_LAYER := 1
-# The shaft down from the graveyard's sinkhole, open to the top of the Room, and the tunnel
-# west to the salt cliffs, level with their beach.
-const SHAFT_ENTRY := Vector2(312, 24)
-const SHAFT_FLOOR := Vector2i(19, 6)
+# The tunnel west to the salt cliffs, level with their beach.
 const WEST_ENTRY := Vector2(12, 96)
-# At the shaft's foot, coming back from the undertow.
+# At the east end of the floor, coming back from the undertow.
 const EAST_ENTRY := Vector2(308, 96)
+const EAST_FLOOR := Vector2i(19, 6)
 const SHELF := Vector2i(14, 4)
 const CRATE := Vector2i(10, 3)
 # Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_5.aseprite:
@@ -41,9 +39,9 @@ const LANDMARKS := {
 func get_tests() -> Array:
 	return [
 		["Sea cave Room lays out two screens of cave", _test_lays_out_two_screens],
-		["Sea cave shaft drops from the graveyard, one way", _test_shaft_is_one_way],
+		["Sea cave is roofed whole, with no way down from the graveyard", _test_roofed],
 		["Sea cave tunnel leads west to the salt cliffs", _test_tunnel_leads_west],
-		["Sea cave floor runs from the shaft to the tunnel", _test_floor_runs_west],
+		["Sea cave floor runs from its east end to the tunnel", _test_floor_runs_west],
 		["Sea cave shelf holds a crate a jump up", _test_shelf_holds_crate],
 		["Sea cave leads east into the undertow", _test_leads_east],
 	]
@@ -73,18 +71,15 @@ func _test_lays_out_two_screens() -> bool:
 	return valid
 
 
-# The shaft is open to the Room's top and too tall to jump back up; no Exit leads up.
-func _test_shaft_is_one_way() -> bool:
+# The sea cave is reached only from the salt cliffs' foot: its roof runs whole along the top.
+func _test_roofed() -> bool:
 	var room := _room()
 	if room == null:
 		return false
-	var entry := room.get_node_or_null("Entries/shaft") as Marker2D
-	var valid := entry != null and entry.position == SHAFT_ENTRY
+	var valid := room.get_node_or_null("Entries/shaft") == null
 	var terrain := room.get_node("Terrain") as TileMapLayer
-	for row in range(SHAFT_FLOOR.y):
-		valid = valid and terrain.get_cell_source_id(Vector2i(SHAFT_FLOOR.x, row)) == -1
-	valid = valid and terrain.get_cell_source_id(SHAFT_FLOOR) != -1
-	valid = valid and SHAFT_FLOOR.y > RoomReach.jump_rows()
+	for column in range(ROOM_SIZE.x / TILE):
+		valid = valid and terrain.get_cell_source_id(Vector2i(column, 0)) != -1
 	for exit in _exits(room):
 		valid = valid and exit.room_id != &"waking_coast_4"
 	room.free()
@@ -109,7 +104,7 @@ func _test_floor_runs_west() -> bool:
 	if room == null:
 		return false
 	var terrain := room.get_node("Terrain") as TileMapLayer
-	var reached := RoomReach.reachable(terrain, SHAFT_FLOOR)
+	var reached := RoomReach.reachable(terrain, EAST_FLOOR)
 	room.free()
 	return RoomReach.span_at(reached, Vector2i(WEST_ENTRY / TILE)) != null
 
@@ -120,15 +115,14 @@ func _test_shelf_holds_crate() -> bool:
 		return false
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	var props := room.get_node("Props") as TileMapLayer
-	var reached := RoomReach.reachable(terrain, SHAFT_FLOOR)
+	var reached := RoomReach.reachable(terrain, EAST_FLOOR)
 	var valid := RoomReach.span_at(reached, SHELF) != null
 	valid = valid and props.get_cell_atlas_coords(SHELF + Vector2i.UP) == CRATE
 	room.free()
 	return valid
 
 
-# Past the shaft's foot the tunnel runs on east into the undertow. Falling down the shaft does
-# not touch the Exit: it starts at the Room's edge.
+# Past the floor's east end the tunnel runs on east into the undertow.
 func _test_leads_east() -> bool:
 	var room := _room()
 	if room == null:

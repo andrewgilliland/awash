@@ -34,9 +34,10 @@ const TIDEFEN_CLIMB := [[0, 40.0, 80.0], [1, 56.0, 64.0]]
 const TIDEFEN_WALKWAY_EAST_X := 270.0
 # West along the undertow from the well's shaft: through three pools and over two rocks.
 const UNDERTOW_WEST: Array[float] = [470.0, 400.0, 280.0, 200.0, 90.0, 20.0]
-# Walking the graveyard's beach east to the sinkhole, and the cave's floor west to the tunnel:
-# points to walk to, jumping out of a pool when the walk falls short.
+# Walking the graveyard's beach east to its end, and the cave's floor east to its end and back
+# west to the tunnel: points to walk to, jumping out of a pool when the walk falls short.
 const GRAVEYARD_BEACH_EAST: Array[float] = [88.0, 150.0, 186.0, 250.0, 296.0]
+const SEA_CAVE_EAST: Array[float] = [120.0, 170.0, 296.0]
 const SEA_CAVE_WEST: Array[float] = [170.0, 120.0, 40.0]
 # The cliffs' tunnel Entry, at the foot of the climb.
 const SALT_CLIFFS_CAVE_ENTRY := Vector2(148, 240)
@@ -94,10 +95,11 @@ func _init() -> void:
 	)
 	await _run_playtest_async("Player hops the wreck decks to the stern", _playtest_hops_to_stern)
 	await _run_playtest_async(
-		"Player drops into the sea cave and loops back to the cliffs", _playtest_cave_loop
+		"Player walks into the sea cave from the cliffs' foot and back", _playtest_cave_and_back
 	)
 	await _run_playtest_async(
-		"Player jumps the sinkhole onto the jungle trail and back", _playtest_jumps_to_jungle_trail
+		"Player walks the graveyard's beach onto the jungle trail and back",
+		_playtest_beach_to_jungle_trail
 	)
 	await _run_playtest_async(
 		"Player climbs the jungle trail to its gate", _playtest_climbs_jungle_trail
@@ -413,34 +415,25 @@ func _playtest_hops_to_stern() -> bool:
 	return valid
 
 
-# The loop with real input and physics: east along the graveyard's beach, down the sinkhole,
-# west through the sea cave and out of the tunnel at the salt cliffs' foot. The Scavenger is
-# taken out first: this checks the route, not the fight.
-func _playtest_cave_loop() -> bool:
-	var run := root.get_node_or_null("RunState")
-	if run == null:
-		return false
-	run.call("start_run")
-	run.call("enter_room", &"waking_coast_4", &"west")
-	change_scene_to_file(WRECK_GRAVEYARD_PATH)
-	var landed := await _frames_until(
-		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
-		SETTLE_FRAME_LIMIT
-	)
-	if not landed:
+# With real input and physics: from the salt cliffs' foot east into the sea cave, along its floor
+# to the east end, then back west and out of the tunnel at the cliffs' foot.
+func _playtest_cave_and_back() -> bool:
+	var player := await _enter_room(&"waking_coast_3", &"cave", SALT_CLIFFS_PATH)
+	if player == null:
 		await _leave_scene()
 		return false
-	current_scene.get_node(SCAVENGER_PATH).free()
-	await _wade_to(_current_player(), GRAVEYARD_BEACH_EAST)
+	var run := root.get_node("RunState")
 	var valid := await _walk_until_scene(&"move_right", SEA_CAVE_PATH)
 	valid = valid and run.get("room_id") == &"waking_coast_5"
-	var player := _current_player()
-	valid = valid and player != null and player.is_on_floor() and player.global_position.x > 300.0
+	player = _current_player()
+	valid = valid and player != null and player.global_position.x < 40.0
 	if not valid:
 		await _leave_scene()
 		return false
+	await _wade_to(player, SEA_CAVE_EAST)
+	valid = player.is_on_floor() and player.global_position.x > 290.0
 	await _wade_to(player, SEA_CAVE_WEST)
-	valid = await _walk_until_scene(&"move_left", SALT_CLIFFS_PATH)
+	valid = valid and await _walk_until_scene(&"move_left", SALT_CLIFFS_PATH)
 	valid = valid and run.get("room_id") == &"waking_coast_3"
 	player = _current_player()
 	valid = valid and player != null
@@ -449,42 +442,22 @@ func _playtest_cave_loop() -> bool:
 	return valid
 
 
-# From the graveyard's east end, a running jump over the sinkhole lands on the jungle trail;
-# walking back west lands short of the sinkhole.
-func _playtest_jumps_to_jungle_trail() -> bool:
-	var run := root.get_node_or_null("RunState")
-	if run == null:
-		return false
-	run.call("start_run")
-	run.call("enter_room", &"waking_coast_4", &"east")
-	change_scene_to_file(WRECK_GRAVEYARD_PATH)
-	var landed := await _frames_until(
-		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
-		SETTLE_FRAME_LIMIT
-	)
-	if not landed:
+# Along the graveyard's beach, wading its pools, and straight on east onto the jungle trail's
+# sand; walking back west lands on the graveyard's sand. The Scavenger is taken out first: this
+# checks the route, not the fight.
+func _playtest_beach_to_jungle_trail() -> bool:
+	var player := await _enter_room(&"waking_coast_4", &"west", WRECK_GRAVEYARD_PATH)
+	if player == null:
 		await _leave_scene()
 		return false
+	var run := root.get_node("RunState")
 	current_scene.get_node(SCAVENGER_PATH).free()
-	_press(&"move_right")
-	await _frames(2)
-	_press(&"jump")
-	var arrived := await _frames_until(
-		func() -> bool:
-			return current_scene != null and current_scene.scene_file_path == JUNGLE_TRAIL_PATH,
-		TRANSITION_FRAME_LIMIT
-	)
-	_release(&"jump")
-	_release(&"move_right")
-	var valid: bool = arrived and run.get("room_id") == &"waking_coast_6"
-	await _frames_until(
-		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
-		SETTLE_FRAME_LIMIT
-	)
-	var player := _current_player()
+	await _wade_to(player, GRAVEYARD_BEACH_EAST)
+	var valid := await _walk_until_scene(&"move_right", JUNGLE_TRAIL_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_6"
+	player = _current_player()
 	valid = valid and player != null and player.global_position.x < 40.0
 	valid = valid and absf(player.global_position.y - WAKING_COAST_SAND_Y) < 1.0
-
 	valid = valid and await _walk_until_scene(&"move_left", WRECK_GRAVEYARD_PATH)
 	valid = valid and run.get("room_id") == &"waking_coast_4"
 	player = _current_player()
