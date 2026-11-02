@@ -29,6 +29,7 @@ This file provides guidance for coding agents working in this repository.
 - Lint + format check: `./scripts/quality/lint.sh`
 - Tests: `./scripts/quality/test.sh`
 - Playtests: `./scripts/quality/playtest.sh`
+- World editor: `npm run world-editor` (local only, at `localhost:5174`); its typecheck and tests: `npm run world-editor:test` (run `npm ci --prefix tools/world-editor` once first)
 
 ## Pre-commit
 

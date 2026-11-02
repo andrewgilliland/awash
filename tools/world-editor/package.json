@@ -1,0 +1,18 @@
+{
+  "name": "awash-world-editor",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "The World editor: a local web app for laying out the World and painting each Room's tiles. Never hosted.",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "test": "tsc --noEmit && vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.1.0"
+  }
+}
