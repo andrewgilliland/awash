@@ -46,7 +46,7 @@ func get_tests() -> Array:
 	return [
 		["Palm shore Room lays out two screens", _test_lays_out_two_screens],
 		["Palm shore west Entry stands on the cliff", _test_west_entry_on_cliff],
-		["Palm shore leads east to the salt cliffs", _test_leads_east],
+		["Palm shore leads east to the tide pools", _test_leads_east],
 	]
 
 
@@ -87,7 +87,7 @@ func _test_west_entry_on_cliff() -> bool:
 	return valid
 
 
-# The shore's east edge is the Exit up to the salt cliffs; neither edge is walled.
+# The shore's east edge is the Exit on to the tide pools; neither edge is walled.
 func _test_leads_east() -> bool:
 	var room := _room()
 	if room == null:
@@ -95,7 +95,7 @@ func _test_leads_east() -> bool:
 	var valid := room.get_node_or_null("Bounds") == null
 	var exit := room.get_node_or_null("Exits/east") as Area2D
 	valid = valid and exit != null and exit.position.x > ROOM_SIZE.x
-	valid = valid and exit.get("room_id") == &"waking_coast_3" and exit.get("entry_id") == &"west"
+	valid = valid and exit.get("room_id") == &"waking_coast_10" and exit.get("entry_id") == &"west"
 	var entry := room.get_node_or_null("Entries/east") as Marker2D
 	valid = valid and entry != null and entry.position == EAST_ENTRY
 	room.free()

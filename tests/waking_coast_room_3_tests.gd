@@ -147,7 +147,7 @@ func _test_edges() -> bool:
 		valid = valid and west != null and west.position.x < 0.0
 		valid = valid and _vertical_span(west) == Vector2(0, SCREEN_HEIGHT)
 	var exit := room.get_node_or_null("Exits/west") as Area2D
-	valid = valid and exit != null and exit.get("room_id") == &"waking_coast_2"
+	valid = valid and exit != null and exit.get("room_id") == &"waking_coast_10"
 	valid = valid and exit.get("entry_id") == &"east"
 	if valid:
 		var edge := exit.get_node("Edge") as CollisionShape2D
