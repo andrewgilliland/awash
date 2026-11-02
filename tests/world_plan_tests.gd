@@ -103,6 +103,5 @@ func _test_undertow() -> bool:
 			)
 			if crosses:
 				ways_in[other if plan.region == UNDERTOW else room_id] = true
-	var coast_rooms := ways_in.keys()
-	coast_rooms.sort()
-	return valid and coast_rooms == [SEA_CAVE, TIDEFEN]
+	# Compared as a set: sorting ids would order them by where they sit in memory, not by name.
+	return valid and ways_in.size() == 2 and ways_in.has(SEA_CAVE) and ways_in.has(TIDEFEN)
