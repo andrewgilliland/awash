@@ -9,8 +9,7 @@ const WEST_ENTRY := Vector2(12, 64)
 # On the sand, clear of the east Exit.
 const EAST_ENTRY := Vector2(308, 96)
 const WORLD_LAYER := 1
-# Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_2.aseprite:
-# layer -> {cell: atlas coords}.
+# Landmark cells: layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	# Palms on the beach: crown middle and trunk.
 	&"Trees":
@@ -28,8 +27,9 @@ const LANDMARKS := {
 		Vector2i(1, 6): Vector2i(3, 15),
 		Vector2i(4, 5): Vector2i(4, 4),
 		Vector2i(8, 6): Vector2i(1, 1),
-		Vector2i(13, 5): Vector2i(1, 13),
-		Vector2i(14, 4): Vector2i(1, 5),
+		# a sand slope up from the beach to a step a tile high
+		Vector2i(13, 5): Vector2i(7, 2),
+		Vector2i(14, 5): Vector2i(2, 1),
 		Vector2i(15, 1): Vector2i(5, 4),
 		Vector2i(16, 6): Vector2i(3, 1),
 	},
