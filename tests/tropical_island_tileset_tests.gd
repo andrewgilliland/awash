@@ -10,6 +10,10 @@ const SHALLOW := [Vector2(-8, 2), Vector2(8, 2), Vector2(8, 8), Vector2(-8, 8)]
 const LEDGE_TOP := [Vector2(-8, -8), Vector2(8, -8), Vector2(8, -1), Vector2(-8, -1)]
 # Each ground set is five tiles square: its top-left tile on the ground sheet.
 const GROUND_SETS := [Vector2i(1, 1), Vector2i(1, 7), Vector2i(1, 13)]
+# The beach's 45-degree slopes, from the west side of its rounded set: solid below a diagonal
+# that rises from each tile's west foot to its east top.
+const SLOPES := [Vector2i(8, 1), Vector2i(7, 2)]
+const SLOPE := [Vector2(-8, 8), Vector2(8, -8), Vector2(8, 8)]
 const WATER := [Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1)]
 const LEDGES := {
 	"ladders_and_bridges.png": [Vector2i(4, 4), Vector2i(5, 4), Vector2i(6, 4), Vector2i(7, 4)],
@@ -21,6 +25,7 @@ const LEDGES := {
 func get_tests() -> Array:
 	return [
 		["The pack's beach, cave earth and grass are solid", _test_ground_is_solid],
+		["The beach's slopes are solid below their diagonal", _test_slopes],
 		["The pack's water sinks underfoot like a shallow", _test_water_sinks],
 		["Bridge decks, hut floors and mossy pads are one-way ledges", _test_ledges],
 	]
@@ -60,6 +65,14 @@ func _test_ground_is_solid() -> bool:
 				var coords: Vector2i = corner + Vector2i(column, row)
 				valid = valid and _collides_with(atlas, coords, FULL_SQUARE)
 				valid = valid and not _is_one_way(atlas, coords)
+	return valid
+
+
+func _test_slopes() -> bool:
+	var atlas := _atlas("ground.png")
+	var valid := atlas != null
+	for coords in SLOPES:
+		valid = valid and _collides_with(atlas, coords, SLOPE) and not _is_one_way(atlas, coords)
 	return valid
 
 

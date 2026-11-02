@@ -4,6 +4,9 @@ extends "res://tests/playtest_harness.gd"
 # tests/playtest_harness.gd.
 
 const FIRST_ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
+# The first Room's low shelf at the west wall, two steps down from the beach, under the surf.
+const SHALLOWS_Y := 128.0
+const WEST_WALK_FRAMES := 240
 const START_SCREEN_PATH := "res://scenes/ui/start_screen.tscn"
 const SALT_CLIFFS_PATH := "res://scenes/rooms/waking_coast_3.tscn"
 const WRECK_GRAVEYARD_PATH := "res://scenes/rooms/waking_coast_4.tscn"
@@ -278,14 +281,19 @@ func _scenario_walks_waking_coast_sand(player: CharacterBody2D) -> bool:
 
 # Walking off the screen's west edge would drop the Player out of the world.
 func _scenario_stops_at_west_edge(player: CharacterBody2D) -> bool:
+	# Walking from where Vael wakes, across the beach and down the shore's two slopes into the
+	# shallows, keeps to the ground all the way, then reaches the wall and stops there.
 	_press(&"move_left")
-	await _frames(220)
+	var airborne := 0
+	for frame in WEST_WALK_FRAMES:
+		await _frames(1)
+		if not player.is_on_floor():
+			airborne += 1
 	_release(&"move_left")
 	await _frames(2)
-	# Walking from where Vael wakes, across the open beach, reaches the wall and stops there.
-	var valid := player.is_on_floor() and player.global_position.x >= 0.0
+	var valid := airborne == 0 and player.is_on_floor() and player.global_position.x >= 0.0
 	valid = valid and player.global_position.x < 12.0
-	valid = valid and _is_on_sand(player)
+	valid = valid and absf(player.global_position.y - SHALLOWS_Y) < ON_SAND_TOLERANCE
 	return valid
 
 
