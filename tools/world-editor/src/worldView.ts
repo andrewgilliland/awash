@@ -28,6 +28,8 @@ export type Tool = "select" | "room" | "exit";
 export interface WorldEditor {
   world: WorldData;
   planned: boolean;
+  // The one Region on show, if only one is.
+  focus?: string;
   selected: string | null;
   tool: Tool;
   region: string;
@@ -54,7 +56,13 @@ export interface WorldViewHandle {
 export function showWorld(editor: WorldEditor, stage: HTMLElement, side: HTMLElement): WorldViewHandle {
   const { world, planned } = editor;
   const editing = planned;
-  const layout = layoutWorld(world, planned, editing ? PAD : 0);
+  const layout = layoutWorld(world, planned, editing ? PAD : 0, editor.focus);
+  if (!planned && layout.rooms.length === 0) {
+    const name = world.regions[editor.focus ?? ""]?.name ?? "This Region";
+    stage.replaceChildren(el("p", { className: "muted" }, `${name} has no built Rooms yet. See it in The Plan.`));
+    side.replaceChildren(...details(editor));
+    return { highlight() {} };
+  }
   const [c, g] = canvas(layout.size.w, layout.size.h, SCALE);
   let ghost: Rect | null = null;
   let lit: string | null = null;
