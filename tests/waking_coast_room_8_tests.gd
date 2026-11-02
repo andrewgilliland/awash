@@ -10,8 +10,11 @@ const TILE := 16
 const WORLD_LAYER := 1
 # On the sand, at the height of the Warden's gate's floor.
 const WEST_ENTRY := Vector2(12, 112)
-const DECKS := [Vector2i(1, 6), Vector2i(2, 6), Vector2i(3, 6), Vector2i(4, 6)]
-const STILT := Vector2i(12, 9)
+# The walkway is a log deck; the roofs are plank slabs.
+const WALKWAY_DECKS := [Vector2i(4, 4), Vector2i(5, 4), Vector2i(6, 4), Vector2i(7, 4)]
+const ROOFS := [Vector2i(1, 6), Vector2i(2, 6), Vector2i(3, 6), Vector2i(4, 6)]
+# Each stilt is braced: an X over a post, row by row down to the shallows.
+const STILT := {5: Vector2i(1, 3), 6: Vector2i(1, 2)}
 # The walkway on stilts over the pools, and the stilts under it.
 const WALKWAY_ROW := 4
 const WALKWAY := Vector2i(4, 17)
@@ -26,10 +29,20 @@ const COCONUTS := Vector2i(2, 2)
 const LANDMARKS := {
 	&"Village":
 	{
-		# two stilt houses on the walkway
-		Vector2i(6, 2): Vector2i(2, 2),
-		Vector2i(7, 3): Vector2i(3, 2),
-		Vector2i(14, 2): Vector2i(4, 2),
+		# a stilt house's plank wall, and rope rails across the span over the well
+		Vector2i(8, 2): Vector2i(4, 3),
+		Vector2i(9, 3): Vector2i(4, 3),
+		Vector2i(11, 3): Vector2i(7, 3),
+	},
+	# each house's door and window: the west one's door faces the sand, the east one's the stall
+	&"VillageFront":
+	{
+		Vector2i(6, 2): Vector2i(12, 13),
+		Vector2i(6, 3): Vector2i(12, 14),
+		Vector2i(7, 2): Vector2i(10, 13),
+		Vector2i(12, 2): Vector2i(10, 13),
+		Vector2i(14, 2): Vector2i(12, 13),
+		Vector2i(14, 3): Vector2i(12, 14),
 	},
 	# the jungle at the village's back: a tree at each end, crown and roots
 	&"Jungle":
@@ -124,10 +137,11 @@ func _test_walkway_on_stilts() -> bool:
 	var village := room.get_node("Village") as TileMapLayer
 	var valid := true
 	for column in range(WALKWAY.x, WALKWAY.y + 1):
-		valid = valid and terrain.get_cell_atlas_coords(Vector2i(column, WALKWAY_ROW)) in DECKS
+		var deck := terrain.get_cell_atlas_coords(Vector2i(column, WALKWAY_ROW))
+		valid = valid and deck in WALKWAY_DECKS
 	for column in STILT_COLUMNS:
 		for row in range(WALKWAY_ROW + 1, 7):
-			valid = valid and village.get_cell_atlas_coords(Vector2i(column, row)) == STILT
+			valid = valid and village.get_cell_atlas_coords(Vector2i(column, row)) == STILT[row]
 	var reached := RoomReach.reachable(terrain, Vector2i(WEST_ENTRY / TILE))
 	valid = valid and RoomReach.span_at(reached, Vector2i(WALKWAY.y, WALKWAY_ROW)) != null
 	room.free()
@@ -143,7 +157,7 @@ func _test_bell_and_stall() -> bool:
 	var valid := true
 	for cell in LANDMARKS[&"Props"]:
 		valid = valid and props.get_cell_atlas_coords(cell) == LANDMARKS[&"Props"][cell]
-		valid = valid and terrain.get_cell_atlas_coords(cell + Vector2i.DOWN) in DECKS
+		valid = valid and terrain.get_cell_atlas_coords(cell + Vector2i.DOWN) in WALKWAY_DECKS
 	room.free()
 	return valid
 
@@ -169,7 +183,7 @@ func _test_lanterns_under_eaves() -> bool:
 			valid = valid and frame != null and frame.atlas.resource_path == LANTERN_PATH
 			var cell := Vector2i(sprite.position / TILE)
 			valid = valid and terrain.get_cell_source_id(cell) == -1
-			valid = valid and terrain.get_cell_atlas_coords(cell + Vector2i.UP) in DECKS
+			valid = valid and terrain.get_cell_atlas_coords(cell + Vector2i.UP) in ROOFS
 	room.free()
 	return valid
 
