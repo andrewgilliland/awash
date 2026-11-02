@@ -1,21 +1,17 @@
 // A Room's tiles: its layers drawn from the real sheets in the order the game draws them, painted
 // one layer at a time from that layer's own tile set, and saved back into the Room's scene.
 
-import { parseRoomScene, setLayerCells, type Cell, type RoomScene, type TileSet, type Vec } from "./godot";
-import { el, canvas, image, outline, readRepo, rect, tileSet } from "./dom";
+import { parseRoomScene, setLayerCells, type Cell, type RoomScene, type Vec } from "./godot";
+import { el, canvas, image, outline, readRepo, rect } from "./dom";
 import { blockStamp, eraseRect, fillRect, pickStamp, stampAt, type Area, type Stamp } from "./paint";
+import { drawTiles, forgetPicture, loadRoomArt } from "./roomPicture";
 import { SCREEN, type WorldData } from "./world";
 
 const ROOM_SCALE = 2;
 const PALETTE_SCALE = 2;
-const SKY = "#0cf1ff";
 const EXIT_MARK = "#ffff8b";
 const AIM = "#ff3df2";
 const PICKED = "#ffff8b";
-// Godot's flips on an alternative tile.
-const FLIP_H = 4096;
-const FLIP_V = 8192;
-
 type Tool = "paint" | "fill" | "erase" | "pick";
 const TOOLS: [Tool, string, string][] = [
   ["paint", "Paint", "Click or drag to paint the picked tiles"],
@@ -47,22 +43,15 @@ export async function showRoom(
   };
   const size = { w: record.size[0] * SCREEN.w, h: record.size[1] * SCREEN.h };
   const hidden = new Set<string>();
-  const sets = new Map<string, TileSet>();
-  const sheets = new Map<string, HTMLImageElement>();
-  for (const layer of scene.layers) {
-    sets.set(layer.tileSet, await tileSet(layer.tileSet));
-  }
+  const art = await loadRoomArt(scene);
+  const { sets, sheets } = art;
+  // The palette loads more of a layer's sheets as you pick them.
   const loadSheet = async (texture: string) => {
     if (!sheets.has(texture)) {
       sheets.set(texture, await image(texture));
     }
     return sheets.get(texture)!;
   };
-  const used = new Set(
-    scene.layers.flatMap((layer) => layer.cells.map((cell) => sets.get(layer.tileSet)!.sources.get(cell.source)?.texture ?? "")),
-  );
-  used.delete("");
-  await Promise.all([...used].map(loadSheet));
 
   // What painting changes: each layer's cells, the layers changed since the last save, and undo.
   let active = scene.layers.find((layer) => layer.name === "Terrain")?.name ?? scene.layers[0]?.name ?? "";
@@ -105,29 +94,7 @@ export async function showRoom(
   let aim: Area | null = null;
 
   const draw = () => {
-    rect(g, { x: 0, y: 0, ...size }, SKY);
-    for (const layer of scene.layers) {
-      if (hidden.has(layer.name)) {
-        continue;
-      }
-      const set = sets.get(layer.tileSet)!;
-      const [tw, th] = set.tileSize;
-      g.globalAlpha = layer.opacity;
-      for (const cell of layer.cells) {
-        const sheet = sheets.get(set.sources.get(cell.source)?.texture ?? "");
-        if (!sheet) {
-          continue;
-        }
-        const x = cell.x * tw + layer.position[0];
-        const y = cell.y * th + layer.position[1];
-        g.save();
-        g.translate(x + tw / 2, y + th / 2);
-        g.scale(cell.alternative & FLIP_H ? -1 : 1, cell.alternative & FLIP_V ? -1 : 1);
-        g.drawImage(sheet, cell.atlas[0] * tw, cell.atlas[1] * th, tw, th, -tw / 2, -th / 2, tw, th);
-        g.restore();
-      }
-      g.globalAlpha = 1;
-    }
+    drawTiles(g, scene, art, size, hidden);
     for (let x = 1; x < record.size[0]; x++) {
       rect(g, { x: x * SCREEN.w, y: 0, w: 1, h: size.h }, "rgba(0, 0, 0, 0.35)");
     }
@@ -269,6 +236,7 @@ export async function showRoom(
       version = result.version!;
       changed.clear();
       dirty(false);
+      forgetPicture(id);
       say(`Saved ${path.replace(/^res:\/\//, "")}.`);
     } else if (result.reason === "changed") {
       say("The scene changed on disk since it was opened (was it saved in Godot?), so nothing was saved. Reopen the Room to get it.");

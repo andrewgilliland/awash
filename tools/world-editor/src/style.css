@@ -155,6 +155,10 @@ ul.results li.pass { color: var(--muted); }
 /* The tools sit at the top of the stage; only the World or Room under them scrolls. */
 .toolbar { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; flex: none; margin-bottom: 12px; }
 .toolbar label { color: var(--muted); font-size: 11px; display: flex; gap: 6px; align-items: center; }
+/* A switch in the toolbar, kept to its right: lit amber while it's on. */
+.toolbar .toggle { margin-left: auto; }
+.toolbar .toggle .dot { margin-left: 6px; }
+.toolbar .toggle[aria-pressed="true"] .dot { color: var(--accent); }
 label.field { display: grid; gap: 4px; color: var(--accent); font-weight: 700; font-size: 11px; margin: 10px 0; }
 dd.size input { width: 4em; }
 #side button { margin-top: 10px; width: 100%; }

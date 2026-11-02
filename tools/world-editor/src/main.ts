@@ -12,6 +12,15 @@ import { serializeWorld } from "./worldFile";
 import { showWorld, type Tool, type WorldEditor, type WorldViewHandle } from "./worldView";
 
 const WORLD_PATH = "assets/world.json";
+const PICTURES_KEY = "world-editor:pictures";
+
+function readPictures(): boolean {
+  try {
+    return localStorage.getItem(PICTURES_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
 
 
 const stage = document.querySelector<HTMLElement>("#stage")!;
@@ -31,6 +40,8 @@ let selected: string | null = null;
 let tool: Tool = "select";
 let region = "";
 let drop = false;
+// Built Rooms' tiles shown in their cells on the map: remembered in this browser, if it can.
+let pictures = readPictures();
 // Unsaved paint on the open Room.
 let roomDirty = false;
 // Whether the Check is running the game's tests.
@@ -92,6 +103,7 @@ function render() {
     tool,
     region,
     drop,
+    pictures,
     apply(next, refused, select) {
       if (!next) {
         say(refused, "fail");
@@ -109,6 +121,14 @@ function render() {
     },
     set(changes) {
       ({ tool = tool, region = region, drop = drop } = changes);
+      if (changes.pictures !== undefined) {
+        pictures = changes.pictures;
+        try {
+          localStorage.setItem(PICTURES_KEY, String(pictures));
+        } catch {
+          // a browser that keeps nothing just forgets the toggle
+        }
+      }
       render();
     },
     open(id) {
