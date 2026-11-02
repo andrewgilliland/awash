@@ -1,23 +1,24 @@
 // The World editor's page: the World view (as it is, or as planned, where the Plan is edited), the
 // read-only Room view, saving the World's data, and the Check, which runs the game's tests.
 
-import { el, readRepo, versionOf } from "./dom";
+import "@fontsource/jetbrains-mono/400.css";
+import "@fontsource/jetbrains-mono/700.css";
+import { el, readRepo, versionOf, type View } from "./dom";
 import { buildRoom } from "./build";
 import { showRoom } from "./roomView";
+import { showSidebar } from "./sidebar";
 import type { WorldData } from "./world";
 import { serializeWorld } from "./worldFile";
 import { showWorld, type Tool, type WorldEditor } from "./worldView";
 
 const WORLD_PATH = "assets/world.json";
 
-type View = { kind: "world"; planned: boolean } | { kind: "room"; id: string };
 
 const stage = document.querySelector<HTMLElement>("#stage")!;
 const side = document.querySelector<HTMLElement>("#side")!;
-const views = document.querySelector<HTMLElement>("#views")!;
+const sidebar = document.querySelector<HTMLElement>("#sidebar")!;
 const actions = document.querySelector<HTMLElement>("#actions")!;
 const status = document.querySelector<HTMLElement>("#status")!;
-const checkButton = document.querySelector<HTMLButtonElement>("#check")!;
 
 let world: WorldData;
 // The version of world.json the edits stand on, so a save can tell if it changed on disk since.
@@ -32,6 +33,8 @@ let region = "";
 let drop = false;
 // Unsaved paint on the open Room.
 let roomDirty = false;
+// Whether the Check is running the game's tests.
+let checking = false;
 
 const dirty = () => serializeWorld(world) !== saved;
 
@@ -46,25 +49,27 @@ function edit(next: WorldData) {
   world = next;
 }
 
+function drawSidebar() {
+  showSidebar(sidebar, {
+    world,
+    view,
+    checking,
+    show: (next) => ((view = next), render()),
+    check: () => void check(),
+  });
+}
+
 function render() {
-  views.replaceChildren(
-    ...[false, true].map((planned) =>
-      el(
-        "button",
-        {
-          type: "button",
-          ariaPressed: String(view.kind === "world" && view.planned === planned),
-          onclick: () => ((view = { kind: "world", planned }), render()),
-        },
-        planned ? "As planned" : "As it is",
-      ),
-    ),
-  );
   actions.replaceChildren(
     el("button", { type: "button", disabled: undone.length === 0, title: "Undo (⌘Z)", onclick: undo }, "Undo"),
     el("button", { type: "button", disabled: redone.length === 0, title: "Redo (⇧⌘Z)", onclick: redo }, "Redo"),
-    el("button", { type: "button", disabled: !dirty(), title: "Save the World's data (⌘S)", onclick: save }, dirty() ? "Save ●" : "Saved"),
+    el(
+      "button",
+      { type: "button", className: dirty() ? "primary" : "", disabled: !dirty(), title: "Save the World's data (⌘S)", onclick: save },
+      dirty() ? "Save ●" : "Saved",
+    ),
   );
+  drawSidebar();
   if (view.kind === "room") {
     void showRoom(
       world,
@@ -227,9 +232,10 @@ addEventListener("beforeunload", (event) => {
   }
 });
 
-checkButton.addEventListener("click", async () => {
-  checkButton.disabled = true;
-  checkButton.textContent = "Checking…";
+// Runs the game's tests, the one home of the World's rules, and lists their results beside the view.
+async function check() {
+  checking = true;
+  render();
   side.replaceChildren(
     el("h2", {}, "Check"),
     el("p", { className: "muted" }, dirty() ? "Running the game's tests on the saved World (save first to check your edits)…" : "Running the game's tests…"),
@@ -252,10 +258,10 @@ checkButton.addEventListener("click", async () => {
         : []),
     );
   } finally {
-    checkButton.disabled = false;
-    checkButton.textContent = "Check";
+    checking = false;
+    drawSidebar();
   }
-});
+}
 
 void readRepo(WORLD_PATH).then((file) => {
   world = JSON.parse(file.text);
