@@ -20,7 +20,7 @@ export function worldEditorApi(repo: string): Plugin {
     configureServer(server) {
       server.middlewares.use("/repo/", async (request, response) => {
         const path = repoPath(repo, decodeURIComponent((request.url ?? "").split("?")[0].replace(/^\//, "")));
-        if (!path || request.method !== "GET") {
+        if (!path || (request.method !== "GET" && request.method !== "HEAD")) {
           response.statusCode = 404;
           response.end();
           return;
@@ -31,7 +31,7 @@ export function worldEditorApi(repo: string): Plugin {
           // Which version was loaded, for a save to check the file hasn't changed since.
           response.setHeader("X-Version", versionOf(body.toString("utf8")));
           response.setHeader("Cache-Control", "no-store");
-          response.end(body);
+          response.end(request.method === "HEAD" ? undefined : body);
         } catch {
           response.statusCode = 404;
           response.end();

@@ -47,6 +47,13 @@ export function drawMarker(g: CanvasRenderingContext2D, kind: string, x: number,
 
 export const repoUrl = (path: string) => `/repo/${path.replace(/^res:\/\//, "")}`;
 
+// A file's version as the server counts it: a hash of its contents. A file that isn't there yet
+// reads as empty, so the version of "" means "only if there's no file there".
+export async function versionOf(text: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
 // A repo file's text, and the version it was loaded at.
 export async function readRepo(path: string): Promise<{ text: string; version: string }> {
   const response = await fetch(repoUrl(path), { cache: "no-store" });

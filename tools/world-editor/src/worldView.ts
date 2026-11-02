@@ -33,6 +33,8 @@ export interface WorldEditor {
   select(id: string | null): void;
   set(changes: Partial<Pick<WorldEditor, "tool" | "region" | "drop">>): void;
   open(id: string): void;
+  // Builds a Planned Room: writes its scene and saves the World with it.
+  build(id: string): void;
 }
 
 const same = (a: Vec, b: Vec) => a[0] === b[0] && a[1] === b[1];
@@ -304,6 +306,7 @@ function details(editor: WorldEditor): Node[] {
     );
     if (!built) {
       nodes.push(
+        el("button", { type: "button", title: "Write this Room's scene and put it in the game", onclick: () => editor.build(id) }, "Build this Room"),
         el("button", { type: "button", onclick: () => editor.apply(removePlannedRoom(world, id), "", undefined) }, "Remove this Planned Room"),
       );
     }

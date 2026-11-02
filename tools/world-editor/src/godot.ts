@@ -44,13 +44,14 @@ export interface TileSet {
 const CELL_BYTES = 12;
 const HEADER_BYTES = 2;
 
-interface Section {
+export interface Section {
   kind: string;
   attributes: Record<string, string>;
   properties: Record<string, string>;
 }
 
-function sections(text: string): Section[] {
+// A Godot text file's [sections], each with its header's attributes and its property lines.
+export function parseSections(text: string): Section[] {
   const found: Section[] = [];
   let current: Section | null = null;
   for (const line of text.split("\n")) {
@@ -99,7 +100,7 @@ export function decodeTileMapData(base64: string): Cell[] {
 }
 
 export function parseRoomScene(text: string): RoomScene {
-  const all = sections(text);
+  const all = parseSections(text);
   const paths = new Map<string, string>();
   for (const section of all) {
     if (section.kind === "ext_resource") {
@@ -126,7 +127,7 @@ export function parseRoomScene(text: string): RoomScene {
 }
 
 export function parseTileSet(text: string): TileSet {
-  const all = sections(text);
+  const all = parseSections(text);
   const textures = new Map<string, string>();
   const atlases = new Map<string, Section>();
   let resource: Section | undefined;

@@ -5,7 +5,7 @@ import type { WorldData } from "./world";
 
 // Each record's fields in the file's order; anything else follows in its own order.
 const ROOM_ORDER = ["note", "scene", "cell", "size", "region", "background", "exits", "markers", "plan"];
-const REGION_ORDER = ["note", "name", "colour", "theme", "background", "backgrounds"];
+const REGION_ORDER = ["note", "name", "colour", "floor", "theme", "background", "backgrounds"];
 
 function inline(value: unknown): string {
   if (Array.isArray(value)) {
