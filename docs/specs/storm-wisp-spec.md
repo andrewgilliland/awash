@@ -23,7 +23,7 @@ The Storm Wisp is the Waking Coast's second enemy (see `docs/enemies/storm-wisp.
 
 ## Placement
 
-- **Rune road:** one Wisp over the heights at the road's end, drifting between x 210 and 300.
+- **Jungle trail:** one Wisp over the heights at the trail's end, drifting between x 210 and 300.
 
 ## Ownership
 

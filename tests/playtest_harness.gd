@@ -2,7 +2,7 @@ extends SceneTree
 
 # What the playtests run on: running and reporting each one, sending input the way a key or
 # button would, waiting on frames, and the moves the playtests share (walking, jumping,
-# wading, entering and leaving Rooms, fighting the rune shore's Scavenger, reading dialogue).
+# wading, entering and leaving Rooms, fighting the palm shore's Scavenger, reading dialogue).
 
 const SCENARIO_ACTIONS: Array[StringName] = [
 	&"move_left",
@@ -20,8 +20,8 @@ const SCENARIO_ACTIONS: Array[StringName] = [
 const SETTLE_FRAME_LIMIT := 120
 const TRANSITION_FRAME_LIMIT := 180
 const WAKING_COAST_SAND_Y := 96.0
-const RUNE_SHORE_PATH := "res://scenes/rooms/waking_coast_2.tscn"
-# The sand at the rune shore's tidal pool's west edge, where its Scavenger can reach and be
+const PALM_SHORE_PATH := "res://scenes/rooms/waking_coast_2.tscn"
+# The sand at the palm shore's tidal pool's west edge, where its Scavenger can reach and be
 # reached.
 const POOL_EDGE := Vector2(122, 96)
 const SCAVENGER_PATH := "Enemies/Scavenger"
@@ -245,13 +245,13 @@ func _frames(count: int) -> void:
 		await physics_frame
 
 
-func _enter_rune_shore() -> CharacterBody2D:
+func _enter_palm_shore() -> CharacterBody2D:
 	var run := root.get_node_or_null("RunState")
 	if run == null:
 		return null
 	run.call("start_run")
 	run.call("enter_room", &"waking_coast_2", &"west")
-	change_scene_to_file(RUNE_SHORE_PATH)
+	change_scene_to_file(PALM_SHORE_PATH)
 	var landed := await _frames_until(
 		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
 		SETTLE_FRAME_LIMIT

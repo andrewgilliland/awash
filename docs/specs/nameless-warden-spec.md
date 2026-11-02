@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The Nameless Warden is the Waking Coast's Boss (see `docs/enemies/nameless-warden.md`): an armored spirit with a blank stone mask and a salt-crusted shield, guarding the Warden's gate on the road to Tidefen. It tests what the coast taught: jumping what comes along the floor, keeping clear of a telegraphed rush, and that a Charged Attack bites through a Ward where a quick one glances off. Guarding and Throwing Knives join the fight once the Player has them.
+The Nameless Warden is the Waking Coast's Boss (see `docs/enemies/nameless-warden.md`): an armored spirit with a blank stone mask and a salt-crusted shield, guarding the Warden's gate on the trail to Tidefen. It tests what the coast taught: jumping what comes along the floor, keeping clear of a telegraphed rush, and that a Charged Attack bites through a Ward where a quick one glances off. Guarding and Throwing Knives join the fight once the Player has them.
 
 ## Behavior
 
@@ -18,7 +18,7 @@ The Nameless Warden is the Waking Coast's Boss (see `docs/enemies/nameless-warde
 
 ## The Gate
 
-- A column of rune light, 8 pixels wide, stands across the road at the arena's east edge, solid to the Player and the Warden, between the Warden and the Exit on to Tidefen.
+- A column of rune light, 8 pixels wide, stands across the trail at the arena's east edge, solid to the Player and the Warden, between the Warden and the Exit on to Tidefen.
 - When the Warden is defeated, the Run records it. The light waits 1.5 seconds for the Warden to fade, dissolves over 0.8 seconds, and the way on is open. With the Warden already defeated this Run, the Room opens with neither the Warden nor the light.
 
 ## Boss Health bar

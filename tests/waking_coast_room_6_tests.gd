@@ -11,48 +11,50 @@ const WEST_ENTRY := Vector2(12, 96)
 # On the heights by the gate, clear of the east Exit.
 const EAST_ENTRY := Vector2(308, 48)
 const WORLD_LAYER := 1
-# The heights the road climbs to, at the rune gate by the east edge.
+# The heights the trail climbs to, at the gate by the east edge.
 const EAST_END := Vector2i(19, 3)
-const RUNE_STONE := Vector2i(5, 7)
-const RUNE_STONE_BASE := Vector2i(6, 7)
+# The jungle's plants, two tiles tall: a sapling and a fern, top -> foot.
+const PLANTS := {Vector2i(3, 22): Vector2i(3, 23), Vector2i(6, 22): Vector2i(6, 23)}
 # Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_6.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
-	# a palm on the beach before the road: crown middle and base
-	&"Trees": {Vector2i(2, 2): Vector2i(1, 10), Vector2i(2, 5): Vector2i(3, 10)},
+	# a palm on the beach before the trail: crown middle and base
+	&"Trees": {Vector2i(2, 2): Vector2i(1, 18), Vector2i(2, 5): Vector2i(1, 19)},
+	# the jungle thickening behind the trail: a wide bush's crown and roots
+	&"Jungle": {Vector2i(8, 1): Vector2i(0, 25), Vector2i(8, 3): Vector2i(0, 27)},
 	&"Terrain":
 	{
-		# the beach the road leaves from
-		Vector2i(0, 6): Vector2i(1, 0),
-		Vector2i(3, 6): Vector2i(1, 0),
-		# the road, a step at a time up onto the heights
-		Vector2i(4, 5): Vector2i(0, 2),
-		Vector2i(7, 5): Vector2i(1, 2),
-		Vector2i(8, 4): Vector2i(0, 2),
-		Vector2i(12, 3): Vector2i(0, 2),
-		Vector2i(19, 3): Vector2i(1, 2),
-		# runes set in the rock under it
-		Vector2i(10, 6): Vector2i(1, 4),
-		Vector2i(15, 5): Vector2i(0, 4),
+		# the beach the trail leaves from
+		Vector2i(0, 6): Vector2i(1, 11),
+		Vector2i(3, 6): Vector2i(1, 11),
+		# the trail, a step at a time up onto the heights
+		Vector2i(4, 5): Vector2i(0, 13),
+		Vector2i(7, 5): Vector2i(1, 13),
+		Vector2i(8, 4): Vector2i(0, 13),
+		Vector2i(12, 3): Vector2i(0, 13),
+		Vector2i(19, 3): Vector2i(1, 13),
+		# the earth under it
+		Vector2i(10, 6): Vector2i(1, 14),
+		Vector2i(15, 5): Vector2i(3, 14),
 	},
 	&"Props":
 	{
-		# rune stones along the road, and a pair at the gate
-		Vector2i(6, 3): RUNE_STONE,
-		Vector2i(10, 2): RUNE_STONE,
-		Vector2i(16, 1): RUNE_STONE,
-		Vector2i(18, 1): RUNE_STONE,
+		# saplings and ferns along the trail, and a pair at the gate
+		Vector2i(6, 3): Vector2i(3, 22),
+		Vector2i(10, 2): Vector2i(6, 22),
+		Vector2i(16, 1): Vector2i(3, 22),
+		Vector2i(18, 1): Vector2i(6, 22),
 	},
 }
 
 
 func get_tests() -> Array:
 	return [
-		["Rune road Room lays out two screens", _test_lays_out_two_screens],
-		["Rune road west Entry stands on the beach", _test_west_entry_on_beach],
-		["Rune road climbs east a step at a time", _test_climbs_east],
-		["Rune stones stand on the road", _test_rune_stones_on_road],
-		["Rune road leads east to the Warden's gate", _test_leads_east],
+		["Jungle trail Room lays out two screens", _test_lays_out_two_screens],
+		["Jungle trail west Entry stands on the beach", _test_west_entry_on_beach],
+		["Jungle trail climbs east a step at a time", _test_climbs_east],
+		["Jungle plants line the trail", _test_plants_line_trail],
+		["Jungle trail leads east to the Warden's gate", _test_leads_east],
 	]
 
 
@@ -101,7 +103,7 @@ func _test_west_entry_on_beach() -> bool:
 	return valid
 
 
-# Each step of the road is one tile up from the last, so the climb never needs more than a
+# Each step of the trail is one tile up from the last, so the climb never needs more than a
 # small jump, and it reaches the heights at the east edge.
 func _test_climbs_east() -> bool:
 	var room := _room()
@@ -127,25 +129,26 @@ static func _surface_row(terrain: TileMapLayer, column: int) -> int:
 	return row
 
 
-# Each rune stone is two tiles tall, its base standing on the road's surface.
-func _test_rune_stones_on_road() -> bool:
+# Each plant is two tiles tall, its foot standing on the trail's surface.
+func _test_plants_line_trail() -> bool:
 	var room := _room()
 	if room == null:
 		return false
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	var props := room.get_node("Props") as TileMapLayer
-	var stones := 0
+	var plants := 0
 	var valid := true
 	for cell in props.get_used_cells():
-		if props.get_cell_atlas_coords(cell) != RUNE_STONE:
+		var top := props.get_cell_atlas_coords(cell)
+		if top not in PLANTS:
 			continue
-		stones += 1
+		plants += 1
 		var base := cell + Vector2i.DOWN
-		valid = valid and props.get_cell_atlas_coords(base) == RUNE_STONE_BASE
+		valid = valid and props.get_cell_atlas_coords(base) == PLANTS[top]
 		valid = valid and terrain.get_cell_source_id(base) == -1
 		valid = valid and terrain.get_cell_source_id(base + Vector2i.DOWN) == 0
 	room.free()
-	return valid and stones == LANDMARKS[&"Props"].size()
+	return valid and plants == LANDMARKS[&"Props"].size()
 
 
 # The heights run on east through the rune gate to the Warden's gate.

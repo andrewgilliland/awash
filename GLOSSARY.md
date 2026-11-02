@@ -113,7 +113,7 @@ An Exit the Player falls through into a Room below, with no way back up. A sinkh
 _Avoid_: Pit, sinkhole, chute, hole (as the general term)
 
 **Gate**:
-A place on a route that stays shut until an ability unlock or a defeated Boss opens it, such as the ledge above the salt cliffs that double jump will reach, or the column of rune light across the road east of the Warden's gate.
+A place on a route that stays shut until an ability unlock or a defeated Boss opens it, such as the ledge above the salt cliffs that double jump will reach, or the column of rune light across the trail east of the Warden's gate.
 _Avoid_: Lock, barrier, door
 
 **Cache**:
@@ -187,7 +187,7 @@ An enemy that guards a Region's end, with its own Health bar along the bottom of
 _Avoid_: Miniboss, guardian (as the general term)
 
 **Nameless Warden**:
-The Waking Coast's Boss: an armored spirit with a blank stone mask and a salt-crusted shield, guarding the Warden's gate on the road to Tidefen. It wakes when the Player crosses into the arena, then bashes with its shield and slams rune shockwaves along the floor, hurrying once half its Health is gone.
+The Waking Coast's Boss: an armored spirit with a blank stone mask and a salt-crusted shield, guarding the Warden's gate on the trail to Tidefen. It wakes when the Player crosses into the arena, then bashes with its shield and slams rune shockwaves along the floor, hurrying once half its Health is gone.
 _Avoid_: Warden (alone), sentinel, guardian
 
 **Ward**:

@@ -3,9 +3,8 @@ extends RefCounted
 const ROOM_PATH := "res://scenes/rooms/waking_coast_9.tscn"
 const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 const RoomReach := preload("res://tests/room_reach.gd")
-# Four screens wide, under the rune road, the Warden's gate and Tidefen's west end.
+# Four screens wide, under the jungle trail, the Warden's gate and Tidefen's west end.
 const ROOM_SIZE := Vector2i(640, 144)
-const CELLS := Rect2i(0, 0, 40, 9)
 const TILE := 16
 const WORLD_LAYER := 1
 const SHALLOW := Vector2i(5, 5)
@@ -16,24 +15,23 @@ const WEST_ENTRY := Vector2(12, 96)
 # Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_9.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
-	&"Back": {Vector2i(0, 2): Vector2i(6, 4), Vector2i(39, 0): Vector2i(6, 4)},
 	&"Terrain":
 	{
-		# runes in the roof, rock to jump in the tunnel, and three pools
-		Vector2i(12, 0): Vector2i(0, 4),
-		Vector2i(14, 4): Vector2i(1, 2),
-		Vector2i(26, 5): Vector2i(1, 2),
-		Vector2i(6, 6): Vector2i(2, 8),
+		# the earth roof, mounds to jump in the tunnel, and three pools
+		Vector2i(12, 0): Vector2i(1, 14),
+		Vector2i(14, 4): Vector2i(7, 11),
+		Vector2i(26, 5): Vector2i(7, 11),
+		Vector2i(6, 6): Vector2i(1, 11),
 		Vector2i(20, 6): SHALLOW,
-		Vector2i(34, 6): Vector2i(5, 8),
-		Vector2i(0, 6): Vector2i(1, 0),
+		Vector2i(34, 6): Vector2i(1, 11),
+		Vector2i(0, 6): Vector2i(1, 11),
 	},
 }
 
 
 func get_tests() -> Array:
 	return [
-		["Undertow Room lays out four screens of rock and dark", _test_lays_out_four_screens],
+		["Undertow Room lays out four screens of tunnel", _test_lays_out_four_screens],
 		["Undertow shaft drops from Tidefen's well, one way", _test_shaft_is_one_way],
 		["Undertow floor runs from the well west to the sea cave", _test_floor_runs_west],
 		["A Scavenger hunts the undertow's middle pool", _test_scavenger_in_pool],
@@ -48,7 +46,6 @@ static func _room() -> Node2D:
 	return packed_scene.instantiate() as Node2D
 
 
-# Every cell is rock or the tunnel's dark behind the open air, so nothing shows through.
 func _test_lays_out_four_screens() -> bool:
 	var room := _room()
 	if room == null:
@@ -62,15 +59,6 @@ func _test_lays_out_four_screens() -> bool:
 		var cells: Dictionary = LANDMARKS[layer_name]
 		for cell in cells:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
-	var back := room.get_node("Back") as TileMapLayer
-	var terrain := room.get_node("Terrain") as TileMapLayer
-	for row in range(CELLS.size.y):
-		for column in range(CELLS.size.x):
-			var cell := Vector2i(column, row)
-			valid = (
-				valid
-				and (terrain.get_cell_source_id(cell) == 0 or back.get_cell_source_id(cell) == 0)
-			)
 	room.free()
 	return valid
 

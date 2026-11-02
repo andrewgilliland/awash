@@ -3,7 +3,7 @@ extends RefCounted
 const ROOM_PATH := "res://scenes/rooms/waking_coast_7.tscn"
 const WARDEN_ID := &"nameless_warden"
 const WORLD_LAYER := 1 << 0
-# The Gate stands across the road east, between the arena and the way on to Tidefen.
+# The Gate stands across the trail east, between the arena and the way on to Tidefen.
 const ROOM_WIDTH := 160.0
 const ARENA_FLOOR := 112.0
 
