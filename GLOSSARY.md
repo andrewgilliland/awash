@@ -63,8 +63,12 @@ One area of the world, loaded as a single scene.
 _Avoid_: Level, map, screen
 
 **Planned Room**:
-A Room laid out in the World, with its place, size, Region and Exits, before it is built. Only the Map's picture of the whole World shows it; the game leaves it out until it has a scene.
+A Room laid out in the World, with its place, size, Region and Exits, before it is built. Only the Map drawn from the Plan shows it; the game leaves it out until it has a scene.
 _Avoid_: Placeholder room, stub, draft room
+
+**Plan**:
+The layout agreed for the World ahead of building it: where each Planned Room goes, and where built Rooms are to move. The game plays the World as it is; the Map can draw it as planned. Each Room's plan folds into it as the Room is built or moved.
+_Avoid_: Blueprint, draft, roadmap
 
 **Entry**:
 A named place in a Room where the Player appears on entering it. A new Run begins at the first Room's `start` Entry.
@@ -75,7 +79,7 @@ An edge of a Room that leads to an Entry in another Room. Crossing it enters tha
 _Avoid_: Door, portal, transition, warp
 
 **Region**:
-A stretch of the world with its own theme and Map name, such as the Waking Coast. Each has one Safe spoke.
+A stretch of the world with its own theme, Map name and colour, such as the Waking Coast. Each major Region has one Safe spoke; a smaller one, such as the Undertow beneath the coast's cliffs, leans on a neighbour's.
 _Avoid_: Biome, zone, area, level
 
 **Safe spoke**:
@@ -273,5 +277,5 @@ A line or two at the foot of the Inventory and the Equipment Panel saying what t
 _Avoid_: Tooltip, flavor text, help text
 
 **Map**:
-The Panel that draws each visited Room as a block, sized in screens and filled with its Region's colour, walled round with a gap at each Exit, marking any Rest point or Boss, with the name of the Region or Safe spoke the Player is in and a dot where the Player stands. Unvisited Rooms stay hidden, though a visited Room's Exits show the way on. Drawn for the whole World at once, with every Room shown and Planned Rooms in outline, it is how the World's shape is seen before it is built.
+The Panel that draws each visited Room as a block, sized in screens and filled with its Region's colour, walled round with a gap at each Exit, marking any Rest point or Boss, with the name of the Region or Safe spoke the Player is in and a dot where the Player stands. Unvisited Rooms stay hidden, though a visited Room's Exits show the way on. Drawn for the whole World at once, as it is or as the Plan lays it out with Planned Rooms in outline, it is how the World's shape is seen before it is built.
 _Avoid_: Minimap, world map, atlas

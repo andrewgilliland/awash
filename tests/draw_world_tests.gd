@@ -9,7 +9,7 @@ func get_tests() -> Array:
 	return [
 		["The World map places each Room by its cell and size", _test_places_by_cell],
 		["The World map is just big enough to hold every Room", _test_fits_rooms],
-		["The Map's picture of the World holds every Room, planned ones too", _test_map_rooms],
+		["The Map's picture shows the World as it is, or as planned", _test_map_rooms],
 	]
 
 
@@ -39,8 +39,11 @@ func _test_fits_rooms() -> bool:
 
 
 func _test_map_rooms() -> bool:
-	var rooms := DrawMap.map_rooms()
-	var valid := rooms.size() == World.room_ids().size() + World.planned_ids().size()
-	for room_id: StringName in rooms:
-		valid = valid and rooms[room_id].planned == (room_id in World.planned_ids())
+	var today := DrawMap.map_rooms(false)
+	var planned := DrawMap.map_rooms(true)
+	var valid := today.keys() == World.room_ids()
+	valid = valid and planned.size() == World.room_ids().size() + World.planned_ids().size()
+	for room_id: StringName in planned:
+		valid = valid and planned[room_id].planned == (room_id in World.planned_ids())
+		valid = valid and planned[room_id].cell == World.planned(room_id).cell
 	return valid
