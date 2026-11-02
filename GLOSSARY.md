@@ -62,6 +62,10 @@ _Avoid_: Session, save, runtime state
 One area of the world, loaded as a single scene.
 _Avoid_: Level, map, screen
 
+**Planned Room**:
+A Room laid out in the World, with its place, size, Region and Exits, before it is built. Only the Map's picture of the whole World shows it; the game leaves it out until it has a scene.
+_Avoid_: Placeholder room, stub, draft room
+
 **Entry**:
 A named place in a Room where the Player appears on entering it. A new Run begins at the first Room's `start` Entry.
 _Avoid_: Spawn point, start position, door
@@ -269,5 +273,5 @@ A line or two at the foot of the Inventory and the Equipment Panel saying what t
 _Avoid_: Tooltip, flavor text, help text
 
 **Map**:
-The Panel that draws each visited Room as a block, sized in screens, with the name of the Region or Safe spoke the Player is in and a dot where the Player stands. Unvisited Rooms stay hidden.
+The Panel that draws each visited Room as a block, sized in screens and filled with its Region's colour, walled round with a gap at each Exit, marking any Rest point or Boss, with the name of the Region or Safe spoke the Player is in and a dot where the Player stands. Unvisited Rooms stay hidden, though a visited Room's Exits show the way on. Drawn for the whole World at once, with every Room shown and Planned Rooms in outline, it is how the World's shape is seen before it is built.
 _Avoid_: Minimap, world map, atlas

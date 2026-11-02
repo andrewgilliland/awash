@@ -31,6 +31,9 @@ func get_tests() -> Array:
 		["Every Room is found in the World by its scene", _test_found_by_scene],
 		["Every Room's Region is in the World", _test_region_held],
 		["Every Room's Exits lead to Entries in the World", _test_exits_lead_to_entries],
+		["The World puts every Room's Exits on the Map where they are", _test_exits_on_map],
+		["The World marks every Rest point and Boss on the Map", _test_markers_on_map],
+		["Every Region has its own colour on the Map", _test_region_colours],
 		["No Room scene sets its own camera limits", _test_scene_leaves_camera],
 		["Every Room keeps its camera inside its size", _test_camera_inside],
 		["Every Room draws its layers in order", _test_layer_order],
@@ -99,6 +102,89 @@ func _test_region_held() -> bool:
 		func(room_id: StringName, _room: Node2D) -> bool:
 			return World.has_region(World.region(room_id))
 	)
+
+
+func _test_exits_on_map() -> bool:
+	return _every_room(_exits_on_map)
+
+
+# Each Exit, from just past the Room's edge: the screen it leaves from, and the side.
+static func _exits_on_map(room_id: StringName, room: Node2D) -> bool:
+	var size := Vector2(World.size(room_id)) * World.SCREEN_SIZE
+	var found: Array[String] = []
+	for node in room.find_children("*", "Area2D", true, false):
+		if node.get_script() != RoomExitScript:
+			continue
+		var at := (node as Node2D).position
+		var side := &"south"
+		if at.x < 0.0:
+			side = &"west"
+		elif at.x > size.x:
+			side = &"east"
+		elif at.y < 0.0:
+			side = &"north"
+		found.append(_on_map(_screen_of(room_id, at), side))
+	var listed: Array[String] = []
+	for exit: Dictionary in World.exits(room_id):
+		listed.append(_on_map(exit.screen, exit.side))
+	found.sort()
+	listed.sort()
+	if found != listed:
+		push_error("%s has Exits %s; the World lists %s" % [room_id, found, listed])
+	return found == listed
+
+
+func _test_markers_on_map() -> bool:
+	return _every_room(_markers_on_map)
+
+
+# A Boss is a node in the boss group, marked on its screen. A Rest point is rung at a bell, so it is
+# marked on a screen with one; not every bell is a Rest point.
+static func _markers_on_map(room_id: StringName, room: Node2D) -> bool:
+	var bosses := {}
+	for node in room.find_children("*", "Node2D", true, false):
+		if node.is_in_group(&"boss"):
+			bosses[&"boss"] = _screen_of(room_id, (node as Node2D).position)
+	var markers := World.markers(room_id)
+	var valid: bool = bosses.get(&"boss") == markers.get(&"boss")
+	if markers.has(&"rest"):
+		valid = valid and markers[&"rest"] in _bell_screens(room_id, room)
+	for kind: StringName in markers:
+		valid = valid and kind in [&"boss", &"rest"]
+	if not valid:
+		push_error("%s marks %s on the Map" % [room_id, markers])
+	return valid
+
+
+static func _bell_screens(room_id: StringName, room: Node2D) -> Array[Vector2i]:
+	var screens: Array[Vector2i] = []
+	for layer: TileMapLayer in room.find_children("*", "TileMapLayer", false, false):
+		for cell in layer.get_used_cells():
+			var atlas := layer.tile_set.get_source(layer.get_cell_source_id(cell))
+			var sheet := (atlas as TileSetAtlasSource).texture.resource_path
+			if sheet == OWN_PROPS and layer.get_cell_atlas_coords(cell) == BELL:
+				screens.append(_screen_of(room_id, layer.map_to_local(cell)))
+	return screens
+
+
+func _test_region_colours() -> bool:
+	var colours := {}
+	for room_id in World.room_ids():
+		colours[World.region(room_id)] = World.region_colour(room_id)
+	var valid := not colours.is_empty()
+	for colour: Color in colours.values():
+		valid = valid and colour.a == 1.0 and colours.values().count(colour) == 1
+	return valid
+
+
+# The screen of a Room a point is on, counted from its top-left.
+static func _screen_of(room_id: StringName, at: Vector2) -> Vector2i:
+	var screen := Vector2i((at / World.SCREEN_SIZE).floor())
+	return screen.clamp(Vector2i.ZERO, World.size(room_id) - Vector2i.ONE)
+
+
+static func _on_map(screen: Vector2i, side: StringName) -> String:
+	return "%s %s" % [screen, side]
 
 
 func _test_exits_lead_to_entries() -> bool:

@@ -2,14 +2,10 @@ extends Control
 
 const World := preload("res://scripts/core/world.gd")
 const MapLayout := preload("res://scripts/ui/map_layout.gd")
+const MapDrawing := preload("res://scripts/ui/map_drawing.gd")
 const RunStateScript := preload("res://scripts/core/run_state.gd")
 const PLAYER_GROUP := &"player"
 const BLINK_SECONDS := 0.4
-const VISITED_FILL := Color("183931")
-const CURRENT_FILL := Color("52638c")
-const OUTLINE := Color("94a5c6")
-const DOT := Color("ffff8b")
-const DOT_SIZE := Vector2(2, 2)
 
 # Shows the current Room's region name.
 @export var region_label: Label
@@ -31,14 +27,7 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	var layout := _layout()
-	if layout.is_empty():
-		return
-	for block: Rect2 in layout.blocks:
-		draw_rect(block, CURRENT_FILL if block == layout.current else VISITED_FILL)
-		draw_rect(block.grow(-0.5), OUTLINE, false, 1.0)
-	if _dot_lit():
-		draw_rect(Rect2(layout.dot, DOT_SIZE), DOT)
+	MapDrawing.draw(self, _layout(), _dot_lit())
 
 
 func _on_visibility_changed() -> void:
@@ -59,12 +48,23 @@ func _layout() -> Dictionary:
 	var rooms := {}
 	var visited: Array = []
 	for map_room_id in World.room_ids():
-		var cell := World.cell(map_room_id)
-		var region := World.region_name(map_room_id)
-		rooms[map_room_id] = {cell = cell, size = World.size(map_room_id), region = region}
+		rooms[map_room_id] = map_room(map_room_id)
 		if map_room_id == room_id or (run != null and run.has_visited_room(map_room_id)):
 			visited.append(map_room_id)
 	return MapLayout.layout(rooms, room_id, visited, _player_position(), size)
+
+
+# A Room as the Map lays it out, from the World.
+static func map_room(room_id: StringName) -> Dictionary:
+	return {
+		cell = World.cell(room_id),
+		size = World.size(room_id),
+		region = World.region_name(room_id),
+		colour = World.region_colour(room_id),
+		exits = World.exits(room_id),
+		markers = World.markers(room_id),
+		planned = room_id in World.planned_ids(),
+	}
 
 
 # Null outside the tree or without the autoload (headless tests), which reads as a new Run.

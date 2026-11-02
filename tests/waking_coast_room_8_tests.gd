@@ -3,6 +3,7 @@ extends RefCounted
 const ROOM_PATH := "res://scenes/rooms/waking_coast_8.tscn"
 const LANTERN_PATH := "res://assets/regions/waking_coast/props/tidefen_lantern.png"
 const RoomReach := preload("res://tests/room_reach.gd")
+const World := preload("res://scripts/core/world.gd")
 # Six screens wide: the stilt houses over the shallows, the market square, then the harbour, two
 # screens each.
 const ROOM_SIZE := Vector2i(960, 144)
@@ -103,6 +104,7 @@ func get_tests() -> Array:
 		["Tidefen west Entry stands on the sand", _test_west_entry_on_sand],
 		["Tidefen's walkway runs the village on stilts", _test_walkway_on_stilts],
 		["Tidefen's bell and Supply Shop stand in its market square", _test_market],
+		["The Map marks Tidefen's bell as its Rest point", _test_rest_point_on_map],
 		["Tidefen's harbour pier stands over the shallows, a jump up", _test_harbour],
 		["Blue lanterns hang from Tidefen's eaves", _test_lanterns_under_eaves],
 		["An old well in Tidefen's shallows drops into the undertow", _test_well],
@@ -178,6 +180,11 @@ func _test_walkway_on_stilts() -> bool:
 
 # The bell stands on the square's sand, and the shop's door and stall open onto it, all of it
 # walked to from the west Entry.
+func _test_rest_point_on_map() -> bool:
+	var screen := Vector2i(Vector2(BELL_CELL * TILE) / World.SCREEN_SIZE)
+	return World.markers(&"waking_coast_8") == {&"rest": screen}
+
+
 func _test_market() -> bool:
 	var room := _room()
 	if room == null:
