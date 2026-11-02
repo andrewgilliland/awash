@@ -14,36 +14,36 @@ const WORLD_LAYER := 1
 # The heights the trail climbs to, at the gate by the east edge.
 const EAST_END := Vector2i(19, 3)
 # The jungle's plants, two tiles tall: a sapling and a fern, top -> foot.
-const PLANTS := {Vector2i(3, 22): Vector2i(3, 23), Vector2i(6, 22): Vector2i(6, 23)}
+const PLANTS := {Vector2i(6, 5): Vector2i(6, 6), Vector2i(7, 5): Vector2i(7, 6)}
 # Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_6.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
-	# a palm on the beach before the trail: crown middle and base
-	&"Trees": {Vector2i(2, 2): Vector2i(1, 18), Vector2i(2, 5): Vector2i(1, 19)},
+	# a palm on the beach before the trail, leaning back west: crown and foot
+	&"Trees": {Vector2i(0, 2): Vector2i(11, 1), Vector2i(2, 5): Vector2i(13, 4)},
 	# the jungle thickening behind the trail: a wide bush's crown and roots
-	&"Jungle": {Vector2i(8, 1): Vector2i(0, 25), Vector2i(8, 3): Vector2i(0, 27)},
+	&"Jungle": {Vector2i(8, 1): Vector2i(9, 4), Vector2i(8, 3): Vector2i(9, 6)},
 	&"Terrain":
 	{
 		# the beach the trail leaves from
-		Vector2i(0, 6): Vector2i(1, 11),
-		Vector2i(3, 6): Vector2i(1, 11),
+		Vector2i(0, 6): Vector2i(2, 1),
+		Vector2i(3, 6): Vector2i(2, 1),
 		# the trail, a step at a time up onto the heights
-		Vector2i(4, 5): Vector2i(0, 13),
-		Vector2i(7, 5): Vector2i(1, 13),
-		Vector2i(8, 4): Vector2i(0, 13),
-		Vector2i(12, 3): Vector2i(0, 13),
-		Vector2i(19, 3): Vector2i(1, 13),
+		Vector2i(4, 5): Vector2i(1, 13),
+		Vector2i(7, 5): Vector2i(2, 13),
+		Vector2i(8, 4): Vector2i(1, 13),
+		Vector2i(12, 3): Vector2i(1, 13),
+		Vector2i(19, 3): Vector2i(3, 13),
 		# the earth under it
-		Vector2i(10, 6): Vector2i(1, 14),
-		Vector2i(15, 5): Vector2i(3, 14),
+		Vector2i(10, 6): Vector2i(3, 15),
+		Vector2i(15, 5): Vector2i(4, 16),
 	},
 	&"Props":
 	{
 		# saplings and ferns along the trail, and a pair at the gate
-		Vector2i(6, 3): Vector2i(3, 22),
-		Vector2i(10, 2): Vector2i(6, 22),
-		Vector2i(16, 1): Vector2i(3, 22),
-		Vector2i(18, 1): Vector2i(6, 22),
+		Vector2i(6, 3): Vector2i(6, 5),
+		Vector2i(10, 2): Vector2i(7, 5),
+		Vector2i(16, 1): Vector2i(6, 5),
+		Vector2i(18, 1): Vector2i(7, 5),
 	},
 }
 
@@ -80,7 +80,7 @@ func _test_lays_out_two_screens() -> bool:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	for column in range(CELLS.size.x):
-		valid = valid and terrain.get_cell_source_id(Vector2i(column, CELLS.end.y - 1)) == 0
+		valid = valid and terrain.get_cell_source_id(Vector2i(column, CELLS.end.y - 1)) != -1
 	room.free()
 	return valid
 
@@ -94,7 +94,7 @@ func _test_west_entry_on_beach() -> bool:
 	if valid:
 		var terrain := room.get_node("Terrain") as TileMapLayer
 		var below := Vector2i(entry.position / TILE)
-		valid = terrain.get_cell_source_id(below) == 0
+		valid = terrain.get_cell_source_id(below) != -1
 		valid = valid and terrain.get_cell_source_id(below + Vector2i.UP) == -1
 	var exit := room.get_node_or_null("Exits/west") as Area2D
 	valid = valid and exit != null and exit.position.x < 0.0
@@ -146,7 +146,7 @@ func _test_plants_line_trail() -> bool:
 		var base := cell + Vector2i.DOWN
 		valid = valid and props.get_cell_atlas_coords(base) == PLANTS[top]
 		valid = valid and terrain.get_cell_source_id(base) == -1
-		valid = valid and terrain.get_cell_source_id(base + Vector2i.DOWN) == 0
+		valid = valid and terrain.get_cell_source_id(base + Vector2i.DOWN) != -1
 	room.free()
 	return valid and plants == LANDMARKS[&"Props"].size()
 

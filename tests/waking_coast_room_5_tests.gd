@@ -15,24 +15,24 @@ const WEST_ENTRY := Vector2(12, 96)
 # At the shaft's foot, coming back from the undertow.
 const EAST_ENTRY := Vector2(308, 96)
 const SHELF := Vector2i(14, 4)
-const CRATE := Vector2i(7, 15)
+const CRATE := Vector2i(0, 0)
 # Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_5.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	&"Terrain":
 	{
 		# the earth roof, low at the tunnel
-		Vector2i(0, 3): Vector2i(5, 14),
-		Vector2i(6, 1): Vector2i(5, 14),
-		Vector2i(14, 1): Vector2i(5, 14),
+		Vector2i(0, 3): Vector2i(2, 11),
+		Vector2i(6, 1): Vector2i(3, 11),
+		Vector2i(14, 1): Vector2i(2, 11),
 		# the sandy floor and a pool the tide left
-		Vector2i(0, 6): Vector2i(1, 11),
-		Vector2i(7, 6): Vector2i(1, 11),
-		Vector2i(8, 6): Vector2i(5, 5),
-		Vector2i(10, 6): Vector2i(1, 11),
+		Vector2i(0, 6): Vector2i(2, 1),
+		Vector2i(7, 6): Vector2i(3, 1),
+		Vector2i(8, 6): Vector2i(1, 1),
+		Vector2i(10, 6): Vector2i(3, 1),
 		# a shelf up out of the way, with the cave's crate
-		Vector2i(13, 4): Vector2i(0, 15),
-		Vector2i(15, 4): Vector2i(2, 15),
+		Vector2i(13, 4): Vector2i(4, 4),
+		Vector2i(15, 4): Vector2i(7, 4),
 	},
 	&"Props": {Vector2i(14, 3): CRATE},
 }
@@ -83,7 +83,7 @@ func _test_shaft_is_one_way() -> bool:
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	for row in range(SHAFT_FLOOR.y):
 		valid = valid and terrain.get_cell_source_id(Vector2i(SHAFT_FLOOR.x, row)) == -1
-	valid = valid and terrain.get_cell_source_id(SHAFT_FLOOR) == 0
+	valid = valid and terrain.get_cell_source_id(SHAFT_FLOOR) != -1
 	valid = valid and SHAFT_FLOOR.y > RoomReach.jump_rows()
 	for exit in _exits(room):
 		valid = valid and exit.room_id != &"waking_coast_4"

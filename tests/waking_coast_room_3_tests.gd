@@ -15,7 +15,6 @@ const EAST_ENTRY := Vector2(148, 64)
 const CAVE_ENTRY := Vector2(148, 240)
 const TUNNEL := Rect2i(7, 13, 3, 2)
 const WORLD_LAYER := 1
-const SHALLOW := Vector2i(5, 5)
 # The cliff top the climb ends on, and the high ledge left for a double jump.
 const CLIFF_TOP := Vector2i(8, 4)
 const HIGH_LEDGE := Vector2i(5, 1)
@@ -23,36 +22,36 @@ const HIGH_LEDGE := Vector2i(5, 1)
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	# A broken mast holds up the wreck decks on the west side of the climb.
-	&"Wreck": {Vector2i(0, 6): Vector2i(6, 33), Vector2i(0, 14): Vector2i(6, 33)},
+	&"Wreck": {Vector2i(0, 6): Vector2i(12, 9), Vector2i(0, 14): Vector2i(12, 9)},
 	# the jungle starting on the cliff top: a bush's crown and foot
-	&"Jungle": {Vector2i(7, 1): Vector2i(0, 22), Vector2i(7, 3): Vector2i(0, 24)},
+	&"Jungle": {Vector2i(7, 1): Vector2i(5, 4), Vector2i(7, 3): Vector2i(5, 6)},
 	&"Terrain":
 	{
 		# the beach, with a tidal pool
-		Vector2i(0, 15): Vector2i(1, 11),
-		Vector2i(1, 15): Vector2i(1, 11),
-		Vector2i(2, 15): Vector2i(5, 5),
-		Vector2i(3, 15): Vector2i(5, 5),
-		Vector2i(4, 15): Vector2i(1, 11),
+		Vector2i(0, 15): Vector2i(2, 1),
+		Vector2i(1, 15): Vector2i(3, 1),
+		Vector2i(2, 15): Vector2i(1, 1),
+		Vector2i(3, 15): Vector2i(3, 1),
+		Vector2i(4, 15): Vector2i(3, 1),
 		# the sea cliff, its top two screens up the climb
-		Vector2i(7, 4): Vector2i(0, 13),
-		Vector2i(9, 4): Vector2i(1, 13),
-		Vector2i(7, 17): Vector2i(0, 14),
+		Vector2i(7, 4): Vector2i(1, 13),
+		Vector2i(9, 4): Vector2i(3, 13),
+		Vector2i(7, 17): Vector2i(1, 14),
 		# driftwood logs on the cliff, wreck decks across from them
-		Vector2i(3, 13): Vector2i(0, 15),
-		Vector2i(5, 13): Vector2i(2, 15),
-		Vector2i(1, 11): Vector2i(2, 33),
-		Vector2i(3, 11): Vector2i(5, 33),
-		Vector2i(4, 9): Vector2i(0, 15),
-		Vector2i(1, 7): Vector2i(2, 33),
-		Vector2i(4, 5): Vector2i(0, 15),
-		Vector2i(4, 1): Vector2i(0, 15),
+		Vector2i(3, 13): Vector2i(4, 4),
+		Vector2i(5, 13): Vector2i(7, 4),
+		Vector2i(1, 11): Vector2i(1, 6),
+		Vector2i(3, 11): Vector2i(4, 6),
+		Vector2i(4, 9): Vector2i(4, 4),
+		Vector2i(1, 7): Vector2i(1, 6),
+		Vector2i(4, 5): Vector2i(4, 4),
+		Vector2i(4, 1): Vector2i(4, 4),
 	},
 	&"Props":
 	{
 		# a crate on the high ledge, Tidefen's bell on the cliff top
-		Vector2i(5, 0): Vector2i(7, 15),
-		Vector2i(8, 3): Vector2i(3, 7),
+		Vector2i(5, 0): Vector2i(0, 0),
+		Vector2i(8, 3): Vector2i(1, 0),
 	},
 }
 
@@ -91,7 +90,7 @@ func _test_lays_out_two_screens_tall() -> bool:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	for column in range(CELLS.size.x):
-		valid = valid and terrain.get_cell_source_id(Vector2i(column, CELLS.end.y - 1)) == 0
+		valid = valid and terrain.get_cell_source_id(Vector2i(column, CELLS.end.y - 1)) != -1
 	room.free()
 	return valid
 
@@ -127,7 +126,7 @@ func _test_west_entry_on_beach() -> bool:
 	if valid:
 		var terrain := room.get_node("Terrain") as TileMapLayer
 		var below := Vector2i(entry.position / TILE)
-		valid = terrain.get_cell_source_id(below) == 0
+		valid = terrain.get_cell_source_id(below) != -1
 		valid = valid and terrain.get_cell_source_id(below + Vector2i.UP) == -1
 	room.free()
 	return valid
@@ -178,7 +177,7 @@ func _test_scavenger_in_pool() -> bool:
 		var row := int(scavenger.position.y / TILE)
 		for x in [scavenger.get("patrol_left"), scavenger.get("patrol_right")]:
 			var cell := Vector2i(int(x / TILE), row)
-			valid = valid and terrain.get_cell_atlas_coords(cell) == SHALLOW
+			valid = valid and RoomReach.is_water(terrain, cell)
 	room.free()
 	return valid
 
@@ -194,7 +193,7 @@ func _test_tunnel_to_cave() -> bool:
 		for column in range(TUNNEL.position.x, TUNNEL.end.x):
 			valid = valid and terrain.get_cell_source_id(Vector2i(column, row)) == -1
 	for column in range(TUNNEL.position.x, TUNNEL.end.x):
-		valid = valid and terrain.get_cell_source_id(Vector2i(column, TUNNEL.end.y)) == 0
+		valid = valid and terrain.get_cell_source_id(Vector2i(column, TUNNEL.end.y)) != -1
 	var exit := room.get_node_or_null("Exits/cave") as Area2D
 	valid = valid and exit != null and exit.position.x > ROOM_SIZE.x
 	valid = valid and exit.get("room_id") == &"waking_coast_5" and exit.get("entry_id") == &"west"

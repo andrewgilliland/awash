@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://drbj2daknuxrp"
-path="res://.godot/imported/terrain.png-a821b0d111c1975b71d37d903b51b573.ctex"
+uid="uid://dcn1xk2tp6ej0"
+path="res://.godot/imported/vegetation.png-6154ab8ace58c36d836fd586ca29730f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/regions/waking_coast/tiles/terrain.png"
-dest_files=["res://.godot/imported/terrain.png-a821b0d111c1975b71d37d903b51b573.ctex"]
+source_file="res://assets/packs/tropical_island/vegetation.png"
+dest_files=["res://.godot/imported/vegetation.png-6154ab8ace58c36d836fd586ca29730f.ctex"]
 
 [params]
 

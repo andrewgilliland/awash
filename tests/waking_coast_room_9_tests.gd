@@ -7,7 +7,6 @@ const RoomReach := preload("res://tests/room_reach.gd")
 const ROOM_SIZE := Vector2i(640, 144)
 const TILE := 16
 const WORLD_LAYER := 1
-const SHALLOW := Vector2i(5, 5)
 # The shaft down from Tidefen's well at the east end, and the way west into the sea cave.
 const WELL_ENTRY := Vector2(632, 24)
 const WELL_FLOOR := Vector2i(39, 6)
@@ -18,13 +17,13 @@ const LANDMARKS := {
 	&"Terrain":
 	{
 		# the earth roof, mounds to jump in the tunnel, and three pools
-		Vector2i(12, 0): Vector2i(1, 14),
-		Vector2i(14, 4): Vector2i(7, 11),
-		Vector2i(26, 5): Vector2i(7, 11),
-		Vector2i(6, 6): Vector2i(1, 11),
-		Vector2i(20, 6): SHALLOW,
-		Vector2i(34, 6): Vector2i(1, 11),
-		Vector2i(0, 6): Vector2i(1, 11),
+		Vector2i(12, 0): Vector2i(2, 8),
+		Vector2i(14, 4): Vector2i(1, 6),
+		Vector2i(26, 5): Vector2i(1, 5),
+		Vector2i(6, 6): Vector2i(2, 1),
+		Vector2i(20, 6): Vector2i(2, 1),
+		Vector2i(34, 6): Vector2i(3, 1),
+		Vector2i(0, 6): Vector2i(2, 1),
 	},
 }
 
@@ -73,7 +72,7 @@ func _test_shaft_is_one_way() -> bool:
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	for row in range(WELL_FLOOR.y):
 		valid = valid and terrain.get_cell_source_id(Vector2i(WELL_FLOOR.x, row)) == -1
-	valid = valid and terrain.get_cell_source_id(WELL_FLOOR) == 0
+	valid = valid and terrain.get_cell_source_id(WELL_FLOOR) != -1
 	valid = valid and WELL_FLOOR.y > RoomReach.jump_rows()
 	for node in room.find_children("*", "Area2D", true, false):
 		if node.get_script() == RoomExitScript:
@@ -109,7 +108,7 @@ func _test_scavenger_in_pool() -> bool:
 		var row := int(scavenger.position.y / TILE)
 		for x in [scavenger.get("patrol_left"), scavenger.get("patrol_right")]:
 			var cell := Vector2i(int(x / TILE), row)
-			valid = valid and terrain.get_cell_atlas_coords(cell) == SHALLOW
+			valid = valid and RoomReach.is_water(terrain, cell)
 	room.free()
 	return valid
 
