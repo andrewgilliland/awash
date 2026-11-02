@@ -15,7 +15,7 @@ const WEST_ENTRY := Vector2(12, 96)
 # At the shaft's foot, coming back from the undertow.
 const EAST_ENTRY := Vector2(308, 96)
 const SHELF := Vector2i(14, 4)
-const CRATE := Vector2i(0, 0)
+const CRATE := Vector2i(10, 3)
 # Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_5.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {

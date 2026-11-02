@@ -50,8 +50,8 @@ const LANDMARKS := {
 	&"Props":
 	{
 		# a crate on the high ledge, Tidefen's bell on the cliff top
-		Vector2i(5, 0): Vector2i(0, 0),
-		Vector2i(8, 3): Vector2i(1, 0),
+		Vector2i(5, 0): Vector2i(10, 3),
+		Vector2i(8, 3): Vector2i(0, 0),
 	},
 }
 

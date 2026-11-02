@@ -3,9 +3,10 @@ extends RefCounted
 const ROOM_PATH := "res://scenes/rooms/waking_coast_8.tscn"
 const LANTERN_PATH := "res://assets/regions/waking_coast/props/tidefen_lantern.png"
 const RoomReach := preload("res://tests/room_reach.gd")
-# Two screens wide.
-const ROOM_SIZE := Vector2i(320, 144)
-const CELLS := Rect2i(0, 0, 20, 9)
+# Six screens wide: the stilt houses over the shallows, the market square, then the harbour, two
+# screens each.
+const ROOM_SIZE := Vector2i(960, 144)
+const CELLS := Rect2i(0, 0, 60, 9)
 const TILE := 16
 const WORLD_LAYER := 1
 # On the sand, at the height of the Warden's gate's floor.
@@ -21,9 +22,22 @@ const WALKWAY := Vector2i(4, 17)
 const STILT_COLUMNS := [6, 11, 16]
 # The old well in the shallows, down into the undertow.
 const WELL_COLUMN := 9
-const BELL := Vector2i(1, 0)
-const CRATE := Vector2i(0, 0)
-const COCONUTS := Vector2i(2, 2)
+# The market square's columns: the bell, the rest point, stands on its sand, by the Supply
+# Shop's door and its stall.
+const MARKET := Vector2i(20, 39)
+const BELL := Vector2i(0, 0)
+const BELL_CELL := Vector2i(33, 6)
+const SHOP_DOOR := [Vector2i(22, 4), Vector2i(23, 4)]
+const STALL := Rect2i(35, 4, 5, 3)
+# The harbour: a plank pier on posts over the shallows, a jump up from the stone quay.
+const PIER_ROW := 5
+const PIER := Vector2i(48, 56)
+const PIER_DECKS := [
+	Vector2i(6, 2), Vector2i(7, 2), Vector2i(8, 2), Vector2i(9, 2), Vector2i(10, 2)
+]
+const PIER_DECKS_END := Vector2i(11, 2)
+const PIER_POSTS := [49, 53]
+const HARBOUR_WATER := Vector2i(48, 57)
 # Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_8.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
@@ -52,6 +66,15 @@ const LANDMARKS := {
 		Vector2i(18, 3): Vector2i(7, 1),
 		Vector2i(18, 6): Vector2i(7, 4),
 	},
+	# the harbour's dock crane on the quay: its beam and its foot
+	&"Town": {Vector2i(42, 2): Vector2i(3, 1), Vector2i(45, 6): Vector2i(6, 5)},
+	# the Supply Shop: its roof's peak and door, and the market cart that is its stall
+	&"TownFront":
+	{
+		Vector2i(24, 0): Vector2i(16, 1),
+		Vector2i(22, 4): Vector2i(2, 1),
+		Vector2i(35, 4): Vector2i(2, 6),
+	},
 	&"Terrain":
 	{
 		Vector2i(0, 7): Vector2i(3, 1),
@@ -64,18 +87,23 @@ const LANDMARKS := {
 		# roofs over the houses
 		Vector2i(5, 1): Vector2i(1, 6),
 		Vector2i(15, 1): Vector2i(4, 6),
+		# the stone quay, the pier's first plank, and the stone wall at the east end
+		Vector2i(40, 7): Vector2i(7, 4),
+		Vector2i(48, 5): Vector2i(6, 2),
+		Vector2i(58, 3): Vector2i(1, 3),
 	},
-	# the village bell, and the shop's stall by the east house
-	&"Props": {Vector2i(10, 3): BELL, Vector2i(16, 3): CRATE, Vector2i(17, 3): COCONUTS},
+	# the village bell, and the Supply Shop's hanging sign
+	&"Props": {BELL_CELL: BELL, Vector2i(29, 4): Vector2i(2, 4)},
 }
 
 
 func get_tests() -> Array:
 	return [
-		["Tidefen Room lays out two screens", _test_lays_out_two_screens],
+		["Tidefen Room lays out six screens", _test_lays_out_six_screens],
 		["Tidefen west Entry stands on the sand", _test_west_entry_on_sand],
 		["Tidefen's walkway runs the village on stilts", _test_walkway_on_stilts],
-		["Tidefen's bell and stall stand on the walkway", _test_bell_and_stall],
+		["Tidefen's bell and Supply Shop stand in its market square", _test_market],
+		["Tidefen's harbour pier stands over the shallows, a jump up", _test_harbour],
 		["Blue lanterns hang from Tidefen's eaves", _test_lanterns_under_eaves],
 		["An old well in Tidefen's shallows drops into the undertow", _test_well],
 		["Tidefen walls its east edge", _test_walls_east_edge],
@@ -89,7 +117,7 @@ static func _room() -> Node2D:
 	return packed_scene.instantiate() as Node2D
 
 
-func _test_lays_out_two_screens() -> bool:
+func _test_lays_out_six_screens() -> bool:
 	var room := _room()
 	if room == null:
 		return false
@@ -148,16 +176,48 @@ func _test_walkway_on_stilts() -> bool:
 	return valid
 
 
-func _test_bell_and_stall() -> bool:
+# The bell stands on the square's sand, and the shop's door and stall open onto it, all of it
+# walked to from the west Entry.
+func _test_market() -> bool:
 	var room := _room()
 	if room == null:
 		return false
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	var props := room.get_node("Props") as TileMapLayer
-	var valid := true
-	for cell in LANDMARKS[&"Props"]:
-		valid = valid and props.get_cell_atlas_coords(cell) == LANDMARKS[&"Props"][cell]
-		valid = valid and terrain.get_cell_atlas_coords(cell + Vector2i.DOWN) in WALKWAY_DECKS
+	var front := room.get_node_or_null("TownFront") as TileMapLayer
+	var valid := front != null and props.get_cell_atlas_coords(BELL_CELL) == BELL
+	valid = valid and terrain.get_cell_source_id(BELL_CELL + Vector2i.DOWN) != -1
+	valid = valid and BELL_CELL.x >= MARKET.x and BELL_CELL.x <= MARKET.y
+	for cell in SHOP_DOOR:
+		valid = valid and front != null and front.get_cell_source_id(cell) != -1
+	for column in range(STALL.position.x, STALL.end.x):
+		var foot := Vector2i(column, STALL.end.y - 1)
+		valid = valid and front != null and front.get_cell_source_id(foot) != -1
+		valid = valid and terrain.get_cell_source_id(foot + Vector2i.DOWN) != -1
+	valid = valid and STALL.position.x >= MARKET.x and STALL.end.x - 1 <= MARKET.y
+	var reached := RoomReach.reachable(terrain, Vector2i(WEST_ENTRY / TILE))
+	valid = valid and RoomReach.span_at(reached, BELL_CELL + Vector2i.DOWN) != null
+	room.free()
+	return valid
+
+
+# The pier's planks run over the harbour's shallows on posts, and the quay is a jump below it.
+func _test_harbour() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var town := room.get_node_or_null("Town") as TileMapLayer
+	var valid := town != null
+	for column in range(PIER.x, PIER.y + 1):
+		var plank := terrain.get_cell_atlas_coords(Vector2i(column, PIER_ROW))
+		valid = valid and (plank in PIER_DECKS or (column == PIER.y and plank == PIER_DECKS_END))
+	for column in PIER_POSTS:
+		valid = valid and town != null and town.get_cell_source_id(Vector2i(column, 6)) != -1
+	for column in range(HARBOUR_WATER.x, HARBOUR_WATER.y + 1):
+		valid = valid and RoomReach.is_water(terrain, Vector2i(column, 7))
+	var reached := RoomReach.reachable(terrain, Vector2i(WEST_ENTRY / TILE))
+	valid = valid and RoomReach.span_at(reached, Vector2i(PIER.y, PIER_ROW)) != null
 	room.free()
 	return valid
 

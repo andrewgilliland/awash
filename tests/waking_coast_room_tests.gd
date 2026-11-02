@@ -68,7 +68,7 @@ const LANDMARKS := {
 	&"Props":
 	{
 		Vector2i(18, 3): Vector2i(6, 5),
-		Vector2i(19, 0): Vector2i(0, 0),
+		Vector2i(18, 0): Vector2i(10, 3),
 	},
 }
 

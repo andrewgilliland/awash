@@ -1,11 +1,11 @@
 extends RefCounted
 
 # Each Region's tiles come in two sets: terrain, which the Player stands on, and scenery, which
-# never collides. The coast's are drawn from the Tropical Island pack's sheets, as they come, and
-# one sheet of its own props.
+# never collides. The coast's are drawn from the Mucho Pixels packs' sheets, as they come, and one
+# sheet of its own props.
 const TERRAIN_PATH := "res://assets/regions/waking_coast/tiles/terrain.tres"
 const SCENERY_PATH := "res://assets/regions/waking_coast/tiles/scenery.tres"
-const PACK_DIR := "res://assets/packs/tropical_island/"
+const PACK_DIR := "res://assets/packs/"
 const OWN_PROPS := "res://assets/regions/waking_coast/props/coast_props.png"
 const WORLD_LAYER := 1
 
@@ -14,7 +14,7 @@ func get_tests() -> Array:
 	return [
 		["Every terrain tile collides or is one-way", _test_terrain_collides],
 		["No scenery tile collides", _test_scenery_never_collides],
-		["The coast's tiles come from the pack's sheets and its own props", _test_sheets],
+		["The coast's tiles come from the packs' sheets and its own props", _test_sheets],
 	]
 
 

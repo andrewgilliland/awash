@@ -28,7 +28,7 @@ const UNDERTOW_PATH := "res://scenes/rooms/waking_coast_9.tscn"
 const TIDEFEN_SAND_Y := 112.0
 # Up onto Tidefen's walkway: straight up onto the ledge from under it, then on to the walkway.
 const TIDEFEN_CLIMB := [[0, 40.0, 80.0], [1, 56.0, 64.0]]
-const TIDEFEN_STALL_X := 250.0
+const TIDEFEN_WALKWAY_EAST_X := 270.0
 # West along the undertow from the well's shaft: through three pools and over two rocks.
 const UNDERTOW_WEST: Array[float] = [470.0, 400.0, 280.0, 200.0, 90.0, 20.0]
 # Walking the graveyard's beach east to the sinkhole, and the cave's floor west to the tunnel:
@@ -522,7 +522,7 @@ func _playtest_walks_to_tidefen() -> bool:
 	return valid
 
 
-# From Tidefen's sand up onto the ledge, then the walkway, and along it to the shop's stall.
+# From Tidefen's sand up onto the ledge, then the walkway, and along it to its east end.
 func _playtest_climbs_tidefen() -> bool:
 	var player := await _enter_room(&"waking_coast_8", &"west", TIDEFEN_PATH)
 	if player == null:
@@ -533,8 +533,8 @@ func _playtest_climbs_tidefen() -> bool:
 		await _walk_to_x(player, step[1])
 		await _jump_toward(player, step[0])
 		valid = valid and player.is_on_floor() and absf(player.global_position.y - step[2]) < 1.0
-	await _walk_to_x(player, TIDEFEN_STALL_X)
-	valid = valid and absf(player.global_position.x - TIDEFEN_STALL_X) < 4.0
+	await _walk_to_x(player, TIDEFEN_WALKWAY_EAST_X)
+	valid = valid and absf(player.global_position.x - TIDEFEN_WALKWAY_EAST_X) < 4.0
 	valid = valid and absf(player.global_position.y - TIDEFEN_CLIMB[-1][2]) < 1.0
 	await _leave_scene()
 	return valid
