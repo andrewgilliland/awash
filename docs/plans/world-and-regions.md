@@ -5,7 +5,7 @@ Agreed 2026-11-01. PR 1 and PR 2 are built; this is the order and shape the work
 ## Decisions
 
 - The **World** is every Region and every Room, with where each Room sits and how many screens it spans; the Map draws it. `scripts/core/world_map.gd` becomes `scripts/core/world.gd` and holds only the World. The Map Panel's `layout` moves beside the Map Panel as `scripts/ui/map_layout.gd`, and `tests/world_map_tests.gd` follows it as `tests/map_layout_tests.gd`, keeping its made-up Rooms.
-- The World stays as typed GDScript constants: no Resources, no `class_name`.
+- The World stays as typed GDScript constants: no Resources, no `class_name`. (Superseded: its tables now live in `assets/world.json`; see `docs/adr/0001-world-data-in-json.md`.)
 - Callers ask the World questions instead of indexing its dictionaries: which Room a scene is, a Room's scene, size, Region, Background and theme, and which Rooms there are. Changing the World's shape is then an edit in one file.
 - Each Region is a record keyed by an id that is also its asset folder's name (`&"waking_coast"`). It holds its Map name ("Waking Coast"), its Region theme, its default Background and its named Background variants (`cave`), with every path written out in full so `asset_path_tests` checks them. Rooms name their Region by id. `REGION_MUSIC` goes.
 - A Room's entry names a Background variant only when it uses one: the sea cave and the undertow say `background = &"cave"`; every other Room shows its Region's default.
