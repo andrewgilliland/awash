@@ -2,7 +2,7 @@ extends RefCounted
 
 const WRAITH_SCENE := preload("res://scenes/enemies/wraith.tscn")
 const UNDERTOW_PATH := "res://scenes/rooms/waking_coast_9.tscn"
-const SHEET_PATH := "res://assets/sprites/enemies/wraith_1.png"
+const SHEET_PATH := "res://assets/enemies/wraith/wraith_1.png"
 const WraithBrain := preload("res://scripts/enemies/wraith_brain.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const PLAYER_HITBOX_LAYER := 1 << 2

@@ -72,3 +72,15 @@ jobs:
 
       - name: Playtest
         run: ./scripts/quality/playtest.sh
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/world-editor/package-lock.json
+
+      # The World editor's own typecheck and tests (its reading of Godot's files, the World's layout).
+      - name: World editor
+        run: |
+          npm ci --prefix tools/world-editor
+          npm test --prefix tools/world-editor

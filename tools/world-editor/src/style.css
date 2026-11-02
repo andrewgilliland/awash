@@ -1,0 +1,49 @@
+:root {
+  --bg: #0e0e16;
+  --panel: #171724;
+  --line: #2b2f45;
+  --fg: #e4e8f2;
+  --muted: #94a5c6;
+  --pass: #6fcf8f;
+  --fail: #e8584c;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.45 -apple-system, system-ui, sans-serif; }
+header { display: flex; gap: 16px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+h1 { font-size: 16px; margin: 0; }
+nav { display: flex; gap: 6px; flex: 1; }
+button { background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 5px 12px; font: inherit; cursor: pointer; }
+button[aria-pressed="true"] { border-color: var(--muted); background: #24263a; }
+button:disabled { opacity: 0.6; cursor: progress; }
+main { display: grid; grid-template-columns: 1fr 320px; min-height: calc(100vh - 51px); }
+#stage { overflow: auto; padding: 16px; }
+#side { border-left: 1px solid var(--line); padding: 16px; overflow: auto; background: var(--panel); }
+canvas { image-rendering: pixelated; display: block; }
+h2 { font-size: 15px; margin: 0 0 8px; }
+.muted { color: var(--muted); }
+dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 8px 0; }
+dt { color: var(--muted); }
+dd { margin: 0; }
+ul.results { list-style: none; padding: 0; margin: 8px 0; }
+ul.results li { padding: 2px 0; }
+ul.results li.fail { color: var(--fail); }
+ul.results li.pass { color: var(--pass); }
+label.layer { display: block; padding: 2px 0; }
+@media (max-width: 760px) { main { grid-template-columns: 1fr; } #side { border-left: 0; border-top: 1px solid var(--line); } }
+#status { margin: 0; font-size: 13px; color: var(--muted); max-width: 46ch; }
+#status.fail { color: var(--fail); }
+#status.pass { color: var(--pass); }
+#actions { display: flex; gap: 6px; }
+.toolbar { display: flex; gap: 6px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.toolbar label { color: var(--muted); }
+select, input, textarea { background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 4px; font: inherit; padding: 2px 4px; }
+textarea { width: 100%; resize: vertical; }
+label.field { display: grid; gap: 4px; color: var(--muted); margin: 8px 0; }
+dd.size input { width: 4em; }
+#side button { margin-top: 8px; }
+.layer { display: flex; gap: 6px; align-items: center; padding: 2px 0; }
+.palette-box, .room-box { overflow: auto; max-width: 100%; }
+.palette-box { max-height: 360px; border: 1px solid var(--line); margin: 6px 0; }
+canvas.palette { cursor: crosshair; }
+.room-box canvas { cursor: crosshair; }

@@ -1,8 +1,8 @@
 extends RefCounted
 
 const STORM_WISP_SCENE := preload("res://scenes/enemies/storm_wisp.tscn")
-const RUNE_ROAD_PATH := "res://scenes/rooms/waking_coast_6.tscn"
-const SHEET_PATH := "res://assets/sprites/enemies/storm_wisp_1.png"
+const JUNGLE_TRAIL_PATH := "res://scenes/rooms/waking_coast_6.tscn"
+const SHEET_PATH := "res://assets/enemies/storm_wisp/storm_wisp_1.png"
 const StormWispBrain := preload("res://scripts/enemies/storm_wisp_brain.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const PLAYER_HITBOX_LAYER := 1 << 2
@@ -13,7 +13,7 @@ const ANIMATIONS: Array[StringName] = [&"drift", &"crackle", &"arc", &"rest", &"
 const SFX_BUS := &"SFX"
 const PLAYER_GROUP := &"player"
 const FRAME := 1.0 / 60.0
-# The rune road's heights: their surface, and the columns they span, in pixels.
+# The jungle trail's heights: their surface, and the columns they span, in pixels.
 const HEIGHTS_Y := 48.0
 const HEIGHTS := Vector2(192, 320)
 # The Player's sword reaches from 18 pixels above its feet down to them; the Wisp must hover
@@ -34,7 +34,7 @@ func get_tests() -> Array:
 		["Storm Wisp is drawn from its sheet", _test_sprite],
 		["Storm Wisp carries positional sounds on the SFX bus", _test_sounds_on_sfx_bus],
 		["Storm Wisp's arc is live only while it arcs", _test_arc_live_while_arcing],
-		["A Storm Wisp rides the wind over the rune road's heights", _test_over_rune_road],
+		["A Storm Wisp rides the wind over the jungle trail's heights", _test_over_jungle_trail],
 	]
 
 
@@ -94,8 +94,8 @@ func _test_arc_live_while_arcing() -> bool:
 	return valid
 
 
-func _test_over_rune_road() -> bool:
-	var room := (load(RUNE_ROAD_PATH) as PackedScene).instantiate()
+func _test_over_jungle_trail() -> bool:
+	var room := (load(JUNGLE_TRAIL_PATH) as PackedScene).instantiate()
 	var wisp := room.get_node_or_null("Enemies/StormWisp") as Node2D
 	var valid := wisp != null and wisp.scene_file_path == STORM_WISP_SCENE.resource_path
 	if valid:

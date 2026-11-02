@@ -7,6 +7,7 @@ const PlayerController := preload("res://scripts/player/player_controller.gd")
 const TILE := 16
 # How far apart, in tiles, the ends of two surfaces can be for a jump to cross.
 const JUMP_GAP := 2
+const WATER_SHEET := "res://assets/packs/tropical_island/water.png"
 
 
 # How many tiles a single jump rises, from the Player's jump and the world's gravity.
@@ -67,5 +68,13 @@ static func span_at(spans: Array[Vector3i], cell: Vector2i) -> Variant:
 	return null
 
 
+# Whether a Terrain cell is the pack's water: a shallow the Player sinks into.
+static func is_water(terrain: TileMapLayer, cell: Vector2i) -> bool:
+	var atlas := terrain.tile_set.get_source(terrain.get_cell_source_id(cell))
+	return atlas is TileSetAtlasSource and atlas.texture.resource_path == WATER_SHEET
+
+
 static func _solid(terrain: TileMapLayer, cell: Vector2i, skip: Array) -> bool:
-	return terrain.get_cell_source_id(cell) == 0 and terrain.get_cell_atlas_coords(cell) not in skip
+	return (
+		terrain.get_cell_source_id(cell) != -1 and terrain.get_cell_atlas_coords(cell) not in skip
+	)

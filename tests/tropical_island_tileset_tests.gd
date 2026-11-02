@@ -1,67 +1,50 @@
 extends RefCounted
 
-const TILESET_PATH := "res://assets/tilesets/tropical_island_1.tres"
-const SHEET_PATH := "res://assets/tilesets/tropical_island_1.png"
-const SOURCE_ID := 0
-const COLUMNS := 8
-const ROWS := 18
-const WORLD_LAYER := 1
+# The Tropical Island pack's terrain: its ground sheet's three sets (beach, cave earth and grass),
+# its water, and the ledges the Player stands on: bridge decks, hut floors and mossy pads.
+const TERRAIN_PATH := "res://assets/regions/waking_coast/tiles/terrain.tres"
+const PACK_DIR := "res://assets/packs/tropical_island/"
 const FULL_SQUARE := [Vector2(-8, -8), Vector2(8, -8), Vector2(8, 8), Vector2(-8, 8)]
-# Slopes rise 45 degrees across one tile: up to the right, and down to the right.
-const SLOPE_UP := [Vector2(-8, 8), Vector2(8, -8), Vector2(8, 8)]
-const SLOPE_DOWN := [Vector2(-8, -8), Vector2(8, 8), Vector2(-8, 8)]
-# Beach slopes sit in row 0 and jungle slopes in row 2.
-const SLOPES_UP := [Vector2i(3, 0), Vector2i(3, 2)]
-const SLOPES_DOWN := [Vector2i(4, 0), Vector2i(4, 2)]
-# Planks, the rope bridge, branch platforms and floating logs collide along their top 7 pixels,
-# like the Waking Coast's ledges.
+# The water's surface lets the Player sink 10 pixels in, as a shallow pool does.
+const SHALLOW := [Vector2(-8, 2), Vector2(8, 2), Vector2(8, 8), Vector2(-8, 8)]
 const LEDGE_TOP := [Vector2(-8, -8), Vector2(8, -8), Vector2(8, -1), Vector2(-8, -1)]
-const ONE_WAY := [
-	Vector2i(0, 4),
-	Vector2i(1, 4),
-	Vector2i(2, 4),
-	Vector2i(3, 4),
-	Vector2i(0, 9),
-	Vector2i(1, 9),
-	Vector2i(2, 9),
-	Vector2i(0, 10),
-	Vector2i(1, 10),
-	Vector2i(2, 10),
-]
+# Each ground set is five tiles square: its top-left tile on the ground sheet.
+const GROUND_SETS := [Vector2i(1, 1), Vector2i(1, 7), Vector2i(1, 13)]
+# The beach's 45-degree slopes, from the west side of its rounded set: solid below a diagonal
+# that rises from each tile's west foot to its east top.
+const SLOPES := [Vector2i(8, 1), Vector2i(7, 2)]
+const SLOPE := [Vector2(-8, 8), Vector2(8, -8), Vector2(8, 8)]
+const WATER := [Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1)]
+const LEDGES := {
+	"ladders_and_bridges.png": [Vector2i(4, 4), Vector2i(5, 4), Vector2i(6, 4), Vector2i(7, 4)],
+	"jungle_hut.png": [Vector2i(1, 6), Vector2i(2, 6), Vector2i(3, 6), Vector2i(4, 6)],
+	"jungle_trees.png": [Vector2i(1, 7), Vector2i(2, 7), Vector2i(3, 7)],
+}
 
 
 func get_tests() -> Array:
 	return [
-		["Tropical island tileset holds every sheet tile", _test_holds_every_tile],
-		["Tropical island beach and jungle ground is solid", _test_ground_is_solid],
-		["Tropical island slopes collide along their surface", _test_slopes_collide],
-		[
-			"Tropical island planks, bridge, branches and logs are one-way",
-			_test_planks_are_one_way,
-		],
-		["Tropical island scenery does not collide", _test_scenery_does_not_collide],
+		["The pack's beach, cave earth and grass are solid", _test_ground_is_solid],
+		["The beach's slopes are solid below their diagonal", _test_slopes],
+		["The pack's water sinks underfoot like a shallow", _test_water_sinks],
+		["Bridge decks, hut floors and mossy pads are one-way ledges", _test_ledges],
 	]
 
 
-static func _ground_tiles() -> Array:
-	var tiles: Array = []
-	for row in range(4):
-		for column in range(COLUMNS):
-			var coords := Vector2i(column, row)
-			if coords not in SLOPES_UP and coords not in SLOPES_DOWN:
-				tiles.append(coords)
-	return tiles
-
-
-static func _atlas() -> TileSetAtlasSource:
-	var tile_set := load(TILESET_PATH) as TileSet
-	if tile_set == null or not tile_set.has_source(SOURCE_ID):
+# The terrain set's atlas cut from the named pack sheet, or null.
+static func _atlas(sheet: String) -> TileSetAtlasSource:
+	var tile_set := load(TERRAIN_PATH) as TileSet
+	if tile_set == null:
 		return null
-	return tile_set.get_source(SOURCE_ID) as TileSetAtlasSource
+	for i in range(tile_set.get_source_count()):
+		var atlas := tile_set.get_source(tile_set.get_source_id(i)) as TileSetAtlasSource
+		if atlas != null and atlas.texture.resource_path == PACK_DIR + sheet:
+			return atlas
+	return null
 
 
 static func _collides_with(atlas: TileSetAtlasSource, coords: Vector2i, points: Array) -> bool:
-	if not atlas.has_tile(coords):
+	if atlas == null or not atlas.has_tile(coords):
 		return false
 	var data := atlas.get_tile_data(coords, 0)
 	if data.get_collision_polygons_count(0) != 1:
@@ -73,66 +56,41 @@ static func _is_one_way(atlas: TileSetAtlasSource, coords: Vector2i) -> bool:
 	return atlas.get_tile_data(coords, 0).is_collision_polygon_one_way(0, 0)
 
 
-func _test_holds_every_tile() -> bool:
-	var tile_set := load(TILESET_PATH) as TileSet
-	var atlas := _atlas()
-	if tile_set == null or atlas == null:
-		return false
-	var valid := tile_set.tile_size == Vector2i(16, 16)
-	valid = valid and atlas.texture != null and atlas.texture.resource_path == SHEET_PATH
-	valid = valid and tile_set.get_physics_layers_count() == 1
-	valid = valid and tile_set.get_physics_layer_collision_layer(0) == WORLD_LAYER
-	valid = valid and atlas.get_tiles_count() == COLUMNS * ROWS
-	for row in range(ROWS):
-		for column in range(COLUMNS):
-			valid = valid and atlas.has_tile(Vector2i(column, row))
-	return valid
-
-
 func _test_ground_is_solid() -> bool:
-	var atlas := _atlas()
-	if atlas == null:
-		return false
-	var valid := true
-	for coords in _ground_tiles():
-		valid = valid and _collides_with(atlas, coords, FULL_SQUARE)
-		valid = valid and not _is_one_way(atlas, coords)
+	var atlas := _atlas("ground.png")
+	var valid := atlas != null
+	for corner in GROUND_SETS:
+		for row in range(5):
+			for column in range(5):
+				var coords: Vector2i = corner + Vector2i(column, row)
+				valid = valid and _collides_with(atlas, coords, FULL_SQUARE)
+				valid = valid and not _is_one_way(atlas, coords)
 	return valid
 
 
-func _test_slopes_collide() -> bool:
-	var atlas := _atlas()
-	if atlas == null:
-		return false
-	var valid := true
-	for coords in SLOPES_UP:
-		valid = valid and _collides_with(atlas, coords, SLOPE_UP) and not _is_one_way(atlas, coords)
-	for coords in SLOPES_DOWN:
-		valid = valid and _collides_with(atlas, coords, SLOPE_DOWN)
-		valid = valid and not _is_one_way(atlas, coords)
+func _test_slopes() -> bool:
+	var atlas := _atlas("ground.png")
+	var valid := atlas != null
+	for coords in SLOPES:
+		valid = valid and _collides_with(atlas, coords, SLOPE) and not _is_one_way(atlas, coords)
 	return valid
 
 
-func _test_planks_are_one_way() -> bool:
-	var atlas := _atlas()
-	if atlas == null:
-		return false
-	var valid := true
-	for coords in ONE_WAY:
-		valid = valid and _collides_with(atlas, coords, LEDGE_TOP) and _is_one_way(atlas, coords)
+func _test_water_sinks() -> bool:
+	var atlas := _atlas("water.png")
+	var valid := atlas != null
+	for coords in WATER:
+		valid = valid and _collides_with(atlas, coords, SHALLOW) and not _is_one_way(atlas, coords)
 	return valid
 
 
-func _test_scenery_does_not_collide() -> bool:
-	var atlas := _atlas()
-	if atlas == null:
-		return false
-	var colliding := _ground_tiles() + SLOPES_UP + SLOPES_DOWN + ONE_WAY
+func _test_ledges() -> bool:
 	var valid := true
-	for row in range(ROWS):
-		for column in range(COLUMNS):
-			var coords := Vector2i(column, row)
-			if coords in colliding or not atlas.has_tile(coords):
-				continue
-			valid = valid and atlas.get_tile_data(coords, 0).get_collision_polygons_count(0) == 0
+	for sheet in LEDGES:
+		var atlas := _atlas(sheet)
+		valid = valid and atlas != null
+		for coords in LEDGES[sheet]:
+			valid = (
+				valid and _collides_with(atlas, coords, LEDGE_TOP) and _is_one_way(atlas, coords)
+			)
 	return valid

@@ -21,7 +21,7 @@ The Wraith is the Waking Coast's third enemy (see `docs/enemies/wraith.md`): a s
 - It wails as it manifests, rising over the whole manifest, so the lash can be heard coming. Its lash whooshes, it cracks like stone when hurt, and it sighs away into the water when defeated.
 - Drifting and being exposed are quiet.
 - Its sounds are positional `AudioStreamPlayer2D`s on the `SFX` bus under its `Sounds` node. They fade out 240 pixels from the Player's camera.
-- They are chiptune effects made by `scripts/tools/make_sfx.py` into `assets/audio/sfx/wraith_*.wav`.
+- They are chiptune effects made by `scripts/tools/make_sfx.py` into `assets/enemies/wraith/wraith_*.wav`.
 
 ## Placement
 
@@ -32,4 +32,4 @@ The Wraith is the Waking Coast's third enemy (see `docs/enemies/wraith.md`): a s
 - `scripts/enemies/wraith_brain.gd` (the Wraith brain) owns the Behavior rules from one frame of facts: its position, where the Player is, and whether a hit landed or defeated it.
 - `scripts/enemies/wraith.gd` (the Wraith body) owns its Health and movement, reads the Player through the `player` group, and shows the brain's state: its animation, facing, how solid it looks, whether the lash is live and whether its anchor can be hit.
 - `scripts/enemies/wraith_sounds.gd` (the Wraith sounds) owns which state changes make a sound. The body plays one whenever the brain's state changes.
-- `assets/sprites/enemies/wraith_1.aseprite` holds its 32x32 frames, facing right: two drift, two manifest, two lash, exposed and hurt.
+- `assets/enemies/wraith/wraith_1.aseprite` holds its 32x32 frames, facing right: two drift, two manifest, two lash, exposed and hurt.

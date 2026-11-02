@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The Nameless Warden is the Waking Coast's Boss (see `docs/enemies/nameless-warden.md`): an armored spirit with a blank stone mask and a salt-crusted shield, guarding the Warden's gate on the road to Tidefen. It tests what the coast taught: jumping what comes along the floor, keeping clear of a telegraphed rush, and that a Charged Attack bites through a Ward where a quick one glances off. Guarding and Throwing Knives join the fight once the Player has them.
+The Nameless Warden is the Waking Coast's Boss (see `docs/enemies/nameless-warden.md`): an armored spirit with a blank stone mask and a salt-crusted shield, guarding the Warden's gate on the trail to Tidefen. It tests what the coast taught: jumping what comes along the floor, keeping clear of a telegraphed rush, and that a Charged Attack bites through a Ward where a quick one glances off. Guarding and Throwing Knives join the fight once the Player has them.
 
 ## Behavior
 
@@ -18,7 +18,7 @@ The Nameless Warden is the Waking Coast's Boss (see `docs/enemies/nameless-warde
 
 ## The Gate
 
-- A column of rune light, 8 pixels wide, stands across the road at the arena's east edge, solid to the Player and the Warden, between the Warden and the Exit on to Tidefen.
+- A column of rune light, 8 pixels wide, stands across the trail at the arena's east edge, solid to the Player and the Warden, between the Warden and the Exit on to Tidefen.
 - When the Warden is defeated, the Run records it. The light waits 1.5 seconds for the Warden to fade, dissolves over 0.8 seconds, and the way on is open. With the Warden already defeated this Run, the Room opens with neither the Warden nor the light.
 
 ## Boss Health bar
@@ -29,7 +29,7 @@ The Nameless Warden is the Waking Coast's Boss (see `docs/enemies/nameless-warde
 
 - A deep swell as it winds up, a heavy rush as it bashes, a low boom with each slam, a bright clang off the Ward, shattering glass and a falling chime as the Ward breaks, stone and iron when struck, and a falling knell as it kneels.
 - Waking, resting and the Stagger are quiet. The Waking Coast theme plays on through the fight.
-- Its sounds are positional `AudioStreamPlayer2D`s on the `SFX` bus under its `Sounds` node, made by `scripts/tools/make_sfx.py` into `assets/audio/sfx/warden_*.wav`.
+- Its sounds are positional `AudioStreamPlayer2D`s on the `SFX` bus under its `Sounds` node, made by `scripts/tools/make_sfx.py` into `assets/enemies/nameless_warden/warden_*.wav`.
 
 ## Placement
 
@@ -43,4 +43,4 @@ The Nameless Warden is the Waking Coast's Boss (see `docs/enemies/nameless-warde
 - `scripts/enemies/warden_sounds.gd` (the Warden sounds) owns which state changes make a sound; the body plays the Ward's and a hit's sounds itself.
 - `scripts/core/boss_gate.gd` (the Gate) is the one place that records a Boss's defeat in the Run, and opens once it has.
 - `scripts/ui/boss_bar.gd` (the Boss Health bar) is the Player's Health bar reading the fighting Boss's Health instead.
-- `assets/sprites/enemies/nameless_warden_1.aseprite` holds its 32x32 frames facing right, in two rows: stand, wind-up, bash, slam, stagger and kneel, then the Ward's outline around each. `assets/sprites/enemies/shockwave.aseprite` holds the shockwave's two 16x8 frames.
+- `assets/enemies/nameless_warden/nameless_warden_1.aseprite` holds its 32x32 frames facing right, in two rows: stand, wind-up, bash, slam, stagger and kneel, then the Ward's outline around each. `assets/enemies/nameless_warden/shockwave.aseprite` holds the shockwave's two 16x8 frames.

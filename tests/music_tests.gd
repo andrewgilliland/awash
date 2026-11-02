@@ -1,10 +1,9 @@
 extends RefCounted
 
 const MusicScript := preload("res://scripts/core/music.gd")
-const WorldMap := preload("res://scripts/core/world_map.gd")
 const FIRST_ROOM := preload("res://scenes/rooms/waking_coast_1.tscn")
-const COAST_THEME_PATH := "res://assets/audio/music/waking_coast_theme.wav"
-const START_THEME_PATH := "res://assets/audio/music/start_theme.wav"
+const COAST_THEME_PATH := "res://assets/regions/waking_coast/music/theme.wav"
+const START_THEME_PATH := "res://assets/ui/start_theme.wav"
 
 # Needs a root that is already in the tree: music only plays, and fades, inside it.
 var _root: Window
@@ -19,8 +18,8 @@ func get_tests() -> Array:
 		["Music plays a track on the Music bus", _test_plays_on_music_bus],
 		["Music keeps going when asked for the same track", _test_same_track_continues],
 		["Music switches to a new track, and stops", _test_switches_and_stops],
-		["Every Room's region has a looping theme", _test_regions_have_themes],
 		["A Room starts its region's theme", _test_room_starts_theme],
+		["A scene the World doesn't hold plays no theme", _test_unheld_scene_is_silent],
 	]
 
 
@@ -58,14 +57,6 @@ func _test_switches_and_stops() -> bool:
 	return valid
 
 
-func _test_regions_have_themes() -> bool:
-	var valid := true
-	for room_id in WorldMap.ROOMS:
-		var theme := load(WorldMap.music_for(room_id)) as AudioStreamWAV
-		valid = valid and theme != null and theme.loop_mode == AudioStreamWAV.LOOP_FORWARD
-	return valid
-
-
 # The Room asks the game's Music autoload, live once the first frame has run.
 func _test_room_starts_theme() -> bool:
 	var music := _root.get_node_or_null("Music") as MusicScript
@@ -77,6 +68,20 @@ func _test_room_starts_theme() -> bool:
 	var valid := music.current() != null and music.current().resource_path == COAST_THEME_PATH
 	room.free()
 	music.stop()
+	return valid
+
+
+# Wherever the Run says the Player is, a Room finds itself in the World by its own scene.
+func _test_unheld_scene_is_silent() -> bool:
+	var music := _root.get_node_or_null("Music") as MusicScript
+	if music == null:
+		return false
+	music.stop()
+	var room := FIRST_ROOM.instantiate()
+	room.scene_file_path = "res://scenes/main.tscn"
+	_root.add_child(room)
+	var valid := music.current() == null
+	room.free()
 	return valid
 
 

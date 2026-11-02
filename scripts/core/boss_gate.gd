@@ -1,6 +1,6 @@
 extends StaticBody2D
 
-# A Gate a Boss holds shut: a column of rune light across the road. Defeating the Boss records it
+# A Gate a Boss holds shut: a column of rune light across the trail. Defeating the Boss records it
 # in the Run, and once the Boss has faded the light dissolves and the way is open. With the Boss
 # already defeated this Run, the Room opens without it.
 

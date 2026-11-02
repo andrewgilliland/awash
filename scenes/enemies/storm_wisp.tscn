@@ -3,10 +3,10 @@
 [ext_resource type="Script" uid="uid://cc0xpujahbe5w" path="res://scripts/enemies/storm_wisp.gd" id="1_wisp"]
 [ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
 [ext_resource type="Script" uid="uid://dk3355uvj2vwl" path="res://scripts/combat/hitbox.gd" id="3_hit"]
-[ext_resource type="AudioStream" uid="uid://cx6gc4it40f7n" path="res://assets/audio/sfx/storm_wisp_crackle.wav" id="4_crackle"]
-[ext_resource type="AudioStream" uid="uid://ds8vwxnvhiyw3" path="res://assets/audio/sfx/storm_wisp_zap.wav" id="5_zap"]
-[ext_resource type="AudioStream" uid="uid://bjoypxrbk77mi" path="res://assets/audio/sfx/storm_wisp_hurt.wav" id="6_hurt"]
-[ext_resource type="AudioStream" uid="uid://dpqfsiv3fhla3" path="res://assets/audio/sfx/storm_wisp_defeat.wav" id="7_defeat"]
+[ext_resource type="AudioStream" uid="uid://cx6gc4it40f7n" path="res://assets/enemies/storm_wisp/storm_wisp_crackle.wav" id="4_crackle"]
+[ext_resource type="AudioStream" uid="uid://ds8vwxnvhiyw3" path="res://assets/enemies/storm_wisp/storm_wisp_zap.wav" id="5_zap"]
+[ext_resource type="AudioStream" uid="uid://bjoypxrbk77mi" path="res://assets/enemies/storm_wisp/storm_wisp_hurt.wav" id="6_hurt"]
+[ext_resource type="AudioStream" uid="uid://dpqfsiv3fhla3" path="res://assets/enemies/storm_wisp/storm_wisp_defeat.wav" id="7_defeat"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body0"]
 radius = 5.0

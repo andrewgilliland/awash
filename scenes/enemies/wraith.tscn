@@ -3,10 +3,10 @@
 [ext_resource type="Script" uid="uid://dopxfmcxertkm" path="res://scripts/enemies/wraith.gd" id="1_wraith"]
 [ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
 [ext_resource type="Script" uid="uid://dk3355uvj2vwl" path="res://scripts/combat/hitbox.gd" id="3_hit"]
-[ext_resource type="AudioStream" uid="uid://cs6xwnjch3amb" path="res://assets/audio/sfx/wraith_wail.wav" id="4_wail"]
-[ext_resource type="AudioStream" uid="uid://b4o74pg6gntmg" path="res://assets/audio/sfx/wraith_lash.wav" id="5_lash"]
-[ext_resource type="AudioStream" uid="uid://c2njlpqyqyfg" path="res://assets/audio/sfx/wraith_hurt.wav" id="6_hurt"]
-[ext_resource type="AudioStream" uid="uid://cf80m0fh75olv" path="res://assets/audio/sfx/wraith_defeat.wav" id="7_defeat"]
+[ext_resource type="AudioStream" uid="uid://cs6xwnjch3amb" path="res://assets/enemies/wraith/wraith_wail.wav" id="4_wail"]
+[ext_resource type="AudioStream" uid="uid://b4o74pg6gntmg" path="res://assets/enemies/wraith/wraith_lash.wav" id="5_lash"]
+[ext_resource type="AudioStream" uid="uid://c2njlpqyqyfg" path="res://assets/enemies/wraith/wraith_hurt.wav" id="6_hurt"]
+[ext_resource type="AudioStream" uid="uid://cf80m0fh75olv" path="res://assets/enemies/wraith/wraith_defeat.wav" id="7_defeat"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body0"]
 radius = 5.0

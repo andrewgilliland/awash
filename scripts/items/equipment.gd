@@ -11,7 +11,7 @@ const WEAPONS := {
 	{
 		name = "Short Sword",
 		description = "A plain blade Mara pulled from the sand.",
-		icon = "res://assets/sprites/items/short_sword.png",
+		icon = "res://assets/items/short_sword.png",
 	},
 }
 const STARTING_ARMOR := &"worn_leather_tunic"
@@ -23,7 +23,7 @@ const ARMOR := {
 		name = "Worn Leather Tunic",
 		description = "Faded by salt. Light, but gives no Defense.",
 		defense = 0,
-		icon = "res://assets/sprites/items/worn_leather_tunic.png",
+		icon = "res://assets/items/worn_leather_tunic.png",
 	},
 }
 # What the Armor slot reads with nothing worn.

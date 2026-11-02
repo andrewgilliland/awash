@@ -24,7 +24,7 @@ func _init(harness: SceneTree) -> void:
 func get_playtests() -> Array:
 	return [
 		["A Charged Attack breaks the Warden's Ward; a quick one then lands", _breaks_ward],
-		["Defeating the Warden opens the road to Tidefen", _defeat_opens_road],
+		["Defeating the Warden opens the trail to Tidefen", _defeat_opens_trail],
 	]
 
 
@@ -46,7 +46,7 @@ func _breaks_ward() -> bool:
 	return valid
 
 
-func _defeat_opens_road() -> bool:
+func _defeat_opens_trail() -> bool:
 	var player: CharacterBody2D = await _harness.call(
 		"_enter_room", &"waking_coast_7", &"west", WARDENS_GATE_PATH
 	)

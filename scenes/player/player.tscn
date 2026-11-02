@@ -3,17 +3,17 @@
 [ext_resource type="Script" uid="uid://o4osibv7x85f" path="res://scripts/player/player.gd" id="1_3h4r8"]
 [ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
 [ext_resource type="Script" uid="uid://dk3355uvj2vwl" path="res://scripts/combat/hitbox.gd" id="3_hit"]
-[ext_resource type="AudioStream" uid="uid://d3j1nv660cqxw" path="res://assets/audio/sfx/player_jump.wav" id="4_jump"]
-[ext_resource type="AudioStream" uid="uid://dgkgv2cco5w5b" path="res://assets/audio/sfx/player_land.wav" id="5_land"]
-[ext_resource type="AudioStream" uid="uid://u7hslhes1tby" path="res://assets/audio/sfx/player_swing.wav" id="6_swing"]
-[ext_resource type="AudioStream" uid="uid://cenax3m0v0kr3" path="res://assets/audio/sfx/player_hit.wav" id="7_hit"]
-[ext_resource type="AudioStream" uid="uid://hedum2cq88na" path="res://assets/audio/sfx/player_hurt.wav" id="8_hurt"]
-[ext_resource type="AudioStream" uid="uid://s07w20sc5lru" path="res://assets/audio/sfx/player_defeat.wav" id="9_defeat"]
-[ext_resource type="AudioStream" uid="uid://cptrr1jwbprox" path="res://assets/audio/sfx/player_level_up.wav" id="10_level_up"]
+[ext_resource type="AudioStream" uid="uid://d3j1nv660cqxw" path="res://assets/player/player_jump.wav" id="4_jump"]
+[ext_resource type="AudioStream" uid="uid://dgkgv2cco5w5b" path="res://assets/player/player_land.wav" id="5_land"]
+[ext_resource type="AudioStream" uid="uid://u7hslhes1tby" path="res://assets/player/player_swing.wav" id="6_swing"]
+[ext_resource type="AudioStream" uid="uid://cenax3m0v0kr3" path="res://assets/player/player_hit.wav" id="7_hit"]
+[ext_resource type="AudioStream" uid="uid://hedum2cq88na" path="res://assets/player/player_hurt.wav" id="8_hurt"]
+[ext_resource type="AudioStream" uid="uid://s07w20sc5lru" path="res://assets/player/player_defeat.wav" id="9_defeat"]
+[ext_resource type="AudioStream" uid="uid://cptrr1jwbprox" path="res://assets/player/player_level_up.wav" id="10_level_up"]
 [ext_resource type="Script" uid="uid://cjjmbw2nuu4ll" path="res://scripts/ui/level_up_flash.gd" id="11_flash"]
 [ext_resource type="Theme" uid="uid://cgm30v4u24jhi" path="res://assets/ui/awash_theme.tres" id="12_theme"]
-[ext_resource type="AudioStream" uid="uid://cs23yp0gax6n0" path="res://assets/audio/sfx/player_pickup.wav" id="13_pickup"]
-[ext_resource type="AudioStream" uid="uid://cirxtkaunnpmk" path="res://assets/audio/sfx/player_eat.wav" id="14_eat"]
+[ext_resource type="AudioStream" uid="uid://cs23yp0gax6n0" path="res://assets/player/player_pickup.wav" id="13_pickup"]
+[ext_resource type="AudioStream" uid="uid://cirxtkaunnpmk" path="res://assets/player/player_eat.wav" id="14_eat"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2x6a2"]
 radius = 6.0
@@ -27,6 +27,7 @@ size = Vector2(16, 20)
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 collision_layer = 2
+floor_snap_length = 6.0
 script = ExtResource("1_3h4r8")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

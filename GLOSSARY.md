@@ -50,6 +50,10 @@ _Avoid_: Power attack, heavy attack, charge shot
 
 ## World
 
+**World**:
+Every Region and every Room, with where each Room sits and how many screens it spans. The Map draws it.
+_Avoid_: World map, level list, Map (for what the Map draws)
+
 **Run**:
 One playthrough from a new game. It remembers where the Player is in the world and what they have done. Only START begins a new one; a defeat keeps it.
 _Avoid_: Session, save, runtime state
@@ -57,6 +61,18 @@ _Avoid_: Session, save, runtime state
 **Room**:
 One area of the world, loaded as a single scene.
 _Avoid_: Level, map, screen
+
+**Planned Room**:
+A Room laid out in the World, with its place, size, Region and Exits, before it is built. Only the Map drawn from the Plan shows it; the game leaves it out until it has a scene.
+_Avoid_: Placeholder room, stub, draft room
+
+**Plan**:
+The layout agreed for the World ahead of building it: where each Planned Room goes, and where built Rooms are to move. The game plays the World as it is; the Map can draw it as planned. Each Room's plan folds into it as the Room is built or moved.
+_Avoid_: Blueprint, draft, roadmap
+
+**World editor**:
+The local web app for laying out the World, Region by Region and Room by Room, and for painting each Room's tiles from its Region's sheets. It draws the World as the Map does and leaves the rest of a Room to Godot.
+_Avoid_: Map editor, level editor
 
 **Entry**:
 A named place in a Room where the Player appears on entering it. A new Run begins at the first Room's `start` Entry.
@@ -67,7 +83,7 @@ An edge of a Room that leads to an Entry in another Room. Crossing it enters tha
 _Avoid_: Door, portal, transition, warp
 
 **Region**:
-A stretch of the world with its own theme and Map name, such as the Waking Coast. Each has one Safe spoke.
+A stretch of the world with its own theme, Map name and colour, such as the Waking Coast. Each major Region has one Safe spoke; a smaller one, such as the Undertow beneath the coast's cliffs, leans on a neighbour's.
 _Avoid_: Biome, zone, area, level
 
 **Safe spoke**:
@@ -77,6 +93,10 @@ _Avoid_: Hub, village, town (as a kind of place)
 **Rest point**:
 A place in a Safe spoke where the Player recovers, and which a defeat returns them to without ending the Run.
 _Avoid_: Checkpoint, save point, bonfire
+
+**Background**:
+The distant layers of a Region drawn behind its Rooms, each scrolling slower the farther back it is: for the Waking Coast, a sky with the sun and its beams fixed in it, clouds far and near, ships sailing on the horizon, and the sea. Every Room in the Region shows the same Background, set by where the Room sits in the world, so it carries on across Exits; the caves show a dark rock wall instead.
+_Avoid_: Backdrop, skybox, parallax (as a thing)
 
 **Region theme**:
 The music of a Region, such as the Waking Coast's. It plays in each of the Region's Rooms outside its Safe spoke, which has a theme of its own, and carries on unbroken through Exits between them.
@@ -105,7 +125,7 @@ An Exit the Player falls through into a Room below, with no way back up. A sinkh
 _Avoid_: Pit, sinkhole, chute, hole (as the general term)
 
 **Gate**:
-A place on a route that stays shut until an ability unlock or a defeated Boss opens it, such as the ledge above the salt cliffs that double jump will reach, or the column of rune light across the road east of the Warden's gate.
+A place on a route that stays shut until an ability unlock or a defeated Boss opens it, such as the ledge above the salt cliffs that double jump will reach, or the column of rune light across the trail east of the Warden's gate.
 _Avoid_: Lock, barrier, door
 
 **Cache**:
@@ -179,7 +199,7 @@ An enemy that guards a Region's end, with its own Health bar along the bottom of
 _Avoid_: Miniboss, guardian (as the general term)
 
 **Nameless Warden**:
-The Waking Coast's Boss: an armored spirit with a blank stone mask and a salt-crusted shield, guarding the Warden's gate on the road to Tidefen. It wakes when the Player crosses into the arena, then bashes with its shield and slams rune shockwaves along the floor, hurrying once half its Health is gone.
+The Waking Coast's Boss: an armored spirit with a blank stone mask and a salt-crusted shield, guarding the Warden's gate on the trail to Tidefen. It wakes when the Player crosses into the arena, then bashes with its shield and slams rune shockwaves along the floor, hurrying once half its Health is gone.
 _Avoid_: Warden (alone), sentinel, guardian
 
 **Ward**:
@@ -261,5 +281,5 @@ A line or two at the foot of the Inventory and the Equipment Panel saying what t
 _Avoid_: Tooltip, flavor text, help text
 
 **Map**:
-The Panel that draws each visited Room as a block, sized in screens, with the name of the Region or Safe spoke the Player is in and a dot where the Player stands. Unvisited Rooms stay hidden.
+The Panel that draws each visited Room as a block, sized in screens and filled with its Region's colour, walled round with a gap at each Exit, marking any Rest point or Boss, with the name of the Region or Safe spoke the Player is in and a dot where the Player stands. Unvisited Rooms stay hidden, though a visited Room's Exits show the way on. Drawn for the whole World at once, as it is or as the Plan lays it out with Planned Rooms in outline, it is how the World's shape is seen before it is built.
 _Avoid_: Minimap, world map, atlas

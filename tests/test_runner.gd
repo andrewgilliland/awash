@@ -5,15 +5,19 @@ const FIRST_ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
 const START_SCREEN_PATH := "res://scenes/ui/start_screen.tscn"
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 const PlayerController := preload("res://scripts/player/player_controller.gd")
+const AssetPathTests := preload("res://tests/asset_path_tests.gd")
+const RegionBackgroundTests := preload("res://tests/region_background_tests.gd")
+const RegionTileSheetsTests := preload("res://tests/region_tile_sheets_tests.gd")
 const PlayerControllerTests := preload("res://tests/player_controller_tests.gd")
 const PlayerRigTests := preload("res://tests/player_rig_tests.gd")
 const RunStateTests := preload("res://tests/run_state_tests.gd")
 const PauseMenuTests := preload("res://tests/pause_menu_tests.gd")
-const WakingCoastTilesetTests := preload("res://tests/waking_coast_tileset_tests.gd")
 const TropicalIslandTilesetTests := preload("res://tests/tropical_island_tileset_tests.gd")
-const JungleCanopyTilesetTests := preload("res://tests/jungle_canopy_tileset_tests.gd")
 const WakingCoastRoomTests := preload("res://tests/waking_coast_room_tests.gd")
-const WorldMapTests := preload("res://tests/world_map_tests.gd")
+const MapLayoutTests := preload("res://tests/map_layout_tests.gd")
+const DrawWorldTests := preload("res://tests/draw_world_tests.gd")
+const WorldPlanTests := preload("res://tests/world_plan_tests.gd")
+const WorldDataTests := preload("res://tests/world_data_tests.gd")
 const WakingCoastRoom2Tests := preload("res://tests/waking_coast_room_2_tests.gd")
 const WakingCoastRoom3Tests := preload("res://tests/waking_coast_room_3_tests.gd")
 const WakingCoastRoom4Tests := preload("res://tests/waking_coast_room_4_tests.gd")
@@ -23,6 +27,7 @@ const WakingCoastRoom7Tests := preload("res://tests/waking_coast_room_7_tests.gd
 const WakingCoastRoom8Tests := preload("res://tests/waking_coast_room_8_tests.gd")
 const WakingCoastRoom9Tests := preload("res://tests/waking_coast_room_9_tests.gd")
 const RoomExitTests := preload("res://tests/room_exit_tests.gd")
+const EveryRoomTests := preload("res://tests/every_room_tests.gd")
 const HealthTests := preload("res://tests/health_tests.gd")
 const LevelTests := preload("res://tests/level_tests.gd")
 const SuppliesTests := preload("res://tests/supplies_tests.gd")
@@ -61,6 +66,9 @@ var _failures: int = 0
 
 
 func _init() -> void:
+	var asset_path_tests := AssetPathTests.new()
+	for test in asset_path_tests.get_tests():
+		_run_test(test[0], test[1])
 	var controller_tests := PlayerControllerTests.new()
 	for test in controller_tests.get_tests():
 		_run_test(test[0], test[1])
@@ -70,20 +78,26 @@ func _init() -> void:
 	var run_state_tests := RunStateTests.new()
 	for test in run_state_tests.get_tests():
 		_run_test(test[0], test[1])
-	var tileset_tests := WakingCoastTilesetTests.new()
-	for test in tileset_tests.get_tests():
+	var region_tile_sheets_tests := RegionTileSheetsTests.new()
+	for test in region_tile_sheets_tests.get_tests():
 		_run_test(test[0], test[1])
 	var tropical_tileset_tests := TropicalIslandTilesetTests.new()
 	for test in tropical_tileset_tests.get_tests():
 		_run_test(test[0], test[1])
-	var jungle_canopy_tests := JungleCanopyTilesetTests.new()
-	for test in jungle_canopy_tests.get_tests():
-		_run_test(test[0], test[1])
 	var room_tests := WakingCoastRoomTests.new()
 	for test in room_tests.get_tests():
 		_run_test(test[0], test[1])
-	var world_map_tests := WorldMapTests.new()
-	for test in world_map_tests.get_tests():
+	var map_layout_tests := MapLayoutTests.new()
+	for test in map_layout_tests.get_tests():
+		_run_test(test[0], test[1])
+	var draw_world_tests := DrawWorldTests.new()
+	for test in draw_world_tests.get_tests():
+		_run_test(test[0], test[1])
+	var world_plan_tests := WorldPlanTests.new()
+	for test in world_plan_tests.get_tests():
+		_run_test(test[0], test[1])
+	var world_data_tests := WorldDataTests.new()
+	for test in world_data_tests.get_tests():
 		_run_test(test[0], test[1])
 	var room_2_tests := WakingCoastRoom2Tests.new()
 	for test in room_2_tests.get_tests():
@@ -225,6 +239,13 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var boss_bar_tests := BossBarTests.new(root)
 	for test in boss_bar_tests.get_tests():
+		_run_test(test[0], test[1])
+
+	var every_room_tests := EveryRoomTests.new(root)
+	for test in every_room_tests.get_tests():
+		_run_test(test[0], test[1])
+	var region_background_tests := RegionBackgroundTests.new(root)
+	for test in region_background_tests.get_tests():
 		_run_test(test[0], test[1])
 
 	if _failures > 0:

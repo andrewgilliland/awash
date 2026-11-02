@@ -3,10 +3,10 @@
 [ext_resource type="Script" uid="uid://4yjhvi7vclm2" path="res://scripts/enemies/scavenger.gd" id="1_scav"]
 [ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
 [ext_resource type="Script" uid="uid://dk3355uvj2vwl" path="res://scripts/combat/hitbox.gd" id="3_hit"]
-[ext_resource type="AudioStream" uid="uid://cec0jmkysrq0d" path="res://assets/audio/sfx/scavenger_windup.wav" id="4_windup"]
-[ext_resource type="AudioStream" uid="uid://bkbno6c6q03lp" path="res://assets/audio/sfx/scavenger_lunge.wav" id="5_lunge"]
-[ext_resource type="AudioStream" uid="uid://dxi6b8subkgvi" path="res://assets/audio/sfx/scavenger_hurt.wav" id="6_hurt"]
-[ext_resource type="AudioStream" uid="uid://fq1telygdugx" path="res://assets/audio/sfx/scavenger_defeat.wav" id="7_defeat"]
+[ext_resource type="AudioStream" uid="uid://cec0jmkysrq0d" path="res://assets/enemies/scavenger/scavenger_windup.wav" id="4_windup"]
+[ext_resource type="AudioStream" uid="uid://bkbno6c6q03lp" path="res://assets/enemies/scavenger/scavenger_lunge.wav" id="5_lunge"]
+[ext_resource type="AudioStream" uid="uid://dxi6b8subkgvi" path="res://assets/enemies/scavenger/scavenger_hurt.wav" id="6_hurt"]
+[ext_resource type="AudioStream" uid="uid://fq1telygdugx" path="res://assets/enemies/scavenger/scavenger_defeat.wav" id="7_defeat"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body0"]
 size = Vector2(10, 14)

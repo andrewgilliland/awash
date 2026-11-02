@@ -3,7 +3,7 @@ extends RefCounted
 const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
 const SCAVENGER_SCENE := preload("res://scenes/enemies/scavenger.tscn")
 const STORM_WISP_SCENE := preload("res://scenes/enemies/storm_wisp.tscn")
-const RUNE_SHORE_SCENE := preload("res://scenes/rooms/waking_coast_2.tscn")
+const PALM_SHORE_SCENE := preload("res://scenes/rooms/waking_coast_2.tscn")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
@@ -11,7 +11,7 @@ const WORLD_LAYER := 1 << 0
 const PLAYER_HITBOX_LAYER := 1 << 2
 const ENEMY_LAYER := 1 << 3
 const ENEMY_HITBOX_LAYER := 1 << 4
-# The rune shore's tidal pool, in pixels.
+# The palm shore's tidal pool, in pixels.
 const POOL := Vector2(128, 160)
 
 # Needs a root that is already in the tree: bodies read Health and Hitboxes in _ready.
@@ -35,7 +35,7 @@ func get_tests() -> Array:
 		],
 		["A full Charge makes the sword blink", _test_full_charge_blinks],
 		["Scavenger has a body, hurtbox and spear", _test_scavenger_boxes],
-		["Rune shore keeps a Scavenger in its tidal pool", _test_scavenger_in_pool],
+		["Palm shore keeps a Scavenger in its tidal pool", _test_scavenger_in_pool],
 	]
 
 
@@ -108,7 +108,7 @@ func _test_scavenger_boxes() -> bool:
 
 
 func _test_scavenger_in_pool() -> bool:
-	var room := RUNE_SHORE_SCENE.instantiate()
+	var room := PALM_SHORE_SCENE.instantiate()
 	var scavenger := room.get_node_or_null("Enemies/Scavenger") as Node2D
 	var valid := scavenger != null and scavenger.scene_file_path == SCAVENGER_SCENE.resource_path
 	if valid:
