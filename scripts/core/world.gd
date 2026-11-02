@@ -72,12 +72,13 @@ const ROOMS := {
 		size = Vector2i(1, 1),
 		region = &"waking_coast",
 	},
-	# Tidefen, at the end of the coast: two screens past the Warden's gate.
+	# Tidefen, at the end of the coast past the Warden's gate: its stilt houses, market square and
+	# harbour, two screens each.
 	&"waking_coast_8":
 	{
 		scene = "res://scenes/rooms/waking_coast_8.tscn",
 		cell = Vector2i(9, -1),
-		size = Vector2i(2, 1),
+		size = Vector2i(6, 1),
 		region = &"waking_coast",
 	},
 	# Four screens of tunnel under the trail, the gate and Tidefen's well, back to the sea cave.

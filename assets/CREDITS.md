@@ -14,6 +14,15 @@ entry names its pack, author, link and licence.
   used in commercial products, but not redistributed as they are, so this repository stays
   private.
 
+## Pirate Town Tileset Pack
+
+- **Files:** `packs/pirate_town/`, each sheet as it comes in v1.0 (renamed with underscores for
+  spaces). Tidefen's market square and harbour, and the Caches' crates, are drawn from them.
+- **Author:** Mucho Pixels (https://www.muchopixels.com)
+- **Link:** https://muchopixels.itch.io/pirate-town-tileset-pack
+- **Licence:** GameDev Market Pro Licence
+  (https://www.gamedevmarket.net/terms-conditions/#pro-licence), as for the Tropical Island pack.
+
 ## Waiting on details
 
 These sheets look like they come from an asset pack; their source and licence are still to be

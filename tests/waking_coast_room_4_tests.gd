@@ -22,7 +22,7 @@ const EAST_END := Vector2i(18, 6)
 const SINKHOLE_COLUMN := 19
 const STERN_DECK := Vector2i(17, 1)
 const STERN_CRATE := Vector2i(18, 0)
-const CRATE := Vector2i(0, 0)
+const CRATE := Vector2i(10, 3)
 # Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_4.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {

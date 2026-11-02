@@ -37,7 +37,7 @@ const LANDMARKS := {
 	{
 		Vector2i(11, 5): Vector2i(14, 7),
 		Vector2i(15, 2): Vector2i(3, 7),
-		Vector2i(16, 0): Vector2i(0, 0),
+		Vector2i(16, 0): Vector2i(10, 3),
 	},
 }
 

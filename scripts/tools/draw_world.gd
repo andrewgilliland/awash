@@ -76,6 +76,8 @@ func _draw_room(room_id: StringName, size: Vector2i) -> Image:
 		camera.enabled = false
 	for layer: Parallax2D in room.find_children("*", "Parallax2D", true, false):
 		layer.autoscroll = Vector2.ZERO
+		# The camera shows one screen; the whole Room needs a Background as wide as it is.
+		layer.repeat_times = size.x / 160 + 4
 	viewport.add_child(_name_tag(room_id))
 	for i in 4:
 		await process_frame

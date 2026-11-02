@@ -9,10 +9,11 @@ const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 const SCREEN_CELLS := Vector2i(10, 9)
 const TRIGGER_LAYER := 1 << 7
 const PLAYER_LAYER := 1 << 1
-# Every Room is drawn from the Tropical Island pack's sheets, but for the coast's own props: the
-# Caches' crate and Tidefen's bell, which the pack has none of.
-const PACK_DIR := "res://assets/packs/tropical_island/"
+# Every Room is drawn from the Mucho Pixels packs' sheets, but for the coast's own prop: Tidefen's
+# bell, which no pack has.
+const PACK_DIR := "res://assets/packs/"
 const OWN_PROPS := "res://assets/regions/waking_coast/props/coast_props.png"
+const BELL := Vector2i(0, 0)
 
 # Needs a root that is already in the tree: a Room sets itself up from the World in _ready.
 var _root: Window
@@ -33,7 +34,7 @@ func get_tests() -> Array:
 		["Every Room draws its layers in order", _test_layer_order],
 		["Every Room keeps its tiles inside its size", _test_tiles_inside],
 		["Every Room draws only from its Region's sheets", _test_region_sheets],
-		["Every Room draws from the Tropical Island pack", _test_pack_art],
+		["Every Room draws from the Mucho Pixels packs", _test_pack_art],
 		["No Room scene holds its own Background", _test_scene_leaves_background],
 		["Every Room draws its Region's Background behind all else", _test_background],
 		["Every Room's Region has a looping theme", _test_region_theme],
@@ -212,8 +213,10 @@ static func _draws_pack_art(room_id: StringName, room: Node2D) -> bool:
 			var source := layer.get_cell_source_id(cell)
 			var atlas := layer.tile_set.get_source(source) as TileSetAtlasSource
 			var sheet := atlas.texture.resource_path if atlas != null else ""
-			var drawn := atlas != null and atlas.has_tile(layer.get_cell_atlas_coords(cell))
-			if not drawn or (not sheet.begins_with(PACK_DIR) and sheet != OWN_PROPS):
+			var coords := layer.get_cell_atlas_coords(cell)
+			var drawn := atlas != null and atlas.has_tile(coords)
+			var own := sheet == OWN_PROPS and coords == BELL
+			if not drawn or (not sheet.begins_with(PACK_DIR) and not own):
 				push_error("%s/%s %s draws from %s" % [room_id, layer.name, cell, sheet])
 				valid = false
 	return valid
