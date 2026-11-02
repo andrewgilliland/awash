@@ -2,12 +2,14 @@ extends RefCounted
 
 const World := preload("res://scripts/core/world.gd")
 const DrawWorld := preload("res://scripts/tools/draw_world.gd")
+const DrawMap := preload("res://scripts/tools/draw_map.gd")
 
 
 func get_tests() -> Array:
 	return [
 		["The World map places each Room by its cell and size", _test_places_by_cell],
 		["The World map is just big enough to hold every Room", _test_fits_rooms],
+		["The Map's picture of the World holds every Room, planned ones too", _test_map_rooms],
 	]
 
 
@@ -34,3 +36,11 @@ func _test_fits_rooms() -> bool:
 			return false
 		touched = place if touched.size == Vector2i.ZERO else touched.merge(place)
 	return touched == bounds
+
+
+func _test_map_rooms() -> bool:
+	var rooms := DrawMap.map_rooms()
+	var valid := rooms.size() == World.room_ids().size() + World.planned_ids().size()
+	for room_id: StringName in rooms:
+		valid = valid and rooms[room_id].planned == (room_id in World.planned_ids())
+	return valid
