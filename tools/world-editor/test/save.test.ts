@@ -26,9 +26,19 @@ describe("saving", () => {
     expect(readFileSync(join(repo, "assets/world.json"), "utf8")).toBe("changed by someone else\n");
   });
 
+  it("writes a Room's scene over the version it was loaded from", async () => {
+    const repo = repoWithWorld("old\n");
+    mkdirSync(join(repo, "scenes/rooms"), { recursive: true });
+    writeFileSync(join(repo, "scenes/rooms/waking_coast_1.tscn"), "scene\n");
+    const path = "scenes/rooms/waking_coast_1.tscn";
+    expect((await saveFile(repo, path, versionOf("scene\n"), "painted\n")).saved).toBe(true);
+    expect(readFileSync(join(repo, path), "utf8")).toBe("painted\n");
+    expect(await saveFile(repo, path, versionOf("scene\n"), "again\n")).toEqual({ saved: false, reason: "changed" });
+  });
+
   it("writes nothing but the files it owns", async () => {
     const repo = repoWithWorld("old\n");
-    for (const path of ["scenes/rooms/waking_coast_1.tscn", "scripts/core/world.gd", "../escape.json", "assets/other.json"]) {
+    for (const path of ["scenes/ui/pause_menu.tscn", "scenes/rooms/../ui/pause_menu.tscn", "scenes/rooms/x.tres", "scripts/core/world.gd", "../escape.json", "assets/other.json"]) {
       expect(await saveFile(repo, path, versionOf(""), "x")).toEqual({ saved: false, reason: "not writable" });
     }
   });
