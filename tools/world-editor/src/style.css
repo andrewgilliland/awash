@@ -31,3 +31,14 @@ ul.results li.fail { color: var(--fail); }
 ul.results li.pass { color: var(--pass); }
 label.layer { display: block; padding: 2px 0; }
 @media (max-width: 760px) { main { grid-template-columns: 1fr; } #side { border-left: 0; border-top: 1px solid var(--line); } }
+#status { margin: 0; font-size: 13px; color: var(--muted); max-width: 46ch; }
+#status.fail { color: var(--fail); }
+#status.pass { color: var(--pass); }
+#actions { display: flex; gap: 6px; }
+.toolbar { display: flex; gap: 6px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.toolbar label { color: var(--muted); }
+select, input, textarea { background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 4px; font: inherit; padding: 2px 4px; }
+textarea { width: 100%; resize: vertical; }
+label.field { display: grid; gap: 4px; color: var(--muted); margin: 8px 0; }
+dd.size input { width: 4em; }
+#side button { margin-top: 8px; }

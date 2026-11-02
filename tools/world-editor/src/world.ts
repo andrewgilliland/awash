@@ -63,6 +63,9 @@ export interface WorldLayout {
   rooms: LaidRoom[];
   labels: { text: string; x: number; y: number }[];
   size: { w: number; h: number };
+  // The screen of the World a point in the picture is on, and where screens sit in the picture.
+  screenAt: (x: number, y: number) => Vec;
+  blockAt: (cell: Vec, size: Vec) => Rect;
 }
 
 // One screen on the Map, keeping the screen's shape.
@@ -87,8 +90,8 @@ export function asPlanned(room: RoomRecord): Required<Pick<RoomRecord, "cell" | 
 }
 
 // Lays out the whole World: as it is, every built Room where it sits; or as planned, every Room,
-// built and planned, where the World's plan puts it.
-export function layoutWorld(world: WorldData, planned: boolean): WorldLayout {
+// built and planned, where the World's plan puts it. Pad leaves that many empty screens round it.
+export function layoutWorld(world: WorldData, planned: boolean, pad = 0): WorldLayout {
   const shown = Object.entries(world.rooms)
     .filter(([, room]) => planned || room.scene !== undefined)
     .map(([id, room]) => {
@@ -97,13 +100,11 @@ export function layoutWorld(world: WorldData, planned: boolean): WorldLayout {
         : { cell: room.cell, size: room.size, region: room.region, exits: room.exits ?? [], markers: room.markers ?? {} };
       return { id, built: room.scene !== undefined, ...laid };
     });
-  if (shown.length === 0) {
-    return { rooms: [], labels: [], size: { w: 0, h: 0 } };
-  }
-  const corner = [Math.min(...shown.map((r) => r.cell[0])), Math.min(...shown.map((r) => r.cell[1]))];
+  const cells = shown.length ? shown : [{ cell: [0, 0] as Vec, size: [1, 1] as Vec }];
+  const corner = [Math.min(...cells.map((r) => r.cell[0])) - pad, Math.min(...cells.map((r) => r.cell[1])) - pad];
   const far = [
-    Math.max(...shown.map((r) => r.cell[0] + r.size[0])),
-    Math.max(...shown.map((r) => r.cell[1] + r.size[1])),
+    Math.max(...cells.map((r) => r.cell[0] + r.size[0])) + pad,
+    Math.max(...cells.map((r) => r.cell[1] + r.size[1])) + pad,
   ];
   const offset = { x: MARGIN.x - corner[0] * CELL.w, y: MARGIN.y - corner[1] * CELL.h };
   const nameAt = new Map<string, { x: number; y: number }>();
@@ -140,7 +141,17 @@ export function layoutWorld(world: WorldData, planned: boolean): WorldLayout {
   });
   const labels = [...nameAt].map(([text, at]) => ({ text, x: at.x, y: at.y - LABEL_RISE }));
   const size = { w: (far[0] - corner[0]) * CELL.w + MARGIN.x * 2, h: (far[1] - corner[1]) * CELL.h + MARGIN.y * 2 };
-  return { rooms, labels, size };
+  const screenAt = (x: number, y: number): Vec => [
+    corner[0] + Math.floor((x - MARGIN.x) / CELL.w),
+    corner[1] + Math.floor((y - MARGIN.y) / CELL.h),
+  ];
+  const blockAt = (cell: Vec, size: Vec): Rect => ({
+    x: offset.x + cell[0] * CELL.w,
+    y: offset.y + cell[1] * CELL.h,
+    w: size[0] * CELL.w,
+    h: size[1] * CELL.h,
+  });
+  return { rooms, labels, size, screenAt, blockAt };
 }
 
 function screenRect(block: Rect, screen: Vec): Rect {

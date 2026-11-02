@@ -1,8 +1,9 @@
 import { readFile } from "node:fs/promises";
 import { extname } from "node:path";
 import type { Plugin } from "vite";
-import { runCheck } from "./check";
-import { repoPath } from "./files";
+import { runCheck } from "./check.ts";
+import { repoPath } from "./files.ts";
+import { saveFile, versionOf } from "./save.ts";
 
 const TYPES: Record<string, string> = {
   ".json": "application/json",
@@ -27,12 +28,30 @@ export function worldEditorApi(repo: string): Plugin {
         try {
           const body = await readFile(path);
           response.setHeader("Content-Type", TYPES[extname(path)] ?? "application/octet-stream");
+          // Which version was loaded, for a save to check the file hasn't changed since.
+          response.setHeader("X-Version", versionOf(body.toString("utf8")));
           response.setHeader("Cache-Control", "no-store");
           response.end(body);
         } catch {
           response.statusCode = 404;
           response.end();
         }
+      });
+      server.middlewares.use("/api/save", async (request, response) => {
+        if (request.method !== "POST") {
+          response.statusCode = 405;
+          response.end();
+          return;
+        }
+        let body = "";
+        for await (const chunk of request) {
+          body += chunk;
+        }
+        const { path, base, text } = JSON.parse(body) as { path: string; base: string; text: string };
+        const result = await saveFile(repo, path, base, text);
+        response.statusCode = result.saved ? 200 : result.reason === "changed" ? 409 : 403;
+        response.setHeader("Content-Type", "application/json");
+        response.end(JSON.stringify(result));
       });
       server.middlewares.use("/api/check", async (request, response) => {
         if (request.method !== "POST") {
