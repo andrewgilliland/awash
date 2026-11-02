@@ -14,6 +14,8 @@ const PLAYER_LAYER := 1 << 1
 const PACK_DIR := "res://assets/packs/"
 const OWN_PROPS := "res://assets/regions/waking_coast/props/coast_props.png"
 const BELL := Vector2i(0, 0)
+# The layers drawn in front of the Player: water it wades through.
+const FOREGROUND: Array[StringName] = [&"Surf"]
 
 # Needs a root that is already in the tree: a Room sets itself up from the World in _ready.
 var _root: Window
@@ -152,7 +154,8 @@ func _test_layer_order() -> bool:
 	return _every_room(_layers_in_order)
 
 
-# Scenery layers behind the Terrain, then Props, Entries, and the Player drawn last of all.
+# Scenery layers behind the Terrain, then Props, Entries, and the Player; drawn after the Player,
+# only what it wades through, in front of it.
 static func _layers_in_order(_room_id: StringName, room: Node2D) -> bool:
 	var terrain := room.get_node_or_null("Terrain")
 	var props := room.get_node_or_null("Props")
@@ -160,12 +163,13 @@ static func _layers_in_order(_room_id: StringName, room: Node2D) -> bool:
 	var player := room.get_node_or_null("Player")
 	if [terrain, props, entries, player].has(null):
 		return false
-	var valid := player.get_index() == room.get_child_count() - 1
-	valid = valid and terrain.get_index() < props.get_index()
+	var valid := terrain.get_index() < props.get_index()
 	valid = valid and props.get_index() < entries.get_index()
 	valid = valid and entries.get_index() < player.get_index()
 	for child in room.get_children():
-		if child is TileMapLayer and child != terrain and child != props:
+		if child.get_index() > player.get_index():
+			valid = valid and FOREGROUND.has(child.name) and child is TileMapLayer
+		elif child is TileMapLayer and child != terrain and child != props:
 			valid = valid and child.get_index() < terrain.get_index()
 	return valid
 

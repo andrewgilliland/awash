@@ -13,9 +13,10 @@ const CELLS := Rect2i(0, 0, 20, 9)
 const TALL_TREE := Rect2i(17, 0, 3, 4)
 const TALL_TREE_SHEET := Vector2i(1, 1)
 # Three palms lean over the beach, each three tiles wide and four tall, standing on the sand: each
-# one's top-left cell, and its top-left on the pack's palm sheet.
+# one's top-left cell, and its top-left on the pack's palm sheet. The westmost stands at the top
+# of the shore's slopes, leaning out over the water.
 const PALMS := {
-	Vector2i(2, 2): Vector2i(11, 1),
+	Vector2i(6, 2): Vector2i(11, 1),
 	Vector2i(9, 2): Vector2i(14, 1),
 	Vector2i(12, 2): Vector2i(11, 1),
 }
@@ -27,6 +28,20 @@ const PLATFORM_CELLS := [Vector2i(16, 5), Vector2i(19, 1)]
 const OPEN_BEACH := Rect2i(0, 0, 16, 6)
 # The sand's surface row, where nothing but the palms' feet stands.
 const SAND_ROW := 5
+# West of the beach the sand steps down into the sea: a 45-degree slope, a middle shelf, another
+# slope, then a low shelf at the west wall. The row each column's surface tile is in, from the
+# west wall to the plank step, and the slopes' tiles on the pack's ground sheet.
+const SHORE_ROWS: Array[int] = [8, 8, 8, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6]
+const SLOPES := {Vector2i(3, 7): Vector2i(7, 2), Vector2i(7, 6): Vector2i(8, 1)}
+# The surf, drawn in front of Vael over the shallows, from the west wall to the upper slope's
+# foot, and see-through enough to show what's under it. Its surface is half a tile below the
+# middle shelf: Vael walks the shelf dry-footed, and wades in waist-deep at the west wall.
+const SURF := Rect2i(0, 7, 7, 2)
+const SURF_LINE := 120.0
+const TILE := 16
+const SURF_TOP: Array[Vector2i] = [Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1)]
+const SURF_DEEP: Array[Vector2i] = [Vector2i(1, 2), Vector2i(2, 2)]
+const WATER_SHEET := "res://assets/packs/tropical_island/water.png"
 # Vael starts on the beach below the cliff, in the surf.
 const START_ENTRY := Vector2(240, 96)
 const BLACKTIDE_PATH := "res://assets/regions/waking_coast/props/blacktide_stuck.png"
@@ -43,8 +58,8 @@ const LANDMARKS := {
 	# Three palms behind the beach: each one's crown and foot.
 	&"FarTrees":
 	{
-		Vector2i(2, 2): Vector2i(11, 1),
-		Vector2i(4, 5): Vector2i(13, 4),
+		Vector2i(6, 2): Vector2i(11, 1),
+		Vector2i(8, 5): Vector2i(13, 4),
 		Vector2i(9, 2): Vector2i(14, 1),
 		Vector2i(11, 5): Vector2i(16, 4),
 		Vector2i(12, 2): Vector2i(11, 1),
@@ -52,8 +67,9 @@ const LANDMARKS := {
 	},
 	&"Terrain":
 	{
-		# the sand, from the west wall to the sand Vael wakes on
-		Vector2i(0, 6): Vector2i(2, 1),
+		# the sand, from the shallows at the west wall to the sand Vael wakes on
+		Vector2i(0, 8): Vector2i(2, 1),
+		Vector2i(4, 7): Vector2i(2, 1),
 		Vector2i(9, 6): Vector2i(2, 1),
 		Vector2i(10, 6): Vector2i(3, 1),
 		Vector2i(15, 6): Vector2i(2, 1),
@@ -82,6 +98,8 @@ func get_tests() -> Array:
 		["The first Room is an open surf beach", _test_open_surf_beach],
 		["The plank step and the high branch stay one-way", _test_platforms_one_way],
 		["The beach runs open from the west wall", _test_open_beach],
+		["West of the beach the sand slopes down into the sea in two steps", _test_shore_slopes],
+		["The surf washes over the shallows in front of Vael", _test_surf],
 		["A tall jungle tree on the cliff top holds the high branch", _test_tall_tree],
 		["Nothing stands on the sand but the palms", _test_clear_sand],
 		["Behind the cliff is only the Background and the tall tree", _test_no_haze],
@@ -115,7 +133,7 @@ func _test_lays_out_the_screen() -> bool:
 			valid = valid and layer.get_cell_atlas_coords(cell) == cells[cell]
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	for column in range(CELLS.size.x):
-		valid = valid and terrain.get_cell_source_id(Vector2i(column, 6)) != -1
+		valid = valid and terrain.get_cell_source_id(Vector2i(column, CELLS.end.y - 1)) != -1
 	room.free()
 	return valid
 
@@ -231,7 +249,7 @@ func _test_clear_sand() -> bool:
 		return false
 	var valid := room.get_node_or_null("Wreck") == null
 	for layer: TileMapLayer in room.find_children("*", "TileMapLayer", false, false):
-		if layer.name == &"Terrain":
+		if layer.name == &"Terrain" or layer.name == &"Surf":
 			continue
 		for cell in layer.get_used_cells():
 			if cell.y >= SAND_ROW:
@@ -263,5 +281,53 @@ func _test_open_beach() -> bool:
 	for row in range(OPEN_BEACH.position.y, OPEN_BEACH.end.y):
 		for column in range(OPEN_BEACH.position.x, OPEN_BEACH.end.x):
 			valid = valid and terrain.get_cell_source_id(Vector2i(column, row)) == -1
+	room.free()
+	return valid
+
+
+func _test_shore_slopes() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var valid := true
+	for column in range(SHORE_ROWS.size()):
+		var cell := Vector2i(column, SHORE_ROWS[column])
+		valid = valid and terrain.get_cell_source_id(cell) != -1
+		valid = valid and terrain.get_cell_source_id(cell + Vector2i.UP) == -1
+		var data := terrain.get_cell_tile_data(cell)
+		if data == null:
+			valid = false
+			continue
+		var points := data.get_collision_polygon_points(0, 0)
+		if SLOPES.has(cell):
+			# solid below a diagonal that rises from the cell's west foot to its east top
+			valid = valid and terrain.get_cell_atlas_coords(cell) == SLOPES[cell]
+			valid = valid and points.size() == 3
+			valid = valid and Vector2(-8, 8) in points and Vector2(8, -8) in points
+		else:
+			valid = valid and points.size() == 4
+	room.free()
+	return valid
+
+
+func _test_surf() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var surf := room.get_node_or_null("Surf") as TileMapLayer
+	var valid := surf != null
+	if valid:
+		# drawn after Vael, and see-through
+		valid = surf.get_index() > room.get_node("Player").get_index()
+		valid = valid and surf.modulate.a > 0.5 and surf.modulate.a < 1.0
+		valid = valid and surf.get_used_rect() == SURF
+		valid = valid and surf.position.y + SURF.position.y * TILE == SURF_LINE
+		for cell in surf.get_used_cells():
+			var atlas := surf.tile_set.get_source(surf.get_cell_source_id(cell))
+			valid = valid and (atlas as TileSetAtlasSource).texture.resource_path == WATER_SHEET
+			var tiles := SURF_TOP if cell.y == SURF.position.y else SURF_DEEP
+			valid = valid and surf.get_cell_atlas_coords(cell) in tiles
+		valid = valid and surf.get_used_cells().size() == SURF.get_area()
 	room.free()
 	return valid
