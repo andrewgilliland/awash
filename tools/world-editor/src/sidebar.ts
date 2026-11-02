@@ -66,8 +66,9 @@ export function showSidebar(into: HTMLElement, sidebar: Sidebar) {
     el(
       "nav",
       { className: "cards", ariaLabel: "Views" },
-      card("world", "The World", "As it is today", view.kind === "world" && !view.planned, () => show({ kind: "world", planned: false, region: focusOf(view) })),
-      card("plan", "The Plan", "As planned, to edit", view.kind === "world" && view.planned, () => show({ kind: "world", planned: true, region: focusOf(view) })),
+      // the whole of it; a Region card narrows whichever is on show
+      card("world", "The World", "As it is today", view.kind === "world" && !view.planned, () => show({ kind: "world", planned: false })),
+      card("plan", "The Plan", "As planned, to edit", view.kind === "world" && view.planned, () => show({ kind: "world", planned: true })),
       card("check", "Check", sidebar.checking ? "Running the game's tests…" : "Run the game's tests", false, sidebar.check, sidebar.checking),
     ),
     el("p", { className: "label" }, "Regions"),
@@ -104,9 +105,4 @@ export function showSidebar(into: HTMLElement, sidebar: Sidebar) {
       }),
     ),
   );
-}
-
-// The Region a view shows, if one.
-function focusOf(view: View): string | undefined {
-  return view.kind === "world" ? view.region : undefined;
 }
