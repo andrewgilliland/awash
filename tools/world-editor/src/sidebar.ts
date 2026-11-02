@@ -10,6 +10,8 @@ export interface Sidebar {
   checking: boolean;
   show: (view: View) => void;
   check: () => void;
+  // A Room card hovered or focused, to light that Room on the map; null when it's left.
+  hover: (id: string | null) => void;
 }
 
 const ICONS: Record<string, string> = {
@@ -68,15 +70,20 @@ export function showSidebar(into: HTMLElement, sidebar: Sidebar) {
     el(
       "nav",
       { className: "cards", ariaLabel: "Rooms" },
-      ...built.map(([id, room]) =>
-        card(
+      ...built.map(([id, room]) => {
+        const roomCard = card(
           "room",
           id.replace(/_/g, " "),
           `${room.size[0]}×${room.size[1]} · ${world.regions[room.region]?.name ?? room.region}`,
           view.kind === "room" && view.id === id,
           () => show({ kind: "room", id }),
-        ),
-      ),
+        );
+        roomCard.addEventListener("pointerenter", () => sidebar.hover(id));
+        roomCard.addEventListener("pointerleave", () => sidebar.hover(null));
+        roomCard.addEventListener("focus", () => sidebar.hover(id));
+        roomCard.addEventListener("blur", () => sidebar.hover(null));
+        return roomCard;
+      }),
     ),
   );
 }

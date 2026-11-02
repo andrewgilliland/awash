@@ -16,6 +16,9 @@ const PLANNED_WALL = "rgba(148, 165, 198, 0.55)";
 const LINE = "rgba(148, 165, 198, 0.3)";
 const GRID = "rgba(148, 165, 198, 0.07)";
 const GHOST = "#ffff8b";
+// A Room lit from outside the map, as its card in the sidebar is hovered.
+const LIT_FILL = "rgba(248, 225, 142, 0.28)";
+const LIT_EDGE = "#f8e18e";
 // How near a Room's edge, in Map pixels, a click toggles an Exit.
 const EDGE_REACH = 5;
 
@@ -39,12 +42,19 @@ export interface WorldEditor {
 
 const same = (a: Vec, b: Vec) => a[0] === b[0] && a[1] === b[1];
 
-export function showWorld(editor: WorldEditor, stage: HTMLElement, side: HTMLElement) {
+// What the rest of the page can do to the World view once it is shown.
+export interface WorldViewHandle {
+  // Lights one Room on the map, bringing it into view, or none.
+  highlight(id: string | null): void;
+}
+
+export function showWorld(editor: WorldEditor, stage: HTMLElement, side: HTMLElement): WorldViewHandle {
   const { world, planned } = editor;
   const editing = planned;
   const layout = layoutWorld(world, planned, editing ? PAD : 0);
   const [c, g] = canvas(layout.size.w, layout.size.h, SCALE);
   let ghost: Rect | null = null;
+  let lit: string | null = null;
 
   const draw = () => {
     rect(g, { x: 0, y: 0, ...layout.size }, BACKDROP);
@@ -69,6 +79,11 @@ export function showWorld(editor: WorldEditor, stage: HTMLElement, side: HTMLEle
     g.fillStyle = "#c6d3e8";
     g.font = "6px monospace";
     layout.labels.forEach((label) => g.fillText(label.text.toUpperCase(), label.x, label.y));
+    const shown = layout.rooms.find((room) => room.id === lit);
+    if (shown) {
+      rect(g, shown.block, LIT_FILL);
+      outline(g, shown.block, LIT_EDGE);
+    }
     if (ghost) {
       outline(g, ghost, GHOST);
     }
@@ -184,6 +199,30 @@ export function showWorld(editor: WorldEditor, stage: HTMLElement, side: HTMLEle
   const tools = editing ? toolbar(editor) : [];
   stage.replaceChildren(...tools, c);
   side.replaceChildren(...details(editor));
+  return {
+    highlight(id) {
+      lit = id;
+      draw();
+      const room = layout.rooms.find((r) => r.id === id);
+      if (!room) {
+        return;
+      }
+      // Scrolled into the middle of the stage if any of it is out of sight.
+      const box = c.getBoundingClientRect();
+      const view = stage.getBoundingClientRect();
+      const left = box.left + room.block.x * SCALE;
+      const top = box.top + room.block.y * SCALE;
+      const right = left + room.block.w * SCALE;
+      const bottom = top + room.block.h * SCALE;
+      if (left < view.left || right > view.right || top < view.top || bottom > view.bottom) {
+        stage.scrollBy({
+          left: (left + right) / 2 - (view.left + view.right) / 2,
+          top: (top + bottom) / 2 - (view.top + view.bottom) / 2,
+          behavior: "smooth",
+        });
+      }
+    },
+  };
 }
 
 function toolbar(editor: WorldEditor): Node[] {
