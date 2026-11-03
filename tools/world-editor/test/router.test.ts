@@ -52,7 +52,7 @@ describe("writing a URL", () => {
       { view: { kind: "world" as const, planned: true }, selected: "waking_coast_4" },
       { view: { kind: "world" as const, planned: true, region: "undertow" }, selected: null },
       { view: { kind: "world" as const, planned: false, region: "waking_coast" }, selected: "waking_coast_1" },
-      { view: { kind: "room" as const, id: "waking_coast_8" }, selected: null },
+      { view: { kind: "room" as const, id: "tidefen_village_1" }, selected: null },
       { view: { kind: "tests" as const }, selected: null },
     ];
     for (const route of routes) {
@@ -60,7 +60,7 @@ describe("writing a URL", () => {
       expect(parseRoute(url.pathname, url.search)).toEqual(route);
     }
     expect(formatRoute(routes[1])).toBe("/plan?room=waking_coast_4");
-    expect(formatRoute(routes[4])).toBe("/rooms/waking_coast_8");
+    expect(formatRoute(routes[4])).toBe("/rooms/tidefen_village_1");
   });
 
   it("keeps an odd id whole", () => {

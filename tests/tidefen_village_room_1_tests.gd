@@ -1,7 +1,7 @@
 extends RefCounted
 
-const ROOM_PATH := "res://scenes/rooms/waking_coast_8.tscn"
-const LANTERN_PATH := "res://assets/regions/waking_coast/props/tidefen_lantern.png"
+const ROOM_PATH := "res://scenes/rooms/tidefen_village_1.tscn"
+const LANTERN_PATH := "res://assets/regions/tidefen_village/props/tidefen_lantern.png"
 const RoomReach := preload("res://tests/room_reach.gd")
 const World := preload("res://scripts/core/world.gd")
 # Six screens wide: the stilt houses over the shallows, the market square, then the harbour, two
@@ -38,7 +38,7 @@ const PIER_DECKS := [
 ]
 const PIER_DECKS_END := Vector2i(11, 2)
 const HARBOUR_WATER := Vector2i(48, 57)
-# Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_8.aseprite:
+# Landmark cells from assets/regions/tidefen_village/room_layouts/tidefen_village_1.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	&"Village":
@@ -181,7 +181,7 @@ func _test_walkway_on_stilts() -> bool:
 # walked to from the west Entry.
 func _test_rest_point_on_map() -> bool:
 	var screen := Vector2i(Vector2(BELL_CELL * TILE) / World.SCREEN_SIZE)
-	return World.markers(&"waking_coast_8") == {&"rest": screen}
+	return World.markers(&"tidefen_village_1") == {&"rest": screen}
 
 
 func _test_market() -> bool:

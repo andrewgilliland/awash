@@ -3,7 +3,7 @@ extends RefCounted
 # The Undertow's playtests, played by tests/playtest_runner.gd with its harness: real Rooms, real
 # input and physics.
 
-const TIDEFEN_PATH := "res://scenes/rooms/waking_coast_8.tscn"
+const TIDEFEN_PATH := "res://scenes/rooms/tidefen_village_1.tscn"
 const SHAFT_PATH := "res://scenes/rooms/undertow_1.tscn"
 const TUNNEL_PATH := "res://scenes/rooms/waking_coast_9.tscn"
 # The shaft's floor, two screens below the well.
@@ -97,7 +97,7 @@ func get_playtests() -> Array:
 # tunnel's Scavenger and Wraith are taken out first.
 func _drops_home() -> bool:
 	var player: CharacterBody2D = await _harness.call(
-		"_enter_room", &"waking_coast_8", &"west", TIDEFEN_PATH
+		"_enter_room", &"tidefen_village_1", &"west", TIDEFEN_PATH
 	)
 	if player == null:
 		await _harness.call("_leave_scene")

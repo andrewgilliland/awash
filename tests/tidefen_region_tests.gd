@@ -5,9 +5,11 @@ extends RefCounted
 # coast's sky and sea and its sheets.
 
 const World := preload("res://scripts/core/world.gd")
-const TIDEFEN := &"waking_coast_8"
+const TIDEFEN := &"tidefen_village_1"
 const COAST_ROOM := &"waking_coast_7"
 const COAST_THEME := "res://assets/regions/waking_coast/music/theme.wav"
+# A Room's scene by its id; Tidefen's old scene, named for the coast, is gone.
+const ROOM_SCENE := "res://scenes/rooms/%s.tscn"
 
 
 func get_tests() -> Array:
@@ -16,13 +18,14 @@ func get_tests() -> Array:
 		["Tidefen has a calm, looping theme of its own", _test_theme],
 		["Tidefen keeps the coast's sky and sea, and draws from its sheets", _test_shares_coast],
 		["The Warden's gate stays the coast's last Room before Tidefen", _test_gate_on_coast],
+		["Tidefen's files go by its own name, not the coast's", _test_own_names],
 	]
 
 
 func _test_region() -> bool:
 	var region := World.region(TIDEFEN)
 	return (
-		region == &"tidefen"
+		region == &"tidefen_village"
 		and World.name_of_region(region) == "Tidefen Village"
 		and World.colour_of_region(region).a == 1.0
 		and World.colour_of_region(region) != World.region_colour(COAST_ROOM)
@@ -35,7 +38,7 @@ func _test_theme() -> bool:
 	return (
 		theme != null
 		and theme.loop_mode == AudioStreamWAV.LOOP_FORWARD
-		and path.begins_with("res://assets/regions/tidefen/")
+		and path.begins_with("res://assets/regions/tidefen_village/")
 		and path != COAST_THEME
 	)
 
@@ -49,3 +52,11 @@ func _test_shares_coast() -> bool:
 
 func _test_gate_on_coast() -> bool:
 	return World.region(COAST_ROOM) == &"waking_coast"
+
+
+func _test_own_names() -> bool:
+	return (
+		World.scene(TIDEFEN) == "res://scenes/rooms/tidefen_village_1.tscn"
+		and ResourceLoader.exists("res://assets/regions/tidefen_village/props/tidefen_lantern.png")
+		and World.room_for_scene(ROOM_SCENE % "waking_coast_8") == &""
+	)

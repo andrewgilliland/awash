@@ -5,7 +5,7 @@
 [ext_resource type="TileSet" uid="uid://bk0woevdr64it" path="res://assets/regions/waking_coast/tiles/terrain.tres" id="terrain_tiles"]
 [ext_resource type="TileSet" uid="uid://bysu7h6kisnbi" path="res://assets/regions/waking_coast/tiles/scenery.tres" id="scenery_tiles"]
 
-[ext_resource type="Texture2D" uid="uid://br6u01tkjwoq6" path="res://assets/regions/waking_coast/props/tidefen_lantern.png" id="4_r86vo"]
+[ext_resource type="Texture2D" uid="uid://br6u01tkjwoq6" path="res://assets/regions/tidefen_village/props/tidefen_lantern.png" id="4_r86vo"]
 
 [ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="5_usmxo"]
 
@@ -164,7 +164,7 @@ size = Vector2(8, 144)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0jmsj"]
 size = Vector2(16, 16)
 
-[node name="WakingCoast8" type="Node2D"]
+[node name="TidefenVillage1" type="Node2D"]
 script = ExtResource("1_ltjx2")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
