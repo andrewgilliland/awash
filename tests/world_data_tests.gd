@@ -12,6 +12,7 @@ func get_tests() -> Array:
 		["The World's data is a JSON file of Regions and Rooms", _test_data_file],
 		["The World answers from its data file, Room by Room", _test_rooms_from_data],
 		["The World answers from its data file, Region by Region", _test_regions_from_data],
+		["A Region draws from its own tile folder, or the one it shares", _test_tile_folders],
 	]
 
 
@@ -72,4 +73,18 @@ func _test_regions_from_data() -> bool:
 		valid = valid and World.has_region(StringName(id))
 		valid = valid and World.name_of_region(StringName(id)) == record.name
 		valid = valid and World.colour_of_region(StringName(id)) == Color(record.colour)
+	return valid
+
+
+func _test_tile_folders() -> bool:
+	var regions: Dictionary = _data().get("regions", {})
+	var rooms: Dictionary = _data().get("rooms", {})
+	var valid := not rooms.is_empty()
+	for id: String in rooms:
+		var record: Dictionary = rooms[id]
+		if not record.has("scene"):
+			continue
+		var region: Dictionary = regions.get(record.region, {})
+		var folder: String = region.get("tiles", record.region)
+		valid = valid and World.tiles(StringName(id)) == "res://assets/regions/%s/tiles/" % folder
 	return valid

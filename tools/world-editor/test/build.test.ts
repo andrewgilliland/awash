@@ -65,6 +65,17 @@ describe("building a Planned Room", () => {
     expect(WORLD.rooms.cove.scene).toBeUndefined();
   });
 
+  it("draws a Room in a Region that shares another's tile sets from that Region's folder", () => {
+    const village = { ...COAST, name: "Village", colour: "#5c3d1e", tiles: "coast" };
+    const sharing: WorldData = { ...WORLD, regions: { ...WORLD.regions, village }, rooms: { ...WORLD.rooms, cove: { ...WORLD.rooms.cove, region: "village" } } };
+    const result = buildRoom(sharing, "cove");
+    const scene = parseRoomScene("scene" in result ? result.scene : "");
+    expect(scene.layers.map((layer) => layer.tileSet)).toEqual([
+      "res://assets/regions/coast/tiles/terrain.tres",
+      "res://assets/regions/coast/tiles/scenery.tres",
+    ]);
+  });
+
   it("starts the Room with a floor of its Region's ground along its bottom, open under a Drop", () => {
     const scene = parseRoomScene(built("cove").scene);
     expect(scene.layers.map((layer) => layer.name)).toEqual(["Terrain", "Props"]);

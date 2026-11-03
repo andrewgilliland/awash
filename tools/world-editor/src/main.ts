@@ -5,7 +5,7 @@
 import "@fontsource/jetbrains-mono/400.css";
 import "@fontsource/jetbrains-mono/700.css";
 import { el, readRepo, versionOf, type View } from "./dom";
-import { buildRoom } from "./build";
+import { buildRoom, tileFolder } from "./build";
 import { showRoom } from "./roomView";
 import { formatRoute, parseRoute, type Route } from "./router";
 import { showSidebar } from "./sidebar";
@@ -307,7 +307,7 @@ async function build(id: string) {
   }
   const region = world.rooms[id].region;
   for (const sheet of ["terrain", "scenery"]) {
-    const found = await fetch(`/repo/assets/regions/${region}/tiles/${sheet}.tres`, { method: "HEAD" });
+    const found = await fetch(`/repo/assets/regions/${tileFolder(world, region)}/tiles/${sheet}.tres`, { method: "HEAD" });
     if (!found.ok) {
       say(`${world.regions[region]?.name ?? region} has no tile sheets yet, so its Rooms can't be built.`, "fail");
       return;

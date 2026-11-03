@@ -58,6 +58,9 @@ function nameOf(all: Exit[], exit: Exit): string {
 
 const v = (x: number, y: number) => `Vector2(${x}, ${y})`;
 
+// The folder a Region's tile sets are in: its own, or the one of another Region it shares.
+export const tileFolder = (world: WorldData, region: string) => world.regions[region]?.tiles ?? region;
+
 export function buildRoom(world: WorldData, id: string): BuildResult {
   const record = world.rooms[id];
   if (record.scene !== undefined) {
@@ -135,7 +138,7 @@ export function buildRoom(world: WorldData, id: string): BuildResult {
     ...(exits.some((e) => e.shape === "RectangleShape2D_drop") ? [`[sub_resource type="RectangleShape2D" id="RectangleShape2D_drop"]\nsize = ${v(DROP_GAP.length * TILE, 8)}`] : []),
     ...walls.map((side) => `[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_${side}"]\nnormal = ${side === "west" ? v(1, 0) : v(-1, 0)}`),
   ];
-  const tiles = `res://assets/regions/${room.region}/tiles`;
+  const tiles = `res://assets/regions/${tileFolder(world, room.region)}/tiles`;
   const resources = [
     `[ext_resource type="Script" path="res://scripts/core/main.gd" id="1_room"]`,
     `[ext_resource type="TileSet" path="${tiles}/terrain.tres" id="terrain_tiles"]`,

@@ -5,7 +5,7 @@ Agreed 2026-11-02, from three throwaway layouts drawn with the Map's own code. T
 ## Decisions
 
 - The coast climbs up and right: the beach, the palm shore, new tide pools, the salt cliffs, new ledges up to the cliff tops, then the wreck graveyard up on the tops. A new broken stair comes down to the jungle trail, the Warden's gate and Tidefen, back at sea level.
-- Tidefen stays the Waking Coast's Safe spoke, coloured with the coast on the Map.
+- Tidefen stays the Safe spoke the coast leans on. (Changed 2026-11-03: Tidefen Village became a small Region of its own, with its own Map name, colour and theme, keeping the coast's sky, sea and sheets.)
 - The Warden stays the last Room before Tidefen.
 - The graveyard's sinkhole goes. The sea cave sits under the cliffs and is reached only from the cliffs' foot.
 - The Undertow becomes its own Region, beneath the cliffs and the graveyard, with its own Map name and colour. It has no Safe spoke of its own and leans on Tidefen.
