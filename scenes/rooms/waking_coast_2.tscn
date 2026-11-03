@@ -28,7 +28,7 @@ tile_map_data = PackedByteArray("AAAHAAIAAAAFAAEAAAAIAAIAAAAGAAEAAAAJAAIAAAAHAAE
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Wreck" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAARAAQABAACAAIAAAASAAQABAAEAAIAAAARAAUABAACAAIAAAASAAUABAAEAAIAAAA=")
+tile_map_data = PackedByteArray("AAA=")
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Terrain" type="TileMapLayer" parent="."]
@@ -36,7 +36,7 @@ tile_map_data = PackedByteArray("AAAOAAEAAgAEAAQAAAAPAAEAAgAFAAQAAAAQAAEAAgAHAAQ
 tile_set = ExtResource("terrain_tiles")
 
 [node name="Props" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAAQAAAAEAAKAAMAAAARAAAAEAALAAMAAAAPAAIAAgADAAcAAAAGAAUAAAABAAIAAAALAAUABQAOAAcAAAAQAAUAAAACAAIAAAATAAUAAAABAAIAAAA=")
+tile_map_data = PackedByteArray("AAALAAUABQAOAAcAAAA=")
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Enemies" type="Node2D" parent="."]
@@ -64,7 +64,7 @@ position = Vector2(324, 72)
 collision_layer = 128
 collision_mask = 2
 script = ExtResource("4_uinnw")
-room_id = &"waking_coast_3"
+room_id = &"waking_coast_10"
 entry_id = &"west"
 
 [node name="Edge" type="CollisionShape2D" parent="Exits/east"]
