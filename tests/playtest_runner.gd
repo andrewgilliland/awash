@@ -27,7 +27,7 @@ const WISP_WATCH_DISTANCE := 24.0
 const WISP_STRIKE_DISTANCE := 14.0
 const WISP_ARC_DISTANCE := 8.0
 const WARDENS_GATE_PATH := "res://scenes/rooms/waking_coast_7.tscn"
-const TIDEFEN_PATH := "res://scenes/rooms/waking_coast_8.tscn"
+const TIDEFEN_PATH := "res://scenes/rooms/tidefen_village_1.tscn"
 const UNDERTOW_PATH := "res://scenes/rooms/waking_coast_9.tscn"
 const TIDEFEN_SAND_Y := 112.0
 # Up onto Tidefen's walkway: straight up onto the ledge from under it, then on to the walkway.
@@ -487,7 +487,7 @@ func _playtest_walks_to_tidefen() -> bool:
 	var valid := await _walk_until_scene(&"move_right", WARDENS_GATE_PATH)
 	valid = valid and run.get("room_id") == &"waking_coast_7"
 	valid = valid and await _walk_until_scene(&"move_right", TIDEFEN_PATH)
-	valid = valid and run.get("room_id") == &"waking_coast_8"
+	valid = valid and run.get("room_id") == &"tidefen_village_1"
 	var player := _current_player()
 	valid = valid and player != null and player.global_position.x < 40.0
 	valid = valid and absf(player.global_position.y - TIDEFEN_SAND_Y) < 1.0
@@ -497,7 +497,7 @@ func _playtest_walks_to_tidefen() -> bool:
 
 # From Tidefen's sand up onto the ledge, then the walkway, and along it to its east end.
 func _playtest_climbs_tidefen() -> bool:
-	var player := await _enter_room(&"waking_coast_8", &"west", TIDEFEN_PATH)
+	var player := await _enter_room(&"tidefen_village_1", &"west", TIDEFEN_PATH)
 	if player == null:
 		await _leave_scene()
 		return false

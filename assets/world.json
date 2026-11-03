@@ -8,13 +8,13 @@
 			"background": "res://scenes/regions/waking_coast/background.tscn",
 			"backgrounds": {"cave": "res://scenes/regions/waking_coast/cave_background.tscn"}
 		},
-		"tidefen": {
+		"tidefen_village": {
 			"note": "Tidefen Village, past the Warden's gate: the Safe spoke the Waking Coast and the Undertow lean on. It keeps the coast's sky and sea, and its sheets.",
 			"name": "Tidefen Village",
 			"colour": "#5c3d1e",
 			"tiles": "waking_coast",
 			"floor": [0, 2, 1],
-			"theme": "res://assets/regions/tidefen/music/theme.wav",
+			"theme": "res://assets/regions/tidefen_village/music/theme.wav",
 			"background": "res://scenes/regions/waking_coast/background.tscn"
 		},
 		"undertow": {
@@ -104,12 +104,12 @@
 			],
 			"markers": {"boss": [0, 0]}
 		},
-		"waking_coast_8": {
+		"tidefen_village_1": {
 			"note": "Tidefen, at the end of the coast past the Warden's gate: its stilt houses, market square and harbour, two screens each.",
-			"scene": "res://scenes/rooms/waking_coast_8.tscn",
+			"scene": "res://scenes/rooms/tidefen_village_1.tscn",
 			"cell": [15, 0],
 			"size": [6, 1],
-			"region": "tidefen",
+			"region": "tidefen_village",
 			"exits": [
 				{"screen": [0, 0], "side": "west"},
 				{"screen": [0, 0], "side": "south"}

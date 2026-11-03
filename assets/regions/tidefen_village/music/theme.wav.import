@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://bgyub1inpw70o"
-path="res://.godot/imported/theme.wav-696b26aee055a3db85b83d7f72db4ab2.sample"
+path="res://.godot/imported/theme.wav-cd28f3d71741775335b959c9e8f2153d.sample"
 
 [deps]
 
-source_file="res://assets/regions/tidefen/music/theme.wav"
-dest_files=["res://.godot/imported/theme.wav-696b26aee055a3db85b83d7f72db4ab2.sample"]
+source_file="res://assets/regions/tidefen_village/music/theme.wav"
+dest_files=["res://.godot/imported/theme.wav-cd28f3d71741775335b959c9e8f2153d.sample"]
 
 [params]
 

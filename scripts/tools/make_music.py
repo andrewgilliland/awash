@@ -303,7 +303,7 @@ HOMES = {
     "start_theme": Path("assets/ui/start_theme.wav"),
     "waking_coast_theme": Path("assets/regions/waking_coast/music/theme.wav"),
     "undertow_theme": Path("assets/regions/undertow/music/theme.wav"),
-    "tidefen_theme": Path("assets/regions/tidefen/music/theme.wav"),
+    "tidefen_theme": Path("assets/regions/tidefen_village/music/theme.wav"),
 }
 
 
