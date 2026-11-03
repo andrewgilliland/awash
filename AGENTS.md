@@ -35,9 +35,10 @@ This file provides guidance for coding agents working in this repository.
 
 - Hook path: `.githooks/pre-commit`
 - Hook runs, in order:
-  1. `./scripts/quality/typecheck.sh`
-  2. `./scripts/quality/lint.sh`
-  3. `./scripts/quality/test.sh`
+  1. `./scripts/quality/file_size.sh`: rejects a staged hand-written file over 5,000 tokens (bytes / 4) and says how to split it. Lockfiles, `.tscn`, `.tres`, `.import`, `.uid` and binary files are passed over.
+  2. `./scripts/quality/typecheck.sh`
+  3. `./scripts/quality/lint.sh`
+  4. `./scripts/quality/test.sh`
 
 ## Lint/Format Notes
 
