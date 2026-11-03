@@ -24,6 +24,8 @@ var player_owned_armor: Array[StringName] = [Equipment.STARTING_ARMOR]
 var _visited_rooms: Dictionary = {FIRST_ROOM_ID: true}
 # Every Boss defeated this Run, by id.
 var _defeated_bosses: Dictionary = {}
+# Every Shortcut opened this Run, by id.
+var _opened_shortcuts: Dictionary = {}
 
 
 # Begins a new Run: in the first Room at its default Entry, with only that Room visited.
@@ -38,11 +40,12 @@ func start_run() -> void:
 	player_owned_armor = [Equipment.STARTING_ARMOR]
 	_visited_rooms = {FIRST_ROOM_ID: true}
 	_defeated_bosses = {}
+	_opened_shortcuts = {}
 
 
 # After a defeat the Run carries on: back at the first Room's default Entry with full Health,
-# keeping every Room visited, every Boss defeated, and all the Player's Experience, Supplies and
-# Equipment.
+# keeping every Room visited, every Boss defeated, every Shortcut opened, and all the Player's
+# Experience, Supplies and Equipment.
 func recover_from_defeat() -> void:
 	room_id = FIRST_ROOM_ID
 	entry_id = DEFAULT_ENTRY_ID
@@ -72,3 +75,12 @@ func defeat_boss(boss_id: StringName) -> void:
 
 func has_defeated_boss(boss_id: StringName) -> bool:
 	return _defeated_bosses.has(boss_id)
+
+
+# A Shortcut stays open for the rest of the Run.
+func open_shortcut(shortcut_id: StringName) -> void:
+	_opened_shortcuts[shortcut_id] = true
+
+
+func has_opened_shortcut(shortcut_id: StringName) -> bool:
+	return _opened_shortcuts.has(shortcut_id)

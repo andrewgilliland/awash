@@ -108,9 +108,9 @@
 			"markers": {"rest": [3, 0]}
 		},
 		"waking_coast_9": {
-			"note": "Four screens of tunnel under the trail, the gate and Tidefen's well, back to the sea cave.",
+			"note": "Four screens of tunnel under Tidefen, between the shaft from its well and the hall west.",
 			"scene": "res://scenes/rooms/waking_coast_9.tscn",
-			"cell": [7, 1],
+			"cell": [9, 1],
 			"size": [4, 1],
 			"region": "undertow",
 			"exits": [
@@ -190,6 +190,7 @@
 		},
 		"undertow_3": {
 			"note": "The passage to the sea cave's wall, the Undertow's Shortcut home.",
+			"scene": "res://scenes/rooms/undertow_3.tscn",
 			"cell": [7, 1],
 			"size": [2, 1],
 			"region": "undertow",

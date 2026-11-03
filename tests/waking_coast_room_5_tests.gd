@@ -48,7 +48,7 @@ func get_tests() -> Array:
 		["Sea cave climbs up through its roof to the salt cliffs", _test_climbs_out],
 		["Sea cave floor runs from its east end to its west wall", _test_floor_runs_west],
 		["Sea cave shelf holds a crate a jump up", _test_shelf_holds_crate],
-		["Sea cave leads east into the undertow", _test_leads_east],
+		["Sea cave leads east to the Undertow's passage", _test_leads_east],
 	]
 
 
@@ -157,7 +157,7 @@ func _test_leads_east() -> bool:
 	var valid := room.get_node_or_null("Bounds") == null
 	var exit := room.get_node_or_null("Exits/east") as Area2D
 	valid = valid and exit != null and exit.position.x > ROOM_SIZE.x
-	valid = valid and exit.get("room_id") == &"waking_coast_9" and exit.get("entry_id") == &"west"
+	valid = valid and exit.get("room_id") == &"undertow_3" and exit.get("entry_id") == &"west"
 	var entry := room.get_node_or_null("Entries/east") as Marker2D
 	valid = valid and entry != null and entry.position == EAST_ENTRY
 	room.free()

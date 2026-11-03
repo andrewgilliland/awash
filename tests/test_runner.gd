@@ -31,6 +31,8 @@ const WakingCoastRoom11Tests := preload("res://tests/waking_coast_room_11_tests.
 const WakingCoastRoom12Tests := preload("res://tests/waking_coast_room_12_tests.gd")
 const WakingCoastRoom13Tests := preload("res://tests/waking_coast_room_13_tests.gd")
 const UndertowRegionTests := preload("res://tests/undertow_region_tests.gd")
+const UndertowRoom3Tests := preload("res://tests/undertow_room_3_tests.gd")
+const ShortcutWallTests := preload("res://tests/shortcut_wall_tests.gd")
 const RoomExitTests := preload("res://tests/room_exit_tests.gd")
 const EveryRoomTests := preload("res://tests/every_room_tests.gd")
 const HealthTests := preload("res://tests/health_tests.gd")
@@ -142,6 +144,9 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var undertow_region_tests := UndertowRegionTests.new()
 	for test in undertow_region_tests.get_tests():
+		_run_test(test[0], test[1])
+	var undertow_room_3_tests := UndertowRoom3Tests.new()
+	for test in undertow_room_3_tests.get_tests():
 		_run_test(test[0], test[1])
 	var room_exit_tests := RoomExitTests.new()
 	for test in room_exit_tests.get_tests():
@@ -256,6 +261,9 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var wardens_gate_tests := WardensGateTests.new(root)
 	for test in wardens_gate_tests.get_tests():
+		_run_test(test[0], test[1])
+	var shortcut_wall_tests := ShortcutWallTests.new(root)
+	for test in shortcut_wall_tests.get_tests():
 		_run_test(test[0], test[1])
 	var boss_bar_tests := BossBarTests.new(root)
 	for test in boss_bar_tests.get_tests():

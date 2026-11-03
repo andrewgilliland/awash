@@ -15,6 +15,7 @@ func get_tests() -> Array:
 		["Run carries the Player's Supplies, even through a defeat", _test_carries_supplies],
 		["Run carries the Player's Armor, even through a defeat", _test_carries_armor],
 		["Run remembers each Boss defeated, even through a defeat", _test_remembers_bosses],
+		["Run remembers each Shortcut opened, even through a defeat", _test_remembers_shortcuts],
 	]
 
 
@@ -137,5 +138,20 @@ func _test_remembers_bosses() -> bool:
 	valid = valid and run.has_defeated_boss(&"nameless_warden")
 	run.start_run()
 	valid = valid and not run.has_defeated_boss(&"nameless_warden")
+	run.free()
+	return valid
+
+
+func _test_remembers_shortcuts() -> bool:
+	var run := RunStateScript.new()
+	var valid: bool = not run.has_opened_shortcut(&"sea_cave_wall")
+	run.open_shortcut(&"sea_cave_wall")
+	run.enter_room(&"waking_coast_5", &"east")
+	valid = valid and run.has_opened_shortcut(&"sea_cave_wall")
+	valid = valid and not run.has_opened_shortcut(&"somewhere_else")
+	run.recover_from_defeat()
+	valid = valid and run.has_opened_shortcut(&"sea_cave_wall")
+	run.start_run()
+	valid = valid and not run.has_opened_shortcut(&"sea_cave_wall")
 	run.free()
 	return valid
