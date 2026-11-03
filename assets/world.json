@@ -43,15 +43,8 @@
 			"exits": [
 				{"screen": [0, 1], "side": "west"},
 				{"screen": [0, 0], "side": "east"},
-				{"screen": [0, 1], "side": "east"}
-			],
-			"plan": {
-				"exits": [
-					{"screen": [0, 1], "side": "west"},
-					{"screen": [0, 0], "side": "east"},
-					{"screen": [0, 1], "side": "south"}
-				]
-			}
+				{"screen": [0, 1], "side": "south"}
+			]
 		},
 		"waking_coast_4": {
 			"note": "Two screens wide, along the cliff tops.",
@@ -65,23 +58,16 @@
 			]
 		},
 		"waking_coast_5": {
-			"note": "Under the wreck graveyard, beside the salt cliffs' foot.",
+			"note": "Under the salt cliffs' foot, down a hole beside the beach.",
 			"scene": "res://scenes/rooms/waking_coast_5.tscn",
-			"cell": [6, 0],
+			"cell": [5, 1],
 			"size": [2, 1],
 			"region": "waking_coast",
 			"background": "cave",
 			"exits": [
-				{"screen": [0, 0], "side": "west"},
+				{"screen": [0, 0], "side": "north"},
 				{"screen": [1, 0], "side": "east"}
-			],
-			"plan": {
-				"cell": [5, 1],
-				"exits": [
-					{"screen": [0, 0], "side": "north"},
-					{"screen": [1, 0], "side": "east"}
-				]
-			}
+			]
 		},
 		"waking_coast_6": {
 			"note": "Two screens wide, on from the broken stair's foot, climbing inland.",
@@ -121,7 +107,7 @@
 		"waking_coast_9": {
 			"note": "Four screens of tunnel under the trail, the gate and Tidefen's well, back to the sea cave.",
 			"scene": "res://scenes/rooms/waking_coast_9.tscn",
-			"cell": [8, 1],
+			"cell": [7, 1],
 			"size": [4, 1],
 			"region": "waking_coast",
 			"background": "cave",

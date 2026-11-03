@@ -38,10 +38,14 @@ const UNDERTOW_WEST: Array[float] = [470.0, 400.0, 280.0, 200.0, 90.0, 20.0]
 # Walking the graveyard's beach east to its end, and the cave's floor east to its end and back
 # west to the tunnel: points to walk to, jumping out of a pool when the walk falls short.
 const GRAVEYARD_BEACH_EAST: Array[float] = [88.0, 150.0, 186.0, 250.0, 296.0]
-const SEA_CAVE_EAST: Array[float] = [120.0, 170.0, 296.0]
-const SEA_CAVE_WEST: Array[float] = [170.0, 120.0, 40.0]
-# The cliffs' tunnel Entry, at the foot of the climb.
-const SALT_CLIFFS_CAVE_ENTRY := Vector2(148, 240)
+const SEA_CAVE_EAST: Array[float] = [170.0, 296.0]
+const SEA_CAVE_WEST: Array[float] = [170.0, 124.0]
+# Up out of the sea cave: onto its two landings, a jump straight up at a time, then a jump up
+# through the opening into the salt cliffs, onto the step at the hole's rim, and a hop onto the
+# beach: [direction, launch x, height landed on].
+const SEA_CAVE_CLIMB := [[0, 124.0, 64.0], [0, 136.0, 32.0]]
+const SEA_CAVE_LEAVE_X := 152.0
+const SALT_CLIFFS_CAVE_ENTRY := Vector2(104, 272)
 # The salt cliffs' beach, two screens down, and the cliff top the climb ends on.
 const SALT_CLIFFS_BEACH_Y := 240.0
 const SALT_CLIFFS_TOP_Y := 64.0
@@ -94,7 +98,8 @@ func _init() -> void:
 		await _run_playtest_async(playtest[0], playtest[1])
 	await _run_playtest_async("Player hops the wreck decks to the stern", _playtest_hops_to_stern)
 	await _run_playtest_async(
-		"Player walks into the sea cave from the cliffs' foot and back", _playtest_cave_and_back
+		"Player drops into the sea cave from the cliffs' foot and climbs back out",
+		_playtest_cave_and_back
 	)
 	await _run_playtest_async(
 		"Player walks the graveyard's beach to the broken stair and back",
@@ -361,30 +366,65 @@ func _playtest_hops_to_stern() -> bool:
 	return valid
 
 
-# With real input and physics: from the salt cliffs' foot east into the sea cave, along its floor
-# to the east end, then back west and out of the tunnel at the cliffs' foot.
+# With real input and physics: east along the salt cliffs' beach, down the hole under the cliff's
+# foot into the sea cave, along its floor to the east end and back, then up its landings and out
+# through the opening onto the step at the hole's rim, and back onto the beach. The cliffs'
+# Scavenger is taken out first: this checks the route, not the fight.
 func _playtest_cave_and_back() -> bool:
-	var player := await _enter_room(&"waking_coast_3", &"cave", SALT_CLIFFS_PATH)
+	var player := await _enter_room(&"waking_coast_3", &"west", SALT_CLIFFS_PATH)
 	if player == null:
 		await _leave_scene()
 		return false
 	var run := root.get_node("RunState")
+	current_scene.get_node(SCAVENGER_PATH).free()
+	await _wade_to(player, [80.0])
 	var valid := await _walk_until_scene(&"move_right", SEA_CAVE_PATH)
 	valid = valid and run.get("room_id") == &"waking_coast_5"
 	player = _current_player()
-	valid = valid and player != null and player.global_position.x < 40.0
-	if not valid:
+	if not valid or player == null:
 		await _leave_scene()
 		return false
+	await _frames_until(func() -> bool: return player.is_on_floor(), SETTLE_FRAME_LIMIT)
 	await _wade_to(player, SEA_CAVE_EAST)
 	valid = player.is_on_floor() and player.global_position.x > 290.0
+	valid = valid and await _climb_out_of_cave(player)
+	await _leave_scene()
+	return valid
+
+
+# From the sea cave's floor, west to under the opening, up the landings and out into the salt
+# cliffs; then from the step at the hole's rim onto the beach.
+func _climb_out_of_cave(player: CharacterBody2D) -> bool:
+	var run := root.get_node("RunState")
 	await _wade_to(player, SEA_CAVE_WEST)
-	valid = valid and await _walk_until_scene(&"move_left", SALT_CLIFFS_PATH)
+	var valid := true
+	for step in SEA_CAVE_CLIMB:
+		await _walk_to_x(player, step[1])
+		await _jump_toward(player, step[0])
+		valid = valid and player.is_on_floor() and absf(player.global_position.y - step[2]) < 1.0
+	await _walk_to_x(player, SEA_CAVE_LEAVE_X)
+	_press(&"jump")
+	valid = (
+		valid
+		and await _frames_until(
+			func() -> bool:
+				return current_scene != null and current_scene.scene_file_path == SALT_CLIFFS_PATH,
+			TRANSITION_FRAME_LIMIT
+		)
+	)
+	_release(&"jump")
 	valid = valid and run.get("room_id") == &"waking_coast_3"
+	await _frames_until(
+		func() -> bool: return _current_player() != null and _current_player().is_on_floor(),
+		SETTLE_FRAME_LIMIT
+	)
 	player = _current_player()
 	valid = valid and player != null
 	valid = valid and player.global_position.distance_to(SALT_CLIFFS_CAVE_ENTRY) < 1.0
-	await _leave_scene()
+	if valid:
+		await _jump_toward(player, -1)
+		valid = player.is_on_floor()
+		valid = valid and absf(player.global_position.y - SALT_CLIFFS_BEACH_Y) < 1.0
 	return valid
 
 
@@ -467,8 +507,8 @@ func _playtest_climbs_tidefen() -> bool:
 	return valid
 
 
-# The way home with real input: wade into Tidefen's well, run the undertow west, through the
-# sea cave and out at the salt cliffs' foot. The undertow's Scavenger and Wraith are taken out
+# The way home with real input: wade into Tidefen's well, run the undertow west, into the sea
+# cave and up out of it at the salt cliffs' foot. The undertow's Scavenger and Wraith are taken out
 # first.
 func _playtest_drops_home() -> bool:
 	var player := await _enter_room(&"waking_coast_8", &"west", TIDEFEN_PATH)
@@ -493,12 +533,7 @@ func _playtest_drops_home() -> bool:
 	if not valid:
 		await _leave_scene()
 		return false
-	await _wade_to(player, SEA_CAVE_WEST)
-	valid = await _walk_until_scene(&"move_left", SALT_CLIFFS_PATH)
-	valid = valid and run.get("room_id") == &"waking_coast_3"
-	player = _current_player()
-	valid = valid and player != null
-	valid = valid and player.global_position.distance_to(SALT_CLIFFS_CAVE_ENTRY) < 1.0
+	valid = await _climb_out_of_cave(player)
 	await _leave_scene()
 	return valid
 

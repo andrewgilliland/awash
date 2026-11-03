@@ -41,7 +41,7 @@ func _test_waking_coast_connects() -> bool:
 		and _leads_to(&"waking_coast_12", &"waking_coast_4", &"west")
 		and _leads_to(&"waking_coast_4", &"waking_coast_12", &"east")
 		and _leads_to(&"waking_coast_5", &"waking_coast_3", &"cave")
-		and _leads_to(&"waking_coast_3", &"waking_coast_5", &"west")
+		and _leads_to(&"waking_coast_3", &"waking_coast_5", &"north")
 		and _leads_to(&"waking_coast_4", &"waking_coast_13", &"west")
 		and _leads_to(&"waking_coast_13", &"waking_coast_4", &"east")
 		and _leads_to(&"waking_coast_13", &"waking_coast_6", &"west")
