@@ -23,6 +23,15 @@ entry names its pack, author, link and licence.
 - **Licence:** GameDev Market Pro Licence
   (https://www.gamedevmarket.net/terms-conditions/#pro-licence), as for the Tropical Island pack.
 
+## Underwater Tileset Pack
+
+- **Files:** `packs/underwater/`, each sheet as it comes in v1.0 (renamed with underscores for
+  spaces). Nothing is drawn from them yet; they are kept for the Undertow.
+- **Author:** Mucho Pixels (https://www.muchopixels.com)
+- **Link:** https://muchopixels.itch.io/underwater-tileset-pack
+- **Licence:** GameDev Market Pro Licence
+  (https://www.gamedevmarket.net/terms-conditions/#pro-licence), as for the Tropical Island pack.
+
 ## Waiting on details
 
 These sheets look like they come from an asset pack; their source and licence are still to be
