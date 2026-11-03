@@ -19,7 +19,7 @@ mouse_filter = 2
 color = Color(0.039, 0.078, 0.157, 1)
 
 [node name="Beams" type="Parallax2D" parent="."]
-scroll_scale = Vector2(0.05, 0.05)
+scroll_scale = Vector2(0.05, 0)
 repeat_size = Vector2(160, 0)
 modulate = Color(0.6, 0.8, 1, 0.25)
 
@@ -28,7 +28,7 @@ tile_map_data = PackedByteArray("AAAAAAAABgADAAEAAAABAAAABgAEAAEAAAACAAAABgAFAAE
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Ridge" type="Parallax2D" parent="."]
-scroll_scale = Vector2(0.2, 0.2)
+scroll_scale = Vector2(0.2, 0)
 repeat_size = Vector2(96, 0)
 modulate = Color(0.25, 0.35, 0.55, 1)
 
@@ -37,7 +37,7 @@ tile_map_data = PackedByteArray("AAAAAAUACAAgAAcAAAABAAUACAAhAAcAAAACAAUACAAiAAc
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Ruins" type="Parallax2D" parent="."]
-scroll_scale = Vector2(0.4, 0.4)
+scroll_scale = Vector2(0.4, 0)
 repeat_size = Vector2(480, 0)
 modulate = Color(0.15, 0.25, 0.42, 1)
 

@@ -36,6 +36,8 @@ const UndertowRoom2Tests := preload("res://tests/undertow_room_2_tests.gd")
 const UndertowRoom3Tests := preload("res://tests/undertow_room_3_tests.gd")
 const UndertowRoom4Tests := preload("res://tests/undertow_room_4_tests.gd")
 const UndertowRoom5Tests := preload("res://tests/undertow_room_5_tests.gd")
+const UndertowRoom6Tests := preload("res://tests/undertow_room_6_tests.gd")
+const UndertowRoom7Tests := preload("res://tests/undertow_room_7_tests.gd")
 const CacheTests := preload("res://tests/cache_tests.gd")
 const ShortcutWallTests := preload("res://tests/shortcut_wall_tests.gd")
 const RoomExitTests := preload("res://tests/room_exit_tests.gd")
@@ -164,6 +166,12 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var undertow_room_5_tests := UndertowRoom5Tests.new()
 	for test in undertow_room_5_tests.get_tests():
+		_run_test(test[0], test[1])
+	var undertow_room_6_tests := UndertowRoom6Tests.new()
+	for test in undertow_room_6_tests.get_tests():
+		_run_test(test[0], test[1])
+	var undertow_room_7_tests := UndertowRoom7Tests.new()
+	for test in undertow_room_7_tests.get_tests():
 		_run_test(test[0], test[1])
 	var room_exit_tests := RoomExitTests.new()
 	for test in room_exit_tests.get_tests():

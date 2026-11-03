@@ -12,6 +12,24 @@ const HALL_PATH := "res://scenes/rooms/undertow_2.tscn"
 const PASSAGE_PATH := "res://scenes/rooms/undertow_3.tscn"
 const POOLS_PATH := "res://scenes/rooms/undertow_4.tscn"
 const DEAD_END_PATH := "res://scenes/rooms/undertow_5.tscn"
+const STAIR_PATH := "res://scenes/rooms/undertow_6.tscn"
+const LAKE_PATH := "res://scenes/rooms/undertow_7.tscn"
+# Down the temple stair: walking off each landing's end onto the one below, to the floor.
+const STAIR_DOWN: Array[float] = [100.0, 120.0, 100.0, 120.0, 100.0, 40.0]
+const STAIR_FLOOR_Y := 256.0
+# Back up, a jump at a time: [direction, launch x, height landed on].
+const STAIR_UP := [
+	[1, 96.0, 224.0],
+	[-1, 128.0, 192.0],
+	[1, 96.0, 160.0],
+	[-1, 128.0, 128.0],
+	[1, 96.0, 96.0],
+]
+# West across the lake's shallows to its sealed door, and back east: a point on each sand bank,
+# and one past the stepping stone in the middle shallow, which takes a hop from the water.
+const LAKE_WEST: Array[float] = [440.0, 352.0, 230.0, 192.0, 40.0]
+const LAKE_EAST: Array[float] = [192.0, 300.0, 352.0, 440.0]
+const LAKE_FLOOR_Y := 96.0
 # Down off the dead end's ledge to the wreck's floor, to its Cache, then back up the ledges a jump
 # at a time: [direction, launch x, height landed on].
 const DEAD_END_FLOOR_Y := 240.0
@@ -69,6 +87,7 @@ func get_playtests() -> Array:
 		["A quick Attack leaves the Shortcut's wall standing", _quick_attack_glances],
 		["Player drops into the pools under the tunnel and climbs back up", _pools_and_back],
 		["Player opens the Cache in the dead end's wreck and climbs back out", _opens_cache],
+		["Player goes down the temple stair, wades the lake and climbs back", _stair_and_lake],
 	]
 
 
@@ -246,6 +265,45 @@ func _opens_cache() -> bool:
 		await _harness.call("_jump_toward", player, step[0])
 		valid = player.is_on_floor() and absf(player.global_position.y - step[2]) < 1.0
 	valid = valid and await _harness.call("_walk_until_scene", &"move_left", POOLS_PATH)
+	valid = valid and run.get("room_id") == &"undertow_4"
+	await _harness.call("_leave_scene")
+	return valid
+
+
+# From the pools' west end down the temple stair, landing to landing, into the lake; west across
+# its shallows to the sealed door and back; then up the stair a jump at a time and out east.
+func _stair_and_lake() -> bool:
+	var player: CharacterBody2D = await _harness.call(
+		"_enter_room", &"undertow_6", &"east", STAIR_PATH
+	)
+	if player == null:
+		await _harness.call("_leave_scene")
+		return false
+	var run := _harness.root.get_node("RunState")
+	for x in STAIR_DOWN:
+		await _harness.call("_walk_to_x", player, x)
+	var valid := player.is_on_floor() and absf(player.global_position.y - STAIR_FLOOR_Y) < 1.0
+	valid = valid and await _harness.call("_walk_until_scene", &"move_left", LAKE_PATH)
+	valid = valid and run.get("room_id") == &"undertow_7"
+	player = _harness.call("_current_player")
+	if not valid or player == null:
+		await _harness.call("_leave_scene")
+		return false
+	await _harness.call("_wade_to", player, LAKE_WEST)
+	valid = player.global_position.x < 48.0
+	valid = valid and absf(player.global_position.y - LAKE_FLOOR_Y) < 1.0
+	await _harness.call("_wade_to", player, LAKE_EAST)
+	valid = valid and await _harness.call("_walk_until_scene", &"move_right", STAIR_PATH)
+	valid = valid and run.get("room_id") == &"undertow_6"
+	player = _harness.call("_current_player")
+	valid = valid and player != null and absf(player.global_position.y - STAIR_FLOOR_Y) < 1.0
+	for step in STAIR_UP:
+		if not valid:
+			break
+		await _harness.call("_walk_to_x", player, step[1])
+		await _harness.call("_jump_toward", player, step[0])
+		valid = player.is_on_floor() and absf(player.global_position.y - step[2]) < 1.0
+	valid = valid and await _harness.call("_walk_until_scene", &"move_right", POOLS_PATH)
 	valid = valid and run.get("room_id") == &"undertow_4"
 	await _harness.call("_leave_scene")
 	return valid

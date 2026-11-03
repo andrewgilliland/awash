@@ -203,15 +203,9 @@
 			"region": "undertow",
 			"exits": [
 				{"screen": [0, 0], "side": "north"},
-				{"screen": [1, 0], "side": "east"}
-			],
-			"plan": {
-				"exits": [
-					{"screen": [0, 0], "side": "north"},
-					{"screen": [1, 0], "side": "east"},
-					{"screen": [0, 0], "side": "west"}
-				]
-			}
+				{"screen": [1, 0], "side": "east"},
+				{"screen": [0, 0], "side": "west"}
+			]
 		},
 		"undertow_5": {
 			"note": "East of the pools, a dead end down to a sunken wreck and its Cache.",
@@ -224,7 +218,8 @@
 			]
 		},
 		"undertow_6": {
-			"note": "A stair down from the pools.",
+			"note": "A stair down from the pools, in the drowned temple.",
+			"scene": "res://scenes/rooms/undertow_6.tscn",
 			"cell": [11, 3],
 			"size": [1, 2],
 			"region": "undertow",
@@ -234,14 +229,20 @@
 			]
 		},
 		"undertow_7": {
-			"note": "A lake at the bottom, west to the Boss.",
+			"note": "A shallow lake at the bottom, west to the Boss behind a sealed temple door.",
+			"scene": "res://scenes/rooms/undertow_7.tscn",
 			"cell": [8, 4],
 			"size": [3, 1],
 			"region": "undertow",
 			"exits": [
-				{"screen": [2, 0], "side": "east"},
-				{"screen": [0, 0], "side": "west"}
-			]
+				{"screen": [2, 0], "side": "east"}
+			],
+			"plan": {
+				"exits": [
+					{"screen": [2, 0], "side": "east"},
+					{"screen": [0, 0], "side": "west"}
+				]
+			}
 		},
 		"undertow_8": {
 			"note": "The Undertow's Boss, at its far west end: named and designed later.",

@@ -5,7 +5,6 @@ const RoomReach := preload("res://tests/room_reach.gd")
 # Two screens wide: pools under the undertow tunnel, open to it through a hole in its floor.
 const ROOM_SIZE := Vector2i(320, 144)
 const TILE := 16
-const WORLD_LAYER := 1
 # Dropping in through the opening in the roof, under the tunnel's hole.
 const NORTH_ENTRY := Vector2(112, 16)
 const OPENING := Rect2i(5, 0, 4, 2)
@@ -28,7 +27,10 @@ func get_tests() -> Array:
 		["Undertow pools lay out two screens", _test_lays_out],
 		["Undertow pools hold two shallows on the sand", _test_pools],
 		["Undertow pools climb up through their roof to the tunnel", _test_climbs_out],
-		["Undertow pools lead north to the tunnel and east to the dead end", _test_north],
+		[
+			"Undertow pools lead north to the tunnel, east to the dead end, west to the stair",
+			_test_north
+		],
 	]
 
 
@@ -97,7 +99,6 @@ func _test_climbs_out() -> bool:
 	return valid
 
 
-# The way on west waits for the stair down; until then that edge is walled.
 func _test_north() -> bool:
 	var room := _room()
 	if room == null:
@@ -113,7 +114,9 @@ func _test_north() -> bool:
 	valid = valid and east.get("room_id") == &"undertow_5" and east.get("entry_id") == &"west"
 	var entry := room.get_node_or_null("Entries/east") as Marker2D
 	valid = valid and entry != null and entry.position == Vector2(308, 96)
-	var bounds := room.get_node_or_null("Bounds") as StaticBody2D
-	valid = valid and bounds != null and bounds.collision_layer == WORLD_LAYER
+	var west := room.get_node_or_null("Exits/west") as Area2D
+	valid = valid and west != null and west.position.x < 0.0
+	valid = valid and west.get("room_id") == &"undertow_6" and west.get("entry_id") == &"east"
+	valid = valid and room.get_node_or_null("Bounds") == null
 	room.free()
 	return valid

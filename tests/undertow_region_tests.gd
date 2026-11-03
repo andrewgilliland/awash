@@ -19,8 +19,9 @@ const LEDGES: Array[Vector2i] = [Vector2i(1, 7), Vector2i(5, 7), Vector2i(9, 7)]
 # The temple's stone slab, one-way, and its block of masonry, solid.
 const SLAB := Rect2i(14, 12, 5, 1)
 const MASONRY := Rect2i(14, 8, 5, 3)
-# The Background's layers, back to front, and how fast each scrolls with the camera: the deep
-# water fixed to the screen, the light beams near it, the far ridge, then the drowned ruins.
+# The Background's layers, back to front, and how fast each scrolls across with the camera: the
+# deep water fixed to the screen, the light beams near it, the far ridge, then the drowned ruins.
+# None scrolls up or down: under the cliffs they hold their height on the screen, however deep.
 const LAYERS := {Deep = 0.0, Beams = 0.05, Ridge = 0.2, Ruins = 0.4}
 
 
@@ -102,7 +103,7 @@ func _test_background() -> bool:
 			var parallax := layer as Parallax2D
 			names.append(parallax.name)
 			var speed: float = LAYERS.get(parallax.name, -1.0)
-			valid = valid and parallax.scroll_scale.is_equal_approx(Vector2(speed, speed))
+			valid = valid and parallax.scroll_scale.is_equal_approx(Vector2(speed, 0))
 			valid = valid and parallax.repeat_size.x > 0.0 and parallax.get_child_count() > 0
 			for tiles: TileMapLayer in parallax.find_children("*", "TileMapLayer", true, false):
 				valid = valid and tiles.tile_set.resource_path == TILES + "scenery.tres"
