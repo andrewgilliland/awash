@@ -19,7 +19,6 @@ const LANDMARKS := {
 		Vector2i(10, 2): Vector2i(8, 1),
 		Vector2i(10, 4): Vector2i(8, 3),
 	},
-	&"Wreck": {Vector2i(18, 4): Vector2i(4, 2)},
 	&"Terrain":
 	{
 		Vector2i(0, 4): Vector2i(3, 13),
@@ -33,12 +32,7 @@ const LANDMARKS := {
 		Vector2i(15, 1): Vector2i(5, 4),
 		Vector2i(16, 6): Vector2i(3, 1),
 	},
-	&"Props":
-	{
-		Vector2i(11, 5): Vector2i(14, 7),
-		Vector2i(15, 2): Vector2i(3, 7),
-		Vector2i(16, 0): Vector2i(10, 3),
-	},
+	&"Props": {Vector2i(11, 5): Vector2i(14, 7)},
 }
 
 

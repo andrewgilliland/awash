@@ -28,7 +28,7 @@ tile_map_data = PackedByteArray("AAAHAAIAAAAFAAEAAAAIAAIAAAAGAAEAAAAJAAIAAAAHAAE
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Wreck" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAARAAQABAACAAIAAAASAAQABAAEAAIAAAARAAUABAACAAIAAAASAAUABAAEAAIAAAA=")
+tile_map_data = PackedByteArray("AAA=")
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Terrain" type="TileMapLayer" parent="."]
@@ -36,7 +36,7 @@ tile_map_data = PackedByteArray("AAAOAAEAAgAEAAQAAAAPAAEAAgAFAAQAAAAQAAEAAgAHAAQ
 tile_set = ExtResource("terrain_tiles")
 
 [node name="Props" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAAQAAAAEAAKAAMAAAARAAAAEAALAAMAAAAPAAIAAgADAAcAAAAGAAUAAAABAAIAAAALAAUABQAOAAcAAAAQAAUAAAACAAIAAAATAAUAAAABAAIAAAA=")
+tile_map_data = PackedByteArray("AAALAAUABQAOAAcAAAA=")
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Enemies" type="Node2D" parent="."]

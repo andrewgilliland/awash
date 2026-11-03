@@ -23,8 +23,6 @@ const LANDMARKS := {
 		Vector2i(6, 8): Vector2i(1, 14),
 		Vector2i(0, 13): Vector2i(2, 13),
 	},
-	# vines hanging under two of the planks
-	&"Vines": {Vector2i(4, 10): Vector2i(1, 7), Vector2i(1, 8): Vector2i(2, 7)},
 }
 
 

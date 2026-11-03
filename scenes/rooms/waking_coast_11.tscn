@@ -22,7 +22,7 @@ tile_map_data = PackedByteArray("AAAGAAMAAQADAAIAAAAHAAMAAQACAAIAAAAIAAMAAQAEAAI
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Vines" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAABAAgAAgACAAcAAAABAAkAAgACAAgAAAAEAAoAAgABAAcAAAAEAAsAAgABAAgAAAA=")
+tile_map_data = PackedByteArray("AAA=")
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Terrain" type="TileMapLayer" parent="."]
