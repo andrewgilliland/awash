@@ -2,8 +2,9 @@ import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-// The files the World editor writes: the World's data, and the Room scenes whose tiles it paints.
-const WRITABLE = [/^assets\/world\.json$/, /^scenes\/rooms\/[\w-]+\.tscn$/];
+// The files the World editor writes: the World's data, the Room scenes whose tiles it paints, and
+// the Regions' Background scenes, painted from a Room.
+const WRITABLE = [/^assets\/world\.json$/, /^scenes\/rooms\/[\w-]+\.tscn$/, /^scenes\/regions\/[\w-]+\/[\w-]+\.tscn$/];
 
 export type SaveResult = { saved: true; version: string } | { saved: false; reason: "changed" | "not writable" };
 

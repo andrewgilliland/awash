@@ -26,6 +26,15 @@ describe("saving", () => {
     expect(readFileSync(join(repo, "assets/world.json"), "utf8")).toBe("changed by someone else\n");
   });
 
+  it("writes a Region's Background scene over the version it was loaded from", async () => {
+    const repo = repoWithWorld("old\n");
+    mkdirSync(join(repo, "scenes/regions/coast"), { recursive: true });
+    writeFileSync(join(repo, "scenes/regions/coast/background.tscn"), "sky\n");
+    const result = await saveFile(repo, "scenes/regions/coast/background.tscn", versionOf("sky\n"), "sea\n");
+    expect(result).toEqual({ saved: true, version: versionOf("sea\n") });
+    expect(readFileSync(join(repo, "scenes/regions/coast/background.tscn"), "utf8")).toBe("sea\n");
+  });
+
   it("writes a Room's scene over the version it was loaded from", async () => {
     const repo = repoWithWorld("old\n");
     mkdirSync(join(repo, "scenes/rooms"), { recursive: true });

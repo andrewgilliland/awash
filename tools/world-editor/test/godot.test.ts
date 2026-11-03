@@ -37,6 +37,14 @@ describe("a Room scene", () => {
   });
 });
 
+describe("a tile layer under another node", () => {
+  it("sits where its parents put it, as well as its own offset", () => {
+    const passage = parseRoomScene(read("scenes/rooms/undertow_3.tscn"));
+    const wall = passage.layers.find((layer) => layer.name === "ShortcutWall/Tiles")!;
+    expect(wall.position).toEqual([0, 8]);
+  });
+});
+
 describe("tile map data", () => {
   it("decodes nothing from an empty layer", () => {
     expect(decodeTileMapData("AAA=")).toEqual([]);
@@ -64,5 +72,15 @@ describe("a tile set", () => {
     const water = scenery.sources.get(7)!;
     expect(water.texture).toBe("res://assets/packs/tropical_island/water.png");
     expect(water.tiles.get("1,1")).toEqual({ collides: false, oneWay: false });
+  });
+});
+
+describe("a tile's tint", () => {
+  it("is read from its tile set, white when it has none", () => {
+    const undertow = parseTileSet(read("assets/regions/undertow/tiles/terrain.tres"));
+    const water = [...undertow.sources.values()].find((source) => source.texture.endsWith("water.png"))!;
+    expect(water.tiles.get("1,1")!.tint).toEqual([0.32, 0.5, 0.62, 1]);
+    const ground = undertow.sources.get(0)!;
+    expect(ground.tiles.get("2,1")!.tint).toBeUndefined();
   });
 });
