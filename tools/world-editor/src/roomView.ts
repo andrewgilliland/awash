@@ -3,20 +3,16 @@
 
 import { parseRoomScene, setLayerCells, type Cell, type RoomScene, type TileLayer, type Vec } from "./godot";
 import { el, canvas, image, outline, readRepo, rect } from "./dom";
-import { blockStamp, eraseRect, fillRect, pickStamp, stampAt, type Area, type Stamp } from "./paint";
+import { areaBetween, eraseRect, fillRect, pickStamp, stampAt, type Area, type Stamp } from "./paint";
+import { markCollision, showPalette } from "./palette";
 import { drawTiles, forgetBackdrop, forgetPicture, loadBackdrop, loadRoomArt } from "./roomPicture";
 import { layerBounds, layerCell, layerOrigin, roomsSharing, screenOf, type BackgroundLayer } from "./background";
-import { collisionOf, layerStack, peeled, type Collision } from "./layers";
+import { collisionOf, layerStack, peeled } from "./layers";
 import { SCREEN, type WorldData } from "./world";
 
 const ROOM_SCALE = 2;
-const PALETTE_SCALE = 2;
 const EXIT_MARK = "#ffff8b";
 const AIM = "#ff3df2";
-const PICKED = "#ffff8b";
-// How a tile collides, when Collisions is on: solid tiles filled, one-way tiles barred along the top.
-const SOLID = "rgba(255, 70, 70, 0.45)";
-const ONE_WAY = "rgba(255, 190, 40, 0.95)";
 type Tool = "paint" | "fill" | "erase" | "pick";
 const TOOLS: [Tool, string, string][] = [
   ["paint", "Paint", "Click or drag to paint the picked tiles"],
@@ -187,12 +183,6 @@ export async function showRoom(
     }
     return [Math.floor(lastPoint[0] / 16), Math.floor(lastPoint[1] / 16)];
   };
-  const areaBetween = (a: Vec, b: Vec): Area => ({
-    x: Math.min(a[0], b[0]),
-    y: Math.min(a[1], b[1]),
-    w: Math.abs(a[0] - b[0]) + 1,
-    h: Math.abs(a[1] - b[1]) + 1,
-  });
   const stampArea = (at: Vec): Area => ({ x: at[0], y: at[1], w: stamp?.tiles[0].length ?? 1, h: stamp?.tiles.length ?? 1 });
 
   let from: Vec | null = null;
@@ -354,74 +344,29 @@ export async function showRoom(
     if (!sources.some((s) => s.src === source)) {
       source = sources[0]?.src ?? -1;
     }
-    const chooser = el(
-      "select",
-      {
-        onchange: (e: Event) => {
-          source = Number((e.target as HTMLSelectElement).value);
-          stamp = null;
-          render();
-        },
+    return showPalette({
+      set: setOf(active),
+      sources,
+      source,
+      paintable: (src) => paintable(active, src),
+      sheet: loadSheet,
+      stamp,
+      collisions,
+      empty: `${active} has nothing to paint with.`,
+      chooseSource: (src) => {
+        source = src;
+        stamp = null;
+        render();
       },
-      ...sources.map((s) => el("option", { value: String(s.src), selected: s.src === source }, s.texture.split("/").slice(-2).join("/"))),
-    );
-    if (source < 0) {
-      return [el("p", { className: "muted" }, `${active} has nothing to paint with.`)];
-    }
-    const texture = setOf(active).sources.get(source)!.texture;
-    const sheet = await loadSheet(texture);
-    const has = paintable(active, source);
-    const [pc, pg] = canvas(sheet.width, sheet.height, PALETTE_SCALE);
-    pc.className = "palette";
-    const drawPalette = (dragged?: Area) => {
-      rect(pg, { x: 0, y: 0, w: sheet.width, h: sheet.height }, "#2a2d40");
-      pg.drawImage(sheet, 0, 0);
-      for (let y = 0; y < sheet.height / 16; y++) {
-        for (let x = 0; x < sheet.width / 16; x++) {
-          if (!has.has(`${x},${y}`)) {
-            rect(pg, { x: x * 16, y: y * 16, w: 16, h: 16 }, "rgba(14, 14, 22, 0.75)");
-          }
-        }
-      }
-      if (collisions) {
-        for (const coords of has) {
-          const [x, y] = coords.split(",").map(Number);
-          markCollision(pg, collisionOf(setOf(active), { x, y, source, atlas: [x, y], alternative: 0 }), x * 16, y * 16);
-        }
-      }
-      const shown = dragged ?? (stamp && stamp.source === source ? pickedArea(stamp) : null);
-      if (shown) {
-        outline(pg, { x: shown.x * 16, y: shown.y * 16, w: shown.w * 16, h: shown.h * 16 }, PICKED);
-      }
-    };
-    let start: Vec | null = null;
-    const tileAt = (event: PointerEvent): Vec => {
-      const box = pc.getBoundingClientRect();
-      return [Math.floor((event.clientX - box.left) / PALETTE_SCALE / 16), Math.floor((event.clientY - box.top) / PALETTE_SCALE / 16)];
-    };
-    pc.addEventListener("pointerdown", (event) => {
-      start = tileAt(event);
-      pc.setPointerCapture(event.pointerId);
-      drawPalette(areaBetween(start, start));
-    });
-    pc.addEventListener("pointermove", (event) => start && drawPalette(areaBetween(start, tileAt(event))));
-    pc.addEventListener("pointerup", (event) => {
-      if (!start) {
-        return;
-      }
-      const picked = blockStamp(source, start, tileAt(event), has);
-      start = null;
-      if (picked.tiles.flat().some((tile) => tile)) {
+      pick: (picked) => {
         stamp = picked;
         if (tool === "erase" || tool === "pick") {
           tool = "paint";
         }
         status = "";
-      }
-      render();
+        render();
+      },
     });
-    drawPalette();
-    return [el("label", { className: "field" }, "Sheet", chooser), el("div", { className: "palette-box" }, pc)];
   };
 
   async function render() {
@@ -511,26 +456,6 @@ export async function showRoom(
   }
 
   await render();
-}
-
-function pickedArea(stamp: Stamp): Area | null {
-  for (let y = 0; y < stamp.tiles.length; y++) {
-    for (let x = 0; x < stamp.tiles[y].length; x++) {
-      const tile = stamp.tiles[y][x];
-      if (tile) {
-        return { x: tile[0] - x, y: tile[1] - y, w: stamp.tiles[0].length, h: stamp.tiles.length };
-      }
-    }
-  }
-  return null;
-}
-
-function markCollision(g: CanvasRenderingContext2D, collision: Collision, x: number, y: number) {
-  if (collision === "solid") {
-    rect(g, { x, y, w: 16, h: 16 }, SOLID);
-  } else if (collision === "one-way") {
-    rect(g, { x, y, w: 16, h: 3 }, ONE_WAY);
-  }
 }
 
 function refusal(reason: string | undefined, what: string): string {
