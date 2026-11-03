@@ -4,12 +4,15 @@ extends RefCounted
 # input and physics.
 
 const TIDEFEN_PATH := "res://scenes/rooms/waking_coast_8.tscn"
+const SHAFT_PATH := "res://scenes/rooms/undertow_1.tscn"
 const TUNNEL_PATH := "res://scenes/rooms/waking_coast_9.tscn"
+# The shaft's floor, two screens below the well.
+const SHAFT_FLOOR_Y := 240.0
 const PASSAGE_PATH := "res://scenes/rooms/undertow_3.tscn"
 const SEA_CAVE_PATH := "res://scenes/rooms/waking_coast_5.tscn"
 const SCAVENGER_PATH := "Enemies/Scavenger"
 const WRAITH_PATH := "Enemies/Wraith"
-# West along the tunnel from the well's shaft: through three pools and over two rocks.
+# West along the tunnel from its east end: through three pools and over two rocks.
 const TUNNEL_WEST: Array[float] = [470.0, 400.0, 280.0, 200.0, 90.0, 20.0]
 # Up against the Shortcut's wall, in the sword's reach of it.
 const AT_WALL_X := 76.0
@@ -31,9 +34,10 @@ func get_playtests() -> Array:
 	]
 
 
-# The way home with real input: wade into Tidefen's well, run the tunnel west, along the passage
-# to the Shortcut's wall, break it with a Charged Attack, and on into the sea cave and up out of
-# it at the salt cliffs' foot. The tunnel's Scavenger and Wraith are taken out first.
+# The way home with real input: wade into Tidefen's well, land at the foot of its shaft, run the
+# tunnel west, along the passage to the Shortcut's wall, break it with a Charged Attack, and on
+# into the sea cave and up out of it at the salt cliffs' foot. The tunnel's Scavenger and Wraith
+# are taken out first.
 func _drops_home() -> bool:
 	var player: CharacterBody2D = await _harness.call(
 		"_enter_room", &"waking_coast_8", &"west", TIDEFEN_PATH
@@ -42,10 +46,15 @@ func _drops_home() -> bool:
 		await _harness.call("_leave_scene")
 		return false
 	var run := _harness.root.get_node("RunState")
-	var valid: bool = await _harness.call("_walk_until_scene", &"move_right", TUNNEL_PATH)
+	var valid: bool = await _harness.call("_walk_until_scene", &"move_right", SHAFT_PATH)
+	valid = valid and run.get("room_id") == &"undertow_1"
+	player = _harness.call("_current_player")
+	valid = valid and player != null and player.is_on_floor()
+	valid = valid and absf(player.global_position.y - SHAFT_FLOOR_Y) < 1.0
+	valid = valid and await _harness.call("_walk_until_scene", &"move_left", TUNNEL_PATH)
 	valid = valid and run.get("room_id") == &"waking_coast_9"
 	player = _harness.call("_current_player")
-	valid = valid and player != null and player.is_on_floor() and player.global_position.x > 620.0
+	valid = valid and player != null and player.global_position.x > 600.0
 	if not valid:
 		await _harness.call("_leave_scene")
 		return false

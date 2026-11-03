@@ -114,7 +114,8 @@
 			"size": [4, 1],
 			"region": "undertow",
 			"exits": [
-				{"screen": [0, 0], "side": "west"}
+				{"screen": [0, 0], "side": "west"},
+				{"screen": [3, 0], "side": "east"}
 			],
 			"plan": {
 				"cell": [11, 2],
@@ -171,12 +172,16 @@
 		},
 		"undertow_1": {
 			"note": "The shaft Tidefen's well drops into: no way back up.",
-			"cell": [15, 1],
+			"scene": "res://scenes/rooms/undertow_1.tscn",
+			"cell": [13, 1],
 			"size": [1, 2],
 			"region": "undertow",
 			"exits": [
 				{"screen": [0, 1], "side": "west"}
-			]
+			],
+			"plan": {
+				"cell": [15, 1]
+			}
 		},
 		"undertow_2": {
 			"note": "A hall west of the undertow tunnel.",
