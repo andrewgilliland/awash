@@ -54,3 +54,13 @@ describe("an area", () => {
     expect(at(erased, 0, 0)).toBeDefined();
   });
 });
+
+describe("painting bounds that start above or left of zero", () => {
+  it("keeps tiles inside a box that may begin at a negative cell", () => {
+    const stamp = { source: 0, tiles: [[[1, 1], [2, 1]]] as ([number, number] | null)[][] };
+    const cells = stampAt([], [-1, -3], stamp, { x: 0, y: -2, w: 4, h: 4 });
+    expect(cells).toEqual([]);
+    const placed = stampAt([], [0, -2], stamp, { x: 0, y: -2, w: 4, h: 4 });
+    expect(placed.map((cell) => [cell.x, cell.y])).toEqual([[0, -2], [1, -2]]);
+  });
+});

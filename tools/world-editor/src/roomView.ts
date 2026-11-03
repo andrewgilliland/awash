@@ -4,7 +4,7 @@
 import { parseRoomScene, setLayerCells, type Cell, type RoomScene, type Vec } from "./godot";
 import { el, canvas, image, outline, readRepo, rect } from "./dom";
 import { blockStamp, eraseRect, fillRect, pickStamp, stampAt, type Area, type Stamp } from "./paint";
-import { drawTiles, forgetPicture, loadRoomArt } from "./roomPicture";
+import { drawTiles, forgetPicture, loadBackdrop, loadRoomArt } from "./roomPicture";
 import { SCREEN, type WorldData } from "./world";
 
 const ROOM_SCALE = 2;
@@ -45,6 +45,8 @@ export async function showRoom(
   const hidden = new Set<string>();
   const art = await loadRoomArt(scene);
   const { sets, sheets } = art;
+  // The Region's Background, behind the Room as the camera frames each of its screens.
+  const backdrop = await loadBackdrop(world, id);
   // The palette loads more of a layer's sheets as you pick them.
   const loadSheet = async (texture: string) => {
     if (!sheets.has(texture)) {
@@ -94,7 +96,7 @@ export async function showRoom(
   let aim: Area | null = null;
 
   const draw = () => {
-    drawTiles(g, scene, art, size, hidden);
+    drawTiles(g, scene, art, size, { hidden }, backdrop);
     for (let x = 1; x < record.size[0]; x++) {
       rect(g, { x: x * SCREEN.w, y: 0, w: 1, h: size.h }, "rgba(0, 0, 0, 0.35)");
     }
