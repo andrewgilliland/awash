@@ -17,6 +17,14 @@ const key = (x: number, y: number) => `${x},${y}`;
 const inside = (x: number, y: number, { x: left = 0, y: top = 0, w, h }: Bounds) =>
   x >= left && y >= top && x < left + w && y < top + h;
 
+// The area between two corner cells, either way round.
+export const areaBetween = (a: Vec, b: Vec): Area => ({
+  x: Math.min(a[0], b[0]),
+  y: Math.min(a[1], b[1]),
+  w: Math.abs(a[0] - b[0]) + 1,
+  h: Math.abs(a[1] - b[1]) + 1,
+});
+
 // The block of a sheet between two corners, picked in the palette: only tiles the sheet has.
 export function blockStamp(source: number, from: Vec, to: Vec, has: Set<string>): Stamp {
   const [x0, x1] = [Math.min(from[0], to[0]), Math.max(from[0], to[0])];
