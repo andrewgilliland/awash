@@ -3,7 +3,7 @@ extends RefCounted
 const World := preload("res://scripts/core/world.gd")
 const BACKGROUND := "res://scenes/regions/waking_coast/background.tscn"
 const CAVE_BACKGROUND := "res://scenes/regions/waking_coast/cave_background.tscn"
-const CAVE_ROOMS: Array[StringName] = [&"waking_coast_5", &"waking_coast_9"]
+const CAVE_ROOMS: Array[StringName] = [&"waking_coast_5"]
 # The Waking Coast's layers, back to front, and how fast each scrolls with the camera: the sky and
 # the sun fixed to the screen, as if infinitely far; the haze rides with the sea, on its horizon.
 const LAYERS := {

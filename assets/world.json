@@ -9,9 +9,12 @@
 			"backgrounds": {"cave": "res://scenes/regions/waking_coast/cave_background.tscn"}
 		},
 		"undertow": {
-			"note": "Under the coast's cliffs, off the Main path: Tidefen's well drops into it once the story opens it, and its Shortcut leads home through the sea cave. Planned: its theme and Background come with its first Room.",
+			"note": "Under the coast's cliffs, off the Main path: Tidefen's well drops into it once the story opens it, and its Shortcut leads home through the sea cave.",
 			"name": "Undertow",
-			"colour": "#2b2452"
+			"colour": "#2b2452",
+			"floor": [0, 2, 1],
+			"theme": "res://assets/regions/undertow/music/theme.wav",
+			"background": "res://scenes/regions/undertow/background.tscn"
 		}
 	},
 	"rooms": {
@@ -109,14 +112,12 @@
 			"scene": "res://scenes/rooms/waking_coast_9.tscn",
 			"cell": [7, 1],
 			"size": [4, 1],
-			"region": "waking_coast",
-			"background": "cave",
+			"region": "undertow",
 			"exits": [
 				{"screen": [0, 0], "side": "west"}
 			],
 			"plan": {
 				"cell": [11, 2],
-				"region": "undertow",
 				"exits": [
 					{"screen": [3, 0], "side": "east"},
 					{"screen": [0, 0], "side": "west"},

@@ -11,15 +11,14 @@ const WORLD_LAYER := 1
 const WELL_ENTRY := Vector2(632, 24)
 const WELL_FLOOR := Vector2i(39, 6)
 const WEST_ENTRY := Vector2(12, 96)
-# Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_9.aseprite:
-# layer -> {cell: atlas coords}.
+# Landmark cells, drawn from the Undertow's sheets: layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	&"Terrain":
 	{
-		# the earth roof, mounds to jump in the tunnel, and three pools
-		Vector2i(12, 0): Vector2i(2, 8),
-		Vector2i(14, 4): Vector2i(1, 6),
-		Vector2i(26, 5): Vector2i(1, 5),
+		# the mossy earth roof, fallen masonry to jump in the tunnel, and three pools
+		Vector2i(12, 0): Vector2i(9, 15),
+		Vector2i(14, 4): Vector2i(16, 8),
+		Vector2i(26, 5): Vector2i(16, 9),
 		Vector2i(6, 6): Vector2i(2, 1),
 		Vector2i(20, 6): Vector2i(2, 1),
 		Vector2i(34, 6): Vector2i(3, 1),
