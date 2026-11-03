@@ -1,27 +1,28 @@
 extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_9.tscn"
-const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 const RoomReach := preload("res://tests/room_reach.gd")
 # Four screens wide, under the jungle trail, the Warden's gate and Tidefen's west end.
 const ROOM_SIZE := Vector2i(640, 144)
 const TILE := 16
-const WORLD_LAYER := 1
-# The shaft down from Tidefen's well at the east end, and the way west into the sea cave.
-const WELL_ENTRY := Vector2(632, 24)
-const WELL_FLOOR := Vector2i(39, 6)
+# The east end, by the way on to the well's shaft, and the way west to the temple hall.
+const EAST_ENTRY := Vector2(628, 96)
+const EAST_FLOOR := Vector2i(39, 6)
 const WEST_ENTRY := Vector2(12, 96)
-# Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_9.aseprite:
-# layer -> {cell: atlas coords}.
+# The hole in the floor down to the pools, a tile wide so the way west hops it, and the sand
+# beside it where the climb back up comes out.
+const HOLE := Rect2i(17, 6, 1, 3)
+const SOUTH_ENTRY := Vector2(296, 96)
+# Landmark cells, drawn from the Undertow's sheets: layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	&"Terrain":
 	{
-		# the earth roof, mounds to jump in the tunnel, and three pools
-		Vector2i(12, 0): Vector2i(2, 8),
-		Vector2i(14, 4): Vector2i(1, 6),
-		Vector2i(26, 5): Vector2i(1, 5),
+		# the mossy earth roof, fallen masonry to jump in the tunnel, and three pools
+		Vector2i(12, 0): Vector2i(9, 15),
+		Vector2i(14, 4): Vector2i(16, 8),
+		Vector2i(26, 5): Vector2i(16, 9),
 		Vector2i(6, 6): Vector2i(2, 1),
-		Vector2i(20, 6): Vector2i(2, 1),
+		Vector2i(22, 6): Vector2i(2, 1),
 		Vector2i(34, 6): Vector2i(3, 1),
 		Vector2i(0, 6): Vector2i(2, 1),
 	},
@@ -31,10 +32,10 @@ const LANDMARKS := {
 func get_tests() -> Array:
 	return [
 		["Undertow Room lays out four screens of tunnel", _test_lays_out_four_screens],
-		["Undertow shaft drops from Tidefen's well, one way", _test_shaft_is_one_way],
-		["Undertow floor runs from the well west to the sea cave", _test_floor_runs_west],
+		["Undertow tunnel leads east to the shaft from Tidefen's well", _test_leads_east],
+		["A hole in the tunnel's floor drops into the pools below", _test_hole_to_pools],
+		["Undertow tunnel's floor runs from its east end west to the hall", _test_floor_runs_west],
 		["A Scavenger hunts the undertow's middle pool", _test_scavenger_in_pool],
-		["Undertow walls its east edge", _test_walls_east_edge],
 	]
 
 
@@ -62,21 +63,21 @@ func _test_lays_out_four_screens() -> bool:
 	return valid
 
 
-# The shaft is open to the Room's top and too tall to jump back up; no Exit leads up.
-func _test_shaft_is_one_way() -> bool:
+# The roof runs whole over the east end now; its edge is the Exit on to the shaft, which the well
+# drops into.
+func _test_leads_east() -> bool:
 	var room := _room()
 	if room == null:
 		return false
-	var entry := room.get_node_or_null("Entries/well") as Marker2D
-	var valid := entry != null and entry.position == WELL_ENTRY
+	var valid := room.get_node_or_null("Bounds") == null
+	valid = valid and room.get_node_or_null("Entries/well") == null
 	var terrain := room.get_node("Terrain") as TileMapLayer
-	for row in range(WELL_FLOOR.y):
-		valid = valid and terrain.get_cell_source_id(Vector2i(WELL_FLOOR.x, row)) == -1
-	valid = valid and terrain.get_cell_source_id(WELL_FLOOR) != -1
-	valid = valid and WELL_FLOOR.y > RoomReach.jump_rows()
-	for node in room.find_children("*", "Area2D", true, false):
-		if node.get_script() == RoomExitScript:
-			valid = valid and node.room_id != &"waking_coast_8"
+	valid = valid and terrain.get_cell_source_id(Vector2i(EAST_FLOOR.x, 0)) != -1
+	var exit := room.get_node_or_null("Exits/east") as Area2D
+	valid = valid and exit != null and exit.position.x > ROOM_SIZE.x
+	valid = valid and exit.get("room_id") == &"undertow_1" and exit.get("entry_id") == &"west"
+	var entry := room.get_node_or_null("Entries/east") as Marker2D
+	valid = valid and entry != null and entry.position == EAST_ENTRY
 	room.free()
 	return valid
 
@@ -86,13 +87,13 @@ func _test_floor_runs_west() -> bool:
 	if room == null:
 		return false
 	var terrain := room.get_node("Terrain") as TileMapLayer
-	var reached := RoomReach.reachable(terrain, WELL_FLOOR)
+	var reached := RoomReach.reachable(terrain, EAST_FLOOR)
 	var valid := RoomReach.span_at(reached, Vector2i(WEST_ENTRY / TILE)) != null
 	var entry := room.get_node_or_null("Entries/west") as Marker2D
 	valid = valid and entry != null and entry.position == WEST_ENTRY
 	var exit := room.get_node_or_null("Exits/west") as Area2D
 	valid = valid and exit != null and exit.position.x < 0.0
-	valid = valid and exit.get("room_id") == &"waking_coast_5" and exit.get("entry_id") == &"east"
+	valid = valid and exit.get("room_id") == &"undertow_2" and exit.get("entry_id") == &"east"
 	room.free()
 	return valid
 
@@ -113,16 +114,24 @@ func _test_scavenger_in_pool() -> bool:
 	return valid
 
 
-func _test_walls_east_edge() -> bool:
+func _test_hole_to_pools() -> bool:
 	var room := _room()
 	if room == null:
 		return false
-	var bounds := room.get_node_or_null("Bounds") as StaticBody2D
-	var valid := bounds != null and bounds.collision_layer == WORLD_LAYER
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var valid := true
+	for column in range(HOLE.position.x, HOLE.end.x):
+		for row in range(HOLE.position.y, HOLE.end.y):
+			valid = valid and terrain.get_cell_source_id(Vector2i(column, row)) == -1
+	var exit := room.get_node_or_null("Exits/south") as Area2D
+	valid = valid and exit != null and exit.position.y > ROOM_SIZE.y
+	valid = valid and int(exit.position.x / TILE) in range(HOLE.position.x, HOLE.end.x)
+	valid = valid and exit.get("room_id") == &"undertow_4" and exit.get("entry_id") == &"north"
+	var entry := room.get_node_or_null("Entries/south") as Marker2D
+	valid = valid and entry != null and entry.position == SOUTH_ENTRY
 	if valid:
-		var east := bounds.get_node_or_null("East") as CollisionShape2D
-		var boundary := east.shape as WorldBoundaryShape2D if east != null else null
-		valid = boundary != null and boundary.normal == Vector2.LEFT
-		valid = valid and east.position.x == ROOM_SIZE.x
+		var below := Vector2i(SOUTH_ENTRY / TILE)
+		valid = terrain.get_cell_source_id(below) != -1
+		valid = valid and terrain.get_cell_source_id(below + Vector2i.UP) == -1
 	room.free()
 	return valid

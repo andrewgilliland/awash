@@ -244,7 +244,7 @@ position = Vector2(152, 160)
 collision_layer = 128
 collision_mask = 2
 script = ExtResource("5_usmxo")
-room_id = &"waking_coast_9"
+room_id = &"undertow_1"
 entry_id = &"well"
 
 [node name="Edge" type="CollisionShape2D" parent="Exits/well"]

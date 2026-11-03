@@ -9,9 +9,12 @@
 			"backgrounds": {"cave": "res://scenes/regions/waking_coast/cave_background.tscn"}
 		},
 		"undertow": {
-			"note": "Under the coast's cliffs, off the Main path: Tidefen's well drops into it once the story opens it, and its Shortcut leads home through the sea cave. Planned: its theme and Background come with its first Room.",
+			"note": "Under the coast's cliffs, off the Main path: Tidefen's well drops into it once the story opens it, and its Shortcut leads home through the sea cave.",
 			"name": "Undertow",
-			"colour": "#2b2452"
+			"colour": "#2b2452",
+			"floor": [0, 2, 1],
+			"theme": "res://assets/regions/undertow/music/theme.wav",
+			"background": "res://scenes/regions/undertow/background.tscn"
 		}
 	},
 	"rooms": {
@@ -105,24 +108,16 @@
 			"markers": {"rest": [3, 0]}
 		},
 		"waking_coast_9": {
-			"note": "Four screens of tunnel under the trail, the gate and Tidefen's well, back to the sea cave.",
+			"note": "Four screens of tunnel under the trail and Tidefen, between the shaft from its well and the temple hall.",
 			"scene": "res://scenes/rooms/waking_coast_9.tscn",
-			"cell": [7, 1],
+			"cell": [11, 2],
 			"size": [4, 1],
-			"region": "waking_coast",
-			"background": "cave",
+			"region": "undertow",
 			"exits": [
-				{"screen": [0, 0], "side": "west"}
-			],
-			"plan": {
-				"cell": [11, 2],
-				"region": "undertow",
-				"exits": [
-					{"screen": [3, 0], "side": "east"},
-					{"screen": [0, 0], "side": "west"},
-					{"screen": [1, 0], "side": "south"}
-				]
-			}
+				{"screen": [0, 0], "side": "west"},
+				{"screen": [3, 0], "side": "east"},
+				{"screen": [1, 0], "side": "south"}
+			]
 		},
 		"waking_coast_10": {
 			"note": "Tide pools on the beach, between the palm shore and the salt cliffs.",
@@ -170,6 +165,7 @@
 		},
 		"undertow_1": {
 			"note": "The shaft Tidefen's well drops into: no way back up.",
+			"scene": "res://scenes/rooms/undertow_1.tscn",
 			"cell": [15, 1],
 			"size": [1, 2],
 			"region": "undertow",
@@ -178,7 +174,8 @@
 			]
 		},
 		"undertow_2": {
-			"note": "A hall west of the undertow tunnel.",
+			"note": "A hall of the drowned temple, west of the undertow tunnel.",
+			"scene": "res://scenes/rooms/undertow_2.tscn",
 			"cell": [9, 1],
 			"size": [2, 2],
 			"region": "undertow",
@@ -189,6 +186,7 @@
 		},
 		"undertow_3": {
 			"note": "The passage to the sea cave's wall, the Undertow's Shortcut home.",
+			"scene": "res://scenes/rooms/undertow_3.tscn",
 			"cell": [7, 1],
 			"size": [2, 1],
 			"region": "undertow",
@@ -198,7 +196,8 @@
 			]
 		},
 		"undertow_4": {
-			"note": "Pools under the undertow tunnel.",
+			"note": "Pools under the undertow tunnel, down a hole in its floor.",
+			"scene": "res://scenes/rooms/undertow_4.tscn",
 			"cell": [12, 3],
 			"size": [2, 1],
 			"region": "undertow",
@@ -209,7 +208,8 @@
 			]
 		},
 		"undertow_5": {
-			"note": "East of the pools, a dead end for now.",
+			"note": "East of the pools, a dead end down to a sunken wreck and its Cache.",
+			"scene": "res://scenes/rooms/undertow_5.tscn",
 			"cell": [14, 3],
 			"size": [2, 2],
 			"region": "undertow",
@@ -218,7 +218,8 @@
 			]
 		},
 		"undertow_6": {
-			"note": "A stair down from the pools.",
+			"note": "A stair down from the pools, in the drowned temple.",
+			"scene": "res://scenes/rooms/undertow_6.tscn",
 			"cell": [11, 3],
 			"size": [1, 2],
 			"region": "undertow",
@@ -228,14 +229,20 @@
 			]
 		},
 		"undertow_7": {
-			"note": "A lake at the bottom, west to the Boss.",
+			"note": "A shallow lake at the bottom, west to the Boss behind a sealed temple door.",
+			"scene": "res://scenes/rooms/undertow_7.tscn",
 			"cell": [8, 4],
 			"size": [3, 1],
 			"region": "undertow",
 			"exits": [
-				{"screen": [2, 0], "side": "east"},
-				{"screen": [0, 0], "side": "west"}
-			]
+				{"screen": [2, 0], "side": "east"}
+			],
+			"plan": {
+				"exits": [
+					{"screen": [2, 0], "side": "east"},
+					{"screen": [0, 0], "side": "west"}
+				]
+			}
 		},
 		"undertow_8": {
 			"note": "The Undertow's Boss, at its far west end: named and designed later.",

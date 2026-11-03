@@ -30,6 +30,16 @@ const WakingCoastRoom10Tests := preload("res://tests/waking_coast_room_10_tests.
 const WakingCoastRoom11Tests := preload("res://tests/waking_coast_room_11_tests.gd")
 const WakingCoastRoom12Tests := preload("res://tests/waking_coast_room_12_tests.gd")
 const WakingCoastRoom13Tests := preload("res://tests/waking_coast_room_13_tests.gd")
+const UndertowRegionTests := preload("res://tests/undertow_region_tests.gd")
+const UndertowRoom1Tests := preload("res://tests/undertow_room_1_tests.gd")
+const UndertowRoom2Tests := preload("res://tests/undertow_room_2_tests.gd")
+const UndertowRoom3Tests := preload("res://tests/undertow_room_3_tests.gd")
+const UndertowRoom4Tests := preload("res://tests/undertow_room_4_tests.gd")
+const UndertowRoom5Tests := preload("res://tests/undertow_room_5_tests.gd")
+const UndertowRoom6Tests := preload("res://tests/undertow_room_6_tests.gd")
+const UndertowRoom7Tests := preload("res://tests/undertow_room_7_tests.gd")
+const CacheTests := preload("res://tests/cache_tests.gd")
+const ShortcutWallTests := preload("res://tests/shortcut_wall_tests.gd")
 const RoomExitTests := preload("res://tests/room_exit_tests.gd")
 const EveryRoomTests := preload("res://tests/every_room_tests.gd")
 const HealthTests := preload("res://tests/health_tests.gd")
@@ -138,6 +148,30 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var room_13_tests := WakingCoastRoom13Tests.new()
 	for test in room_13_tests.get_tests():
+		_run_test(test[0], test[1])
+	var undertow_region_tests := UndertowRegionTests.new()
+	for test in undertow_region_tests.get_tests():
+		_run_test(test[0], test[1])
+	var undertow_room_1_tests := UndertowRoom1Tests.new()
+	for test in undertow_room_1_tests.get_tests():
+		_run_test(test[0], test[1])
+	var undertow_room_2_tests := UndertowRoom2Tests.new()
+	for test in undertow_room_2_tests.get_tests():
+		_run_test(test[0], test[1])
+	var undertow_room_3_tests := UndertowRoom3Tests.new()
+	for test in undertow_room_3_tests.get_tests():
+		_run_test(test[0], test[1])
+	var undertow_room_4_tests := UndertowRoom4Tests.new()
+	for test in undertow_room_4_tests.get_tests():
+		_run_test(test[0], test[1])
+	var undertow_room_5_tests := UndertowRoom5Tests.new()
+	for test in undertow_room_5_tests.get_tests():
+		_run_test(test[0], test[1])
+	var undertow_room_6_tests := UndertowRoom6Tests.new()
+	for test in undertow_room_6_tests.get_tests():
+		_run_test(test[0], test[1])
+	var undertow_room_7_tests := UndertowRoom7Tests.new()
+	for test in undertow_room_7_tests.get_tests():
 		_run_test(test[0], test[1])
 	var room_exit_tests := RoomExitTests.new()
 	for test in room_exit_tests.get_tests():
@@ -252,6 +286,12 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var wardens_gate_tests := WardensGateTests.new(root)
 	for test in wardens_gate_tests.get_tests():
+		_run_test(test[0], test[1])
+	var shortcut_wall_tests := ShortcutWallTests.new(root)
+	for test in shortcut_wall_tests.get_tests():
+		_run_test(test[0], test[1])
+	var cache_tests := CacheTests.new(root)
+	for test in cache_tests.get_tests():
 		_run_test(test[0], test[1])
 	var boss_bar_tests := BossBarTests.new(root)
 	for test in boss_bar_tests.get_tests():

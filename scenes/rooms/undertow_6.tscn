@@ -1,0 +1,82 @@
+[gd_scene load_steps=7 format=4]
+
+[ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_main"]
+
+[ext_resource type="TileSet" path="res://assets/regions/undertow/tiles/terrain.tres" id="terrain_tiles"]
+[ext_resource type="TileSet" path="res://assets/regions/undertow/tiles/scenery.tres" id="scenery_tiles"]
+
+[ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="4_exit"]
+
+[ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="5_player"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_edge"]
+size = Vector2(8, 144)
+
+[node name="Undertow6" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Beams" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAFAAEABgABAAEAAAAFAAIABgABAAIAAAAFAAMABgABAAMAAAAFAAQABgABAAQAAAAFAAUABgABAAUAAAA=")
+tile_set = ExtResource("scenery_tiles")
+
+[node name="Temple" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAACAAkAAgAIAA0AAAADAAkAAgAJAA0AAAAEAAkAAgAKAA0AAAAFAAkAAgALAA0AAAAGAAkAAgAMAA0AAAAHAAkAAgANAA0AAAACAAoAAgAIAA4AAAADAAoAAgAJAA4AAAAEAAoAAgAKAA4AAAAFAAoAAgALAA4AAAAGAAoAAgAMAA4AAAAHAAoAAgANAA4AAAACAAsAAgAIAA8AAAADAAsAAgAJAA8AAAAEAAsAAgAKAA8AAAAFAAsAAgALAA8AAAAGAAsAAgAMAA8AAAAHAAsAAgANAA8AAAACAAwAAgAIABAAAAADAAwAAgAJABAAAAAEAAwAAgAKABAAAAAFAAwAAgALABAAAAAGAAwAAgAMABAAAAAHAAwAAgANABAAAAACAA0AAgAIABEAAAADAA0AAgAJABEAAAAEAA0AAgAKABEAAAAFAA0AAgALABEAAAAGAA0AAgAMABEAAAAHAA0AAgANABEAAAACAA4AAgAIABIAAAADAA4AAgAJABIAAAAEAA4AAgAKABIAAAAFAA4AAgALABIAAAAGAA4AAgAMABIAAAAHAA4AAgANABIAAAA=")
+tile_set = ExtResource("scenery_tiles")
+
+[node name="Terrain" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAAAAAAAAACAA0AAAABAAAAAAADAA0AAAACAAAAAAAEAA0AAAADAAAAAAACAA0AAAAEAAAAAAADAA0AAAAFAAAAAAAEAA0AAAAGAAAAAAACAA0AAAAHAAAAAAADAA0AAAAIAAAAAAAEAA0AAAAJAAAAAAACAA0AAAAHAAYAAgAOAAwAAAAIAAYAAgAQAAwAAAAJAAYAAgASAAwAAAAEAAgAAgAOAAwAAAAFAAgAAgAQAAwAAAAGAAgAAgASAAwAAAAHAAoAAgAOAAwAAAAIAAoAAgAQAAwAAAAJAAoAAgASAAwAAAAEAAwAAgAOAAwAAAAFAAwAAgAQAAwAAAAGAAwAAgASAAwAAAAHAA4AAgAOAAwAAAAIAA4AAgAQAAwAAAAJAA4AAgASAAwAAAAAABAAAAACAAEAAAABABAAAAADAAEAAAACABAAAAAEAAEAAAADABAAAAACAAEAAAAEABAAAAADAAEAAAAFABAAAAAEAAEAAAAGABAAAAACAAEAAAAHABAAAAADAAEAAAAIABAAAAAEAAEAAAAJABAAAAACAAEAAAAAABEAAAAJABEAAAABABEAAAAKABEAAAACABEAAAALABEAAAADABEAAAAJABEAAAAEABEAAAAKABEAAAAFABEAAAALABEAAAAGABEAAAAJABEAAAAHABEAAAAKABEAAAAIABEAAAALABEAAAAJABEAAAAJABEAAAA=")
+tile_set = ExtResource("terrain_tiles")
+
+[node name="Props" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAABAAEAAAABAAIAAAAIAAEAAAACAAIAAAABAAIAAAABAAMAAAAIAAIAAAACAAMAAAABAA8AAAADAAMAAAAJAA8AAAAHAAMAAAA=")
+tile_set = ExtResource("scenery_tiles")
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Bounds" type="StaticBody2D" parent="."]
+collision_mask = 0
+
+[node name="WestTop" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(-4, 72)
+shape = SubResource("RectangleShape2D_edge")
+
+[node name="EastLow" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(164, 216)
+shape = SubResource("RectangleShape2D_edge")
+
+[node name="Exits" type="Node2D" parent="."]
+
+[node name="east" type="Area2D" parent="Exits"]
+position = Vector2(164, 72)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_exit")
+room_id = &"undertow_4"
+entry_id = &"west"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/east"]
+shape = SubResource("RectangleShape2D_edge")
+
+[node name="west" type="Area2D" parent="Exits"]
+position = Vector2(-4, 216)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_exit")
+room_id = &"undertow_7"
+entry_id = &"east"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/west"]
+shape = SubResource("RectangleShape2D_edge")
+
+[node name="Entries" type="Node2D" parent="."]
+
+[node name="east" type="Marker2D" parent="Entries"]
+position = Vector2(148, 96)
+
+[node name="west" type="Marker2D" parent="Entries"]
+position = Vector2(12, 256)
+
+[node name="Player" parent="." instance=ExtResource("5_player")]
+position = Vector2(148, 96)

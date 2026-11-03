@@ -117,7 +117,7 @@ An optional route off the Main path that rejoins it, such as the sea cave.
 _Avoid_: Side path, detour, secret area
 
 **Shortcut**:
-A one-way route that returns the Player quickly to an earlier point on the Main path, such as Tidefen's well through the undertow. It stays shut from its far end until first used from its near end.
+A one-way route that returns the Player quickly to an earlier point on the Main path, such as the cracked wall between the Undertow and the sea cave. It stays shut from its far end until first used from its near end.
 _Avoid_: Branch (for a one-way return), warp
 
 **Drop**:

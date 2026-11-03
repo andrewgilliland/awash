@@ -252,7 +252,7 @@ func _test_lanterns_under_eaves() -> bool:
 
 
 # A hole in the shallows to the bottom of the Room, and an Exit under it down into the
-# undertow's shaft.
+# Undertow's shaft.
 func _test_well() -> bool:
 	var room := _room()
 	if room == null:
@@ -264,7 +264,7 @@ func _test_well() -> bool:
 	var exit := room.get_node_or_null("Exits/well") as Area2D
 	valid = valid and exit != null and exit.position.y > ROOM_SIZE.y
 	valid = valid and int(exit.position.x / TILE) == WELL_COLUMN
-	valid = valid and exit.get("room_id") == &"waking_coast_9" and exit.get("entry_id") == &"well"
+	valid = valid and exit.get("room_id") == &"undertow_1" and exit.get("entry_id") == &"well"
 	room.free()
 	return valid
 

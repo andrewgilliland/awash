@@ -33,12 +33,13 @@ const TIDEFEN_SAND_Y := 112.0
 # Up onto Tidefen's walkway: straight up onto the ledge from under it, then on to the walkway.
 const TIDEFEN_CLIMB := [[0, 40.0, 80.0], [1, 56.0, 64.0]]
 const TIDEFEN_WALKWAY_EAST_X := 270.0
-# West along the undertow from the well's shaft: through three pools and over two rocks.
-const UNDERTOW_WEST: Array[float] = [470.0, 400.0, 280.0, 200.0, 90.0, 20.0]
 # Walking the graveyard's beach east to its end, and the cave's floor east to its end and back
 # west to the tunnel: points to walk to, jumping out of a pool when the walk falls short.
 const GRAVEYARD_BEACH_EAST: Array[float] = [88.0, 150.0, 186.0, 250.0, 296.0]
-const SEA_CAVE_EAST: Array[float] = [170.0, 296.0]
+const SEA_CAVE_EAST: Array[float] = [170.0, 280.0]
+# Where the sea cave's walk east stops: against the rock across the Shortcut, short of its Exit.
+const SEA_CAVE_ROCK_X := 288.0
+const ROOM_EDGE_X := 330.0
 const SEA_CAVE_WEST: Array[float] = [170.0, 124.0]
 # Up out of the sea cave: onto its two landings, a jump straight up at a time, then a jump up
 # through the opening into the salt cliffs, onto the step at the hole's rim, and a hop onto the
@@ -63,6 +64,7 @@ const CLIFF_TOP_Y := 64.0
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const WardenPlaytests := preload("res://tests/warden_playtests.gd")
 const CoastRoutePlaytests := preload("res://tests/coast_route_playtests.gd")
+const UndertowPlaytests := preload("res://tests/undertow_playtests.gd")
 const WRAITH_PATH := "Enemies/Wraith"
 const UNDERTOW_FLOOR_Y := 96.0
 # Where to stand by the Wraith: near enough to draw out its lash, clear of the lash while it
@@ -121,9 +123,9 @@ func _init() -> void:
 		"Player baits the Wraith's lash, then strikes its anchor", _playtest_strikes_wraith
 	)
 	await _run_playtest_async("Wraith's lash hurts the Player", _playtest_lash_hurts_player)
-	await _run_playtest_async(
-		"Tidefen's well drops home through the undertow", _playtest_drops_home
-	)
+	var undertow_playtests := UndertowPlaytests.new(self)
+	for playtest in undertow_playtests.get_playtests():
+		await _run_playtest_async(playtest[0], playtest[1])
 	await _run_playtest_async(
 		"Sword defeats the Scavenger and earns its Experience", _playtest_sword_defeats_scavenger
 	)
@@ -367,9 +369,10 @@ func _playtest_hops_to_stern() -> bool:
 
 
 # With real input and physics: east along the salt cliffs' beach, down the hole under the cliff's
-# foot into the sea cave, along its floor to the east end and back, then up its landings and out
-# through the opening onto the step at the hole's rim, and back onto the beach. The cliffs'
-# Scavenger is taken out first: this checks the route, not the fight.
+# foot into the sea cave, along its floor until the rock across the Shortcut stops the Player
+# short of the Exit, then back, up its landings and out through the opening onto the step at the
+# hole's rim, and back onto the beach. The cliffs' Scavenger is taken out first: this checks the
+# route, not the fight.
 func _playtest_cave_and_back() -> bool:
 	var player := await _enter_room(&"waking_coast_3", &"west", SALT_CLIFFS_PATH)
 	if player == null:
@@ -386,7 +389,10 @@ func _playtest_cave_and_back() -> bool:
 		return false
 	await _frames_until(func() -> bool: return player.is_on_floor(), SETTLE_FRAME_LIMIT)
 	await _wade_to(player, SEA_CAVE_EAST)
-	valid = player.is_on_floor() and player.global_position.x > 290.0
+	valid = player.is_on_floor() and player.global_position.x > 270.0
+	await _walk_to_x(player, ROOM_EDGE_X)
+	valid = valid and player.global_position.x < SEA_CAVE_ROCK_X
+	valid = valid and current_scene.scene_file_path == SEA_CAVE_PATH
 	valid = valid and await _climb_out_of_cave(player)
 	await _leave_scene()
 	return valid
@@ -503,37 +509,6 @@ func _playtest_climbs_tidefen() -> bool:
 	await _walk_to_x(player, TIDEFEN_WALKWAY_EAST_X)
 	valid = valid and absf(player.global_position.x - TIDEFEN_WALKWAY_EAST_X) < 4.0
 	valid = valid and absf(player.global_position.y - TIDEFEN_CLIMB[-1][2]) < 1.0
-	await _leave_scene()
-	return valid
-
-
-# The way home with real input: wade into Tidefen's well, run the undertow west, into the sea
-# cave and up out of it at the salt cliffs' foot. The undertow's Scavenger and Wraith are taken out
-# first.
-func _playtest_drops_home() -> bool:
-	var player := await _enter_room(&"waking_coast_8", &"west", TIDEFEN_PATH)
-	if player == null:
-		await _leave_scene()
-		return false
-	var run := root.get_node("RunState")
-	var valid := await _walk_until_scene(&"move_right", UNDERTOW_PATH)
-	valid = valid and run.get("room_id") == &"waking_coast_9"
-	player = _current_player()
-	valid = valid and player != null and player.is_on_floor() and player.global_position.x > 620.0
-	if not valid:
-		await _leave_scene()
-		return false
-	current_scene.get_node(SCAVENGER_PATH).free()
-	current_scene.get_node(WRAITH_PATH).free()
-	await _wade_to(player, UNDERTOW_WEST)
-	valid = await _walk_until_scene(&"move_left", SEA_CAVE_PATH)
-	valid = valid and run.get("room_id") == &"waking_coast_5"
-	player = _current_player()
-	valid = valid and player != null
-	if not valid:
-		await _leave_scene()
-		return false
-	valid = await _climb_out_of_cave(player)
 	await _leave_scene()
 	return valid
 
