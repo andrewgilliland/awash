@@ -5,6 +5,8 @@ import { parseRoomScene, setLayerCells, type Cell, type RoomScene, type Vec } fr
 import { el, canvas, image, outline, readRepo, rect } from "./dom";
 import { blockStamp, eraseRect, fillRect, pickStamp, stampAt, type Area, type Stamp } from "./paint";
 import { drawTiles, forgetPicture, loadBackdrop, loadRoomArt } from "./roomPicture";
+import { roomsSharing } from "./background";
+import { collisionOf, layerStack, peeled, type Collision } from "./layers";
 import { SCREEN, type WorldData } from "./world";
 
 const ROOM_SCALE = 2;
@@ -12,6 +14,9 @@ const PALETTE_SCALE = 2;
 const EXIT_MARK = "#ffff8b";
 const AIM = "#ff3df2";
 const PICKED = "#ffff8b";
+// How a tile collides, when Collisions is on: solid tiles filled, one-way tiles barred along the top.
+const SOLID = "rgba(255, 70, 70, 0.45)";
+const ONE_WAY = "rgba(255, 190, 40, 0.95)";
 type Tool = "paint" | "fill" | "erase" | "pick";
 const TOOLS: [Tool, string, string][] = [
   ["paint", "Paint", "Click or drag to paint the picked tiles"],
@@ -47,6 +52,11 @@ export async function showRoom(
   const { sets, sheets } = art;
   // The Region's Background, behind the Room as the camera frames each of its screens.
   const backdrop = await loadBackdrop(world, id);
+  // Every layer, front to back; picking one peels away those in front, shown faintly. Peel and
+  // Restore step deeper and back one layer at a time.
+  const stack = layerStack(scene, backdrop?.background ?? null, sets);
+  let peelTo = "";
+  let collisions = false;
   // The palette loads more of a layer's sheets as you pick them.
   const loadSheet = async (texture: string) => {
     if (!sheets.has(texture)) {
@@ -96,7 +106,16 @@ export async function showRoom(
   let aim: Area | null = null;
 
   const draw = () => {
-    drawTiles(g, scene, art, size, { hidden }, backdrop);
+    drawTiles(g, scene, art, size, { hidden, faded: peeled(stack, peelTo || active) }, backdrop);
+    if (collisions) {
+      for (const layer of scene.layers) {
+        if (!hidden.has(layer.name)) {
+          for (const cell of layer.cells) {
+            markCollision(g, collisionOf(sets.get(layer.tileSet)!, cell), cell.x * 16 + layer.position[0], cell.y * 16 + layer.position[1]);
+          }
+        }
+      }
+    }
     for (let x = 1; x < record.size[0]; x++) {
       rect(g, { x: x * SCREEN.w, y: 0, w: 1, h: size.h }, "rgba(0, 0, 0, 0.35)");
     }
@@ -198,6 +217,15 @@ export async function showRoom(
     }
   });
 
+  const stackIndex = (key: string) => stack.findIndex((entry) => entry.key === key);
+  // How deep the peel goes: the layer it stops at, at least the one being painted.
+  const depth = () => Math.max(stackIndex(peelTo || active), stackIndex(active));
+  const step = (by: number) => {
+    const to = Math.min(Math.max(depth() + by, stackIndex(active)), stack.length - 1);
+    peelTo = to === stackIndex(active) ? "" : stack[to].key;
+    render();
+  };
+
   function say(message: string) {
     status = message;
     render();
@@ -289,6 +317,12 @@ export async function showRoom(
           }
         }
       }
+      if (collisions) {
+        for (const coords of has) {
+          const [x, y] = coords.split(",").map(Number);
+          markCollision(pg, collisionOf(setOf(active), { x, y, source, atlas: [x, y], alternative: 0 }), x * 16, y * 16);
+        }
+      }
       const shown = dragged ?? (stamp && stamp.source === source ? pickedArea(stamp) : null);
       if (shown) {
         outline(pg, { x: shown.x * 16, y: shown.y * 16, w: shown.w * 16, h: shown.h * 16 }, PICKED);
@@ -334,32 +368,64 @@ export async function showRoom(
       el("button", { type: "button", disabled: undone.length === 0, title: "Undo paint", onclick: undo }, "Undo"),
       el("button", { type: "button", disabled: redone.length === 0, title: "Redo paint", onclick: redo }, "Redo"),
       el("button", { type: "button", disabled: !unsaved(), title: "Save the Room's scene", onclick: save }, unsaved() ? "Save Room ●" : "Room saved"),
+      el("button", { type: "button", disabled: depth() >= stack.length - 1, title: "Peel away one more layer, from the front", onclick: () => step(1) }, "Peel"),
+      el("button", { type: "button", disabled: depth() <= stackIndex(active), title: "Put the last layer peeled back", onclick: () => step(-1) }, "Restore"),
+      el(
+        "button",
+        { type: "button", ariaPressed: String(collisions), title: "Show which tiles are solid (filled) and one-way (barred)", onclick: () => ((collisions = !collisions), render()) },
+        "Collisions",
+      ),
       el("span", { className: "muted" }, status),
     );
     draw();
     stage.replaceChildren(tools, el("div", { className: "room-box" }, roomCanvas));
-    const layers = scene.layers.map((layer) => {
-      const shown = el("input", { type: "checkbox", checked: !hidden.has(layer.name), title: "Show this layer" });
+    const shared = backdrop ? roomsSharing(world, backdrop.path).length : 0;
+    let headed = false;
+    const layers = stack.flatMap((entry) => {
+      const shown = el("input", { type: "checkbox", checked: !hidden.has(entry.key), title: "Show this layer" });
       shown.addEventListener("change", () => {
         if (shown.checked) {
-          hidden.delete(layer.name);
+          hidden.delete(entry.key);
         } else {
-          hidden.add(layer.name);
+          hidden.add(entry.key);
         }
         draw();
       });
-      const pick = el("input", { type: "radio", name: "layer", checked: layer.name === active, title: "Paint this layer" });
+      const pick = el("input", {
+        type: "radio",
+        name: "layer",
+        checked: entry.key === active,
+        disabled: !entry.paintable || entry.background,
+        title: entry.paintable ? "Paint this layer, peeling away those in front" : "A plain colour: not painted with tiles",
+      });
       pick.addEventListener("change", () => {
-        active = layer.name;
+        active = entry.key;
+        peelTo = "";
         stamp = null;
         render();
       });
-      return el("div", { className: "layer" }, pick, shown, ` ${layer.name} (${layer.cells.length})${changed.has(layer.name) ? " ●" : ""}`);
+      const cells = entry.background ? "" : ` (${layerOf(entry.key).cells.length})`;
+      const row = el(
+        "div",
+        { className: `layer${peeled(stack, peelTo || active).has(entry.key) ? " peeled" : ""}` },
+        pick,
+        shown,
+        ` ${entry.key.replace(/^Background\//, "")}${entry.paintable ? cells : " fill"}${changed.has(entry.key) ? " ●" : ""}`,
+        ...(entry.collides ? [el("span", { className: "badge", title: "Its tiles collide: solid or one-way" }, "collides")] : []),
+      );
+      if (entry.background && !headed) {
+        headed = true;
+        return [
+          el("p", { className: "label" }, `Background · shared by the ${shared} Room${shared === 1 ? "" : "s"} that show it`),
+          row,
+        ];
+      }
+      return [row];
     });
     side.replaceChildren(
       el("h2", {}, id),
       el("p", { className: "muted" }, `${record.size[0]} × ${record.size[1]} screens · ${path}`),
-      el("p", {}, "Layers in the order the game draws them. Paint the one picked; tick to show."),
+      el("p", {}, "Layers front to back. Paint the one picked: those in front of it are peeled away, shown faintly. Tick to show."),
       ...layers,
       ...(await palette()),
       el(
@@ -391,4 +457,12 @@ function pickedArea(stamp: Stamp): Area | null {
     }
   }
   return null;
+}
+
+function markCollision(g: CanvasRenderingContext2D, collision: Collision, x: number, y: number) {
+  if (collision === "solid") {
+    rect(g, { x, y, w: 16, h: 16 }, SOLID);
+  } else if (collision === "one-way") {
+    rect(g, { x, y, w: 16, h: 3 }, ONE_WAY);
+  }
 }

@@ -5,6 +5,7 @@
 import { parseRoomScene, type Cell, type RoomScene, type TileLayer, type TileSet, type Vec } from "./godot";
 import { backgroundOf, layerOrigin, parseBackground, type Background, type BackgroundLayer } from "./background";
 import { canvas, image, readRepo, rect, tileSet } from "./dom";
+import { fillKey, tilesKey } from "./layers";
 import { SCREEN, type WorldData } from "./world";
 
 const SKY = "#0cf1ff";
@@ -70,9 +71,6 @@ export async function loadBackdrop(world: WorldData, id: string): Promise<Backdr
   return loaded && { ...loaded, roomOrigin: [cell[0] * SCREEN.w, cell[1] * SCREEN.h] };
 }
 
-// The keys the Room view shows and peels a Background's parts by.
-export const fillKey = (layer: BackgroundLayer) => `Background/${layer.name}`;
-export const tilesKey = (tiles: TileLayer) => `Background/${tiles.name}`;
 
 export interface Showing {
   hidden?: Set<string>;
@@ -150,17 +148,17 @@ function drawBackdropLayer(g: CanvasRenderingContext2D, layer: BackgroundLayer, 
   const faded = showing.faded ?? new Set();
   for (let copy = first; copy <= last; copy++) {
     const at: Vec = [origin[0] + copy * repeat - screen[0], origin[1] - screen[1]];
-    if (!hidden.has(fillKey(layer))) {
-      og.globalAlpha = faded.has(fillKey(layer)) ? FADED : 1;
+    if (!hidden.has(fillKey(layer.name))) {
+      og.globalAlpha = faded.has(fillKey(layer.name)) ? FADED : 1;
       for (const fill of layer.fills) {
         rect(og, { x: at[0] + fill.rect.x, y: at[1] + fill.rect.y, w: fill.rect.w, h: fill.rect.h }, css(fill.colour));
       }
     }
     for (const tiles of layer.tiles) {
-      if (hidden.has(tilesKey(tiles))) {
+      if (hidden.has(tilesKey(tiles.name))) {
         continue;
       }
-      og.globalAlpha = tiles.opacity * (faded.has(tilesKey(tiles)) ? FADED : 1);
+      og.globalAlpha = tiles.opacity * (faded.has(tilesKey(tiles.name)) ? FADED : 1);
       drawLayerCells(og, tiles, backdrop.art, at);
     }
   }
