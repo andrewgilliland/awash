@@ -2,7 +2,7 @@ extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/undertow_3.tscn"
 const RoomReach := preload("res://tests/room_reach.gd")
-# Two screens wide: the passage from the undertow tunnel west to the Shortcut's wall.
+# Two screens wide: the passage from the temple hall west to the Shortcut's wall.
 const ROOM_SIZE := Vector2i(320, 144)
 const TILE := 16
 const WEST_ENTRY := Vector2(12, 96)
@@ -23,8 +23,8 @@ const LANDMARKS := {
 func get_tests() -> Array:
 	return [
 		["Undertow passage lays out two screens", _test_lays_out],
-		["Undertow passage's floor runs from the tunnel to the wall", _test_floor_runs_west],
-		["Undertow passage leads west to the sea cave and east to the tunnel", _test_exits],
+		["Undertow passage's floor runs from the hall to the wall", _test_floor_runs_west],
+		["Undertow passage leads west to the sea cave and east to the hall", _test_exits],
 	]
 
 
@@ -70,7 +70,7 @@ func _test_exits() -> bool:
 	valid = valid and west.get("room_id") == &"waking_coast_5" and west.get("entry_id") == &"east"
 	var east := room.get_node_or_null("Exits/east") as Area2D
 	valid = valid and east != null and east.position.x > ROOM_SIZE.x
-	valid = valid and east.get("room_id") == &"waking_coast_9" and east.get("entry_id") == &"west"
+	valid = valid and east.get("room_id") == &"undertow_2" and east.get("entry_id") == &"west"
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	for entry_name in ["west", "east"]:
 		var entry := room.get_node_or_null("Entries/%s" % entry_name) as Marker2D

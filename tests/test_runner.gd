@@ -32,6 +32,7 @@ const WakingCoastRoom12Tests := preload("res://tests/waking_coast_room_12_tests.
 const WakingCoastRoom13Tests := preload("res://tests/waking_coast_room_13_tests.gd")
 const UndertowRegionTests := preload("res://tests/undertow_region_tests.gd")
 const UndertowRoom1Tests := preload("res://tests/undertow_room_1_tests.gd")
+const UndertowRoom2Tests := preload("res://tests/undertow_room_2_tests.gd")
 const UndertowRoom3Tests := preload("res://tests/undertow_room_3_tests.gd")
 const ShortcutWallTests := preload("res://tests/shortcut_wall_tests.gd")
 const RoomExitTests := preload("res://tests/room_exit_tests.gd")
@@ -148,6 +149,9 @@ func _init() -> void:
 		_run_test(test[0], test[1])
 	var undertow_room_1_tests := UndertowRoom1Tests.new()
 	for test in undertow_room_1_tests.get_tests():
+		_run_test(test[0], test[1])
+	var undertow_room_2_tests := UndertowRoom2Tests.new()
+	for test in undertow_room_2_tests.get_tests():
 		_run_test(test[0], test[1])
 	var undertow_room_3_tests := UndertowRoom3Tests.new()
 	for test in undertow_room_3_tests.get_tests():

@@ -8,7 +8,18 @@ const SHAFT_PATH := "res://scenes/rooms/undertow_1.tscn"
 const TUNNEL_PATH := "res://scenes/rooms/waking_coast_9.tscn"
 # The shaft's floor, two screens below the well.
 const SHAFT_FLOOR_Y := 240.0
+const HALL_PATH := "res://scenes/rooms/undertow_2.tscn"
 const PASSAGE_PATH := "res://scenes/rooms/undertow_3.tscn"
+# Up the temple hall from its floor, slab to slab, to the west ledge: [direction, launch x, height
+# landed on].
+const HALL_FLOOR_Y := 240.0
+const HALL_CLIMB := [
+	[-1, 256.0, 208.0],
+	[-1, 200.0, 176.0],
+	[1, 176.0, 144.0],
+	[-1, 200.0, 112.0],
+	[-1, 136.0, 96.0],
+]
 const SEA_CAVE_PATH := "res://scenes/rooms/waking_coast_5.tscn"
 const SCAVENGER_PATH := "Enemies/Scavenger"
 const WRAITH_PATH := "Enemies/Wraith"
@@ -35,9 +46,9 @@ func get_playtests() -> Array:
 
 
 # The way home with real input: wade into Tidefen's well, land at the foot of its shaft, run the
-# tunnel west, along the passage to the Shortcut's wall, break it with a Charged Attack, and on
-# into the sea cave and up out of it at the salt cliffs' foot. The tunnel's Scavenger and Wraith
-# are taken out first.
+# tunnel west, climb the temple hall, go along the passage to the Shortcut's wall, break it with a
+# Charged Attack, and go on into the sea cave and up out of it at the salt cliffs' foot. The
+# tunnel's Scavenger and Wraith are taken out first.
 func _drops_home() -> bool:
 	var player: CharacterBody2D = await _harness.call(
 		"_enter_room", &"waking_coast_8", &"west", TIDEFEN_PATH
@@ -61,7 +72,17 @@ func _drops_home() -> bool:
 	_harness.current_scene.get_node(SCAVENGER_PATH).free()
 	_harness.current_scene.get_node(WRAITH_PATH).free()
 	await _harness.call("_wade_to", player, TUNNEL_WEST)
-	valid = await _harness.call("_walk_until_scene", &"move_left", PASSAGE_PATH)
+	valid = await _harness.call("_walk_until_scene", &"move_left", HALL_PATH)
+	valid = valid and run.get("room_id") == &"undertow_2"
+	player = _harness.call("_current_player")
+	valid = valid and player != null and absf(player.global_position.y - HALL_FLOOR_Y) < 1.0
+	for step in HALL_CLIMB:
+		if not valid:
+			break
+		await _harness.call("_walk_to_x", player, step[1])
+		await _harness.call("_jump_toward", player, step[0])
+		valid = player.is_on_floor() and absf(player.global_position.y - step[2]) < 1.0
+	valid = valid and await _harness.call("_walk_until_scene", &"move_left", PASSAGE_PATH)
 	valid = valid and run.get("room_id") == &"undertow_3"
 	player = _harness.call("_current_player")
 	if not valid or player == null:

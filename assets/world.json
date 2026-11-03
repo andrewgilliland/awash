@@ -108,9 +108,9 @@
 			"markers": {"rest": [3, 0]}
 		},
 		"waking_coast_9": {
-			"note": "Four screens of tunnel under Tidefen, between the shaft from its well and the hall west.",
+			"note": "Four screens of tunnel under the trail and Tidefen, between the shaft from its well and the temple hall.",
 			"scene": "res://scenes/rooms/waking_coast_9.tscn",
-			"cell": [9, 1],
+			"cell": [11, 2],
 			"size": [4, 1],
 			"region": "undertow",
 			"exits": [
@@ -118,7 +118,6 @@
 				{"screen": [3, 0], "side": "east"}
 			],
 			"plan": {
-				"cell": [11, 2],
 				"exits": [
 					{"screen": [3, 0], "side": "east"},
 					{"screen": [0, 0], "side": "west"},
@@ -173,18 +172,16 @@
 		"undertow_1": {
 			"note": "The shaft Tidefen's well drops into: no way back up.",
 			"scene": "res://scenes/rooms/undertow_1.tscn",
-			"cell": [13, 1],
+			"cell": [15, 1],
 			"size": [1, 2],
 			"region": "undertow",
 			"exits": [
 				{"screen": [0, 1], "side": "west"}
-			],
-			"plan": {
-				"cell": [15, 1]
-			}
+			]
 		},
 		"undertow_2": {
-			"note": "A hall west of the undertow tunnel.",
+			"note": "A hall of the drowned temple, west of the undertow tunnel.",
+			"scene": "res://scenes/rooms/undertow_2.tscn",
 			"cell": [9, 1],
 			"size": [2, 2],
 			"region": "undertow",

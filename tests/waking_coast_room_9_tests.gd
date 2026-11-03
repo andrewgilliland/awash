@@ -5,7 +5,7 @@ const RoomReach := preload("res://tests/room_reach.gd")
 # Four screens wide, under the jungle trail, the Warden's gate and Tidefen's west end.
 const ROOM_SIZE := Vector2i(640, 144)
 const TILE := 16
-# The east end, by the way on to the well's shaft, and the way west to the passage.
+# The east end, by the way on to the well's shaft, and the way west to the temple hall.
 const EAST_ENTRY := Vector2(628, 96)
 const EAST_FLOOR := Vector2i(39, 6)
 const WEST_ENTRY := Vector2(12, 96)
@@ -29,7 +29,7 @@ func get_tests() -> Array:
 	return [
 		["Undertow Room lays out four screens of tunnel", _test_lays_out_four_screens],
 		["Undertow tunnel leads east to the shaft from Tidefen's well", _test_leads_east],
-		["Undertow floor runs from the well west to the passage", _test_floor_runs_west],
+		["Undertow tunnel's floor runs from its east end west to the hall", _test_floor_runs_west],
 		["A Scavenger hunts the undertow's middle pool", _test_scavenger_in_pool],
 	]
 
@@ -88,7 +88,7 @@ func _test_floor_runs_west() -> bool:
 	valid = valid and entry != null and entry.position == WEST_ENTRY
 	var exit := room.get_node_or_null("Exits/west") as Area2D
 	valid = valid and exit != null and exit.position.x < 0.0
-	valid = valid and exit.get("room_id") == &"undertow_3" and exit.get("entry_id") == &"east"
+	valid = valid and exit.get("room_id") == &"undertow_2" and exit.get("entry_id") == &"east"
 	room.free()
 	return valid
 
