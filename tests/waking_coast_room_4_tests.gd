@@ -8,11 +8,11 @@ const CELLS := Rect2i(0, 0, 20, 9)
 const TILE := 16
 # On the cliff top, clear of the west Exit, at the height the cliff tops leave off.
 const WEST_ENTRY := Vector2(12, 64)
-# On the sand at the beach's east end, coming back from the jungle trail.
+# On the sand at the beach's east end, coming back up the broken stair.
 const EAST_ENTRY := Vector2(296, 96)
 const DECKS := [Vector2i(1, 6), Vector2i(2, 6), Vector2i(3, 6), Vector2i(4, 6)]
-# The beach's east end, running on onto the jungle trail, and the stern compartment's deck with
-# its crate.
+# The beach's east end, running on to the broken stair, and the stern compartment's deck with its
+# crate.
 const EAST_END := Vector2i(19, 6)
 const STERN_DECK := Vector2i(17, 1)
 const STERN_CRATE := Vector2i(18, 0)
@@ -59,7 +59,7 @@ func get_tests() -> Array:
 	return [
 		["Wreck graveyard Room lays out two screens", _test_lays_out_two_screens],
 		["Wreck graveyard west Entry stands on the cliff", _test_west_entry_on_cliff],
-		["Wreck graveyard's beach leads east onto the jungle trail", _test_leads_east],
+		["Wreck graveyard's beach leads east to the broken stair", _test_leads_east],
 		["Wreck graveyard beach runs east without the decks", _test_beach_runs_east],
 		["Wreck decks lead up to the stern's crate", _test_decks_reach_stern],
 		["A Scavenger wades the wreck graveyard's second pool", _test_scavenger_in_pool],
@@ -110,7 +110,7 @@ func _test_west_entry_on_cliff() -> bool:
 	return valid
 
 
-# The east edge is the Exit onto the jungle trail, its whole height, so the beach walks straight
+# The east edge is the Exit to the broken stair, its whole height, so the beach walks straight
 # on. The west edge is the Exit back along the cliff tops. Coming back, the Player lands on the
 # sand.
 func _test_leads_east() -> bool:
@@ -123,7 +123,7 @@ func _test_leads_east() -> bool:
 	if valid:
 		var edge := east_exit.get_node("Edge") as CollisionShape2D
 		valid = _vertical_span(edge) == Vector2(0, ROOM_SIZE.y)
-	valid = valid and east_exit.get("room_id") == &"waking_coast_6"
+	valid = valid and east_exit.get("room_id") == &"waking_coast_13"
 	valid = valid and east_exit.get("entry_id") == &"west"
 	var entry := room.get_node_or_null("Entries/east") as Marker2D
 	valid = valid and entry != null and entry.position == EAST_ENTRY

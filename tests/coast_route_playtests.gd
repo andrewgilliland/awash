@@ -21,6 +21,23 @@ const CLIFF_TOPS_PATH := "res://scenes/rooms/waking_coast_12.tscn"
 # jumping whenever the walk stops short.
 const CLIFF_TOPS_EAST: Array[float] = [150.0, 176.0, 210.0, 280.0, 300.0]
 const CLIFF_TOPS_WEST: Array[float] = [210.0, 176.0, 150.0, 100.0, 40.0]
+const BROKEN_STAIR_PATH := "res://scenes/rooms/waking_coast_13.tscn"
+const JUNGLE_TRAIL_PATH := "res://scenes/rooms/waking_coast_6.tscn"
+# Down the broken stair, landing to landing: points to walk to, each walking off a landing's end
+# onto the one below. Then back up, a jump at a time: [direction, launch x, height landed on].
+const STAIR_DOWN: Array[float] = [150.0, 72.0, 150.0, 72.0, 150.0, 72.0, 150.0, 72.0]
+const STAIR_FOOT_Y := 384.0
+const STAIR_UP := [
+	[1, 104.0, 352.0],
+	[-1, 120.0, 320.0],
+	[1, 104.0, 288.0],
+	[-1, 120.0, 256.0],
+	[1, 104.0, 224.0],
+	[-1, 120.0, 192.0],
+	[1, 104.0, 160.0],
+	[-1, 120.0, 128.0],
+	[-1, 72.0, WAKING_COAST_SAND_Y],
+]
 const GULL_LEDGES_PATH := "res://scenes/rooms/waking_coast_11.tscn"
 # The gull ledges' ground, on from the salt cliffs' top, and the climb up its planks to the cliff
 # top, a jump at a time: [direction, launch x, height landed on].
@@ -48,6 +65,7 @@ func get_playtests() -> Array:
 			_climbs_gull_ledges
 		],
 		["Player walks the cliff tops from the gull ledges to the graveyard", _walks_cliff_tops],
+		["Player goes down the broken stair to the jungle trail and back up", _walks_broken_stair],
 	]
 
 
@@ -168,5 +186,44 @@ func _walks_cliff_tops() -> bool:
 	player = _harness.call("_current_player")
 	valid = valid and player != null and player.global_position.x > 120.0
 	valid = valid and absf(player.global_position.y - CLIFF_TOP_Y) < 1.0
+	await _harness.call("_leave_scene")
+	return valid
+
+
+# From the graveyard's beach down the broken stair, landing to landing, and east onto the jungle
+# trail's sand; back west to the stair's foot, then up it a jump at a time to the graveyard.
+func _walks_broken_stair() -> bool:
+	var player: CharacterBody2D = await _harness.call(
+		"_enter_room", &"waking_coast_13", &"west", BROKEN_STAIR_PATH
+	)
+	if player == null:
+		await _harness.call("_leave_scene")
+		return false
+	var run := _harness.root.get_node("RunState")
+	for x in STAIR_DOWN:
+		await _harness.call("_walk_to_x", player, x)
+	var valid := player.is_on_floor() and absf(player.global_position.y - STAIR_FOOT_Y) < 1.0
+	valid = valid and await _harness.call("_walk_until_scene", &"move_right", JUNGLE_TRAIL_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_6"
+	player = _harness.call("_current_player")
+	valid = valid and player != null and player.global_position.x < 40.0
+	valid = valid and absf(player.global_position.y - WAKING_COAST_SAND_Y) < 1.0
+
+	valid = valid and await _harness.call("_walk_until_scene", &"move_left", BROKEN_STAIR_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_13"
+	player = _harness.call("_current_player")
+	valid = valid and player != null and player.global_position.x > 120.0
+	valid = valid and absf(player.global_position.y - STAIR_FOOT_Y) < 1.0
+	for step in STAIR_UP:
+		if not valid:
+			break
+		await _harness.call("_walk_to_x", player, step[1])
+		await _harness.call("_jump_toward", player, step[0])
+		valid = player.is_on_floor() and absf(player.global_position.y - step[2]) < 1.0
+	valid = valid and await _harness.call("_walk_until_scene", &"move_left", WRECK_GRAVEYARD_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_4"
+	player = _harness.call("_current_player")
+	valid = valid and player != null and player.global_position.x > 280.0
+	valid = valid and absf(player.global_position.y - WAKING_COAST_SAND_Y) < 1.0
 	await _harness.call("_leave_scene")
 	return valid

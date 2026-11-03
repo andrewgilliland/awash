@@ -6,7 +6,7 @@ const RoomReach := preload("res://tests/room_reach.gd")
 const ROOM_SIZE := Vector2i(320, 144)
 const CELLS := Rect2i(0, 0, 20, 9)
 const TILE := 16
-# On the sand, clear of the west Exit, at the height of the graveyard's beach.
+# On the sand, clear of the west Exit, at the height of the broken stair's foot.
 const WEST_ENTRY := Vector2(12, 96)
 # On the heights by the gate, clear of the east Exit.
 const EAST_ENTRY := Vector2(308, 48)
@@ -98,7 +98,7 @@ func _test_west_entry_on_beach() -> bool:
 		valid = valid and terrain.get_cell_source_id(below + Vector2i.UP) == -1
 	var exit := room.get_node_or_null("Exits/west") as Area2D
 	valid = valid and exit != null and exit.position.x < 0.0
-	valid = valid and exit.get("room_id") == &"waking_coast_4" and exit.get("entry_id") == &"east"
+	valid = valid and exit.get("room_id") == &"waking_coast_13" and exit.get("entry_id") == &"east"
 	room.free()
 	return valid
 

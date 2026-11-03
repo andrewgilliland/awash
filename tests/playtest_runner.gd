@@ -16,6 +16,7 @@ const WRECK_DECKS := [[1, 92.0, 64.0], [1, 140.0, 48.0], [1, 180.0, 48.0], [1, 2
 const STERN_X := Vector2(256, 304)
 const SEA_CAVE_PATH := "res://scenes/rooms/waking_coast_5.tscn"
 const JUNGLE_TRAIL_PATH := "res://scenes/rooms/waking_coast_6.tscn"
+const BROKEN_STAIR_PATH := "res://scenes/rooms/waking_coast_13.tscn"
 # Up the jungle trail's steps to the gate, jumping each one when the walk stops at it.
 const JUNGLE_TRAIL_EAST: Array[float] = [56.0, 104.0, 168.0, 232.0, 300.0]
 const JUNGLE_TRAIL_HEIGHTS_Y := 48.0
@@ -96,8 +97,8 @@ func _init() -> void:
 		"Player walks into the sea cave from the cliffs' foot and back", _playtest_cave_and_back
 	)
 	await _run_playtest_async(
-		"Player walks the graveyard's beach onto the jungle trail and back",
-		_playtest_beach_to_jungle_trail
+		"Player walks the graveyard's beach to the broken stair and back",
+		_playtest_beach_to_broken_stair
 	)
 	await _run_playtest_async(
 		"Player climbs the jungle trail to its gate", _playtest_climbs_jungle_trail
@@ -387,10 +388,10 @@ func _playtest_cave_and_back() -> bool:
 	return valid
 
 
-# Along the graveyard's beach, wading its pools, and straight on east onto the jungle trail's
-# sand; walking back west lands on the graveyard's sand. The Scavenger is taken out first: this
+# Along the graveyard's beach, wading its pools, and straight on east to the top of the broken
+# stair; walking back west lands on the graveyard's sand. The Scavenger is taken out first: this
 # checks the route, not the fight.
-func _playtest_beach_to_jungle_trail() -> bool:
+func _playtest_beach_to_broken_stair() -> bool:
 	var player := await _enter_room(&"waking_coast_4", &"west", WRECK_GRAVEYARD_PATH)
 	if player == null:
 		await _leave_scene()
@@ -398,8 +399,8 @@ func _playtest_beach_to_jungle_trail() -> bool:
 	var run := root.get_node("RunState")
 	current_scene.get_node(SCAVENGER_PATH).free()
 	await _wade_to(player, GRAVEYARD_BEACH_EAST)
-	var valid := await _walk_until_scene(&"move_right", JUNGLE_TRAIL_PATH)
-	valid = valid and run.get("room_id") == &"waking_coast_6"
+	var valid := await _walk_until_scene(&"move_right", BROKEN_STAIR_PATH)
+	valid = valid and run.get("room_id") == &"waking_coast_13"
 	player = _current_player()
 	valid = valid and player != null and player.global_position.x < 40.0
 	valid = valid and absf(player.global_position.y - WAKING_COAST_SAND_Y) < 1.0

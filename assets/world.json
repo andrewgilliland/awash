@@ -84,53 +84,44 @@
 			}
 		},
 		"waking_coast_6": {
-			"note": "Two screens wide, on from the graveyard's beach, climbing inland.",
+			"note": "Two screens wide, on from the broken stair's foot, climbing inland.",
 			"scene": "res://scenes/rooms/waking_coast_6.tscn",
-			"cell": [11, -2],
+			"cell": [12, 0],
 			"size": [2, 1],
 			"region": "waking_coast",
 			"exits": [
 				{"screen": [0, 0], "side": "west"},
 				{"screen": [1, 0], "side": "east"}
-			],
-			"plan": {
-				"cell": [12, 0]
-			}
+			]
 		},
 		"waking_coast_7": {
 			"note": "One screen: the arena at the trail's end.",
 			"scene": "res://scenes/rooms/waking_coast_7.tscn",
-			"cell": [13, -2],
+			"cell": [14, 0],
 			"size": [1, 1],
 			"region": "waking_coast",
 			"exits": [
 				{"screen": [0, 0], "side": "west"},
 				{"screen": [0, 0], "side": "east"}
 			],
-			"markers": {"boss": [0, 0]},
-			"plan": {
-				"cell": [14, 0]
-			}
+			"markers": {"boss": [0, 0]}
 		},
 		"waking_coast_8": {
 			"note": "Tidefen, at the end of the coast past the Warden's gate: its stilt houses, market square and harbour, two screens each.",
 			"scene": "res://scenes/rooms/waking_coast_8.tscn",
-			"cell": [14, -2],
+			"cell": [15, 0],
 			"size": [6, 1],
 			"region": "waking_coast",
 			"exits": [
 				{"screen": [0, 0], "side": "west"},
 				{"screen": [0, 0], "side": "south"}
 			],
-			"markers": {"rest": [3, 0]},
-			"plan": {
-				"cell": [15, 0]
-			}
+			"markers": {"rest": [3, 0]}
 		},
 		"waking_coast_9": {
 			"note": "Four screens of tunnel under the trail, the gate and Tidefen's well, back to the sea cave.",
 			"scene": "res://scenes/rooms/waking_coast_9.tscn",
-			"cell": [8, -1],
+			"cell": [8, 1],
 			"size": [4, 1],
 			"region": "waking_coast",
 			"background": "cave",
@@ -182,6 +173,7 @@
 		},
 		"waking_coast_13": {
 			"note": "A broken stair down from the graveyard to the jungle trail.",
+			"scene": "res://scenes/rooms/waking_coast_13.tscn",
 			"cell": [11, -2],
 			"size": [1, 3],
 			"region": "waking_coast",
