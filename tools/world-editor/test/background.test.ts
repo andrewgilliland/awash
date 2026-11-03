@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { backgroundOf, layerCell, layerOrigin, parseBackground, roomsSharing } from "../src/background";
+import { backgroundOf, layerBounds, layerCell, layerOrigin, parseBackground, roomsSharing } from "../src/background";
 import type { WorldData } from "../src/world";
 
 const REPO = resolve(__dirname, "../../..");
@@ -59,6 +59,18 @@ describe("where a Background layer lands", () => {
     expect(layerCell({ ...layer, scrollScale: [0, 0] }, tiles, [0, 0], [200, 20])).toEqual([2, 1]);
     // Above the layer's top it is a row up; and a tile layer's own offset counts.
     expect(layerCell({ ...layer, scrollScale: [0, 0] }, { ...tiles, position: [0, 8] }, [0, 0], [40, 4])).toEqual([2, -1]);
+  });
+});
+
+describe("what a Background layer may hold", () => {
+  it("is one repeat across, and from above the screen to below it, as the coast's sky reaches", () => {
+    const coast = parseBackground(read("scenes/regions/waking_coast/background.tscn"));
+    const clouds = coast.layers.find((layer) => layer.name === "FarClouds")!;
+    expect(layerBounds(clouds)).toEqual({ x: 0, y: -9, w: 30, h: 27 });
+    const sky = coast.layers.find((layer) => layer.name === "Sky")!;
+    expect(layerBounds(sky)).toEqual({ x: 0, y: -9, w: 10, h: 27 });
+    // Without a repeat, a screen either side of its own.
+    expect(layerBounds({ ...sky, repeat: [0, 0] })).toEqual({ x: -10, y: -9, w: 30, h: 27 });
   });
 });
 

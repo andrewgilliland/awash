@@ -143,3 +143,13 @@ export function backgroundOf(world: WorldData, id: string): string {
 export function roomsSharing(world: WorldData, path: string): string[] {
   return Object.keys(world.rooms).filter((id) => world.rooms[id].scene && backgroundOf(world, id) === path);
 }
+
+// The cells a layer's tiles may be painted into: one repeat across, or a screen either side of its
+// own without one; and a screen above and below its own, as far as the camera can carry it.
+export function layerBounds(layer: BackgroundLayer): { x: number; y: number; w: number; h: number } {
+  const across = SCREEN.w / 16;
+  const down = SCREEN.h / 16;
+  return layer.repeat[0] > 0
+    ? { x: 0, y: -down, w: layer.repeat[0] / 16, h: down * 3 }
+    : { x: -across, y: -down, w: across * 3, h: down * 3 };
+}
