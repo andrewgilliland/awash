@@ -202,7 +202,8 @@
 			"size": [2, 1],
 			"region": "undertow",
 			"exits": [
-				{"screen": [0, 0], "side": "north"}
+				{"screen": [0, 0], "side": "north"},
+				{"screen": [1, 0], "side": "east"}
 			],
 			"plan": {
 				"exits": [
@@ -213,7 +214,8 @@
 			}
 		},
 		"undertow_5": {
-			"note": "East of the pools, a dead end for now.",
+			"note": "East of the pools, a dead end down to a sunken wreck and its Cache.",
+			"scene": "res://scenes/rooms/undertow_5.tscn",
 			"cell": [14, 3],
 			"size": [2, 2],
 			"region": "undertow",

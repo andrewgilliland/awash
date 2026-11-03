@@ -11,11 +11,24 @@ const SHAFT_FLOOR_Y := 240.0
 const HALL_PATH := "res://scenes/rooms/undertow_2.tscn"
 const PASSAGE_PATH := "res://scenes/rooms/undertow_3.tscn"
 const POOLS_PATH := "res://scenes/rooms/undertow_4.tscn"
-# The pools' floor, wading east through both pools; then back up, landing to landing, and a jump
+const DEAD_END_PATH := "res://scenes/rooms/undertow_5.tscn"
+# Down off the dead end's ledge to the wreck's floor, to its Cache, then back up the ledges a jump
+# at a time: [direction, launch x, height landed on].
+const DEAD_END_FLOOR_Y := 240.0
+const CACHE_X := 268.0
+const DEAD_END_CLIMB := [
+	[-1, 256.0, 208.0],
+	[-1, 200.0, 176.0],
+	[1, 176.0, 144.0],
+	[-1, 200.0, 112.0],
+	[-1, 136.0, 96.0],
+]
+# The pools' floor, wading east through the first pool to the sand short of the way east, and
+# back; then up, landing to landing, and a jump
 # up through the opening into the tunnel: [direction, launch x, height landed on].
 const POOLS_FLOOR_Y := 96.0
-const POOLS_EAST: Array[float] = [150.0, 220.0, 300.0]
-const POOLS_WEST: Array[float] = [220.0, 150.0, 60.0]
+const POOLS_EAST: Array[float] = [150.0, 220.0]
+const POOLS_WEST: Array[float] = [150.0, 60.0]
 const POOLS_CLIMB := [[0, 72.0, 64.0], [0, 88.0, 32.0]]
 const POOLS_LEAVE_X := 104.0
 # Where the climb comes out: on the tunnel's sand beside the hole.
@@ -55,6 +68,7 @@ func get_playtests() -> Array:
 		["Tidefen's well drops home through the undertow and its Shortcut", _drops_home],
 		["A quick Attack leaves the Shortcut's wall standing", _quick_attack_glances],
 		["Player drops into the pools under the tunnel and climbs back up", _pools_and_back],
+		["Player opens the Cache in the dead end's wreck and climbs back out", _opens_cache],
 	]
 
 
@@ -147,7 +161,7 @@ func _charge_at_wall(player: CharacterBody2D) -> void:
 
 
 # Down the hole in the tunnel's floor into the pools, onto the landing under it and off it to the
-# floor, wading the pools east and back, then up the
+# floor, wading a pool east and back, then up the
 # landings and out through the opening onto the tunnel's sand beside the hole. The tunnel's
 # Scavenger is taken out first.
 func _pools_and_back() -> bool:
@@ -167,7 +181,7 @@ func _pools_and_back() -> bool:
 		return false
 	await _harness.call("_wade_to", player, POOLS_EAST)
 	valid = absf(player.global_position.y - POOLS_FLOOR_Y) < 1.0
-	valid = valid and player.global_position.x > 290.0
+	valid = valid and player.global_position.x > 210.0
 	await _harness.call("_wade_to", player, POOLS_WEST)
 	for step in POOLS_CLIMB:
 		await _harness.call("_walk_to_x", player, step[1])
@@ -199,5 +213,39 @@ func _pools_and_back() -> bool:
 	player = _harness.call("_current_player")
 	valid = valid and player != null
 	valid = valid and player.global_position.distance_to(TUNNEL_SOUTH_ENTRY) < 1.0
+	await _harness.call("_leave_scene")
+	return valid
+
+
+# From the pools east into the dead end, off its ledge down to the wreck, Interact with the Cache
+# for its Brinecaps, then back up the ledges and out west to the pools.
+func _opens_cache() -> bool:
+	var player: CharacterBody2D = await _harness.call(
+		"_enter_room", &"undertow_4", &"east", POOLS_PATH
+	)
+	if player == null:
+		await _harness.call("_leave_scene")
+		return false
+	var run := _harness.root.get_node("RunState")
+	var valid: bool = await _harness.call("_walk_until_scene", &"move_right", DEAD_END_PATH)
+	valid = valid and run.get("room_id") == &"undertow_5"
+	player = _harness.call("_current_player")
+	if not valid or player == null:
+		await _harness.call("_leave_scene")
+		return false
+	await _harness.call("_walk_to_x", player, CACHE_X)
+	valid = absf(player.global_position.y - DEAD_END_FLOOR_Y) < 1.0
+	await _harness.call("_tap", &"interact")
+	await _harness.call("_frames", 10)
+	valid = valid and player.get("supplies").count(&"brinecap") == 2
+	valid = valid and run.call("has_taken_cache", &"wreck_chest")
+	for step in DEAD_END_CLIMB:
+		if not valid:
+			break
+		await _harness.call("_walk_to_x", player, step[1])
+		await _harness.call("_jump_toward", player, step[0])
+		valid = player.is_on_floor() and absf(player.global_position.y - step[2]) < 1.0
+	valid = valid and await _harness.call("_walk_until_scene", &"move_left", POOLS_PATH)
+	valid = valid and run.get("room_id") == &"undertow_4"
 	await _harness.call("_leave_scene")
 	return valid

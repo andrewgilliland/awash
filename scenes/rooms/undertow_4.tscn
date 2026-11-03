@@ -37,10 +37,6 @@ tile_set = ExtResource("scenery_tiles")
 [node name="Bounds" type="StaticBody2D" parent="."]
 collision_mask = 0
 
-[node name="East" type="CollisionShape2D" parent="Bounds"]
-position = Vector2(324, 72)
-shape = SubResource("RectangleShape2D_edge")
-
 [node name="West" type="CollisionShape2D" parent="Bounds"]
 position = Vector2(-4, 72)
 shape = SubResource("RectangleShape2D_edge")
@@ -58,10 +54,24 @@ entry_id = &"south"
 [node name="Edge" type="CollisionShape2D" parent="Exits/north"]
 shape = SubResource("RectangleShape2D_north")
 
+[node name="east" type="Area2D" parent="Exits"]
+position = Vector2(324, 72)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_exit")
+room_id = &"undertow_5"
+entry_id = &"west"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/east"]
+shape = SubResource("RectangleShape2D_edge")
+
 [node name="Entries" type="Node2D" parent="."]
 
 [node name="north" type="Marker2D" parent="Entries"]
 position = Vector2(112, 16)
+
+[node name="east" type="Marker2D" parent="Entries"]
+position = Vector2(308, 96)
 
 [node name="Player" parent="." instance=ExtResource("5_player")]
 position = Vector2(112, 16)

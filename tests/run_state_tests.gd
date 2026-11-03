@@ -16,6 +16,7 @@ func get_tests() -> Array:
 		["Run carries the Player's Armor, even through a defeat", _test_carries_armor],
 		["Run remembers each Boss defeated, even through a defeat", _test_remembers_bosses],
 		["Run remembers each Shortcut opened, even through a defeat", _test_remembers_shortcuts],
+		["Run remembers each Cache taken, even through a defeat", _test_remembers_caches],
 	]
 
 
@@ -153,5 +154,20 @@ func _test_remembers_shortcuts() -> bool:
 	valid = valid and run.has_opened_shortcut(&"sea_cave_wall")
 	run.start_run()
 	valid = valid and not run.has_opened_shortcut(&"sea_cave_wall")
+	run.free()
+	return valid
+
+
+func _test_remembers_caches() -> bool:
+	var run := RunStateScript.new()
+	var valid: bool = not run.has_taken_cache(&"wreck_chest")
+	run.take_cache(&"wreck_chest")
+	run.enter_room(&"undertow_5", &"west")
+	valid = valid and run.has_taken_cache(&"wreck_chest")
+	valid = valid and not run.has_taken_cache(&"somewhere_else")
+	run.recover_from_defeat()
+	valid = valid and run.has_taken_cache(&"wreck_chest")
+	run.start_run()
+	valid = valid and not run.has_taken_cache(&"wreck_chest")
 	run.free()
 	return valid

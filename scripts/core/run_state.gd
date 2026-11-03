@@ -26,6 +26,8 @@ var _visited_rooms: Dictionary = {FIRST_ROOM_ID: true}
 var _defeated_bosses: Dictionary = {}
 # Every Shortcut opened this Run, by id.
 var _opened_shortcuts: Dictionary = {}
+# Every Cache taken this Run, by id.
+var _taken_caches: Dictionary = {}
 
 
 # Begins a new Run: in the first Room at its default Entry, with only that Room visited.
@@ -41,11 +43,12 @@ func start_run() -> void:
 	_visited_rooms = {FIRST_ROOM_ID: true}
 	_defeated_bosses = {}
 	_opened_shortcuts = {}
+	_taken_caches = {}
 
 
 # After a defeat the Run carries on: back at the first Room's default Entry with full Health,
-# keeping every Room visited, every Boss defeated, every Shortcut opened, and all the Player's
-# Experience, Supplies and Equipment.
+# keeping every Room visited, every Boss defeated, every Shortcut opened, every Cache taken, and
+# all the Player's Experience, Supplies and Equipment.
 func recover_from_defeat() -> void:
 	room_id = FIRST_ROOM_ID
 	entry_id = DEFAULT_ENTRY_ID
@@ -84,3 +87,12 @@ func open_shortcut(shortcut_id: StringName) -> void:
 
 func has_opened_shortcut(shortcut_id: StringName) -> bool:
 	return _opened_shortcuts.has(shortcut_id)
+
+
+# A Cache stays empty for the rest of the Run.
+func take_cache(cache_id: StringName) -> void:
+	_taken_caches[cache_id] = true
+
+
+func has_taken_cache(cache_id: StringName) -> bool:
+	return _taken_caches.has(cache_id)

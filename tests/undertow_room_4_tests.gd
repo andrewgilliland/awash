@@ -28,7 +28,7 @@ func get_tests() -> Array:
 		["Undertow pools lay out two screens", _test_lays_out],
 		["Undertow pools hold two shallows on the sand", _test_pools],
 		["Undertow pools climb up through their roof to the tunnel", _test_climbs_out],
-		["Undertow pools lead north to the tunnel", _test_north],
+		["Undertow pools lead north to the tunnel and east to the dead end", _test_north],
 	]
 
 
@@ -97,7 +97,7 @@ func _test_climbs_out() -> bool:
 	return valid
 
 
-# The way on east and west waits for the Rooms past the pools; until then both edges are walled.
+# The way on west waits for the stair down; until then that edge is walled.
 func _test_north() -> bool:
 	var room := _room()
 	if room == null:
@@ -108,6 +108,11 @@ func _test_north() -> bool:
 	if valid:
 		var edge := (exit.get_node("Edge") as CollisionShape2D).shape as RectangleShape2D
 		valid = exit.position.y + edge.size.y / 2.0 < NORTH_ENTRY.y - 20.0
+	var east := room.get_node_or_null("Exits/east") as Area2D
+	valid = valid and east != null and east.position.x > ROOM_SIZE.x
+	valid = valid and east.get("room_id") == &"undertow_5" and east.get("entry_id") == &"west"
+	var entry := room.get_node_or_null("Entries/east") as Marker2D
+	valid = valid and entry != null and entry.position == Vector2(308, 96)
 	var bounds := room.get_node_or_null("Bounds") as StaticBody2D
 	valid = valid and bounds != null and bounds.collision_layer == WORLD_LAYER
 	room.free()
