@@ -10,6 +10,16 @@ const TUNNEL_PATH := "res://scenes/rooms/waking_coast_9.tscn"
 const SHAFT_FLOOR_Y := 240.0
 const HALL_PATH := "res://scenes/rooms/undertow_2.tscn"
 const PASSAGE_PATH := "res://scenes/rooms/undertow_3.tscn"
+const POOLS_PATH := "res://scenes/rooms/undertow_4.tscn"
+# The pools' floor, wading east through both pools; then back up, landing to landing, and a jump
+# up through the opening into the tunnel: [direction, launch x, height landed on].
+const POOLS_FLOOR_Y := 96.0
+const POOLS_EAST: Array[float] = [150.0, 220.0, 300.0]
+const POOLS_WEST: Array[float] = [220.0, 150.0, 60.0]
+const POOLS_CLIMB := [[0, 72.0, 64.0], [0, 88.0, 32.0]]
+const POOLS_LEAVE_X := 104.0
+# Where the climb comes out: on the tunnel's sand beside the hole.
+const TUNNEL_SOUTH_ENTRY := Vector2(296, 96)
 # Up the temple hall from its floor, slab to slab, to the west ledge: [direction, launch x, height
 # landed on].
 const HALL_FLOOR_Y := 240.0
@@ -23,8 +33,10 @@ const HALL_CLIMB := [
 const SEA_CAVE_PATH := "res://scenes/rooms/waking_coast_5.tscn"
 const SCAVENGER_PATH := "Enemies/Scavenger"
 const WRAITH_PATH := "Enemies/Wraith"
-# West along the tunnel from its east end: through three pools and over two rocks.
-const TUNNEL_WEST: Array[float] = [470.0, 400.0, 280.0, 200.0, 90.0, 20.0]
+# West along the tunnel from its east end: through two pools to the hole in its floor, a jump over
+# the hole, then through the last pool and over two rocks.
+const TUNNEL_TO_HOLE: Array[float] = [470.0, 400.0, 300.0]
+const TUNNEL_PAST_HOLE: Array[float] = [200.0, 90.0, 20.0]
 # Up against the Shortcut's wall, in the sword's reach of it.
 const AT_WALL_X := 76.0
 # A full Charge is half a second of holding melee; a few frames more to be sure.
@@ -42,6 +54,7 @@ func get_playtests() -> Array:
 	return [
 		["Tidefen's well drops home through the undertow and its Shortcut", _drops_home],
 		["A quick Attack leaves the Shortcut's wall standing", _quick_attack_glances],
+		["Player drops into the pools under the tunnel and climbs back up", _pools_and_back],
 	]
 
 
@@ -71,7 +84,9 @@ func _drops_home() -> bool:
 		return false
 	_harness.current_scene.get_node(SCAVENGER_PATH).free()
 	_harness.current_scene.get_node(WRAITH_PATH).free()
-	await _harness.call("_wade_to", player, TUNNEL_WEST)
+	await _harness.call("_wade_to", player, TUNNEL_TO_HOLE)
+	await _harness.call("_jump_toward", player, -1)
+	await _harness.call("_wade_to", player, TUNNEL_PAST_HOLE)
 	valid = await _harness.call("_walk_until_scene", &"move_left", HALL_PATH)
 	valid = valid and run.get("room_id") == &"undertow_2"
 	player = _harness.call("_current_player")
@@ -129,3 +144,60 @@ func _charge_at_wall(player: CharacterBody2D) -> void:
 	await _harness.call("_frames", CHARGE_FRAMES)
 	_harness.call("_release", &"melee_attack")
 	await _harness.call("_frames", 20)
+
+
+# Down the hole in the tunnel's floor into the pools, onto the landing under it and off it to the
+# floor, wading the pools east and back, then up the
+# landings and out through the opening onto the tunnel's sand beside the hole. The tunnel's
+# Scavenger is taken out first.
+func _pools_and_back() -> bool:
+	var player: CharacterBody2D = await _harness.call(
+		"_enter_room", &"waking_coast_9", &"south", TUNNEL_PATH
+	)
+	if player == null:
+		await _harness.call("_leave_scene")
+		return false
+	var run := _harness.root.get_node("RunState")
+	_harness.current_scene.get_node(SCAVENGER_PATH).free()
+	var valid: bool = await _harness.call("_walk_until_scene", &"move_left", POOLS_PATH)
+	valid = valid and run.get("room_id") == &"undertow_4"
+	player = _harness.call("_current_player")
+	if not valid or player == null:
+		await _harness.call("_leave_scene")
+		return false
+	await _harness.call("_wade_to", player, POOLS_EAST)
+	valid = absf(player.global_position.y - POOLS_FLOOR_Y) < 1.0
+	valid = valid and player.global_position.x > 290.0
+	await _harness.call("_wade_to", player, POOLS_WEST)
+	for step in POOLS_CLIMB:
+		await _harness.call("_walk_to_x", player, step[1])
+		await _harness.call("_jump_toward", player, step[0])
+		valid = valid and player.is_on_floor() and absf(player.global_position.y - step[2]) < 1.0
+	await _harness.call("_walk_to_x", player, POOLS_LEAVE_X)
+	_harness.call("_press", &"jump")
+	valid = (
+		valid
+		and await _harness.call(
+			"_frames_until",
+			func() -> bool:
+				return (
+					_harness.current_scene != null
+					and _harness.current_scene.scene_file_path == TUNNEL_PATH
+				),
+			180
+		)
+	)
+	_harness.call("_release", &"jump")
+	valid = valid and run.get("room_id") == &"waking_coast_9"
+	await _harness.call(
+		"_frames_until",
+		func() -> bool:
+			var landed: CharacterBody2D = _harness.call("_current_player")
+			return landed != null and landed.is_on_floor(),
+		120
+	)
+	player = _harness.call("_current_player")
+	valid = valid and player != null
+	valid = valid and player.global_position.distance_to(TUNNEL_SOUTH_ENTRY) < 1.0
+	await _harness.call("_leave_scene")
+	return valid

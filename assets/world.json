@@ -115,15 +115,9 @@
 			"region": "undertow",
 			"exits": [
 				{"screen": [0, 0], "side": "west"},
-				{"screen": [3, 0], "side": "east"}
-			],
-			"plan": {
-				"exits": [
-					{"screen": [3, 0], "side": "east"},
-					{"screen": [0, 0], "side": "west"},
-					{"screen": [1, 0], "side": "south"}
-				]
-			}
+				{"screen": [3, 0], "side": "east"},
+				{"screen": [1, 0], "side": "south"}
+			]
 		},
 		"waking_coast_10": {
 			"note": "Tide pools on the beach, between the palm shore and the salt cliffs.",
@@ -202,15 +196,21 @@
 			]
 		},
 		"undertow_4": {
-			"note": "Pools under the undertow tunnel.",
+			"note": "Pools under the undertow tunnel, down a hole in its floor.",
+			"scene": "res://scenes/rooms/undertow_4.tscn",
 			"cell": [12, 3],
 			"size": [2, 1],
 			"region": "undertow",
 			"exits": [
-				{"screen": [0, 0], "side": "north"},
-				{"screen": [1, 0], "side": "east"},
-				{"screen": [0, 0], "side": "west"}
-			]
+				{"screen": [0, 0], "side": "north"}
+			],
+			"plan": {
+				"exits": [
+					{"screen": [0, 0], "side": "north"},
+					{"screen": [1, 0], "side": "east"},
+					{"screen": [0, 0], "side": "west"}
+				]
+			}
 		},
 		"undertow_5": {
 			"note": "East of the pools, a dead end for now.",

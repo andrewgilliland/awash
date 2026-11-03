@@ -9,6 +9,10 @@ const TILE := 16
 const EAST_ENTRY := Vector2(628, 96)
 const EAST_FLOOR := Vector2i(39, 6)
 const WEST_ENTRY := Vector2(12, 96)
+# The hole in the floor down to the pools, a tile wide so the way west hops it, and the sand
+# beside it where the climb back up comes out.
+const HOLE := Rect2i(17, 6, 1, 3)
+const SOUTH_ENTRY := Vector2(296, 96)
 # Landmark cells, drawn from the Undertow's sheets: layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	&"Terrain":
@@ -18,7 +22,7 @@ const LANDMARKS := {
 		Vector2i(14, 4): Vector2i(16, 8),
 		Vector2i(26, 5): Vector2i(16, 9),
 		Vector2i(6, 6): Vector2i(2, 1),
-		Vector2i(20, 6): Vector2i(2, 1),
+		Vector2i(22, 6): Vector2i(2, 1),
 		Vector2i(34, 6): Vector2i(3, 1),
 		Vector2i(0, 6): Vector2i(2, 1),
 	},
@@ -29,6 +33,7 @@ func get_tests() -> Array:
 	return [
 		["Undertow Room lays out four screens of tunnel", _test_lays_out_four_screens],
 		["Undertow tunnel leads east to the shaft from Tidefen's well", _test_leads_east],
+		["A hole in the tunnel's floor drops into the pools below", _test_hole_to_pools],
 		["Undertow tunnel's floor runs from its east end west to the hall", _test_floor_runs_west],
 		["A Scavenger hunts the undertow's middle pool", _test_scavenger_in_pool],
 	]
@@ -105,5 +110,28 @@ func _test_scavenger_in_pool() -> bool:
 		for x in [scavenger.get("patrol_left"), scavenger.get("patrol_right")]:
 			var cell := Vector2i(int(x / TILE), row)
 			valid = valid and RoomReach.is_water(terrain, cell)
+	room.free()
+	return valid
+
+
+func _test_hole_to_pools() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var valid := true
+	for column in range(HOLE.position.x, HOLE.end.x):
+		for row in range(HOLE.position.y, HOLE.end.y):
+			valid = valid and terrain.get_cell_source_id(Vector2i(column, row)) == -1
+	var exit := room.get_node_or_null("Exits/south") as Area2D
+	valid = valid and exit != null and exit.position.y > ROOM_SIZE.y
+	valid = valid and int(exit.position.x / TILE) in range(HOLE.position.x, HOLE.end.x)
+	valid = valid and exit.get("room_id") == &"undertow_4" and exit.get("entry_id") == &"north"
+	var entry := room.get_node_or_null("Entries/south") as Marker2D
+	valid = valid and entry != null and entry.position == SOUTH_ENTRY
+	if valid:
+		var below := Vector2i(SOUTH_ENTRY / TILE)
+		valid = terrain.get_cell_source_id(below) != -1
+		valid = valid and terrain.get_cell_source_id(below + Vector2i.UP) == -1
 	room.free()
 	return valid
