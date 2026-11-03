@@ -83,11 +83,11 @@ An edge of a Room that leads to an Entry in another Room. Crossing it enters tha
 _Avoid_: Door, portal, transition, warp
 
 **Region**:
-A stretch of the world with its own theme, Map name and colour, such as the Waking Coast. Each major Region has one Safe spoke; a smaller one, such as the Undertow beneath the coast's cliffs, leans on a neighbour's.
+A stretch of the world with its own theme, Map name and colour, such as the Waking Coast. A Region has a Safe spoke or leans on a neighbouring one, as the Waking Coast and the Undertow beneath its cliffs both lean on Tidefen Village.
 _Avoid_: Biome, zone, area, level
 
 **Safe spoke**:
-The one small place in a Region with no enemies, where its people, Rest point and shops are, such as Tidefen Village. It belongs to its Region but goes by its own name.
+A small place with no enemies, where people, a Rest point and shops are. It may be a small Region of its own, such as Tidefen Village past the Waking Coast, with its own theme, Map name and colour.
 _Avoid_: Hub, village, town (as a kind of place)
 
 **Rest point**:

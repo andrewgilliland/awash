@@ -8,6 +8,15 @@
 			"background": "res://scenes/regions/waking_coast/background.tscn",
 			"backgrounds": {"cave": "res://scenes/regions/waking_coast/cave_background.tscn"}
 		},
+		"tidefen": {
+			"note": "Tidefen Village, past the Warden's gate: the Safe spoke the Waking Coast and the Undertow lean on. It keeps the coast's sky and sea, and its sheets.",
+			"name": "Tidefen Village",
+			"colour": "#5c3d1e",
+			"tiles": "waking_coast",
+			"floor": [0, 2, 1],
+			"theme": "res://assets/regions/tidefen/music/theme.wav",
+			"background": "res://scenes/regions/waking_coast/background.tscn"
+		},
 		"undertow": {
 			"note": "Under the coast's cliffs, off the Main path: Tidefen's well drops into it once the story opens it, and its Shortcut leads home through the sea cave.",
 			"name": "Undertow",
@@ -100,7 +109,7 @@
 			"scene": "res://scenes/rooms/waking_coast_8.tscn",
 			"cell": [15, 0],
 			"size": [6, 1],
-			"region": "waking_coast",
+			"region": "tidefen",
 			"exits": [
 				{"screen": [0, 0], "side": "west"},
 				{"screen": [0, 0], "side": "south"}

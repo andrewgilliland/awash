@@ -58,7 +58,7 @@ describe("the World as planned", () => {
   });
 
   it("names each Region above its top-left Room", () => {
-    expect(planned.labels.map((label) => label.text).sort()).toEqual(["Undertow", "Waking Coast"]);
+    expect(planned.labels.map((label) => label.text).sort()).toEqual(["Tidefen Village", "Undertow", "Waking Coast"]);
   });
 });
 
