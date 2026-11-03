@@ -35,7 +35,7 @@ describe("the World as it is", () => {
   it("shows only built Rooms, each where it sits today", () => {
     const ids = today.rooms.map((room) => room.id);
     expect(ids).toContain("waking_coast_1");
-    expect(ids).not.toContain("undertow_1");
+    expect(ids).not.toContain("undertow_8");
     const one = today.rooms.find((room) => room.id === "waking_coast_1")!.block;
     const two = today.rooms.find((room) => room.id === "waking_coast_2")!.block;
     expect(two.x - one.x).toBe(2 * CELL.w);
@@ -47,8 +47,8 @@ describe("the World as planned", () => {
   const planned = layoutWorld(world, true);
 
   it("shows every Room, the Planned ones in outline, the built ones where they are to go", () => {
-    const undertow = planned.rooms.find((room) => room.id === "undertow_1")!;
-    expect(undertow.built).toBe(false);
+    const arena = planned.rooms.find((room) => room.id === "undertow_8")!;
+    expect(arena.built).toBe(false);
     const beach = planned.rooms.find((room) => room.id === "waking_coast_1")!;
     const graveyard = planned.rooms.find((room) => room.id === "waking_coast_4")!;
     expect(beach.built).toBe(true);
@@ -66,13 +66,21 @@ describe("one Region", () => {
   it("shows only that Region's Rooms, by where they are today or where the Plan puts them", () => {
     const plannedUndertow = layoutWorld(world, true, 0, "undertow");
     const ids = plannedUndertow.rooms.map((room) => room.id);
-    expect(ids).toContain("undertow_1");
+    expect(ids).toContain("undertow_8");
     expect(ids).toContain("waking_coast_9");
     expect(ids).not.toContain("waking_coast_1");
     expect(plannedUndertow.labels.map((label) => label.text)).toEqual(["Undertow"]);
-    // today the undertow tunnel is still on the Waking Coast
-    expect(layoutWorld(world, false, 0, "undertow").rooms).toEqual([]);
-    expect(layoutWorld(world, false, 0, "waking_coast").rooms.map((room) => room.id)).toContain("waking_coast_9");
+    const todayUndertow = layoutWorld(world, false, 0, "undertow").rooms.map((room) => room.id);
+    expect(todayUndertow).toContain("waking_coast_9");
+    expect(todayUndertow).not.toContain("undertow_8");
+    // a Room the Plan moves to another Region shows in its Region today, and in the other as planned
+    const moving: WorldData = {
+      regions: MADE_UP.regions,
+      rooms: { tunnel: { scene: "res://tunnel.tscn", cell: [0, 0], size: [1, 1], region: "coast", exits: [], plan: { region: "reef" } } },
+    };
+    expect(layoutWorld(moving, false, 0, "coast").rooms.map((room) => room.id)).toEqual(["tunnel"]);
+    expect(layoutWorld(moving, false, 0, "reef").rooms).toEqual([]);
+    expect(layoutWorld(moving, true, 0, "reef").rooms.map((room) => room.id)).toEqual(["tunnel"]);
   });
 });
 
