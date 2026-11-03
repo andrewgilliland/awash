@@ -27,7 +27,7 @@ Agreed 2026-11-02, from three throwaway layouts drawn with the Map's own code. T
 Each step gets its own grilling and PR.
 
 1. Built: move the built coast Rooms to their planned places, with the new coast Rooms built between them as they're needed. That covers the graveyard on the cliff tops, the stair down, and the trail, the Warden and Tidefen at sea level.
-2. Built: the sea cave under the cliffs, and the sinkhole removed. The sea cave is reached down a hole under the cliffs' foot and climbed out of up two landings. Until the Undertow is built, its east end still runs on into the undertow tunnel, open both ways; the Shortcut's wall comes with step 4.
-3. The Undertow as a Region: its theme, Background and tile sheets, with the undertow tunnel moved into it.
-4. The Undertow's Rooms, its Shortcut through the sea cave, then its Boss.
+2. Built: the sea cave under the cliffs, and the sinkhole removed. The sea cave is reached down a hole under the cliffs' foot and climbed out of up two landings.
+3. Built: the Undertow as a Region, drawn from the Mucho Pixels Underwater pack: its theme, Background and tile sheets, with the undertow tunnel moved into it.
+4. Built but for the Boss: the Undertow's Rooms (`undertow_1` to `undertow_7`), its Shortcut through the sea cave (a cracked wall a Charged Attack breaks from the Undertow side), and the first Cache, in a wreck at its dead end. Its Boss and the arena (`undertow_8`) behind the lake's sealed temple door come with their own grilling.
 5. The story beat that opens Tidefen's well.
