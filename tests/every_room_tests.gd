@@ -277,10 +277,10 @@ func _test_region_sheets() -> bool:
 	return _every_entered_room(_draws_from_region_sheets)
 
 
-# A Room's Terrain layer comes from its Region's terrain sheet, in the folder named by the Region's
-# id; every other layer, its Background's included, from the scenery sheet.
+# A Room's Terrain layer comes from its Region's terrain sheet, in the Region's tile folder (its
+# own, or the one it shares); every other layer, its Background's included, from the scenery sheet.
 static func _draws_from_region_sheets(room_id: StringName, room: Node2D) -> bool:
-	var tiles := "res://assets/regions/%s/tiles/" % World.region(room_id)
+	var tiles := World.tiles(room_id)
 	var terrain := room.get_node_or_null("Terrain")
 	var valid := terrain is TileMapLayer
 	for layer: TileMapLayer in room.find_children("*", "TileMapLayer", true, false):

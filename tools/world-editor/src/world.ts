@@ -33,6 +33,8 @@ export interface RegionRecord {
   colour: string;
   // The ground a new Room's starter floor is painted with: a source and atlas tile in its terrain.
   floor?: [number, number, number];
+  // Another Region whose tile sets it draws from, when it has none of its own.
+  tiles?: string;
   theme?: string;
   background?: string;
   backgrounds?: Record<string, string>;

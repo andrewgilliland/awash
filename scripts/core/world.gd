@@ -109,6 +109,12 @@ static func colour_of_region(region_id: StringName) -> Color:
 	return _regions_table().get(region_id, {}).get("colour", Color.TRANSPARENT)
 
 
+# The folder a Room's tile sets are in: its Region's own, or the one of another Region it shares.
+static func tiles(room_id: StringName) -> String:
+	var region_id := region(room_id)
+	return "res://assets/regions/%s/tiles/" % _region_of(room_id).get("tiles", region_id)
+
+
 # The theme for a Room's Region, or "" when it has none.
 static func theme(room_id: StringName) -> String:
 	return _region_of(room_id).get("theme", "")
@@ -162,7 +168,7 @@ static func _read() -> void:
 
 static func _region_record(plain: Dictionary) -> Dictionary:
 	var record := {}
-	for key: String in ["name", "theme", "background"]:
+	for key: String in ["name", "theme", "background", "tiles"]:
 		if plain.has(key):
 			record[key] = plain[key]
 	if plain.has("colour"):
