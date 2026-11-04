@@ -57,6 +57,8 @@ const SUITES: Array[String] = [
 	"res://tests/wraith_brain_tests.gd",
 	"res://tests/warden_brain_tests.gd",
 	"res://tests/wraith_sounds_tests.gd",
+	"res://tests/lurelight_brain_tests.gd",
+	"res://tests/lurelight_sounds_tests.gd",
 ]
 
 # Then, once nodes can join the tree, those built with its root.
@@ -71,6 +73,7 @@ const TREE_SUITES: Array[String] = [
 	"res://tests/scavenger_sound_scene_tests.gd",
 	"res://tests/storm_wisp_scene_tests.gd",
 	"res://tests/wraith_scene_tests.gd",
+	"res://tests/lurelight_scene_tests.gd",
 	"res://tests/health_bar_tests.gd",
 	"res://tests/player_growth_tests.gd",
 	"res://tests/enemy_experience_tests.gd",

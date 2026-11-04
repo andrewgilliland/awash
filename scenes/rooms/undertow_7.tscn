@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=4]
+[gd_scene load_steps=8 format=4]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_main"]
 
@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="4_exit"]
 
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="5_player"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/lurelight.tscn" id="lurelight_scene"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_edge"]
 size = Vector2(8, 144)
@@ -34,6 +35,16 @@ tile_map_data = PackedByteArray("AAAcAAIAAAACAAsAAAAcAAMAAAACAAwAAAAMAAQAAAABAAw
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Enemies" type="Node2D" parent="."]
+
+[node name="Lurelight" parent="Enemies" instance=ExtResource("lurelight_scene")]
+position = Vector2(112, 96)
+pool_left = 64.0
+pool_right = 160.0
+
+[node name="Lurelight2" parent="Enemies" instance=ExtResource("lurelight_scene")]
+position = Vector2(264, 96)
+pool_left = 208.0
+pool_right = 320.0
 
 [node name="Bounds" type="StaticBody2D" parent="."]
 collision_mask = 0

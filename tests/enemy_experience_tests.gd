@@ -3,12 +3,17 @@ extends RefCounted
 const SCAVENGER_SCENE := preload("res://scenes/enemies/scavenger.tscn")
 const STORM_WISP_SCENE := preload("res://scenes/enemies/storm_wisp.tscn")
 const WRAITH_SCENE := preload("res://scenes/enemies/wraith.tscn")
+const LURELIGHT_SCENE := preload("res://scenes/enemies/lurelight.tscn")
 const PALM_SHORE_SCENE := preload("res://scenes/rooms/waking_coast_2.tscn")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 # Each enemy kind and the Experience its defeat is worth, as its spec says.
-const WORTH := [[SCAVENGER_SCENE, 10], [STORM_WISP_SCENE, 15], [WRAITH_SCENE, 20]]
+const WORTH := [
+	[SCAVENGER_SCENE, 10], [STORM_WISP_SCENE, 15], [WRAITH_SCENE, 20], [LURELIGHT_SCENE, 15]
+]
 # Each enemy kind and its chance of leaving a Brinecap where it falls.
-const DROP_CHANCES := [[SCAVENGER_SCENE, 0.25], [STORM_WISP_SCENE, 0.2], [WRAITH_SCENE, 0.35]]
+const DROP_CHANCES := [
+	[SCAVENGER_SCENE, 0.25], [STORM_WISP_SCENE, 0.2], [WRAITH_SCENE, 0.35], [LURELIGHT_SCENE, 0.2]
+]
 const BRINECAP_SCENE_PATH := "res://scenes/items/brinecap.tscn"
 const WORLD_LAYER := 1 << 0
 const PLAYER_LAYER := 1 << 1

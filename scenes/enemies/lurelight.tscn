@@ -1,0 +1,77 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/lurelight.gd" id="1_lurelight"]
+[ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
+[ext_resource type="Script" uid="uid://dk3355uvj2vwl" path="res://scripts/combat/hitbox.gd" id="3_hit"]
+[ext_resource type="AudioStream" path="res://assets/enemies/lurelight/lurelight_gulp.wav" id="4_gulp"]
+[ext_resource type="AudioStream" path="res://assets/enemies/lurelight/lurelight_snap.wav" id="5_snap"]
+[ext_resource type="AudioStream" path="res://assets/enemies/lurelight/lurelight_hurt.wav" id="6_hurt"]
+[ext_resource type="AudioStream" path="res://assets/enemies/lurelight/lurelight_defeat.wav" id="7_defeat"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body0"]
+size = Vector2(16, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_head0"]
+size = Vector2(16, 12)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jaws0"]
+size = Vector2(16, 24)
+
+[node name="Lurelight" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 8
+collision_mask = 0
+motion_mode = 1
+script = ExtResource("1_lurelight")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 4)
+shape = SubResource("RectangleShape2D_body0")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -8)
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+monitorable = false
+script = ExtResource("2_hurt")
+
+[node name="Shape" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -6)
+shape = SubResource("RectangleShape2D_head0")
+
+[node name="JawsHitbox" type="Area2D" parent="."]
+position = Vector2(0, -12)
+collision_layer = 16
+collision_mask = 4
+monitoring = false
+monitorable = false
+script = ExtResource("3_hit")
+damage = 15
+
+[node name="Shape" type="CollisionShape2D" parent="JawsHitbox"]
+shape = SubResource("RectangleShape2D_jaws0")
+
+[node name="Sounds" type="Node2D" parent="."]
+
+[node name="Gulp" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("4_gulp")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Snap" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("5_snap")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Hurt" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("6_hurt")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Defeat" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("7_defeat")
+max_distance = 240.0
+bus = &"SFX"
