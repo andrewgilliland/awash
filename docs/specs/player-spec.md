@@ -90,7 +90,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - Idle, Walk, Jump and Attack each show their own body animation.
 - Jump plays once and holds its final frame while airborne; Attack plays once, and its end finishes the `ATTACK` state.
 - While charging, the body shows `walk` when horizontal input is held and `idle` otherwise.
-- The sword shows only during `CHARGE` and `ATTACK`, with its own `charge` and `attack` animations.
+- The sword shows only during `CHARGE` and `ATTACK`, with its own `charge` and `attack` animations. The `charge` pose holds the sword straight up over the head, in a frame of its own that no `attack` frame uses, so a Charge never looks like a swing's follow-through.
 - Each sword frame sits at its declared offset from the body, and the body and sword mirror with facing.
 - A shown animation keeps playing, even across a state change that still shows it (Walk into a moving Charge); a newly shown animation starts from its first frame.
 

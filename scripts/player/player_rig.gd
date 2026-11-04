@@ -17,7 +17,9 @@ const BODY_ANIMATIONS := {
 	&"attack": {frames = [5, 6], fps = 10.0, loop = false},
 }
 const SWORD_ANIMATIONS := {
-	&"charge": {frames = [1], fps = 1.0, loop = true, offsets = [Vector2(11, 0)]},
+	# Held straight up over the head, apart from either Attack frame, so a Charge never looks like
+	# a swing's follow-through.
+	&"charge": {frames = [2], fps = 1.0, loop = true, offsets = [Vector2(3, -12)]},
 	&"attack":
 	{
 		frames = [0, 1],
