@@ -2,7 +2,7 @@
 
 The Player's controller, rig and body; Health, Levels, Supplies and Equipment; and each enemy and Boss, their hits and sounds. How to run them is in [Testing](../testing.md).
 
-- The Player controller follows each Movement and States rule in `docs/specs/player-spec.md` (`tests/player_controller_tests.gd`).
+- The Player controller follows each Movement and States rule in `docs/specs/player-spec.md`, among them a quick tap of melee attacking with no Charge, the Charge starting only once melee is held a moment, and a full Charge half a second from the press (`tests/player_controller_tests.gd`).
 - The Player rig follows each Animation rule, and its table is complete: a row for every state and one sword offset per sword frame (`tests/player_rig_tests.gd`).
 - The player scene wires the rig: its sprites follow controller state and facing, driven through the body's `controller`.
 - Health starts full, or at a carried amount, takes hits, blocks them while invulnerable, stops at zero, and raises its maximum and what is left together, except when defeated (`tests/health_tests.gd`). The Run carries the Player's Health and Experience between Rooms, and a defeat keeps the Run and its Experience, back at the start with full Health (`tests/run_state_tests.gd`).

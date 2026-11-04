@@ -2,6 +2,8 @@ extends RefCounted
 
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const DELTA := 0.1
+# One physics frame at 60 a second.
+const FRAME := 1.0 / 60.0
 
 
 func get_tests() -> Array:
@@ -12,6 +14,9 @@ func get_tests() -> Array:
 		["Controller jumps from the floor", _test_jumps_from_floor],
 		["Controller ignores jump while airborne", _test_ignores_jump_while_airborne],
 		["Controller charges while melee is held", _test_charges_while_melee_held],
+		["A quick tap of melee attacks without a Charge", _test_tap_skips_charge],
+		["Melee held past a moment starts the Charge", _test_charge_waits_a_moment],
+		["A full Charge takes half a second of holding melee", _test_full_from_the_press],
 		["Controller attacks on melee release", _test_attacks_on_melee_release],
 		["Controller locks attack until it finishes", _test_locks_attack_until_finished],
 		["Controller ends attack by floor contact", _test_ends_attack_by_floor_contact],
@@ -156,13 +161,11 @@ func _test_ignores_jump_while_airborne() -> bool:
 
 func _test_charges_while_melee_held() -> bool:
 	var controller := PlayerController.new()
-	var frame := _next_frame(controller)
-	frame.melee_held = true
-	controller.step(frame, DELTA)
+	_hold_melee(controller, controller.charge_delay)
 	var valid := controller.state == PlayerController.State.CHARGE
 	valid = valid and not controller.is_moving
 
-	frame = _next_frame(controller)
+	var frame := _next_frame(controller)
 	frame.melee_held = true
 	frame.direction = 1.0
 	controller.step(frame, DELTA)
@@ -171,6 +174,43 @@ func _test_charges_while_melee_held() -> bool:
 	valid = valid and controller.is_moving
 	valid = valid and controller.facing == -1.0
 	return valid
+
+
+# A tap shorter than the moment before a Charge never shows one: letting go swings plainly.
+func _test_tap_skips_charge() -> bool:
+	var controller := PlayerController.new()
+	var valid := true
+	for i in 6:
+		var frame := _next_frame(controller)
+		frame.melee_held = true
+		controller.step(frame, FRAME)
+		valid = valid and controller.state == PlayerController.State.IDLE
+	controller.step(_next_frame(controller), FRAME)
+	valid = valid and controller.state == PlayerController.State.ATTACK
+	return valid and not controller.charged_attack
+
+
+func _test_charge_waits_a_moment() -> bool:
+	var controller := PlayerController.new()
+	var held := 0.0
+	while controller.state != PlayerController.State.CHARGE and held < 1.0:
+		var frame := _next_frame(controller)
+		frame.melee_held = true
+		controller.step(frame, FRAME)
+		held += FRAME
+	return held >= controller.charge_delay - 0.001 and held < controller.charge_delay + FRAME * 1.5
+
+
+# The moment before the Charge counts toward filling it: full half a second from the press.
+func _test_full_from_the_press() -> bool:
+	var controller := PlayerController.new()
+	var held := 0.0
+	while not controller.is_fully_charged() and held < 1.0:
+		var frame := _next_frame(controller)
+		frame.melee_held = true
+		controller.step(frame, FRAME)
+		held += FRAME
+	return absf(held - controller.charge_time) < FRAME * 1.5
 
 
 func _test_attacks_on_melee_release() -> bool:
@@ -260,7 +300,13 @@ func _test_reports_each_state_change_once() -> bool:
 	frame = _next_frame(controller)
 	frame.direction = 1.0
 	controller.step(frame, DELTA)
+	# Melee held while walking, short of the Charge; then a jump on the step the Charge starts.
 	frame = _next_frame(controller)
+	frame.direction = 1.0
+	frame.melee_held = true
+	controller.step(frame, DELTA)
+	frame = _next_frame(controller)
+	frame.direction = 1.0
 	frame.melee_held = true
 	frame.jump_pressed = true
 	controller.step(frame, DELTA)
@@ -326,11 +372,10 @@ func _hold_melee(controller: PlayerController, time: float) -> void:
 		controller.step(frame, DELTA)
 
 
+# A controller just into its Charge, melee held past the moment before one.
 func _charged_controller() -> PlayerController:
 	var controller := PlayerController.new()
-	var frame := _next_frame(controller)
-	frame.melee_held = true
-	controller.step(frame, DELTA)
+	_hold_melee(controller, controller.charge_delay)
 	return controller
 
 

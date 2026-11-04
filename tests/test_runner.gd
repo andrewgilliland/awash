@@ -208,7 +208,11 @@ func _test_player_sprites_follow_controller() -> bool:
 	var valid := character_sprite.animation == &"jump" and not sword_sprite.visible
 
 	_step_with(controller, {"direction": 1.0})
-	_step_with(controller, {"melee_held": true, "direction": 1.0})
+	# Held past the moment before a Charge.
+	for i in 30:
+		if controller.state == PlayerController.State.CHARGE:
+			break
+		_step_with(controller, {"melee_held": true, "direction": 1.0})
 	valid = valid and character_sprite.animation == &"walk"
 	valid = valid and sword_sprite.visible and sword_sprite.animation == &"charge"
 

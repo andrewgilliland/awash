@@ -37,7 +37,7 @@ Anything Interact can use, such as Mara. It reports being used and shows a bobbi
 _Avoid_: Usable, trigger, hotspot
 
 **Charge**:
-The Player state while melee is held: the sword is raised, movement continues, and facing is locked.
+The Player state once melee has been held a moment, 0.15 seconds: the sword is held out ready, movement continues, and facing is locked. A tap let go sooner is a quick Attack, with no Charge shown.
 _Avoid_: Wind-up, hold
 
 **Attack**:
