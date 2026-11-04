@@ -45,7 +45,7 @@ The Player state from melee release until the swing finishes: facing is locked, 
 _Avoid_: Swing, strike (as state names)
 
 **Charged Attack**:
-An Attack let go after a full Charge, half a second of holding melee. It costs twice what a quick one does, and the sword blinks once the Charge is full.
+An Attack let go after a full Charge, half a second of holding melee. It costs twice what a quick one does, the sword blinks once the Charge is full, and it swings lit.
 _Avoid_: Power attack, heavy attack, charge shot
 
 ## World
