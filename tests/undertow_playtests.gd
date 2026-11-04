@@ -64,6 +64,7 @@ const HALL_CLIMB := [
 const SEA_CAVE_PATH := "res://scenes/rooms/waking_coast_5.tscn"
 const SCAVENGER_PATH := "Enemies/Scavenger"
 const WRAITH_PATH := "Enemies/Wraith"
+const LURELIGHT_SCENE_PATH := "res://scenes/enemies/lurelight.tscn"
 # West along the tunnel from its east end: through two pools to the hole in its floor, a jump over
 # the hole, then through the last pool and over two rocks.
 const TUNNEL_TO_HOLE: Array[float] = [470.0, 400.0, 300.0]
@@ -182,7 +183,7 @@ func _charge_at_wall(player: CharacterBody2D) -> void:
 # Down the hole in the tunnel's floor into the pools, onto the landing under it and off it to the
 # floor, wading a pool east and back, then up the
 # landings and out through the opening onto the tunnel's sand beside the hole. The tunnel's
-# Scavenger is taken out first.
+# Scavenger and the pools' Lurelights are taken out first.
 func _pools_and_back() -> bool:
 	var player: CharacterBody2D = await _harness.call(
 		"_enter_room", &"waking_coast_9", &"south", TUNNEL_PATH
@@ -198,6 +199,7 @@ func _pools_and_back() -> bool:
 	if not valid or player == null:
 		await _harness.call("_leave_scene")
 		return false
+	_take_out_lurelights()
 	await _harness.call("_wade_to", player, POOLS_EAST)
 	valid = absf(player.global_position.y - POOLS_FLOOR_Y) < 1.0
 	valid = valid and player.global_position.x > 210.0
@@ -271,7 +273,8 @@ func _opens_cache() -> bool:
 
 
 # From the pools' west end down the temple stair, landing to landing, into the lake; west across
-# its shallows to the sealed door and back; then up the stair a jump at a time and out east.
+# its shallows to the sealed door and back; then up the stair a jump at a time and out east. The
+# lake's Lurelights are taken out first.
 func _stair_and_lake() -> bool:
 	var player: CharacterBody2D = await _harness.call(
 		"_enter_room", &"undertow_6", &"east", STAIR_PATH
@@ -289,6 +292,7 @@ func _stair_and_lake() -> bool:
 	if not valid or player == null:
 		await _harness.call("_leave_scene")
 		return false
+	_take_out_lurelights()
 	await _harness.call("_wade_to", player, LAKE_WEST)
 	valid = player.global_position.x < 48.0
 	valid = valid and absf(player.global_position.y - LAKE_FLOOR_Y) < 1.0
@@ -307,3 +311,10 @@ func _stair_and_lake() -> bool:
 	valid = valid and run.get("room_id") == &"undertow_4"
 	await _harness.call("_leave_scene")
 	return valid
+
+
+# Frees every Lurelight in the current Room, for a playtest about the way rather than the fight.
+func _take_out_lurelights() -> void:
+	for enemy in _harness.current_scene.get_node("Enemies").get_children():
+		if enemy.scene_file_path == LURELIGHT_SCENE_PATH:
+			enemy.free()

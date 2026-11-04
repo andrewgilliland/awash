@@ -168,6 +168,21 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
         sweep(0.6, 440, 110, duty=0.5, vibrato_hz=6, vibrato_depth=0.05),
         bubbles(5, 0.06, 160, 420, seed=14),
     ),
+    # The Lurelight dimming: a low gulp, then bubbles welling up, over the whole dim, so the Snap
+    # can be heard coming.
+    "lurelight_gulp": lambda: mix(
+        growl(0.4, 150, 80, tremolo_hz=9),
+        [0.0] * int(RATE * 0.3) + bubbles(3, 0.06, 200, 360, seed=30),
+    ),
+    # Its Snap: a splash as the jaws break the surface, and their clack.
+    "lurelight_snap": lambda: mix(noise(0.25, 5000, 600, seed=31), sweep(0.05, 1400, 1100, duty=0.125)),
+    # Struck: a thin squeal and a slap of water.
+    "lurelight_hurt": lambda: mix(
+        sweep(0.18, 900, 1500, duty=0.25, vibrato_hz=30, vibrato_depth=0.2),
+        noise(0.1, 4000, 800, seed=32),
+    ),
+    # Defeated: it gurgles as it sinks.
+    "lurelight_defeat": lambda: mix(bubbles(7, 0.05, 140, 380, seed=33), sweep(0.5, 300, 80, duty=0.5)),
     # Nameless Warden: a deep swell as it sets its shield, then the move it makes.
     "warden_windup": lambda: growl(0.6, 70, 140, tremolo_hz=12),
     # The shield bash: a heavy rush.
@@ -210,6 +225,7 @@ HOMES = {
     "scavenger_": "assets/enemies/scavenger",
     "storm_wisp_": "assets/enemies/storm_wisp",
     "wraith_": "assets/enemies/wraith",
+    "lurelight_": "assets/enemies/lurelight",
     "warden_": "assets/enemies/nameless_warden",
     "ui_": "assets/ui",
 }
