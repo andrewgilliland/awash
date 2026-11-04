@@ -57,7 +57,7 @@ position = Vector2(164, 72)
 collision_layer = 128
 collision_mask = 2
 script = ExtResource("4_ea865")
-room_id = &"waking_coast_8"
+room_id = &"tidefen_village_1"
 entry_id = &"west"
 
 [node name="Edge" type="CollisionShape2D" parent="Exits/east"]

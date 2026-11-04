@@ -25,6 +25,27 @@ Agreed 2026-11-02. The World editor is a local web app for laying out the World,
 - **Saving safely.** The editor writes files directly, and git is the undo between sessions. It refuses to save a file that changed on disk since it was loaded. Keep a Room's scene closed in Godot while painting it.
 - **The Aseprite sketches** in `room_layouts/` are retired: no new ones, and the old ones and the test comments citing them go in a later tidy-up.
 
+## Look
+
+Black, with near-black hairline panels and square corners, JetBrains Mono (served from `node_modules`, not the web), uppercase bold headings and buttons, one pale amber accent, and amber `//` labels with dashed leaders to their values. A sidebar of cards moves between the World as it is, the Plan, the Check and each built Room, chosen over restyling the old header layout from two throwaway variants. The World and Room pictures keep the game's own pixel art and colours.
+
+## Addresses
+
+Where you are is the address, so Back, Forward, Refresh and links work:
+
+| Address | Shows |
+|---|---|
+| `/world`, `/world/<region>` | The World as it is: all of it, or one Region |
+| `/plan`, `/plan/<region>` | The Plan, likewise |
+| `/rooms/<room>` | A built Room, to paint |
+| `/tests` | The game's tests from the last Check, failures first; the Check card goes here and runs them |
+| `?room=<room>` | The Room selected on the map |
+
+- **Navigation:** moving between views adds history. Selecting a Room only rewrites the address.
+- **Unsaved paint:** leaving a Room with unsaved paint asks first, however you leave.
+- **Addresses that lead nowhere:** an unknown address, Room or Region, or a Planned Room's address, says so, with a way back.
+- **No library:** `tools/world-editor/src/router.ts` reads and writes the addresses.
+
 ## Order of work
 
 Each step is its own PR, built test-first.

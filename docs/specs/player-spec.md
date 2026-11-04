@@ -26,8 +26,8 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - `IDLE`: selected while there is no horizontal input.
 - `WALK`: selected while left or right input is held.
 - `JUMP`: selected while airborne.
-- `CHARGE`: selected while `melee_attack` is held; movement continues, facing is locked, and sword charge pose is shown. Charging works on the ground and in the air, and jumping while charging keeps the charge.
-- `ATTACK`: selected when `melee_attack` is released after charging, on the ground or in the air, and held until the animation finishes. Jumping is not possible during `ATTACK`.
+- `CHARGE`: selected when `ATTACK` finishes with `melee_attack` still held. The Charge fills from the press, so it is full after 0.5 seconds of holding; let go before then and it just ends, with no second swing. While charging, movement continues, facing is locked, and sword charge pose is shown. Charging works on the ground and in the air, and jumping while charging keeps the charge.
+- `ATTACK`: selected the moment `melee_attack` is pressed, a quick slash, or when a full Charge is let go, a Charged Attack; on the ground or in the air, and held until the animation finishes. Jumping is not possible during `ATTACK`.
 - When `ATTACK` finishes, the player returns to `IDLE` on the floor or `JUMP` in the air.
 - State changes are decided once per physics frame, before the body moves, so a landing or ledge walk-off shows on the following frame.
 
@@ -38,7 +38,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - After a hit the Player is invulnerable for 1 second and blinks; hits during that time cost nothing.
 - The Player's Health carries from Room to Room; only a defeat or a new Run refills it.
 - At 0 Health the Player is defeated. It stops answering the controls, falls where it lands and flickers. Then it wakes at the first Room's `start` Entry with full Health, and the Run, its visited Rooms and its Map carry on.
-- The sword's hitbox is live only during `ATTACK`, 12 pixels in front of the Player by facing. A quick Attack costs an enemy 10 Health plus the Player's Strength; a Charged Attack, let go after 0.5 seconds of `CHARGE`, costs twice that, 20 at Strength 0. Once the Charge is full the sword blinks bright every 0.08 seconds until it is let go.
+- The sword's hitbox is live only during a quick slash's `ATTACK`, 12 pixels in front of the Player by facing, and costs an enemy 10 Health plus the Player's Strength. A Charged Attack's swing strikes nothing: it looses a Sword Beam from the blade, which flies along the Player's facing at 240 pixels a second for up to 240 pixels and costs the first thing it strikes twice a slash, 20 at Strength 0, charged, so it breaks a Ward or a Shortcut's cracked wall. It stops there, or at the world's terrain. Once the Charge is full the sword blinks bright every 0.08 seconds until it is let go, and the Charged Attack let go from it swings lit the whole way; a quick Attack's swing is plain.
 
 ## Growth
 
@@ -79,7 +79,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - Sounds play on the `SFX` audio bus (`default_bus_layout.tres`), from `AudioStreamPlayer`s under the Player's `Sounds` node.
 - `jump` plays when the jump impulse is applied, not when the Player walks off a ledge or is knocked into the air.
 - `land` plays on returning to `IDLE` or `WALK` from `JUMP` after at least 0.08 seconds in the air, so appearing at an Entry lands quietly.
-- `swing` plays when `ATTACK` begins, and `hit` when the sword strikes a Hurtbox.
+- `swing` plays when a slash begins, `beam` when a full Charge is let go and looses its Sword Beam, and `hit` when the sword strikes a Hurtbox.
 - `level_up` plays on reaching a Level, `pickup` on collecting a Supply and `eat` on using one.
 - `hurt` plays when a hit lands, or `defeat` instead when it takes the last Health; the Room waits 1.2 seconds, to see the Player fall and hear the sound, before it moves the Player back to the start.
 - The sounds are chiptune effects made by `scripts/tools/make_sfx.py` into `assets/player/`; change them there and rerun it.
@@ -98,7 +98,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 - `scripts/player/player_controller.gd` (the Player controller) owns the Movement and States rules: state transitions, facing, horizontal velocity and the jump impulse.
 - `scripts/player/player_rig.gd` (the Player rig) owns the Animation rules and their table.
-- `scripts/player/player.gd` (the Player body) owns gravity, `move_and_slide` and reading `Input`, and hands each step's state, facing and movement to the rig. It owns the Player's Health, Level, Supplies and Equipment, takes the Armor's Defense off each hit, collects and uses Supplies, turns Experience into Levels, Health and the sword's hit, turns a hurtbox hit into the controller's knockback, keeps the sword hitbox live during `ATTACK` (marking a Charged Attack's hit charged, which breaks a Ward), and reports defeat.
+- `scripts/player/player.gd` (the Player body) owns gravity, `move_and_slide` and reading `Input`, and hands each step's state, facing and movement to the rig. It owns the Player's Health, Level, Supplies and Equipment, takes the Armor's Defense off each hit, collects and uses Supplies, turns Experience into Levels, Health and the sword's hit, turns a hurtbox hit into the controller's knockback, keeps the sword hitbox live during a slash's `ATTACK`, looses a Charged Attack's Sword Beam (`scripts/player/sword_beam.gd`, whose hit is charged, which breaks a Ward), and reports defeat.
 - `scripts/player/player_controller.gd` also owns knockback and the stun that follows a hit.
 - `scripts/player/level.gd` (the Level) owns the Level table and reads a Level and its stats from total Experience.
 - `scripts/core/main.gd` (the Room) adds the Health bar under its Pause menu, hands each of its enemies' defeats to the Player as Experience, rolls each one's drop chance and adds the Brinecap it leaves, and returns the Player to the start when it is defeated. `scripts/core/run_state.gd` carries the Player's Health, Experience, Supplies and Armor between Rooms and recovers the Run from a defeat.

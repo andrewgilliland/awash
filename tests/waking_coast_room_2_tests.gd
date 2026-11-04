@@ -9,8 +9,7 @@ const WEST_ENTRY := Vector2(12, 64)
 # On the sand, clear of the east Exit.
 const EAST_ENTRY := Vector2(308, 96)
 const WORLD_LAYER := 1
-# Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_2.aseprite:
-# layer -> {cell: atlas coords}.
+# Landmark cells: layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	# Palms on the beach: crown middle and trunk.
 	&"Trees":
@@ -20,7 +19,6 @@ const LANDMARKS := {
 		Vector2i(10, 2): Vector2i(8, 1),
 		Vector2i(10, 4): Vector2i(8, 3),
 	},
-	&"Wreck": {Vector2i(18, 4): Vector2i(4, 2)},
 	&"Terrain":
 	{
 		Vector2i(0, 4): Vector2i(3, 13),
@@ -28,17 +26,13 @@ const LANDMARKS := {
 		Vector2i(1, 6): Vector2i(3, 15),
 		Vector2i(4, 5): Vector2i(4, 4),
 		Vector2i(8, 6): Vector2i(1, 1),
-		Vector2i(13, 5): Vector2i(1, 13),
-		Vector2i(14, 4): Vector2i(1, 5),
+		# a sand slope up from the beach to a step a tile high
+		Vector2i(13, 5): Vector2i(7, 2),
+		Vector2i(14, 5): Vector2i(2, 1),
 		Vector2i(15, 1): Vector2i(5, 4),
 		Vector2i(16, 6): Vector2i(3, 1),
 	},
-	&"Props":
-	{
-		Vector2i(11, 5): Vector2i(14, 7),
-		Vector2i(15, 2): Vector2i(3, 7),
-		Vector2i(16, 0): Vector2i(10, 3),
-	},
+	&"Props": {Vector2i(11, 5): Vector2i(14, 7)},
 }
 
 
@@ -46,7 +40,7 @@ func get_tests() -> Array:
 	return [
 		["Palm shore Room lays out two screens", _test_lays_out_two_screens],
 		["Palm shore west Entry stands on the cliff", _test_west_entry_on_cliff],
-		["Palm shore leads east to the salt cliffs", _test_leads_east],
+		["Palm shore leads east to the tide pools", _test_leads_east],
 	]
 
 
@@ -87,7 +81,7 @@ func _test_west_entry_on_cliff() -> bool:
 	return valid
 
 
-# The shore's east edge is the Exit up to the salt cliffs; neither edge is walled.
+# The shore's east edge is the Exit on to the tide pools; neither edge is walled.
 func _test_leads_east() -> bool:
 	var room := _room()
 	if room == null:
@@ -95,7 +89,7 @@ func _test_leads_east() -> bool:
 	var valid := room.get_node_or_null("Bounds") == null
 	var exit := room.get_node_or_null("Exits/east") as Area2D
 	valid = valid and exit != null and exit.position.x > ROOM_SIZE.x
-	valid = valid and exit.get("room_id") == &"waking_coast_3" and exit.get("entry_id") == &"west"
+	valid = valid and exit.get("room_id") == &"waking_coast_10" and exit.get("entry_id") == &"west"
 	var entry := room.get_node_or_null("Entries/east") as Marker2D
 	valid = valid and entry != null and entry.position == EAST_ENTRY
 	room.free()

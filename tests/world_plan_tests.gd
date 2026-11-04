@@ -7,7 +7,7 @@ const World := preload("res://scripts/core/world.gd")
 const BEACH := &"waking_coast_1"
 const GRAVEYARD := &"waking_coast_4"
 const SEA_CAVE := &"waking_coast_5"
-const TIDEFEN := &"waking_coast_8"
+const TIDEFEN := &"tidefen_village_1"
 const UNDERTOW := &"undertow"
 const SIDES := {
 	&"north": Vector2i.UP,

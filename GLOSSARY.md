@@ -37,16 +37,20 @@ Anything Interact can use, such as Mara. It reports being used and shows a bobbi
 _Avoid_: Usable, trigger, hotspot
 
 **Charge**:
-The Player state while melee is held: the sword is raised, movement continues, and facing is locked.
+The Player state melee goes on into when it is still held as the slash it pressed finishes: the sword is held out ready, movement continues, and facing is locked. Let go before it is full and it just ends, with no second swing.
 _Avoid_: Wind-up, hold
 
 **Attack**:
-The Player state from melee release until the swing finishes: facing is locked, jumping is not possible, and horizontal movement bleeds to a stop.
+The Player state from a melee press, or from letting go of a full Charge, until the swing finishes: facing is locked, jumping is not possible, and horizontal movement bleeds to a stop. A press slashes at once.
 _Avoid_: Swing, strike (as state names)
 
 **Charged Attack**:
-An Attack let go after a full Charge, half a second of holding melee. It costs twice what a quick one does, and the sword blinks once the Charge is full.
+An Attack let go after a full Charge, half a second of holding melee from the press. The sword blinks once the Charge is full, and it swings lit; the swing itself strikes nothing, and the Sword Beam it looses is the hit.
 _Avoid_: Power attack, heavy attack, charge shot
+
+**Sword Beam**:
+What a Charged Attack sends out along the Player's facing: a glowing copy of the blade that strikes the first thing in its way, for twice what a quick slash costs, and breaks a Ward or a Shortcut's cracked wall. It flies a screen and a half, and stops at the first thing it strikes or at the world's terrain.
+_Avoid_: Projectile, wave, shot
 
 ## World
 
@@ -83,11 +87,11 @@ An edge of a Room that leads to an Entry in another Room. Crossing it enters tha
 _Avoid_: Door, portal, transition, warp
 
 **Region**:
-A stretch of the world with its own theme, Map name and colour, such as the Waking Coast. Each major Region has one Safe spoke; a smaller one, such as the Undertow beneath the coast's cliffs, leans on a neighbour's.
+A stretch of the world with its own theme, Map name and colour, such as the Waking Coast. A Region has a Safe spoke or leans on a neighbouring one, as the Waking Coast and the Undertow beneath its cliffs both lean on Tidefen Village.
 _Avoid_: Biome, zone, area, level
 
 **Safe spoke**:
-The one small place in a Region with no enemies, where its people, Rest point and shops are, such as Tidefen Village. It belongs to its Region but goes by its own name.
+A small place with no enemies, where people, a Rest point and shops are. It may be a small Region of its own, such as Tidefen Village past the Waking Coast, with its own theme, Map name and colour.
 _Avoid_: Hub, village, town (as a kind of place)
 
 **Rest point**:
@@ -117,7 +121,7 @@ An optional route off the Main path that rejoins it, such as the sea cave.
 _Avoid_: Side path, detour, secret area
 
 **Shortcut**:
-A one-way route that returns the Player quickly to an earlier point on the Main path, such as Tidefen's well through the undertow. It stays shut from its far end until first used from its near end.
+A one-way route that returns the Player quickly to an earlier point on the Main path, such as the cracked wall between the Undertow and the sea cave. It stays shut from its far end until first used from its near end.
 _Avoid_: Branch (for a one-way return), warp
 
 **Drop**:
@@ -193,6 +197,10 @@ _Avoid_: Ghost, specter, phantom
 **Rune anchor**:
 The glowing stone lodged in a Wraith's chest, binding it to the coast. It is the only part of a Wraith the sword can hit, and only while it shows.
 _Avoid_: Core, weak point, heart
+
+**Lurelight**:
+The Undertow's pool enemy: a fish lurking under the dark water, its lure a pale rune light. It drifts toward the Player, dims, then snaps straight up and lies stranded at the surface, open to a single hit.
+_Avoid_: Angler, anglerfish, eel, lure fish
 
 **Boss**:
 An enemy that guards a Region's end, with its own Health bar along the bottom of the screen while it fights. Defeating it opens a Gate, and it stays defeated for the Run, through the Player's own defeat; a new Run brings it back.

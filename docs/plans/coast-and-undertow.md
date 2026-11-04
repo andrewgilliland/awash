@@ -5,7 +5,7 @@ Agreed 2026-11-02, from three throwaway layouts drawn with the Map's own code. T
 ## Decisions
 
 - The coast climbs up and right: the beach, the palm shore, new tide pools, the salt cliffs, new ledges up to the cliff tops, then the wreck graveyard up on the tops. A new broken stair comes down to the jungle trail, the Warden's gate and Tidefen, back at sea level.
-- Tidefen stays the Waking Coast's Safe spoke, coloured with the coast on the Map.
+- Tidefen stays the Safe spoke the coast leans on. (Changed 2026-11-03: Tidefen Village became a small Region of its own, with its own Map name, colour and theme, keeping the coast's sky, sea and sheets.)
 - The Warden stays the last Room before Tidefen.
 - The graveyard's sinkhole goes. The sea cave sits under the cliffs and is reached only from the cliffs' foot.
 - The Undertow becomes its own Region, beneath the cliffs and the graveyard, with its own Map name and colour. It has no Safe spoke of its own and leans on Tidefen.
@@ -26,8 +26,8 @@ Agreed 2026-11-02, from three throwaway layouts drawn with the Map's own code. T
 
 Each step gets its own grilling and PR.
 
-1. Move the built coast Rooms to their planned places, with the new coast Rooms built between them as they're needed. That covers the graveyard on the cliff tops, the stair down, and the trail, the Warden and Tidefen at sea level.
-2. The sea cave under the cliffs, and the sinkhole removed.
-3. The Undertow as a Region: its theme, Background and tile sheets, with the undertow tunnel moved into it.
-4. The Undertow's Rooms, its Shortcut through the sea cave, then its Boss.
+1. Built: move the built coast Rooms to their planned places, with the new coast Rooms built between them as they're needed. That covers the graveyard on the cliff tops, the stair down, and the trail, the Warden and Tidefen at sea level.
+2. Built: the sea cave under the cliffs, and the sinkhole removed. The sea cave is reached down a hole under the cliffs' foot and climbed out of up two landings.
+3. Built: the Undertow as a Region, drawn from the Mucho Pixels Underwater pack: its theme, Background and tile sheets, with the undertow tunnel moved into it.
+4. Built but for the Boss: the Undertow's Rooms (`undertow_1` to `undertow_7`), its Shortcut through the sea cave (a cracked wall a Charged Attack breaks from the Undertow side), and the first Cache, in a wreck at its dead end. Its Boss and the arena (`undertow_8`) behind the lake's sealed temple door come with their own grilling.
 5. The story beat that opens Tidefen's well.

@@ -8,10 +8,22 @@
 			"background": "res://scenes/regions/waking_coast/background.tscn",
 			"backgrounds": {"cave": "res://scenes/regions/waking_coast/cave_background.tscn"}
 		},
+		"tidefen_village": {
+			"note": "Tidefen Village, past the Warden's gate: the Safe spoke the Waking Coast and the Undertow lean on. It keeps the coast's sky and sea, and its sheets.",
+			"name": "Tidefen Village",
+			"colour": "#5c3d1e",
+			"tiles": "waking_coast",
+			"floor": [0, 2, 1],
+			"theme": "res://assets/regions/tidefen_village/music/theme.wav",
+			"background": "res://scenes/regions/waking_coast/background.tscn"
+		},
 		"undertow": {
-			"note": "Under the coast's cliffs, off the Main path: Tidefen's well drops into it once the story opens it, and its Shortcut leads home through the sea cave. Planned: its theme and Background come with its first Room.",
+			"note": "Under the coast's cliffs, off the Main path: Tidefen's well drops into it once the story opens it, and its Shortcut leads home through the sea cave.",
 			"name": "Undertow",
-			"colour": "#2b2452"
+			"colour": "#2b2452",
+			"floor": [0, 2, 1],
+			"theme": "res://assets/regions/undertow/music/theme.wav",
+			"background": "res://scenes/regions/undertow/background.tscn"
 		}
 	},
 	"rooms": {
@@ -37,127 +49,88 @@
 		"waking_coast_3": {
 			"note": "Two screens tall: its beach is level with the palm shore, its cliff top a screen above.",
 			"scene": "res://scenes/rooms/waking_coast_3.tscn",
-			"cell": [3, -1],
+			"cell": [5, -1],
 			"size": [1, 2],
 			"region": "waking_coast",
 			"exits": [
 				{"screen": [0, 1], "side": "west"},
 				{"screen": [0, 0], "side": "east"},
-				{"screen": [0, 1], "side": "east"}
-			],
-			"plan": {
-				"cell": [5, -1],
-				"exits": [
-					{"screen": [0, 1], "side": "west"},
-					{"screen": [0, 0], "side": "east"},
-					{"screen": [0, 1], "side": "south"}
-				]
-			}
+				{"screen": [0, 1], "side": "south"}
+			]
 		},
 		"waking_coast_4": {
-			"note": "Two screens wide, along from the salt cliffs' top.",
+			"note": "Two screens wide, along the cliff tops.",
 			"scene": "res://scenes/rooms/waking_coast_4.tscn",
-			"cell": [4, -1],
+			"cell": [9, -2],
 			"size": [2, 1],
 			"region": "waking_coast",
 			"exits": [
 				{"screen": [0, 0], "side": "west"},
-				{"screen": [1, 0], "side": "east"},
-				{"screen": [1, 0], "side": "south"}
-			],
-			"plan": {
-				"cell": [9, -2],
-				"exits": [
-					{"screen": [0, 0], "side": "west"},
-					{"screen": [1, 0], "side": "east"}
-				]
-			}
+				{"screen": [1, 0], "side": "east"}
+			]
 		},
 		"waking_coast_5": {
-			"note": "Under the wreck graveyard, beside the salt cliffs' foot.",
+			"note": "Under the salt cliffs' foot, down a hole beside the beach.",
 			"scene": "res://scenes/rooms/waking_coast_5.tscn",
-			"cell": [4, 0],
+			"cell": [5, 1],
 			"size": [2, 1],
 			"region": "waking_coast",
 			"background": "cave",
 			"exits": [
-				{"screen": [0, 0], "side": "west"},
+				{"screen": [0, 0], "side": "north"},
 				{"screen": [1, 0], "side": "east"}
-			],
-			"plan": {
-				"cell": [5, 1],
-				"exits": [
-					{"screen": [0, 0], "side": "north"},
-					{"screen": [1, 0], "side": "east"}
-				]
-			}
+			]
 		},
 		"waking_coast_6": {
-			"note": "Two screens wide, on from the graveyard over its sinkhole, climbing inland.",
+			"note": "Two screens wide, on from the broken stair's foot, climbing inland.",
 			"scene": "res://scenes/rooms/waking_coast_6.tscn",
-			"cell": [6, -1],
+			"cell": [12, 0],
 			"size": [2, 1],
 			"region": "waking_coast",
 			"exits": [
 				{"screen": [0, 0], "side": "west"},
 				{"screen": [1, 0], "side": "east"}
-			],
-			"plan": {
-				"cell": [12, 0]
-			}
+			]
 		},
 		"waking_coast_7": {
 			"note": "One screen: the arena at the trail's end.",
 			"scene": "res://scenes/rooms/waking_coast_7.tscn",
-			"cell": [8, -1],
+			"cell": [14, 0],
 			"size": [1, 1],
 			"region": "waking_coast",
 			"exits": [
 				{"screen": [0, 0], "side": "west"},
 				{"screen": [0, 0], "side": "east"}
 			],
-			"markers": {"boss": [0, 0]},
-			"plan": {
-				"cell": [14, 0]
-			}
+			"markers": {"boss": [0, 0]}
 		},
-		"waking_coast_8": {
+		"tidefen_village_1": {
 			"note": "Tidefen, at the end of the coast past the Warden's gate: its stilt houses, market square and harbour, two screens each.",
-			"scene": "res://scenes/rooms/waking_coast_8.tscn",
-			"cell": [9, -1],
+			"scene": "res://scenes/rooms/tidefen_village_1.tscn",
+			"cell": [15, 0],
 			"size": [6, 1],
-			"region": "waking_coast",
+			"region": "tidefen_village",
 			"exits": [
 				{"screen": [0, 0], "side": "west"},
 				{"screen": [0, 0], "side": "south"}
 			],
-			"markers": {"rest": [3, 0]},
-			"plan": {
-				"cell": [15, 0]
-			}
+			"markers": {"rest": [3, 0]}
 		},
 		"waking_coast_9": {
-			"note": "Four screens of tunnel under the trail, the gate and Tidefen's well, back to the sea cave.",
+			"note": "Four screens of tunnel under the trail and Tidefen, between the shaft from its well and the temple hall.",
 			"scene": "res://scenes/rooms/waking_coast_9.tscn",
-			"cell": [6, 0],
+			"cell": [11, 2],
 			"size": [4, 1],
-			"region": "waking_coast",
-			"background": "cave",
+			"region": "undertow",
 			"exits": [
-				{"screen": [0, 0], "side": "west"}
-			],
-			"plan": {
-				"cell": [11, 2],
-				"region": "undertow",
-				"exits": [
-					{"screen": [3, 0], "side": "east"},
-					{"screen": [0, 0], "side": "west"},
-					{"screen": [1, 0], "side": "south"}
-				]
-			}
+				{"screen": [0, 0], "side": "west"},
+				{"screen": [3, 0], "side": "east"},
+				{"screen": [1, 0], "side": "south"}
+			]
 		},
 		"waking_coast_10": {
-			"note": "Tide pools on the beach, before the cliffs.",
+			"note": "Tide pools on the beach, between the palm shore and the salt cliffs.",
+			"scene": "res://scenes/rooms/waking_coast_10.tscn",
 			"cell": [3, 0],
 			"size": [2, 1],
 			"region": "waking_coast",
@@ -168,6 +141,7 @@
 		},
 		"waking_coast_11": {
 			"note": "Ledges up from the salt cliffs' top to the cliff tops.",
+			"scene": "res://scenes/rooms/waking_coast_11.tscn",
 			"cell": [6, -2],
 			"size": [1, 2],
 			"region": "waking_coast",
@@ -178,6 +152,7 @@
 		},
 		"waking_coast_12": {
 			"note": "The cliff tops, on to the wreck graveyard.",
+			"scene": "res://scenes/rooms/waking_coast_12.tscn",
 			"cell": [7, -2],
 			"size": [2, 1],
 			"region": "waking_coast",
@@ -188,6 +163,7 @@
 		},
 		"waking_coast_13": {
 			"note": "A broken stair down from the graveyard to the jungle trail.",
+			"scene": "res://scenes/rooms/waking_coast_13.tscn",
 			"cell": [11, -2],
 			"size": [1, 3],
 			"region": "waking_coast",
@@ -198,6 +174,7 @@
 		},
 		"undertow_1": {
 			"note": "The shaft Tidefen's well drops into: no way back up.",
+			"scene": "res://scenes/rooms/undertow_1.tscn",
 			"cell": [15, 1],
 			"size": [1, 2],
 			"region": "undertow",
@@ -206,7 +183,8 @@
 			]
 		},
 		"undertow_2": {
-			"note": "A hall west of the undertow tunnel.",
+			"note": "A hall of the drowned temple, west of the undertow tunnel.",
+			"scene": "res://scenes/rooms/undertow_2.tscn",
 			"cell": [9, 1],
 			"size": [2, 2],
 			"region": "undertow",
@@ -217,6 +195,7 @@
 		},
 		"undertow_3": {
 			"note": "The passage to the sea cave's wall, the Undertow's Shortcut home.",
+			"scene": "res://scenes/rooms/undertow_3.tscn",
 			"cell": [7, 1],
 			"size": [2, 1],
 			"region": "undertow",
@@ -226,7 +205,8 @@
 			]
 		},
 		"undertow_4": {
-			"note": "Pools under the undertow tunnel.",
+			"note": "Pools under the undertow tunnel, down a hole in its floor.",
+			"scene": "res://scenes/rooms/undertow_4.tscn",
 			"cell": [12, 3],
 			"size": [2, 1],
 			"region": "undertow",
@@ -237,7 +217,8 @@
 			]
 		},
 		"undertow_5": {
-			"note": "East of the pools, a dead end for now.",
+			"note": "East of the pools, a dead end down to a sunken wreck and its Cache.",
+			"scene": "res://scenes/rooms/undertow_5.tscn",
 			"cell": [14, 3],
 			"size": [2, 2],
 			"region": "undertow",
@@ -246,7 +227,8 @@
 			]
 		},
 		"undertow_6": {
-			"note": "A stair down from the pools.",
+			"note": "A stair down from the pools, in the drowned temple.",
+			"scene": "res://scenes/rooms/undertow_6.tscn",
 			"cell": [11, 3],
 			"size": [1, 2],
 			"region": "undertow",
@@ -256,14 +238,20 @@
 			]
 		},
 		"undertow_7": {
-			"note": "A lake at the bottom, west to the Boss.",
+			"note": "A shallow lake at the bottom, west to the Boss behind a sealed temple door.",
+			"scene": "res://scenes/rooms/undertow_7.tscn",
 			"cell": [8, 4],
 			"size": [3, 1],
 			"region": "undertow",
 			"exits": [
-				{"screen": [2, 0], "side": "east"},
-				{"screen": [0, 0], "side": "west"}
-			]
+				{"screen": [2, 0], "side": "east"}
+			],
+			"plan": {
+				"exits": [
+					{"screen": [2, 0], "side": "east"},
+					{"screen": [0, 0], "side": "west"}
+				]
+			}
 		},
 		"undertow_8": {
 			"note": "The Undertow's Boss, at its far west end: named and designed later.",

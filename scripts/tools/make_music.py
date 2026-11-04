@@ -120,6 +120,49 @@ SONGS = [
         ],
         snare=True,
     ),
+    # Tidefen Village: calm and homely after the trail, in G major (G - Em - C - D, then
+    # G - Em - Am - D), unhurried, with no snare.
+    Song(
+        name="tidefen_theme",
+        bpm=92,
+        chords=[
+            ["G3", "B3", "D4"], ["E3", "G3", "B3"], ["C3", "E3", "G3"], ["D3", "F#3", "A3"],
+            ["G3", "B3", "D4"], ["E3", "G3", "B3"], ["A2", "C3", "E3"], ["D3", "F#3", "A3"],
+        ],
+        bass_roots=["G2", "E2", "C2", "D2", "G2", "E2", "A1", "D2"],
+        melody=[
+            ("D5", 2), ("B4", 1), ("G4", 1), ("B4", 2), ("D5", 2),
+            ("E5", 3), ("D5", 1), ("B4", 4),
+            ("C5", 2), ("E5", 2), ("G5", 2), ("E5", 2),
+            ("D5", 4), ("A4", 2), ("-", 2),
+            ("B4", 2), ("D5", 1), ("G5", 1), ("F#5", 2), ("D5", 2),
+            ("E5", 2), ("G5", 2), ("E5", 2), ("B4", 2),
+            ("C5", 2), ("E5", 2), ("D5", 2), ("C5", 2),
+            ("A4", 2), ("F#4", 2), ("A4", 2), ("D5", 2),
+        ],
+    ),
+    # The Undertow: slow and low under the cliffs, in D minor. A phrase that sinks (Dm - Bb - Gm -
+    # A), and an answer that lifts a little before the A major turn lets it fall again
+    # (Dm - Bb - C - A). No snare: only the drip of the surf's noise.
+    Song(
+        name="undertow_theme",
+        bpm=84,
+        chords=[
+            ["D3", "F3", "A3"], ["A#2", "D3", "F3"], ["G2", "A#2", "D3"], ["A2", "C#3", "E3"],
+            ["D3", "F3", "A3"], ["A#2", "D3", "F3"], ["C3", "E3", "G3"], ["A2", "C#3", "E3"],
+        ],
+        bass_roots=["D2", "A#1", "G1", "A1", "D2", "A#1", "C2", "A1"],
+        melody=[
+            ("D5", 3), ("F5", 1), ("A5", 2), ("G5", 1), ("F5", 1),
+            ("D5", 4), ("-", 2), ("C5", 1), ("D5", 1),
+            ("A#4", 2), ("D5", 2), ("G5", 3), ("F5", 1),
+            ("E5", 4), ("C#5", 2), ("-", 2),
+            ("D5", 2), ("A4", 2), ("D5", 2), ("E5", 1), ("F5", 1),
+            ("F5", 3), ("G5", 1), ("F5", 2), ("D5", 2),
+            ("E5", 2), ("G5", 2), ("E5", 2), ("C5", 2),
+            ("C#5", 4), ("A4", 2), ("-", 2),
+        ],
+    ),
 ]
 
 
@@ -259,6 +302,8 @@ def write(path: Path, samples: List[float]) -> None:
 HOMES = {
     "start_theme": Path("assets/ui/start_theme.wav"),
     "waking_coast_theme": Path("assets/regions/waking_coast/music/theme.wav"),
+    "undertow_theme": Path("assets/regions/undertow/music/theme.wav"),
+    "tidefen_theme": Path("assets/regions/tidefen_village/music/theme.wav"),
 }
 
 

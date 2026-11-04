@@ -22,6 +22,7 @@ func get_tests() -> Array:
 		["Player carries its sounds on the SFX bus", _test_sounds_on_sfx_bus],
 		["Player sounds its jump and landing", _test_jump_and_land],
 		["Player sounds its swing and a sword hit", _test_swing_and_hit],
+		["Player zings as a full Charge looses its Sword Beam", _test_beam_zings],
 		["Player sounds being hurt, then defeated", _test_hurt_then_defeat],
 	]
 
@@ -52,9 +53,8 @@ func _test_jump_and_land() -> bool:
 func _test_swing_and_hit() -> bool:
 	var player := _player()
 	var controller := player.get("controller") as PlayerController
-	_step(controller, {"melee_held": true})
 	var valid := not _playing(player, &"Swing")
-	_step(controller, {})
+	_step(controller, {"melee_held": true})
 	valid = valid and _playing(player, &"Swing")
 
 	# The live sword overlapping an enemy's hurtbox, as the physics server reports it.
@@ -66,6 +66,22 @@ func _test_swing_and_hit() -> bool:
 	valid = valid and _playing(player, &"Hit")
 	player.free()
 	target.free()
+	return valid
+
+
+func _test_beam_zings() -> bool:
+	var player := _player()
+	var controller := player.get("controller") as PlayerController
+	_step(controller, {"melee_held": true})
+	_step(controller, {"melee_held": true, "attack_finished": true})
+	for i in ceili(controller.charge_time / 0.1) + 1:
+		_step(controller, {"melee_held": true})
+	var valid := not _playing(player, &"Beam")
+	_step(controller, {})
+	valid = valid and _playing(player, &"Beam")
+	for beam in player.get_tree().get_nodes_in_group(&"sword_beam"):
+		beam.free()
+	player.free()
 	return valid
 
 

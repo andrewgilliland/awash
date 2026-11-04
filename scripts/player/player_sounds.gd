@@ -5,6 +5,7 @@ const PlayerController := preload("res://scripts/player/player_controller.gd")
 const JUMP := &"Jump"
 const LAND := &"Land"
 const SWING := &"Swing"
+const BEAM := &"Beam"
 const HIT := &"Hit"
 const HURT := &"Hurt"
 const DEFEAT := &"Defeat"
@@ -33,7 +34,8 @@ static func for_state_change(
 	if landed:
 		return LAND
 	if next == PlayerController.State.ATTACK:
-		return SWING
+		# Only a full Charge goes from charging into an Attack: the one that looses a Sword Beam.
+		return BEAM if previous == PlayerController.State.CHARGE else SWING
 	return &""
 
 

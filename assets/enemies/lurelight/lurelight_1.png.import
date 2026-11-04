@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://br6u01tkjwoq6"
-path="res://.godot/imported/tidefen_lantern.png-c3b727b22742100660b063beb4fabeaa.ctex"
+uid="uid://dqetymnrg8vp0"
+path="res://.godot/imported/lurelight_1.png-4a583fdc1b6652a96736947edef2b586.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/regions/waking_coast/props/tidefen_lantern.png"
-dest_files=["res://.godot/imported/tidefen_lantern.png-c3b727b22742100660b063beb4fabeaa.ctex"]
+source_file="res://assets/enemies/lurelight/lurelight_1.png"
+dest_files=["res://.godot/imported/lurelight_1.png-4a583fdc1b6652a96736947edef2b586.ctex"]
 
 [params]
 

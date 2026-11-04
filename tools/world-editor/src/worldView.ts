@@ -3,6 +3,7 @@
 // Room's edge for an Exit, and set a Room's Region, note, size and marks beside it.
 
 import { canvas, drawMarker, el, outline, rect, type Rect } from "./dom";
+import { roomPicture } from "./roomPicture";
 import { asPlanned, CELL, layoutWorld, type Side, type Vec, type WorldData } from "./world";
 import { addPlannedRoom, moveRoom, removePlannedRoom, resizeRoom, setMarker, setNote, setRegion, toggleExit } from "./worldEdit";
 
@@ -16,6 +17,9 @@ const PLANNED_WALL = "rgba(148, 165, 198, 0.55)";
 const LINE = "rgba(148, 165, 198, 0.3)";
 const GRID = "rgba(148, 165, 198, 0.07)";
 const GHOST = "#ffff8b";
+// A Room lit from outside the map, as its card in the sidebar is hovered.
+const LIT_FILL = "rgba(248, 225, 142, 0.28)";
+const LIT_EDGE = "#f8e18e";
 // How near a Room's edge, in Map pixels, a click toggles an Exit.
 const EDGE_REACH = 5;
 
@@ -24,14 +28,18 @@ export type Tool = "select" | "room" | "exit";
 export interface WorldEditor {
   world: WorldData;
   planned: boolean;
+  // The one Region on show, if only one is.
+  focus?: string;
   selected: string | null;
   tool: Tool;
   region: string;
   drop: boolean;
+  // Whether built Rooms show their tiles in their cells.
+  pictures: boolean;
   // Applies an edit, or says why it couldn't be made.
   apply(next: WorldData | null, refused: string, select?: string): void;
   select(id: string | null): void;
-  set(changes: Partial<Pick<WorldEditor, "tool" | "region" | "drop">>): void;
+  set(changes: Partial<Pick<WorldEditor, "tool" | "region" | "drop" | "pictures">>): void;
   open(id: string): void;
   // Builds a Planned Room: writes its scene and saves the World with it.
   build(id: string): void;
@@ -39,12 +47,27 @@ export interface WorldEditor {
 
 const same = (a: Vec, b: Vec) => a[0] === b[0] && a[1] === b[1];
 
-export function showWorld(editor: WorldEditor, stage: HTMLElement, side: HTMLElement) {
+// What the rest of the page can do to the World view once it is shown.
+export interface WorldViewHandle {
+  // Lights one Room on the map, bringing it into view, or none.
+  highlight(id: string | null): void;
+}
+
+export function showWorld(editor: WorldEditor, stage: HTMLElement, side: HTMLElement): WorldViewHandle {
   const { world, planned } = editor;
   const editing = planned;
-  const layout = layoutWorld(world, planned, editing ? PAD : 0);
+  const layout = layoutWorld(world, planned, editing ? PAD : 0, editor.focus);
+  if (!planned && layout.rooms.length === 0) {
+    const name = world.regions[editor.focus ?? ""]?.name ?? "This Region";
+    stage.replaceChildren(el("p", { className: "muted" }, `${name} has no built Rooms yet. See it in The Plan.`));
+    side.replaceChildren(...details(editor));
+    return { highlight() {} };
+  }
   const [c, g] = canvas(layout.size.w, layout.size.h, SCALE);
   let ghost: Rect | null = null;
+  let lit: string | null = null;
+  // Each built Room's picture, as it arrives.
+  const shownPictures = new Map<string, HTMLCanvasElement>();
 
   const draw = () => {
     rect(g, { x: 0, y: 0, ...layout.size }, BACKDROP);
@@ -57,7 +80,16 @@ export function showWorld(editor: WorldEditor, stage: HTMLElement, side: HTMLEle
       }
     }
     for (const room of layout.rooms) {
-      if (room.built) {
+      const picture = shownPictures.get(room.id);
+      if (room.built && picture) {
+        rect(g, room.block, room.colour);
+        g.imageSmoothingEnabled = true;
+        g.drawImage(picture, room.block.x, room.block.y, room.block.w, room.block.h);
+        g.imageSmoothingEnabled = false;
+        if (room.id === editor.selected) {
+          rect(g, room.block, "rgba(82, 99, 140, 0.45)");
+        }
+      } else if (room.built) {
         rect(g, room.block, room.id === editor.selected ? CURRENT : room.colour);
       } else if (room.id === editor.selected) {
         rect(g, room.block, "rgba(82, 99, 140, 0.45)");
@@ -69,6 +101,11 @@ export function showWorld(editor: WorldEditor, stage: HTMLElement, side: HTMLEle
     g.fillStyle = "#c6d3e8";
     g.font = "6px monospace";
     layout.labels.forEach((label) => g.fillText(label.text.toUpperCase(), label.x, label.y));
+    const shown = layout.rooms.find((room) => room.id === lit);
+    if (shown) {
+      rect(g, shown.block, LIT_FILL);
+      outline(g, shown.block, LIT_EDGE);
+    }
     if (ghost) {
       outline(g, ghost, GHOST);
     }
@@ -181,12 +218,45 @@ export function showWorld(editor: WorldEditor, stage: HTMLElement, side: HTMLEle
   });
 
   draw();
-  const tools = editing ? toolbar(editor) : [];
-  stage.replaceChildren(...tools, c);
+  const tools = toolbar(editor, editing);
+  if (editor.pictures) {
+    for (const room of layout.rooms.filter((r) => r.built)) {
+      void roomPicture(world, room.id).then((picture) => {
+        shownPictures.set(room.id, picture);
+        draw();
+      });
+    }
+  }
+  const map = el("div", { className: "map-box" }, c);
+  stage.replaceChildren(...tools, map);
   side.replaceChildren(...details(editor));
+  return {
+    highlight(id) {
+      lit = id;
+      draw();
+      const room = layout.rooms.find((r) => r.id === id);
+      if (!room) {
+        return;
+      }
+      // Scrolled into the middle of the map if any of it is out of sight.
+      const box = c.getBoundingClientRect();
+      const view = map.getBoundingClientRect();
+      const left = box.left + room.block.x * SCALE;
+      const top = box.top + room.block.y * SCALE;
+      const right = left + room.block.w * SCALE;
+      const bottom = top + room.block.h * SCALE;
+      if (left < view.left || right > view.right || top < view.top || bottom > view.bottom) {
+        map.scrollBy({
+          left: (left + right) / 2 - (view.left + view.right) / 2,
+          top: (top + bottom) / 2 - (view.top + view.bottom) / 2,
+          behavior: "smooth",
+        });
+      }
+    },
+  };
 }
 
-function toolbar(editor: WorldEditor): Node[] {
+function toolbar(editor: WorldEditor, editing: boolean): Node[] {
   const tool = (kind: Tool, label: string, hint: string) =>
     el("button", { type: "button", title: hint, ariaPressed: String(editor.tool === kind), onclick: () => editor.set({ tool: kind }) }, label);
   const regions = el(
@@ -195,18 +265,33 @@ function toolbar(editor: WorldEditor): Node[] {
     ...Object.entries(editor.world.regions).map(([id, region]) => el("option", { value: id, selected: id === editor.region }, region.name)),
   );
   const drop = el("input", { type: "checkbox", checked: editor.drop, onchange: (e: Event) => editor.set({ drop: (e.target as HTMLInputElement).checked }) });
-  const bits: Node[] = [
-    tool("select", "Move", "Click a Room to see it; drag it to move it (a built Room moves only in the Plan)"),
-    tool("room", "New Room", "Drag out empty screens for a new Planned Room"),
-    tool("exit", "Exits", "Click a Room's edge to add or take away an Exit"),
-  ];
-  if (editor.tool === "room") {
-    bits.push(el("label", {}, "in ", regions));
+  const pictures = el(
+    "button",
+    {
+      type: "button",
+      className: "toggle",
+      title: "Show each built Room's tiles in its cells",
+      ariaPressed: String(editor.pictures),
+      onclick: () => editor.set({ pictures: !editor.pictures }),
+    },
+    "Room pictures",
+    el("span", { className: "dot", ariaHidden: "true" }, editor.pictures ? "●" : "○"),
+  );
+  const bits: Node[] = [];
+  if (editing) {
+    bits.push(
+      tool("select", "Move", "Click a Room to see it; drag it to move it (a built Room moves only in the Plan)"),
+      tool("room", "New Room", "Drag out empty screens for a new Planned Room"),
+      tool("exit", "Exits", "Click a Room's edge to add or take away an Exit"),
+    );
+    if (editor.tool === "room") {
+      bits.push(el("label", {}, "in ", regions));
+    }
+    if (editor.tool === "exit") {
+      bits.push(el("label", { title: "A south Exit falls into the Room below, with no way back up" }, drop, " South Exits are Drops"));
+    }
   }
-  if (editor.tool === "exit") {
-    bits.push(el("label", { title: "A south Exit falls into the Room below, with no way back up" }, drop, " South Exits are Drops"));
-  }
-  return [el("div", { className: "toolbar" }, ...bits)];
+  return [el("div", { className: "toolbar" }, ...bits, pictures)];
 }
 
 function details(editor: WorldEditor): Node[] {
@@ -219,7 +304,7 @@ function details(editor: WorldEditor): Node[] {
         { className: "muted" },
         planned
           ? "Drag a Room to move it, drag out empty screens with New Room, or click a Room's edge with Exits. Double-click a built Room to open it."
-          : "Click a Room to see it; double-click a built Room to open it. Edit the Plan in As planned.",
+          : "Click a Room to see it; double-click a built Room to open it. Edit it in The Plan.",
       ),
     ];
   }

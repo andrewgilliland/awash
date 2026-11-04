@@ -5,169 +5,101 @@ const FIRST_ROOM_PATH := "res://scenes/rooms/waking_coast_1.tscn"
 const START_SCREEN_PATH := "res://scenes/ui/start_screen.tscn"
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 const PlayerController := preload("res://scripts/player/player_controller.gd")
-const AssetPathTests := preload("res://tests/asset_path_tests.gd")
-const RegionBackgroundTests := preload("res://tests/region_background_tests.gd")
-const RegionTileSheetsTests := preload("res://tests/region_tile_sheets_tests.gd")
-const PlayerControllerTests := preload("res://tests/player_controller_tests.gd")
-const PlayerRigTests := preload("res://tests/player_rig_tests.gd")
-const RunStateTests := preload("res://tests/run_state_tests.gd")
-const PauseMenuTests := preload("res://tests/pause_menu_tests.gd")
-const TropicalIslandTilesetTests := preload("res://tests/tropical_island_tileset_tests.gd")
-const WakingCoastRoomTests := preload("res://tests/waking_coast_room_tests.gd")
-const MapLayoutTests := preload("res://tests/map_layout_tests.gd")
-const DrawWorldTests := preload("res://tests/draw_world_tests.gd")
-const WorldPlanTests := preload("res://tests/world_plan_tests.gd")
-const WorldDataTests := preload("res://tests/world_data_tests.gd")
-const WakingCoastRoom2Tests := preload("res://tests/waking_coast_room_2_tests.gd")
-const WakingCoastRoom3Tests := preload("res://tests/waking_coast_room_3_tests.gd")
-const WakingCoastRoom4Tests := preload("res://tests/waking_coast_room_4_tests.gd")
-const WakingCoastRoom5Tests := preload("res://tests/waking_coast_room_5_tests.gd")
-const WakingCoastRoom6Tests := preload("res://tests/waking_coast_room_6_tests.gd")
-const WakingCoastRoom7Tests := preload("res://tests/waking_coast_room_7_tests.gd")
-const WakingCoastRoom8Tests := preload("res://tests/waking_coast_room_8_tests.gd")
-const WakingCoastRoom9Tests := preload("res://tests/waking_coast_room_9_tests.gd")
-const RoomExitTests := preload("res://tests/room_exit_tests.gd")
-const EveryRoomTests := preload("res://tests/every_room_tests.gd")
-const HealthTests := preload("res://tests/health_tests.gd")
-const LevelTests := preload("res://tests/level_tests.gd")
-const SuppliesTests := preload("res://tests/supplies_tests.gd")
-const EquipmentTests := preload("res://tests/equipment_tests.gd")
-const DescriptionTests := preload("res://tests/description_tests.gd")
-const ScavengerBrainTests := preload("res://tests/scavenger_brain_tests.gd")
-const CombatSceneTests := preload("res://tests/combat_scene_tests.gd")
-const PlayerSoundsTests := preload("res://tests/player_sounds_tests.gd")
-const PlayerSoundSceneTests := preload("res://tests/player_sound_scene_tests.gd")
-const StartScreenTests := preload("res://tests/start_screen_tests.gd")
-const MusicTests := preload("res://tests/music_tests.gd")
-const DialogueTests := preload("res://tests/dialogue_tests.gd")
-const IntroTests := preload("res://tests/intro_tests.gd")
-const InteractionTests := preload("res://tests/interaction_tests.gd")
-const ScavengerSoundsTests := preload("res://tests/scavenger_sounds_tests.gd")
-const ScavengerSoundSceneTests := preload("res://tests/scavenger_sound_scene_tests.gd")
-const StormWispBrainTests := preload("res://tests/storm_wisp_brain_tests.gd")
-const StormWispSoundsTests := preload("res://tests/storm_wisp_sounds_tests.gd")
-const StormWispSceneTests := preload("res://tests/storm_wisp_scene_tests.gd")
-const WraithBrainTests := preload("res://tests/wraith_brain_tests.gd")
-const WardenBrainTests := preload("res://tests/warden_brain_tests.gd")
-const WraithSoundsTests := preload("res://tests/wraith_sounds_tests.gd")
-const WraithSceneTests := preload("res://tests/wraith_scene_tests.gd")
-const HealthBarTests := preload("res://tests/health_bar_tests.gd")
-const PlayerGrowthTests := preload("res://tests/player_growth_tests.gd")
-const EnemyExperienceTests := preload("res://tests/enemy_experience_tests.gd")
-const PlayerSuppliesTests := preload("res://tests/player_supplies_tests.gd")
-const InventoryTests := preload("res://tests/inventory_tests.gd")
-const PlayerArmorTests := preload("res://tests/player_armor_tests.gd")
-const EquipmentPanelTests := preload("res://tests/equipment_panel_tests.gd")
-const NamelessWardenTests := preload("res://tests/nameless_warden_tests.gd")
-const WardensGateTests := preload("res://tests/wardens_gate_tests.gd")
-const BossBarTests := preload("res://tests/boss_bar_tests.gd")
 const STEP_DELTA := 0.1
+
+# The test files, each giving get_tests(), in the order they run: first those that need nothing
+# of the tree.
+const SUITES: Array[String] = [
+	"res://tests/asset_path_tests.gd",
+	"res://tests/player_controller_tests.gd",
+	"res://tests/player_melee_tests.gd",
+	"res://tests/player_rig_tests.gd",
+	"res://tests/run_state_tests.gd",
+	"res://tests/region_tile_sheets_tests.gd",
+	"res://tests/tropical_island_tileset_tests.gd",
+	"res://tests/waking_coast_room_tests.gd",
+	"res://tests/map_layout_tests.gd",
+	"res://tests/draw_world_tests.gd",
+	"res://tests/world_plan_tests.gd",
+	"res://tests/world_data_tests.gd",
+	"res://tests/waking_coast_room_2_tests.gd",
+	"res://tests/waking_coast_room_3_tests.gd",
+	"res://tests/waking_coast_room_4_tests.gd",
+	"res://tests/waking_coast_room_5_tests.gd",
+	"res://tests/waking_coast_room_6_tests.gd",
+	"res://tests/waking_coast_room_7_tests.gd",
+	"res://tests/tidefen_village_room_1_tests.gd",
+	"res://tests/waking_coast_room_9_tests.gd",
+	"res://tests/waking_coast_room_10_tests.gd",
+	"res://tests/waking_coast_room_11_tests.gd",
+	"res://tests/waking_coast_room_12_tests.gd",
+	"res://tests/waking_coast_room_13_tests.gd",
+	"res://tests/undertow_region_tests.gd",
+	"res://tests/tidefen_region_tests.gd",
+	"res://tests/undertow_room_1_tests.gd",
+	"res://tests/undertow_room_2_tests.gd",
+	"res://tests/undertow_room_3_tests.gd",
+	"res://tests/undertow_room_4_tests.gd",
+	"res://tests/undertow_room_5_tests.gd",
+	"res://tests/undertow_room_6_tests.gd",
+	"res://tests/undertow_room_7_tests.gd",
+	"res://tests/room_exit_tests.gd",
+	"res://tests/health_tests.gd",
+	"res://tests/level_tests.gd",
+	"res://tests/supplies_tests.gd",
+	"res://tests/equipment_tests.gd",
+	"res://tests/description_tests.gd",
+	"res://tests/scavenger_brain_tests.gd",
+	"res://tests/dialogue_tests.gd",
+	"res://tests/player_sounds_tests.gd",
+	"res://tests/scavenger_sounds_tests.gd",
+	"res://tests/storm_wisp_brain_tests.gd",
+	"res://tests/storm_wisp_sounds_tests.gd",
+	"res://tests/wraith_brain_tests.gd",
+	"res://tests/warden_brain_tests.gd",
+	"res://tests/wraith_sounds_tests.gd",
+	"res://tests/lurelight_brain_tests.gd",
+	"res://tests/lurelight_sounds_tests.gd",
+]
+
+# Then, once nodes can join the tree, those built with its root.
+const TREE_SUITES: Array[String] = [
+	"res://tests/pause_menu_tests.gd",
+	"res://tests/combat_scene_tests.gd",
+	"res://tests/sword_beam_tests.gd",
+	"res://tests/player_sound_scene_tests.gd",
+	"res://tests/start_screen_tests.gd",
+	"res://tests/music_tests.gd",
+	"res://tests/intro_tests.gd",
+	"res://tests/interaction_tests.gd",
+	"res://tests/scavenger_sound_scene_tests.gd",
+	"res://tests/storm_wisp_scene_tests.gd",
+	"res://tests/wraith_scene_tests.gd",
+	"res://tests/lurelight_scene_tests.gd",
+	"res://tests/health_bar_tests.gd",
+	"res://tests/player_growth_tests.gd",
+	"res://tests/enemy_experience_tests.gd",
+	"res://tests/player_supplies_tests.gd",
+	"res://tests/inventory_tests.gd",
+	"res://tests/player_armor_tests.gd",
+	"res://tests/equipment_panel_tests.gd",
+	"res://tests/nameless_warden_tests.gd",
+	"res://tests/wardens_gate_tests.gd",
+	"res://tests/shortcut_wall_tests.gd",
+	"res://tests/cache_tests.gd",
+	"res://tests/boss_bar_tests.gd",
+]
+
+# Last, those that check every Room in the World, built with the tree's root.
+const WORLD_SUITES: Array[String] = [
+	"res://tests/every_room_tests.gd",
+	"res://tests/region_background_tests.gd",
+]
 var _failures: int = 0
 
 
 func _init() -> void:
-	var asset_path_tests := AssetPathTests.new()
-	for test in asset_path_tests.get_tests():
-		_run_test(test[0], test[1])
-	var controller_tests := PlayerControllerTests.new()
-	for test in controller_tests.get_tests():
-		_run_test(test[0], test[1])
-	var rig_tests := PlayerRigTests.new()
-	for test in rig_tests.get_tests():
-		_run_test(test[0], test[1])
-	var run_state_tests := RunStateTests.new()
-	for test in run_state_tests.get_tests():
-		_run_test(test[0], test[1])
-	var region_tile_sheets_tests := RegionTileSheetsTests.new()
-	for test in region_tile_sheets_tests.get_tests():
-		_run_test(test[0], test[1])
-	var tropical_tileset_tests := TropicalIslandTilesetTests.new()
-	for test in tropical_tileset_tests.get_tests():
-		_run_test(test[0], test[1])
-	var room_tests := WakingCoastRoomTests.new()
-	for test in room_tests.get_tests():
-		_run_test(test[0], test[1])
-	var map_layout_tests := MapLayoutTests.new()
-	for test in map_layout_tests.get_tests():
-		_run_test(test[0], test[1])
-	var draw_world_tests := DrawWorldTests.new()
-	for test in draw_world_tests.get_tests():
-		_run_test(test[0], test[1])
-	var world_plan_tests := WorldPlanTests.new()
-	for test in world_plan_tests.get_tests():
-		_run_test(test[0], test[1])
-	var world_data_tests := WorldDataTests.new()
-	for test in world_data_tests.get_tests():
-		_run_test(test[0], test[1])
-	var room_2_tests := WakingCoastRoom2Tests.new()
-	for test in room_2_tests.get_tests():
-		_run_test(test[0], test[1])
-	var room_3_tests := WakingCoastRoom3Tests.new()
-	for test in room_3_tests.get_tests():
-		_run_test(test[0], test[1])
-	var room_4_tests := WakingCoastRoom4Tests.new()
-	for test in room_4_tests.get_tests():
-		_run_test(test[0], test[1])
-	var room_5_tests := WakingCoastRoom5Tests.new()
-	for test in room_5_tests.get_tests():
-		_run_test(test[0], test[1])
-	var room_6_tests := WakingCoastRoom6Tests.new()
-	for test in room_6_tests.get_tests():
-		_run_test(test[0], test[1])
-	var room_7_tests := WakingCoastRoom7Tests.new()
-	for test in room_7_tests.get_tests():
-		_run_test(test[0], test[1])
-	var room_8_tests := WakingCoastRoom8Tests.new()
-	for test in room_8_tests.get_tests():
-		_run_test(test[0], test[1])
-	var room_9_tests := WakingCoastRoom9Tests.new()
-	for test in room_9_tests.get_tests():
-		_run_test(test[0], test[1])
-	var room_exit_tests := RoomExitTests.new()
-	for test in room_exit_tests.get_tests():
-		_run_test(test[0], test[1])
-	var health_tests := HealthTests.new()
-	for test in health_tests.get_tests():
-		_run_test(test[0], test[1])
-	var level_tests := LevelTests.new()
-	for test in level_tests.get_tests():
-		_run_test(test[0], test[1])
-	var supplies_tests := SuppliesTests.new()
-	for test in supplies_tests.get_tests():
-		_run_test(test[0], test[1])
-	var equipment_tests := EquipmentTests.new()
-	for test in equipment_tests.get_tests():
-		_run_test(test[0], test[1])
-	var description_tests := DescriptionTests.new()
-	for test in description_tests.get_tests():
-		_run_test(test[0], test[1])
-	var scavenger_brain_tests := ScavengerBrainTests.new()
-	for test in scavenger_brain_tests.get_tests():
-		_run_test(test[0], test[1])
-	var dialogue_tests := DialogueTests.new()
-	for test in dialogue_tests.get_tests():
-		_run_test(test[0], test[1])
-	var player_sounds_tests := PlayerSoundsTests.new()
-	for test in player_sounds_tests.get_tests():
-		_run_test(test[0], test[1])
-	var scavenger_sounds_tests := ScavengerSoundsTests.new()
-	for test in scavenger_sounds_tests.get_tests():
-		_run_test(test[0], test[1])
-	var storm_wisp_brain_tests := StormWispBrainTests.new()
-	for test in storm_wisp_brain_tests.get_tests():
-		_run_test(test[0], test[1])
-	var storm_wisp_sounds_tests := StormWispSoundsTests.new()
-	for test in storm_wisp_sounds_tests.get_tests():
-		_run_test(test[0], test[1])
-	var wraith_brain_tests := WraithBrainTests.new()
-	for test in wraith_brain_tests.get_tests():
-		_run_test(test[0], test[1])
-	var warden_brain_tests := WardenBrainTests.new()
-	for test in warden_brain_tests.get_tests():
-		_run_test(test[0], test[1])
-	var wraith_sounds_tests := WraithSoundsTests.new()
-	for test in wraith_sounds_tests.get_tests():
-		_run_test(test[0], test[1])
+	_run_suites(SUITES)
 
 	_run_test("Player scene wires the rig", _test_player_scene_wires_rig)
 	_run_test("Player faces movement direction", _test_player_faces_movement_direction)
@@ -180,73 +112,9 @@ func _init() -> void:
 
 	# Nodes join the tree only after the first frame; the Pause menu needs get_tree().
 	await process_frame
-	var pause_menu_tests := PauseMenuTests.new(root)
-	for test in pause_menu_tests.get_tests():
-		_run_test(test[0], test[1])
-	var combat_scene_tests := CombatSceneTests.new(root)
-	for test in combat_scene_tests.get_tests():
-		_run_test(test[0], test[1])
-	var player_sound_scene_tests := PlayerSoundSceneTests.new(root)
-	for test in player_sound_scene_tests.get_tests():
-		_run_test(test[0], test[1])
-	var start_screen_tests := StartScreenTests.new(root)
-	for test in start_screen_tests.get_tests():
-		_run_test(test[0], test[1])
-	var music_tests := MusicTests.new(root)
-	for test in music_tests.get_tests():
-		_run_test(test[0], test[1])
-	var intro_tests := IntroTests.new(root)
-	for test in intro_tests.get_tests():
-		_run_test(test[0], test[1])
-	var interaction_tests := InteractionTests.new(root)
-	for test in interaction_tests.get_tests():
-		_run_test(test[0], test[1])
-	var scavenger_sound_scene_tests := ScavengerSoundSceneTests.new(root)
-	for test in scavenger_sound_scene_tests.get_tests():
-		_run_test(test[0], test[1])
-	var storm_wisp_scene_tests := StormWispSceneTests.new(root)
-	for test in storm_wisp_scene_tests.get_tests():
-		_run_test(test[0], test[1])
-	var wraith_scene_tests := WraithSceneTests.new(root)
-	for test in wraith_scene_tests.get_tests():
-		_run_test(test[0], test[1])
-	var health_bar_tests := HealthBarTests.new(root)
-	for test in health_bar_tests.get_tests():
-		_run_test(test[0], test[1])
-	var player_growth_tests := PlayerGrowthTests.new(root)
-	for test in player_growth_tests.get_tests():
-		_run_test(test[0], test[1])
-	var enemy_experience_tests := EnemyExperienceTests.new(root)
-	for test in enemy_experience_tests.get_tests():
-		_run_test(test[0], test[1])
-	var player_supplies_tests := PlayerSuppliesTests.new(root)
-	for test in player_supplies_tests.get_tests():
-		_run_test(test[0], test[1])
-	var inventory_tests := InventoryTests.new(root)
-	for test in inventory_tests.get_tests():
-		_run_test(test[0], test[1])
-	var player_armor_tests := PlayerArmorTests.new(root)
-	for test in player_armor_tests.get_tests():
-		_run_test(test[0], test[1])
-	var equipment_panel_tests := EquipmentPanelTests.new(root)
-	for test in equipment_panel_tests.get_tests():
-		_run_test(test[0], test[1])
-	var nameless_warden_tests := NamelessWardenTests.new(root)
-	for test in nameless_warden_tests.get_tests():
-		_run_test(test[0], test[1])
-	var wardens_gate_tests := WardensGateTests.new(root)
-	for test in wardens_gate_tests.get_tests():
-		_run_test(test[0], test[1])
-	var boss_bar_tests := BossBarTests.new(root)
-	for test in boss_bar_tests.get_tests():
-		_run_test(test[0], test[1])
+	_run_suites(TREE_SUITES, root)
 
-	var every_room_tests := EveryRoomTests.new(root)
-	for test in every_room_tests.get_tests():
-		_run_test(test[0], test[1])
-	var region_background_tests := RegionBackgroundTests.new(root)
-	for test in region_background_tests.get_tests():
-		_run_test(test[0], test[1])
+	_run_suites(WORLD_SUITES, root)
 
 	if _failures > 0:
 		push_error("%d test(s) failed" % _failures)
@@ -255,6 +123,15 @@ func _init() -> void:
 
 	print("All tests passed")
 	quit(0)
+
+
+# Runs every test each file gives, built with the tree's root when it is given one.
+func _run_suites(paths: Array[String], tree_root: Window = null) -> void:
+	for path in paths:
+		var script := load(path) as GDScript
+		var suite: RefCounted = script.new(tree_root) if tree_root != null else script.new()
+		for test: Array in suite.call("get_tests"):
+			_run_test(test[0], test[1])
 
 
 func _run_test(name: String, test_callable: Callable) -> void:
@@ -333,18 +210,22 @@ func _test_player_sprites_follow_controller() -> bool:
 	var valid := character_sprite.animation == &"jump" and not sword_sprite.visible
 
 	_step_with(controller, {"direction": 1.0})
+	# A press slashes at once.
 	_step_with(controller, {"melee_held": true, "direction": 1.0})
-	valid = valid and character_sprite.animation == &"walk"
-	valid = valid and sword_sprite.visible and sword_sprite.animation == &"charge"
-
-	_step_with(controller, {})
 	valid = valid and character_sprite.animation == &"attack" and sword_sprite.visible
+	valid = valid and sword_sprite.animation == &"attack"
 	valid = valid and character_sprite.flip_h and sword_sprite.flip_h
 
 	character_sprite.animation_finished.emit()
 	valid = valid and instance.get("_attack_finished") == true
 
-	_step_with(controller, {"attack_finished": true})
+	# Held through the slash, it goes on into the Charge.
+	_step_with(controller, {"melee_held": true, "direction": 1.0, "attack_finished": true})
+	valid = valid and character_sprite.animation == &"walk"
+	valid = valid and sword_sprite.visible and sword_sprite.animation == &"charge"
+
+	# Let go short of full, the Charge just ends.
+	_step_with(controller, {})
 	valid = valid and character_sprite.animation == &"idle" and not sword_sprite.visible
 
 	instance.queue_free()

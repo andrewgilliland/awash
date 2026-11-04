@@ -10,10 +10,20 @@ export interface Stamp {
 }
 
 export type Area = { x: number; y: number; w: number; h: number };
-export type Bounds = { w: number; h: number };
+// The cells a layer may hold: from x, y (0, 0 unless given), w across and h down.
+export type Bounds = { x?: number; y?: number; w: number; h: number };
 
 const key = (x: number, y: number) => `${x},${y}`;
-const inside = (x: number, y: number, bounds: Bounds) => x >= 0 && y >= 0 && x < bounds.w && y < bounds.h;
+const inside = (x: number, y: number, { x: left = 0, y: top = 0, w, h }: Bounds) =>
+  x >= left && y >= top && x < left + w && y < top + h;
+
+// The area between two corner cells, either way round.
+export const areaBetween = (a: Vec, b: Vec): Area => ({
+  x: Math.min(a[0], b[0]),
+  y: Math.min(a[1], b[1]),
+  w: Math.abs(a[0] - b[0]) + 1,
+  h: Math.abs(a[1] - b[1]) + 1,
+});
 
 // The block of a sheet between two corners, picked in the palette: only tiles the sheet has.
 export function blockStamp(source: number, from: Vec, to: Vec, has: Set<string>): Stamp {

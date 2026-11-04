@@ -4,7 +4,7 @@ extends RefCounted
 # Warden's gate, real input and physics.
 
 const WARDENS_GATE_PATH := "res://scenes/rooms/waking_coast_7.tscn"
-const TIDEFEN_PATH := "res://scenes/rooms/waking_coast_8.tscn"
+const TIDEFEN_PATH := "res://scenes/rooms/tidefen_village_1.tscn"
 const WardenBrain := preload("res://scripts/enemies/warden_brain.gd")
 # Where to stand by the Warden: in the sword's reach, clear of its touch.
 const STRIKE_DISTANCE := 16.0
@@ -62,7 +62,7 @@ func _defeat_opens_trail() -> bool:
 	valid = valid and player.get("level").experience == 100
 	await _harness.call("_frames", DISSOLVE_FRAMES)
 	valid = valid and await _harness.call("_walk_until_scene", &"move_right", TIDEFEN_PATH)
-	valid = valid and run.get("room_id") == &"waking_coast_8"
+	valid = valid and run.get("room_id") == &"tidefen_village_1"
 	await _harness.call("_leave_scene")
 	return valid
 

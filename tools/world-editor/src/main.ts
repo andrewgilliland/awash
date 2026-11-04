@@ -1,23 +1,35 @@
 // The World editor's page: the World view (as it is, or as planned, where the Plan is edited), the
-// read-only Room view, saving the World's data, and the Check, which runs the game's tests.
+// Room view, saving the World's data, and the Check, which runs the game's tests. Where you are is
+// the address (see router.ts), so Back, Forward, Refresh and links all work.
 
-import { el, readRepo, versionOf } from "./dom";
-import { buildRoom } from "./build";
+import "@fontsource/jetbrains-mono/400.css";
+import "@fontsource/jetbrains-mono/700.css";
+import { el, readRepo, versionOf, type View } from "./dom";
+import { buildRoom, tileFolder } from "./build";
 import { showRoom } from "./roomView";
+import { formatRoute, parseRoute, type Route } from "./router";
+import { showSidebar } from "./sidebar";
+import { showTests, type CheckRun } from "./testsView";
 import type { WorldData } from "./world";
 import { serializeWorld } from "./worldFile";
-import { showWorld, type Tool, type WorldEditor } from "./worldView";
+import { showWorld, type Tool, type WorldEditor, type WorldViewHandle } from "./worldView";
 
 const WORLD_PATH = "assets/world.json";
+const PICTURES_KEY = "world-editor:pictures";
 
-type View = { kind: "world"; planned: boolean } | { kind: "room"; id: string };
+function readPictures(): boolean {
+  try {
+    return localStorage.getItem(PICTURES_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
 
 const stage = document.querySelector<HTMLElement>("#stage")!;
 const side = document.querySelector<HTMLElement>("#side")!;
-const views = document.querySelector<HTMLElement>("#views")!;
+const sidebar = document.querySelector<HTMLElement>("#sidebar")!;
 const actions = document.querySelector<HTMLElement>("#actions")!;
 const status = document.querySelector<HTMLElement>("#status")!;
-const checkButton = document.querySelector<HTMLButtonElement>("#check")!;
 
 let world: WorldData;
 // The version of world.json the edits stand on, so a save can tell if it changed on disk since.
@@ -27,11 +39,20 @@ const undone: WorldData[] = [];
 const redone: WorldData[] = [];
 let view: View = { kind: "world", planned: false };
 let selected: string | null = null;
+// An address that leads nowhere, shown as such until you go somewhere else.
+let unknown: string | null = null;
 let tool: Tool = "select";
 let region = "";
 let drop = false;
+// Built Rooms' tiles shown in their cells on the map: remembered in this browser, if it can.
+let pictures = readPictures();
 // Unsaved paint on the open Room.
 let roomDirty = false;
+// Whether the Check is running the game's tests, and what it found last.
+let checking = false;
+let lastRun: CheckRun | null = null;
+// The World view on show, if it is, for the sidebar to light Rooms on.
+let worldView: WorldViewHandle | null = null;
 
 const dirty = () => serializeWorld(world) !== saved;
 
@@ -46,43 +67,161 @@ function edit(next: WorldData) {
   world = next;
 }
 
-function render() {
-  views.replaceChildren(
-    ...[false, true].map((planned) =>
-      el(
-        "button",
-        {
-          type: "button",
-          ariaPressed: String(view.kind === "world" && view.planned === planned),
-          onclick: () => ((view = { kind: "world", planned }), render()),
-        },
-        planned ? "As planned" : "As it is",
-      ),
+// The address for where you are.
+function here(): string {
+  return formatRoute({ view, selected: view.kind === "world" ? selected : null });
+}
+
+// Records a change that isn't a move, such as a Room selected on the map, without adding history.
+function replaceAddress() {
+  if (location.pathname + location.search !== here()) {
+    history.replaceState(null, "", here());
+  }
+}
+
+// Leaving a Room with unsaved paint asks first; true if it's fine to go.
+function mayLeave(next: View | null): boolean {
+  const staying = next?.kind === "room" && view.kind === "room" && next.id === view.id;
+  if (view.kind !== "room" || !roomDirty || staying) {
+    return true;
+  }
+  if (!confirm("Leave without saving the paint on this Room?")) {
+    return false;
+  }
+  roomDirty = false;
+  return true;
+}
+
+// Goes somewhere: a new history entry, so Back returns here. False if you chose to stay.
+function go(next: View, select: string | null = null): boolean {
+  if (!mayLeave(next)) {
+    return false;
+  }
+  view = next;
+  selected = select;
+  unknown = null;
+  if (location.pathname + location.search !== here()) {
+    history.pushState(null, "", here());
+  }
+  render();
+  return true;
+}
+
+function follow(route: Route) {
+  if ("unknown" in route) {
+    unknown = route.unknown;
+  } else {
+    unknown = null;
+    view = route.view;
+    selected = route.selected && world.rooms[route.selected] ? route.selected : null;
+  }
+  render();
+}
+
+addEventListener("popstate", () => {
+  if (!mayLeave(null)) {
+    // stay, and put the address back
+    history.pushState(null, "", here());
+    return;
+  }
+  follow(parseRoute(location.pathname, location.search));
+});
+
+function drawSidebar() {
+  showSidebar(sidebar, {
+    world,
+    view,
+    checking,
+    show: (next) => go(next),
+    // to the tests, and runs them
+    check: () => {
+      if (go({ kind: "tests" })) {
+        void check();
+      }
+    },
+    hover: (id) => worldView?.highlight(id),
+  });
+}
+
+// A page saying an address leads nowhere, with ways back.
+function nowhere(title: string, why: string, ...ways: [string, View, string | null][]) {
+  worldView = null;
+  stage.replaceChildren(
+    el("h2", {}, title),
+    el("p", { className: "muted" }, why),
+    el(
+      "div",
+      { className: "toolbar" },
+      ...ways.map(([label, to, select]) => el("button", { type: "button", onclick: () => go(to, select) }, label)),
     ),
   );
+  side.replaceChildren(el("h2", {}, "Nowhere"), el("p", { className: "muted" }, "Pick where to go in the sidebar."));
+}
+
+function render() {
   actions.replaceChildren(
     el("button", { type: "button", disabled: undone.length === 0, title: "Undo (⌘Z)", onclick: undo }, "Undo"),
     el("button", { type: "button", disabled: redone.length === 0, title: "Redo (⇧⌘Z)", onclick: redo }, "Redo"),
-    el("button", { type: "button", disabled: !dirty(), title: "Save the World's data (⌘S)", onclick: save }, dirty() ? "Save ●" : "Saved"),
+    el(
+      "button",
+      { type: "button", className: dirty() ? "primary" : "", disabled: !dirty(), title: "Save the World's data (⌘S)", onclick: save },
+      dirty() ? "Save ●" : "Saved",
+    ),
   );
+  drawSidebar();
+  const world_: View = { kind: "world", planned: false };
+  const plan: View = { kind: "world", planned: true };
+  if (unknown !== null) {
+    nowhere("Nothing here", `There's nothing at ${unknown}.`, ["The World", world_, null], ["The Plan", plan, null]);
+    return;
+  }
+  if (view.kind === "tests") {
+    worldView = null;
+    if (!lastRun && !checking) {
+      // landed here with nothing to show: run them
+      void check();
+      return;
+    }
+    showTests(stage, side, { run: lastRun, checking, unsaved: dirty(), check: () => void check() });
+    return;
+  }
   if (view.kind === "room") {
+    const id = view.id;
+    const record = world.rooms[id];
+    if (!record) {
+      nowhere("No such Room", `The World has no Room called ${id}.`, ["The World", world_, null], ["The Plan", plan, null]);
+      return;
+    }
+    if (record.scene === undefined) {
+      nowhere("Not built yet", `${id} is a Planned Room: it has no scene to paint until it's built.`, ["See it in The Plan", plan, id]);
+      return;
+    }
+    worldView = null;
     void showRoom(
       world,
-      view.id,
+      id,
       stage,
       side,
-      () => ((view = { kind: "world", planned: false }), render()),
+      () => go({ kind: "world", planned: false }, id),
       (unsaved) => (roomDirty = unsaved),
     ).catch((error: Error) => stage.replaceChildren(el("p", {}, error.message)));
     return;
   }
+  if (view.region !== undefined && !world.regions[view.region]) {
+    nowhere("No such Region", `The World has no Region called ${view.region}.`, ["The World", world_, null], ["The Plan", plan, null]);
+    return;
+  }
+  const focus = view.region;
   const editor: WorldEditor = {
     world,
     planned: view.planned,
+    focus,
     selected,
     tool,
-    region,
+    // a new Room is in the Region on show, if one is
+    region: focus ?? region,
     drop,
+    pictures,
     apply(next, refused, select) {
       if (!next) {
         say(refused, "fail");
@@ -91,28 +230,43 @@ function render() {
       }
       edit(next);
       selected = select && next.rooms[select] ? select : null;
+      replaceAddress();
       say("");
       render();
     },
     select(id) {
       selected = id;
+      replaceAddress();
       render();
     },
     set(changes) {
       ({ tool = tool, region = region, drop = drop } = changes);
+      if (changes.pictures !== undefined) {
+        pictures = changes.pictures;
+        try {
+          localStorage.setItem(PICTURES_KEY, String(pictures));
+        } catch {
+          // a browser that keeps nothing just forgets the toggle
+        }
+      }
       render();
     },
     open(id) {
-      view = { kind: "room", id };
-      render();
+      go({ kind: "room", id });
     },
     build(id) {
       void build(id);
     },
   };
   // the World view keeps its own selection as you click, and hands it back here
-  Object.defineProperty(editor, "selected", { get: () => selected, set: (id: string | null) => (selected = id) });
-  showWorld(editor, stage, side);
+  Object.defineProperty(editor, "selected", {
+    get: () => selected,
+    set: (id: string | null) => {
+      selected = id;
+      replaceAddress();
+    },
+  });
+  worldView = showWorld(editor, stage, side);
 }
 
 function undo() {
@@ -153,7 +307,7 @@ async function build(id: string) {
   }
   const region = world.rooms[id].region;
   for (const sheet of ["terrain", "scenery"]) {
-    const found = await fetch(`/repo/assets/regions/${region}/tiles/${sheet}.tres`, { method: "HEAD" });
+    const found = await fetch(`/repo/assets/regions/${tileFolder(world, region)}/tiles/${sheet}.tres`, { method: "HEAD" });
     if (!found.ok) {
       say(`${world.regions[region]?.name ?? region} has no tile sheets yet, so its Rooms can't be built.`, "fail");
       return;
@@ -178,6 +332,7 @@ async function build(id: string) {
   version = saved_.version;
   saved = text;
   selected = id;
+  replaceAddress();
   say(`Built ${id} at ${result.path}. Open it to paint; the Check shows what its neighbours still need.`, "pass");
   render();
 }
@@ -227,35 +382,24 @@ addEventListener("beforeunload", (event) => {
   }
 });
 
-checkButton.addEventListener("click", async () => {
-  checkButton.disabled = true;
-  checkButton.textContent = "Checking…";
-  side.replaceChildren(
-    el("h2", {}, "Check"),
-    el("p", { className: "muted" }, dirty() ? "Running the game's tests on the saved World (save first to check your edits)…" : "Running the game's tests…"),
-  );
+// Runs the game's tests, the one home of the World's rules; the tests view shows what they found.
+async function check() {
+  if (checking) {
+    return;
+  }
+  checking = true;
+  render();
   try {
     const response = await fetch("/api/check", { method: "POST" });
-    const result: { passed: boolean; tests: { name: string; passed: boolean }[]; errors: string[] } = await response.json();
-    const failed = result.tests.filter((test) => !test.passed);
-    side.replaceChildren(
-      el("h2", {}, result.passed ? `All ${result.tests.length} tests pass` : `${failed.length} of ${result.tests.length} tests fail`),
-      el(
-        "ul",
-        { className: "results" },
-        ...[...failed, ...result.tests.filter((test) => test.passed)].map((test) =>
-          el("li", { className: test.passed ? "pass" : "fail" }, `${test.passed ? "✓" : "✗"} ${test.name}`),
-        ),
-      ),
-      ...(result.errors.length
-        ? [el("h2", {}, "What failed said"), el("ul", { className: "results" }, ...result.errors.map((e) => el("li", { className: "fail" }, e)))]
-        : []),
-    );
+    const result: Omit<CheckRun, "at"> = await response.json();
+    lastRun = { ...result, at: new Date() };
+  } catch {
+    say("The tests couldn't be run.", "fail");
   } finally {
-    checkButton.disabled = false;
-    checkButton.textContent = "Check";
+    checking = false;
+    render();
   }
-});
+}
 
 void readRepo(WORLD_PATH).then((file) => {
   world = JSON.parse(file.text);
@@ -265,5 +409,10 @@ void readRepo(WORLD_PATH).then((file) => {
   if (serializeWorld(world) !== file.text) {
     say(`${WORLD_PATH} isn't laid out as the editor writes it; saving will lay it out again.`);
   }
-  render();
+  const route = parseRoute(location.pathname, location.search);
+  follow(route);
+  if (!("unknown" in route)) {
+    // "/" and other spellings settle on the address for where they lead
+    replaceAddress();
+  }
 });

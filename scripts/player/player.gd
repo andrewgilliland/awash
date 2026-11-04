@@ -11,6 +11,7 @@ const Supplies := preload("res://scripts/items/supplies.gd")
 const Equipment := preload("res://scripts/items/equipment.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const PlayerSounds := preload("res://scripts/player/player_sounds.gd")
+const SWORD_BEAM_SCENE := preload("res://scenes/player/sword_beam.tscn")
 const INTERACTABLE_GROUP := &"interactable"
 const INVULNERABLE_TIME := 1.0
 const BLINK_TIME := 0.08
@@ -20,9 +21,9 @@ const DEFEAT_BLINK_TIME := 0.15
 const KNOCKBACK := Vector2(90.0, -120.0)
 # The sword's reach, in front of the Player when facing right.
 const SWORD_OFFSET := Vector2(12.0, -8.0)
-# A charged Attack costs this many times a quick one.
+# A Charged Attack's Sword Beam costs this many times a quick slash.
 const CHARGED_MULTIPLIER := 2
-# A full Charge makes the sword blink bright.
+# A full Charge makes the sword blink bright, and the Charged Attack let go from it swings lit.
 const CHARGED_GLOW := Color(2.0, 2.0, 2.0)
 const CHARGED_BLINK_TIME := 0.08
 
@@ -262,15 +263,18 @@ func _on_controller_stepped() -> void:
 	_rig.show(controller.state, controller.facing, controller.is_moving)
 	_sword_hitbox.position = Vector2(SWORD_OFFSET.x * controller.facing, SWORD_OFFSET.y)
 	var attacking := controller.state == PlayerController.State.ATTACK
-	if attacking:
-		var quick := Hitbox.DEFAULT_DAMAGE + level.strength()
-		_sword_hitbox.damage = quick * CHARGED_MULTIPLIER if controller.charged_attack else quick
-		_sword_hitbox.charged = controller.charged_attack
-	if _sword_hitbox.active != attacking:
-		_sword_hitbox.active = attacking
+	# A Charged Attack's swing is for show: the Sword Beam it looses is the hit.
+	var slashing := attacking and not controller.charged_attack
+	if slashing:
+		_sword_hitbox.damage = _quick_cost()
+	if _sword_hitbox.active != slashing:
+		_sword_hitbox.active = slashing
 	var lit := (
-		controller.is_fully_charged()
-		and fmod(controller.time_in_state, CHARGED_BLINK_TIME * 2.0) < CHARGED_BLINK_TIME
+		(attacking and controller.charged_attack)
+		or (
+			controller.is_fully_charged()
+			and fmod(controller.time_in_state, CHARGED_BLINK_TIME * 2.0) < CHARGED_BLINK_TIME
+		)
 	)
 	_sword_sprite.modulate = CHARGED_GLOW if lit else Color.WHITE
 
@@ -279,6 +283,25 @@ func _on_controller_state_changed(
 	previous: PlayerController.State, next: PlayerController.State
 ) -> void:
 	_sounds.play(PlayerSounds.for_state_change(previous, next, controller.time_in_state))
+	if next == PlayerController.State.ATTACK and controller.charged_attack:
+		_loose_sword_beam()
+
+
+# What a quick slash costs: the sword's hit and the Player's Strength.
+func _quick_cost() -> int:
+	return Hitbox.DEFAULT_DAMAGE + level.strength()
+
+
+# Sends a Sword Beam out from the blade along the Player's facing, into the Room.
+func _loose_sword_beam() -> void:
+	var beam := SWORD_BEAM_SCENE.instantiate() as Node2D
+	beam.set("facing", controller.facing)
+	beam.set("damage", _quick_cost() * CHARGED_MULTIPLIER)
+	var world := get_parent() if get_parent() != null else self
+	world.add_child(beam)
+	beam.global_position = (
+		global_position + Vector2(SWORD_OFFSET.x * controller.facing, SWORD_OFFSET.y)
+	)
 
 
 func _on_sword_struck(_hurtbox: Area2D) -> void:

@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/cache.gd" id="1_cache"]
+[ext_resource type="Texture2D" uid="uid://b0mucnjtm0use" path="res://assets/packs/underwater/sunken_treasures.png" id="2_sheet"]
+[ext_resource type="Script" uid="uid://bhmw5qukbvack" path="res://scripts/world/interactable.gd" id="3_interact"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_reach"]
+size = Vector2(24, 24)
+
+[node name="Cache" type="Node2D"]
+script = ExtResource("1_cache")
+shut_frame = Rect2(16, 240, 32, 32)
+open_frame = Rect2(16, 272, 32, 32)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -16)
+texture = ExtResource("2_sheet")
+region_enabled = true
+region_rect = Rect2(16, 240, 32, 32)
+
+[node name="Interactable" type="Area2D" parent="."]
+collision_layer = 128
+collision_mask = 2
+monitorable = false
+script = ExtResource("3_interact")
+prompt_offset = Vector2(0, -36)
+
+[node name="Shape" type="CollisionShape2D" parent="Interactable"]
+position = Vector2(0, -12)
+shape = SubResource("RectangleShape2D_reach")

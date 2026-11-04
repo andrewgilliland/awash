@@ -27,6 +27,8 @@ export interface RoomScene {
 export interface Tile {
   collides: boolean;
   oneWay: boolean;
+  // The colour the tile set multiplies it by, when it has one.
+  tint?: [number, number, number, number];
 }
 
 export interface TileSource {
@@ -74,12 +76,12 @@ export function parseSections(text: string): Section[] {
 }
 
 // The numbers inside a constructor's brackets: Vector2(0, 8) gives [0, 8].
-function numbers(value: string): number[] {
+export function numbers(value: string): number[] {
   const inside = /\(([^)]*)\)/.exec(value)?.[1] ?? value;
   return [...inside.matchAll(/-?\d+(?:\.\d+)?/g)].map((match) => Number(match[0]));
 }
 
-function quoted(value: string): string {
+export function quoted(value: string): string {
   return /"([^"]*)"/.exec(value)?.[1] ?? "";
 }
 
@@ -99,30 +101,56 @@ export function decodeTileMapData(base64: string): Cell[] {
   return cells;
 }
 
-export function parseRoomScene(text: string): RoomScene {
-  const all = parseSections(text);
+// Each ext_resource's id, to the path it names.
+export function resourcePaths(all: Section[]): Map<string, string> {
   const paths = new Map<string, string>();
   for (const section of all) {
     if (section.kind === "ext_resource") {
       paths.set(section.attributes.id, section.attributes.path);
     }
   }
-  const layers: TileLayer[] = [];
+  return paths;
+}
+
+// A node's path as Godot names it: its name, or its parent's path and its name.
+export function nodePath(section: Section): string {
+  const { name, parent } = section.attributes;
+  return parent === "." || parent === undefined ? name : `${parent}/${name}`;
+}
+
+// Where each node sits in its scene's root: its own position on top of its parents'.
+export function nodePositions(all: Section[]): Map<string, Vec> {
+  const placed = new Map<string, Vec>();
   for (const section of all) {
-    if (section.kind !== "node" || section.attributes.type !== "TileMapLayer") {
+    if (section.kind !== "node" || section.attributes.parent === undefined) {
       continue;
     }
-    const { name, parent } = section.attributes;
-    const props = section.properties;
-    const position = props.position ? numbers(props.position) : [0, 0];
-    layers.push({
-      name: parent === "." ? name : `${parent}/${name}`,
-      tileSet: paths.get(quoted(props.tile_set ?? "")) ?? "",
-      position: [position[0], position[1]],
-      opacity: props.modulate ? numbers(props.modulate)[3] : 1,
-      cells: props.tile_map_data ? decodeTileMapData(quoted(props.tile_map_data)) : [],
-    });
+    const own = section.properties.position ? numbers(section.properties.position) : [0, 0];
+    const parent = placed.get(section.attributes.parent) ?? [0, 0];
+    placed.set(nodePath(section), [parent[0] + own[0], parent[1] + own[1]]);
   }
+  return placed;
+}
+
+// A TileMapLayer node as a layer: its tile set, where it sits, how see-through, and its cells.
+export function tileLayerOf(section: Section, paths: Map<string, string>, position: Vec): TileLayer {
+  const props = section.properties;
+  return {
+    name: nodePath(section),
+    tileSet: paths.get(quoted(props.tile_set ?? "")) ?? "",
+    position,
+    opacity: props.modulate ? numbers(props.modulate)[3] : 1,
+    cells: props.tile_map_data ? decodeTileMapData(quoted(props.tile_map_data)) : [],
+  };
+}
+
+export function parseRoomScene(text: string): RoomScene {
+  const all = parseSections(text);
+  const paths = resourcePaths(all);
+  const positions = nodePositions(all);
+  const layers = all
+    .filter((section) => section.kind === "node" && section.attributes.type === "TileMapLayer")
+    .map((section) => tileLayerOf(section, paths, positions.get(nodePath(section)) ?? [0, 0]));
   return { layers };
 }
 
@@ -159,6 +187,9 @@ export function parseTileSet(text: string): TileSet {
         known.collides = true;
       } else if (tile[3].endsWith("/one_way")) {
         known.oneWay = setting === "true";
+      } else if (tile[3] === "/modulate") {
+        const [r, g, b, a] = numbers(setting);
+        known.tint = [r, g, b, a ?? 1];
       }
       tiles.set(coords, known);
     }

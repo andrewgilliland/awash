@@ -1,7 +1,7 @@
 extends RefCounted
 
-const ROOM_PATH := "res://scenes/rooms/waking_coast_8.tscn"
-const LANTERN_PATH := "res://assets/regions/waking_coast/props/tidefen_lantern.png"
+const ROOM_PATH := "res://scenes/rooms/tidefen_village_1.tscn"
+const LANTERN_PATH := "res://assets/regions/tidefen_village/props/tidefen_lantern.png"
 const RoomReach := preload("res://tests/room_reach.gd")
 const World := preload("res://scripts/core/world.gd")
 # Six screens wide: the stilt houses over the shallows, the market square, then the harbour, two
@@ -30,16 +30,15 @@ const BELL := Vector2i(0, 0)
 const BELL_CELL := Vector2i(33, 6)
 const SHOP_DOOR := [Vector2i(22, 4), Vector2i(23, 4)]
 const STALL := Rect2i(35, 4, 5, 3)
-# The harbour: a plank pier on posts over the shallows, a jump up from the stone quay.
+# The harbour: a plank pier over the shallows, a jump up from the stone quay.
 const PIER_ROW := 5
 const PIER := Vector2i(48, 56)
 const PIER_DECKS := [
 	Vector2i(6, 2), Vector2i(7, 2), Vector2i(8, 2), Vector2i(9, 2), Vector2i(10, 2)
 ]
 const PIER_DECKS_END := Vector2i(11, 2)
-const PIER_POSTS := [49, 53]
 const HARBOUR_WATER := Vector2i(48, 57)
-# Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_8.aseprite:
+# Landmark cells from assets/regions/tidefen_village/room_layouts/tidefen_village_1.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
 	&"Village":
@@ -182,7 +181,7 @@ func _test_walkway_on_stilts() -> bool:
 # walked to from the west Entry.
 func _test_rest_point_on_map() -> bool:
 	var screen := Vector2i(Vector2(BELL_CELL * TILE) / World.SCREEN_SIZE)
-	return World.markers(&"waking_coast_8") == {&"rest": screen}
+	return World.markers(&"tidefen_village_1") == {&"rest": screen}
 
 
 func _test_market() -> bool:
@@ -208,19 +207,16 @@ func _test_market() -> bool:
 	return valid
 
 
-# The pier's planks run over the harbour's shallows on posts, and the quay is a jump below it.
+# The pier's planks run over the harbour's shallows, and the quay is a jump below it.
 func _test_harbour() -> bool:
 	var room := _room()
 	if room == null:
 		return false
 	var terrain := room.get_node("Terrain") as TileMapLayer
-	var town := room.get_node_or_null("Town") as TileMapLayer
-	var valid := town != null
+	var valid := true
 	for column in range(PIER.x, PIER.y + 1):
 		var plank := terrain.get_cell_atlas_coords(Vector2i(column, PIER_ROW))
 		valid = valid and (plank in PIER_DECKS or (column == PIER.y and plank == PIER_DECKS_END))
-	for column in PIER_POSTS:
-		valid = valid and town != null and town.get_cell_source_id(Vector2i(column, 6)) != -1
 	for column in range(HARBOUR_WATER.x, HARBOUR_WATER.y + 1):
 		valid = valid and RoomReach.is_water(terrain, Vector2i(column, 7))
 	var reached := RoomReach.reachable(terrain, Vector2i(WEST_ENTRY / TILE))
@@ -256,7 +252,7 @@ func _test_lanterns_under_eaves() -> bool:
 
 
 # A hole in the shallows to the bottom of the Room, and an Exit under it down into the
-# undertow's shaft.
+# Undertow's shaft.
 func _test_well() -> bool:
 	var room := _room()
 	if room == null:
@@ -268,7 +264,7 @@ func _test_well() -> bool:
 	var exit := room.get_node_or_null("Exits/well") as Area2D
 	valid = valid and exit != null and exit.position.y > ROOM_SIZE.y
 	valid = valid and int(exit.position.x / TILE) == WELL_COLUMN
-	valid = valid and exit.get("room_id") == &"waking_coast_9" and exit.get("entry_id") == &"well"
+	valid = valid and exit.get("room_id") == &"undertow_1" and exit.get("entry_id") == &"well"
 	room.free()
 	return valid
 

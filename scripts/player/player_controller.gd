@@ -31,19 +31,23 @@ var friction: float = 800.0
 var jump_velocity: float = -260.0
 # How long a hit takes control away.
 var stun_time: float = 0.3
-# How long melee must be held for a full Charge.
+# How long melee must be held, from the press, for a full Charge.
 var charge_time: float = 0.5
 
 var state: State = State.IDLE
 var facing: float = -1.0
 var is_moving: bool = false
 var velocity: Vector2 = Vector2.ZERO
-# Whether the current or last Attack was let go from a full Charge.
+# Whether the current or last Attack was let go from a full Charge: the one that looses a Sword
+# Beam.
 var charged_attack: bool = false
 # How long the Player has been in its current state; while state_changed is emitted, how
 # long it was in the state it just left.
 var time_in_state: float = 0.0
 var _stun_left: float = 0.0
+# How long melee has been held since it was pressed.
+var _melee_held_for: float = 0.0
+var _melee_was_held: bool = false
 
 
 # Advances one physics frame. Emits state_changed at most once, after all transitions settle,
@@ -61,6 +65,8 @@ func step(frame: Frame, delta: float) -> void:
 		_stun_left -= delta
 		is_moving = false
 		state = State.JUMP
+		_melee_held_for = 0.0
+		_melee_was_held = frame.melee_held
 	else:
 		_step_in_control(frame, delta)
 
@@ -76,21 +82,36 @@ func _step_in_control(frame: Frame, delta: float) -> void:
 	is_moving = frame.direction != 0.0
 	var on_floor := frame.on_floor
 
+	var was_full := is_fully_charged()
+	var pressed := frame.melee_held and not _melee_was_held
+	_melee_was_held = frame.melee_held
+	_melee_held_for = _melee_held_for + delta if frame.melee_held else 0.0
+
 	if state == State.ATTACK and frame.attack_finished:
-		state = State.IDLE if on_floor else State.JUMP
+		# Melee held through the swing goes on into the Charge.
+		if frame.melee_held:
+			state = State.CHARGE
+		else:
+			state = State.IDLE if on_floor else State.JUMP
 
 	if state != State.ATTACK and frame.jump_pressed and on_floor:
 		velocity.y = jump_velocity
 		jumped.emit()
 		on_floor = false
-		state = State.JUMP
+		if state != State.CHARGE:
+			state = State.JUMP
 
-	if state != State.ATTACK:
-		if frame.melee_held:
-			state = State.CHARGE
-		elif state == State.CHARGE:
-			charged_attack = is_fully_charged()
+	if state == State.CHARGE and not frame.melee_held:
+		# Let go: a full Charge swings a charged Attack; short of full, the Charge just ends.
+		if was_full:
+			charged_attack = true
 			state = State.ATTACK
+		else:
+			state = State.IDLE
+	elif pressed and state != State.ATTACK and state != State.CHARGE:
+		# A press slashes at once.
+		charged_attack = false
+		state = State.ATTACK
 
 	_update_horizontal_velocity(frame.direction, delta)
 	_update_locomotion_state(frame, on_floor)
@@ -98,7 +119,7 @@ func _step_in_control(frame: Frame, delta: float) -> void:
 
 # Melee has been held long enough that letting go makes a charged Attack.
 func is_fully_charged() -> bool:
-	return state == State.CHARGE and time_in_state >= charge_time
+	return state == State.CHARGE and _melee_held_for >= charge_time - 0.0001
 
 
 func _update_horizontal_velocity(direction: float, delta: float) -> void:

@@ -57,6 +57,11 @@ jobs:
           source scripts/quality/godot_timeout.sh
           run_godot --headless --path . --import
 
+      # Proves the pre-commit file size gate passes and rejects what it should; it weighs staged
+      # files, so it runs on commit, not here.
+      - name: File size gate self-test
+        run: ./scripts/quality/file_size_selftest.sh
+
       # Proves the typecheck gate still rejects broken scripts before trusting its pass below.
       - name: Typecheck self-test
         run: ./scripts/quality/typecheck_selftest.sh

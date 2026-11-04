@@ -15,6 +15,9 @@ case "$branch" in
 		;;
 esac
 
+echo "[pre-commit] Running file size gate"
+./scripts/quality/file_size.sh
+
 echo "[pre-commit] Running typecheck gate"
 ./scripts/quality/typecheck.sh
 

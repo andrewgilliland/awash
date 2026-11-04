@@ -15,6 +15,7 @@ func get_tests() -> Array:
 	return [
 		["Landing from a jump sounds a landing", _test_landing_sounds],
 		["Starting an Attack sounds a swing", _test_attack_sounds],
+		["A full Charge let go zings its Sword Beam", _test_beam_sounds],
 		["Other state changes are silent", _test_other_changes_silent],
 		["A moment in the air lands quietly", _test_brief_air_lands_quietly],
 	]
@@ -28,7 +29,14 @@ func _test_landing_sounds() -> bool:
 
 
 func _test_attack_sounds() -> bool:
-	return PlayerSounds.for_state_change(CHARGE, ATTACK, FALL) == PlayerSounds.SWING
+	var valid := PlayerSounds.for_state_change(IDLE, ATTACK, FALL) == PlayerSounds.SWING
+	valid = valid and PlayerSounds.for_state_change(WALK, ATTACK, FALL) == PlayerSounds.SWING
+	return valid and PlayerSounds.for_state_change(JUMP, ATTACK, FALL) == PlayerSounds.SWING
+
+
+# Only a full Charge goes from charging into an Attack: let go short of full, it just ends.
+func _test_beam_sounds() -> bool:
+	return PlayerSounds.for_state_change(CHARGE, ATTACK, FALL) == PlayerSounds.BEAM
 
 
 # Leaving the ground has no sound of its own: a jump sounds through the controller's jumped

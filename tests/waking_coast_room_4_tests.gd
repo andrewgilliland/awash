@@ -6,20 +6,14 @@ const RoomReach := preload("res://tests/room_reach.gd")
 const ROOM_SIZE := Vector2i(320, 144)
 const CELLS := Rect2i(0, 0, 20, 9)
 const TILE := 16
-# On the cliff top, clear of the west Exit, at the height the salt cliffs' top leaves off.
+# On the cliff top, clear of the west Exit, at the height the cliff tops leave off.
 const WEST_ENTRY := Vector2(12, 64)
-# On the sand just short of the sinkhole, coming back from the jungle trail.
+# On the sand at the beach's east end, coming back up the broken stair.
 const EAST_ENTRY := Vector2(296, 96)
-# The east edge: a wall from just under a standing Player's feet down, and the Exit from the
-# top down to just above a standing Player's head (it is 20 pixels tall).
-const EAST_WALL_TOP := 88
-const EAST_EXIT_BOTTOM := 72
-const WORLD_LAYER := 1
 const DECKS := [Vector2i(1, 6), Vector2i(2, 6), Vector2i(3, 6), Vector2i(4, 6)]
-# The beach's east end, where the sand gives way into the sea cave, and the stern
-# compartment's deck with its crate.
-const EAST_END := Vector2i(18, 6)
-const SINKHOLE_COLUMN := 19
+# The beach's east end, running on to the broken stair, and the stern compartment's deck with its
+# crate.
+const EAST_END := Vector2i(19, 6)
 const STERN_DECK := Vector2i(17, 1)
 const STERN_CRATE := Vector2i(18, 0)
 const CRATE := Vector2i(10, 3)
@@ -65,11 +59,11 @@ func get_tests() -> Array:
 	return [
 		["Wreck graveyard Room lays out two screens", _test_lays_out_two_screens],
 		["Wreck graveyard west Entry stands on the cliff", _test_west_entry_on_cliff],
-		["Wreck graveyard leads east over the sinkhole", _test_leads_east],
+		["Wreck graveyard's beach leads east to the broken stair", _test_leads_east],
 		["Wreck graveyard beach runs east without the decks", _test_beach_runs_east],
 		["Wreck decks lead up to the stern's crate", _test_decks_reach_stern],
 		["A Scavenger wades the wreck graveyard's second pool", _test_scavenger_in_pool],
-		["A sinkhole at the beach's east end drops into the sea cave", _test_sinkhole],
+		["Wreck graveyard's beach is whole, with no way down", _test_beach_whole],
 	]
 
 
@@ -96,7 +90,7 @@ func _test_lays_out_two_screens() -> bool:
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	for column in range(CELLS.size.x):
 		var filled := terrain.get_cell_source_id(Vector2i(column, CELLS.end.y - 1)) != -1
-		valid = valid and filled == (column != SINKHOLE_COLUMN)
+		valid = valid and filled
 	room.free()
 	return valid
 
@@ -116,35 +110,31 @@ func _test_west_entry_on_cliff() -> bool:
 	return valid
 
 
-# A jump over the sinkhole carries on east onto the jungle trail. Below the sand's height the east
-# edge stays walled, and the Exit sits only above a standing Player's head, so walking off the
-# sand falls into the sinkhole rather than out east. The west edge is the Exit back to the salt
-# cliffs' top. Coming back, the Player lands short of the sinkhole.
+# The east edge is the Exit to the broken stair, its whole height, so the beach walks straight
+# on. The west edge is the Exit back along the cliff tops. Coming back, the Player lands on the
+# sand.
 func _test_leads_east() -> bool:
 	var room := _room()
 	if room == null:
 		return false
-	var bounds := room.get_node_or_null("Bounds") as StaticBody2D
-	var valid := bounds != null and bounds.collision_layer == WORLD_LAYER
-	var wall := bounds.get_node_or_null("EastLow") as CollisionShape2D if valid else null
-	valid = valid and wall != null and wall.position.x > ROOM_SIZE.x - TILE
-	valid = valid and _vertical_span(wall) == Vector2(EAST_WALL_TOP, ROOM_SIZE.y)
+	var valid := room.get_node_or_null("Bounds") == null
 	var east_exit := room.get_node_or_null("Exits/east") as Area2D
 	valid = valid and east_exit != null and east_exit.position.x > ROOM_SIZE.x
 	if valid:
 		var edge := east_exit.get_node("Edge") as CollisionShape2D
-		valid = _vertical_span(edge) == Vector2(0, EAST_EXIT_BOTTOM)
-	valid = valid and east_exit.get("room_id") == &"waking_coast_6"
+		valid = _vertical_span(edge) == Vector2(0, ROOM_SIZE.y)
+	valid = valid and east_exit.get("room_id") == &"waking_coast_13"
 	valid = valid and east_exit.get("entry_id") == &"west"
 	var entry := room.get_node_or_null("Entries/east") as Marker2D
 	valid = valid and entry != null and entry.position == EAST_ENTRY
 	if valid:
 		var terrain := room.get_node("Terrain") as TileMapLayer
 		var below := Vector2i(entry.position / TILE)
-		valid = terrain.get_cell_source_id(below) != -1 and below.x < SINKHOLE_COLUMN
+		valid = terrain.get_cell_source_id(below) != -1
 	var exit := room.get_node_or_null("Exits/west") as Area2D
 	valid = valid and exit != null and exit.position.x < 0.0
-	valid = valid and exit.get("room_id") == &"waking_coast_3" and exit.get("entry_id") == &"east"
+	valid = valid and exit.get("room_id") == &"waking_coast_12"
+	valid = valid and exit.get("entry_id") == &"east"
 	room.free()
 	return valid
 
@@ -193,20 +183,18 @@ func _test_scavenger_in_pool() -> bool:
 	return valid
 
 
-# The sand at the east end gives way: a hole to the bottom of the Room, and an Exit under it
-# down into the sea cave's shaft.
-func _test_sinkhole() -> bool:
+# The sea cave is reached only from the salt cliffs' foot: the sand runs whole to the Room's east
+# edge, and no Exit leads down into it.
+func _test_beach_whole() -> bool:
 	var room := _room()
 	if room == null:
 		return false
 	var terrain := room.get_node("Terrain") as TileMapLayer
 	var valid := true
-	for row in range(6, CELLS.end.y):
-		valid = valid and terrain.get_cell_source_id(Vector2i(SINKHOLE_COLUMN, row)) == -1
-	var exit := room.get_node_or_null("Exits/sinkhole") as Area2D
-	valid = valid and exit != null and exit.position.y > ROOM_SIZE.y
-	valid = valid and int(exit.position.x / TILE) == SINKHOLE_COLUMN
-	valid = valid and exit.get("room_id") == &"waking_coast_5" and exit.get("entry_id") == &"shaft"
+	for row in range(EAST_END.y, CELLS.end.y):
+		valid = valid and terrain.get_cell_source_id(Vector2i(EAST_END.x, row)) != -1
+	for exit in room.get_node("Exits").get_children():
+		valid = valid and exit.get("room_id") != &"waking_coast_5"
 	room.free()
 	return valid
 
