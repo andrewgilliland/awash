@@ -26,7 +26,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - `IDLE`: selected while there is no horizontal input.
 - `WALK`: selected while left or right input is held.
 - `JUMP`: selected while airborne.
-- `CHARGE`: selected while `melee_attack` is held; movement continues, facing is locked, and sword charge pose is shown. Charging works on the ground and in the air, and jumping while charging keeps the charge.
+- `CHARGE`: selected once `melee_attack` has been held for 0.15 seconds; let go sooner, it is a quick `ATTACK` with no Charge shown. The Charge fills from the press, so it is full after 0.5 seconds of holding. While charging, movement continues, facing is locked, and sword charge pose is shown. Charging works on the ground and in the air, and jumping while charging keeps the charge.
 - `ATTACK`: selected when `melee_attack` is released after charging, on the ground or in the air, and held until the animation finishes. Jumping is not possible during `ATTACK`.
 - When `ATTACK` finishes, the player returns to `IDLE` on the floor or `JUMP` in the air.
 - State changes are decided once per physics frame, before the body moves, so a landing or ledge walk-off shows on the following frame.

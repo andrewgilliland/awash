@@ -31,7 +31,9 @@ var friction: float = 800.0
 var jump_velocity: float = -260.0
 # How long a hit takes control away.
 var stun_time: float = 0.3
-# How long melee must be held for a full Charge.
+# How long melee must be held before the Charge starts; let go sooner, it is a quick Attack.
+var charge_delay: float = 0.15
+# How long melee must be held, from the press, for a full Charge.
 var charge_time: float = 0.5
 
 var state: State = State.IDLE
@@ -44,6 +46,8 @@ var charged_attack: bool = false
 # long it was in the state it just left.
 var time_in_state: float = 0.0
 var _stun_left: float = 0.0
+# How long melee has been held since it was pressed, outside an Attack.
+var _melee_held_for: float = 0.0
 
 
 # Advances one physics frame. Emits state_changed at most once, after all transitions settle,
@@ -61,6 +65,7 @@ func step(frame: Frame, delta: float) -> void:
 		_stun_left -= delta
 		is_moving = false
 		state = State.JUMP
+		_melee_held_for = 0.0
 	else:
 		_step_in_control(frame, delta)
 
@@ -87,10 +92,13 @@ func _step_in_control(frame: Frame, delta: float) -> void:
 
 	if state != State.ATTACK:
 		if frame.melee_held:
-			state = State.CHARGE
-		elif state == State.CHARGE:
+			_melee_held_for += delta
+			if _melee_held_for >= charge_delay - 0.0001:
+				state = State.CHARGE
+		elif _melee_held_for > 0.0:
 			charged_attack = is_fully_charged()
 			state = State.ATTACK
+			_melee_held_for = 0.0
 
 	_update_horizontal_velocity(frame.direction, delta)
 	_update_locomotion_state(frame, on_floor)
@@ -98,7 +106,7 @@ func _step_in_control(frame: Frame, delta: float) -> void:
 
 # Melee has been held long enough that letting go makes a charged Attack.
 func is_fully_charged() -> bool:
-	return state == State.CHARGE and time_in_state >= charge_time
+	return state == State.CHARGE and _melee_held_for >= charge_time - 0.0001
 
 
 func _update_horizontal_velocity(direction: float, delta: float) -> void:
