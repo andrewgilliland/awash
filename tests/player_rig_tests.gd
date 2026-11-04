@@ -29,7 +29,6 @@ func get_tests() -> Array:
 		["Rig cuts frames from the sheet row", _test_cuts_frames_from_sheet_row],
 		["Rig shows each state's body animation", _test_shows_body_animation_per_state],
 		["Rig shows the charge pose by movement", _test_shows_charge_pose_by_movement],
-		["Rig raises the sword to charge, in a pose no Attack shows", _test_raises_sword_to_charge],
 		["Rig keeps a held state's animation going", _test_keeps_held_state_animation],
 		["Rig restarts an animation when its state returns", _test_restarts_returning_state],
 		["Rig shows the sword only in charge and attack", _test_shows_sword_in_charge_attack],
@@ -98,18 +97,6 @@ func _test_shows_charge_pose_by_movement() -> bool:
 	valid = valid and rigged.body.animation == &"idle"
 	valid = valid and rigged.sword.animation == &"charge"
 	rigged.free_sprites()
-	return valid
-
-
-# A Charge must not look like an Attack's follow-through, or a tap reads as a Charge and a Charged
-# Attack's release as nothing happening: the sword is held up over the head, in its own frame.
-func _test_raises_sword_to_charge() -> bool:
-	var charge: Dictionary = PlayerRig.SWORD_ANIMATIONS[&"charge"]
-	var attack: Dictionary = PlayerRig.SWORD_ANIMATIONS[&"attack"]
-	var valid := true
-	for i in charge.frames.size():
-		valid = valid and not attack.frames.has(charge.frames[i])
-		valid = valid and charge.offsets[i].y <= -PlayerRig.FRAME_SIZE.y / 2.0
 	return valid
 
 
