@@ -10,6 +10,8 @@ extends "res://tests/coast_playtests.gd"
 const WISP_WATCH_DISTANCE := 24.0
 const WISP_STRIKE_DISTANCE := 14.0
 const WISP_ARC_DISTANCE := 8.0
+# Well out of the sword's reach, and of the Wisp's notice.
+const WISP_CLEAR_DISTANCE := 60.0
 const UNDERTOW_PATH := "res://scenes/rooms/waking_coast_9.tscn"
 const WRAITH_PATH := "Enemies/Wraith"
 const UNDERTOW_FLOOR_Y := 96.0
@@ -68,8 +70,8 @@ func _playtest_arc_hurts_player() -> bool:
 	return valid
 
 
-# Charges just beyond the Wisp's reach through its crackle and arc, then steps in while it rests
-# and lets go: one swing.
+# Presses melee well out of reach, so the slash meets nothing, and charges just beyond the Wisp's
+# reach through its crackle and arc; then steps in while it rests and lets go: one Sword Beam.
 func _playtest_charged_wisp() -> bool:
 	var player := await _enter_room(&"waking_coast_6", &"east", JUNGLE_TRAIL_PATH)
 	var wisp := (
@@ -79,11 +81,15 @@ func _playtest_charged_wisp() -> bool:
 		await _leave_scene()
 		return false
 	var brain = wisp.get("brain")
-	await _stand_by_wisp(player, wisp, WISP_WATCH_DISTANCE)
+	var wisp_health = wisp.get("health")
+	await _stand_by_wisp(player, wisp, WISP_CLEAR_DISTANCE)
 	_press(&"melee_attack")
+	await _frames(20)
+	await _stand_by_wisp(player, wisp, WISP_WATCH_DISTANCE)
 	var rested := await _frames_until(func() -> bool: return brain.state == brain.State.REST, 180)
 	var controller = player.get("controller")
 	var valid: bool = rested and controller.is_fully_charged()
+	valid = valid and wisp_health.current == wisp_health.maximum
 	var side := signf(player.global_position.x - wisp.global_position.x)
 	player.global_position.x = wisp.global_position.x + side * WISP_STRIKE_DISTANCE
 	await _frames(2)
@@ -161,6 +167,9 @@ func _stand_by_wisp(player: CharacterBody2D, wisp: Node2D, distance: float) -> v
 	_press(toward)
 	await _frames(1)
 	_release(toward)
+	# A slash may have dispersed it in that frame.
+	if not is_instance_valid(wisp):
+		return
 	player.global_position = Vector2(
 		wisp.global_position.x + side * distance, JUNGLE_TRAIL_HEIGHTS_Y
 	)

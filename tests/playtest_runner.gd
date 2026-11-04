@@ -157,14 +157,12 @@ func _scenario_attack_plays_out(player: CharacterBody2D) -> bool:
 	var controller := player.get("controller") as PlayerController
 	var body_sprite := player.get_node("AnimatedSprite2D") as AnimatedSprite2D
 	var sword_sprite := player.get_node("SwordSprite") as AnimatedSprite2D
-	# A quick tap: short of the moment before a Charge, so none shows before the swing.
+	# A quick tap: the press slashes at once.
 	_press(&"melee_attack")
-	await _frames(5)
-	var valid := controller.state != PlayerController.State.CHARGE and not sword_sprite.visible
-	_release(&"melee_attack")
 	await _frames(2)
-	valid = valid and controller.state == PlayerController.State.ATTACK
+	var valid := controller.state == PlayerController.State.ATTACK and sword_sprite.visible
 	valid = valid and body_sprite.animation == &"attack" and sword_sprite.animation == &"attack"
+	_release(&"melee_attack")
 
 	# Only the attack animation reaching its last frame ends the Attack state.
 	var idle := func() -> bool: return controller.state == PlayerController.State.IDLE

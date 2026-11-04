@@ -60,11 +60,10 @@ func _test_sword_live_in_attack() -> bool:
 	var sword := player.get_node("SwordHitbox") as Hitbox
 	var valid := not sword.active
 
-	# Face right first: a charge locks facing.
+	# Face right first: an Attack locks facing.
 	_step(controller, {"direction": 1.0})
-	_step(controller, {"melee_held": true, "direction": 1.0})
 	valid = valid and not sword.active
-	_step(controller, {})
+	_step(controller, {"melee_held": true, "direction": 1.0})
 	valid = valid and controller.state == PlayerController.State.ATTACK and sword.active
 	valid = valid and sword.position.x > 0.0
 
@@ -185,18 +184,27 @@ func _test_charged_sword_strength() -> bool:
 	var sword := player.get_node("SwordHitbox") as Hitbox
 
 	_step(controller, {"melee_held": true})
-	_step(controller, {})
 	var valid := sword.active and sword.damage == 10 and not sword.charged
+	valid = valid and _beams().is_empty()
 	_step(controller, {"attack_finished": true})
 
+	# A full Charge let go: the swing is for show, and the Sword Beam it looses is the hit.
 	_hold_melee(controller)
 	_step(controller, {})
-	valid = valid and sword.active and sword.damage == 20 and sword.charged
+	var beams := _beams()
+	valid = valid and controller.charged_attack and not sword.active and beams.size() == 1
+	if beams.size() == 1:
+		var beam := beams[0] as Node2D
+		var hitbox := beam.get_node("Hitbox") as Hitbox
+		valid = valid and hitbox.damage == 20 and hitbox.charged
+		valid = valid and beam.get("facing") == controller.facing
+		var ahead := beam.global_position - player.global_position
+		valid = valid and signf(ahead.x) == controller.facing and ahead.y < 0.0
+	_free_beams()
 	_step(controller, {"attack_finished": true})
 
 	_step(controller, {"melee_held": true})
-	_step(controller, {})
-	valid = valid and sword.active and sword.damage == 10 and not sword.charged
+	valid = valid and sword.active and sword.damage == 10 and _beams().is_empty()
 	player.free()
 	return valid
 
@@ -240,6 +248,7 @@ func _test_charged_swing_glows() -> bool:
 		steady = steady and sword.modulate == glow
 	var valid := controller.state == PlayerController.State.ATTACK and controller.charged_attack
 	valid = valid and glow != Color.WHITE and steady
+	_free_beams()
 	_step(controller, {"attack_finished": true})
 	valid = valid and sword.modulate == Color.WHITE
 
@@ -251,7 +260,18 @@ func _test_charged_swing_glows() -> bool:
 	return valid
 
 
-# Holds melee until the Charge is full.
+# Presses melee and holds it through the slash until the Charge is full.
 func _hold_melee(controller: PlayerController) -> void:
+	_step(controller, {"melee_held": true})
+	_step(controller, {"melee_held": true, "attack_finished": true})
 	for i in ceili(controller.charge_time / 0.1) + 1:
 		_step(controller, {"melee_held": true})
+
+
+func _beams() -> Array[Node]:
+	return _root.get_tree().get_nodes_in_group(&"sword_beam")
+
+
+func _free_beams() -> void:
+	for beam in _beams():
+		beam.free()

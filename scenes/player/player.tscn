@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://bsmxp4op6cc6e"]
+[gd_scene load_steps=20 format=3 uid="uid://bsmxp4op6cc6e"]
 
 [ext_resource type="Script" uid="uid://o4osibv7x85f" path="res://scripts/player/player.gd" id="1_3h4r8"]
 [ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
@@ -6,6 +6,7 @@
 [ext_resource type="AudioStream" uid="uid://d3j1nv660cqxw" path="res://assets/player/player_jump.wav" id="4_jump"]
 [ext_resource type="AudioStream" uid="uid://dgkgv2cco5w5b" path="res://assets/player/player_land.wav" id="5_land"]
 [ext_resource type="AudioStream" uid="uid://u7hslhes1tby" path="res://assets/player/player_swing.wav" id="6_swing"]
+[ext_resource type="AudioStream" path="res://assets/player/player_beam.wav" id="6_beam"]
 [ext_resource type="AudioStream" uid="uid://cenax3m0v0kr3" path="res://assets/player/player_hit.wav" id="7_hit"]
 [ext_resource type="AudioStream" uid="uid://hedum2cq88na" path="res://assets/player/player_hurt.wav" id="8_hurt"]
 [ext_resource type="AudioStream" uid="uid://s07w20sc5lru" path="res://assets/player/player_defeat.wav" id="9_defeat"]
@@ -81,6 +82,10 @@ bus = &"SFX"
 
 [node name="Swing" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource("6_swing")
+bus = &"SFX"
+
+[node name="Beam" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("6_beam")
 bus = &"SFX"
 
 [node name="Hit" type="AudioStreamPlayer" parent="Sounds"]

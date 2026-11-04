@@ -12,6 +12,7 @@ const STEP_DELTA := 0.1
 const SUITES: Array[String] = [
 	"res://tests/asset_path_tests.gd",
 	"res://tests/player_controller_tests.gd",
+	"res://tests/player_melee_tests.gd",
 	"res://tests/player_rig_tests.gd",
 	"res://tests/run_state_tests.gd",
 	"res://tests/region_tile_sheets_tests.gd",
@@ -65,6 +66,7 @@ const SUITES: Array[String] = [
 const TREE_SUITES: Array[String] = [
 	"res://tests/pause_menu_tests.gd",
 	"res://tests/combat_scene_tests.gd",
+	"res://tests/sword_beam_tests.gd",
 	"res://tests/player_sound_scene_tests.gd",
 	"res://tests/start_screen_tests.gd",
 	"res://tests/music_tests.gd",
@@ -208,22 +210,22 @@ func _test_player_sprites_follow_controller() -> bool:
 	var valid := character_sprite.animation == &"jump" and not sword_sprite.visible
 
 	_step_with(controller, {"direction": 1.0})
-	# Held past the moment before a Charge.
-	for i in 30:
-		if controller.state == PlayerController.State.CHARGE:
-			break
-		_step_with(controller, {"melee_held": true, "direction": 1.0})
-	valid = valid and character_sprite.animation == &"walk"
-	valid = valid and sword_sprite.visible and sword_sprite.animation == &"charge"
-
-	_step_with(controller, {})
+	# A press slashes at once.
+	_step_with(controller, {"melee_held": true, "direction": 1.0})
 	valid = valid and character_sprite.animation == &"attack" and sword_sprite.visible
+	valid = valid and sword_sprite.animation == &"attack"
 	valid = valid and character_sprite.flip_h and sword_sprite.flip_h
 
 	character_sprite.animation_finished.emit()
 	valid = valid and instance.get("_attack_finished") == true
 
-	_step_with(controller, {"attack_finished": true})
+	# Held through the slash, it goes on into the Charge.
+	_step_with(controller, {"melee_held": true, "direction": 1.0, "attack_finished": true})
+	valid = valid and character_sprite.animation == &"walk"
+	valid = valid and sword_sprite.visible and sword_sprite.animation == &"charge"
+
+	# Let go short of full, the Charge just ends.
+	_step_with(controller, {})
 	valid = valid and character_sprite.animation == &"idle" and not sword_sprite.visible
 
 	instance.queue_free()
