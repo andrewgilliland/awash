@@ -27,6 +27,7 @@ Each linked file stores the entity's `name`, `type`, `category`, `size`, `moveme
 - **Floating**: Hovers above surfaces with limited aerial movement.
 - **Burrowing**: Travels beneath terrain and emerges to attack.
 - **Amphibious**: Moves effectively through both water and on land.
+- **Aquatic**: Lives under water and strikes from it, never leaving it.
 
 ## Waking Coast
 
@@ -39,6 +40,16 @@ Each linked file stores the entity's `name`, `type`, `category`, `size`, `moveme
 ### Boss
 
 - [Nameless Warden](nameless-warden.md)
+
+## Undertow
+
+### Enemies
+
+- [Lurelight](lurelight.md)
+
+### Boss
+
+- Named and designed later.
 
 ## Low Canopy Jungle
 

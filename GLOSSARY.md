@@ -194,6 +194,10 @@ _Avoid_: Ghost, specter, phantom
 The glowing stone lodged in a Wraith's chest, binding it to the coast. It is the only part of a Wraith the sword can hit, and only while it shows.
 _Avoid_: Core, weak point, heart
 
+**Lurelight**:
+The Undertow's pool enemy: a fish lurking under the dark water, its lure a pale rune light. It drifts toward the Player, dims, then snaps straight up and lies stranded at the surface, open to a single hit.
+_Avoid_: Angler, anglerfish, eel, lure fish
+
 **Boss**:
 An enemy that guards a Region's end, with its own Health bar along the bottom of the screen while it fights. Defeating it opens a Gate, and it stays defeated for the Run, through the Player's own defeat; a new Run brings it back.
 _Avoid_: Miniboss, guardian (as the general term)
