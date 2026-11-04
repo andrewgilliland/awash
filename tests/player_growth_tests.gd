@@ -79,14 +79,22 @@ func _test_strength_adds_to_hits() -> bool:
 	var strength: int = Level.LEVELS[-1].strength
 
 	_step(controller, {"melee_held": true})
-	_step(controller, {})
 	var valid := strength > 0 and sword.damage == Hitbox.DEFAULT_DAMAGE + strength
 	_step(controller, {"attack_finished": true})
 
+	# A full Charge let go: its Sword Beam carries the Charged Attack's cost.
+	_step(controller, {"melee_held": true})
+	_step(controller, {"melee_held": true, "attack_finished": true})
 	for i in ceili(controller.charge_time / 0.1) + 1:
 		_step(controller, {"melee_held": true})
 	_step(controller, {})
-	valid = valid and sword.damage == (Hitbox.DEFAULT_DAMAGE + strength) * 2
+	var beams := player.get_tree().get_nodes_in_group(&"sword_beam")
+	valid = valid and beams.size() == 1
+	if beams.size() == 1:
+		var hitbox := beams[0].get_node("Hitbox") as Hitbox
+		valid = valid and hitbox.damage == (Hitbox.DEFAULT_DAMAGE + strength) * 2
+	for beam in beams:
+		beam.free()
 	player.free()
 	_run().call("start_run")
 	return valid

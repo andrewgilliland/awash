@@ -37,16 +37,20 @@ Anything Interact can use, such as Mara. It reports being used and shows a bobbi
 _Avoid_: Usable, trigger, hotspot
 
 **Charge**:
-The Player state once melee has been held a moment, 0.15 seconds: the sword is held out ready, movement continues, and facing is locked. A tap let go sooner is a quick Attack, with no Charge shown.
+The Player state melee goes on into when it is still held as the slash it pressed finishes: the sword is held out ready, movement continues, and facing is locked. Let go before it is full and it just ends, with no second swing.
 _Avoid_: Wind-up, hold
 
 **Attack**:
-The Player state from melee release until the swing finishes: facing is locked, jumping is not possible, and horizontal movement bleeds to a stop.
+The Player state from a melee press, or from letting go of a full Charge, until the swing finishes: facing is locked, jumping is not possible, and horizontal movement bleeds to a stop. A press slashes at once.
 _Avoid_: Swing, strike (as state names)
 
 **Charged Attack**:
-An Attack let go after a full Charge, half a second of holding melee. It costs twice what a quick one does, the sword blinks once the Charge is full, and it swings lit.
+An Attack let go after a full Charge, half a second of holding melee from the press. The sword blinks once the Charge is full, and it swings lit; the swing itself strikes nothing, and the Sword Beam it looses is the hit.
 _Avoid_: Power attack, heavy attack, charge shot
+
+**Sword Beam**:
+What a Charged Attack sends out along the Player's facing: a glowing copy of the blade that strikes the first thing in its way, for twice what a quick slash costs, and breaks a Ward or a Shortcut's cracked wall. It flies a screen and a half, and stops at the first thing it strikes or at the world's terrain.
+_Avoid_: Projectile, wave, shot
 
 ## World
 

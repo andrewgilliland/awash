@@ -2,8 +2,6 @@ extends RefCounted
 
 const PlayerController := preload("res://scripts/player/player_controller.gd")
 const DELTA := 0.1
-# One physics frame at 60 a second.
-const FRAME := 1.0 / 60.0
 
 
 func get_tests() -> Array:
@@ -13,22 +11,11 @@ func get_tests() -> Array:
 		["Controller applies friction without input", _test_applies_friction_without_input],
 		["Controller jumps from the floor", _test_jumps_from_floor],
 		["Controller ignores jump while airborne", _test_ignores_jump_while_airborne],
-		["Controller charges while melee is held", _test_charges_while_melee_held],
-		["A quick tap of melee attacks without a Charge", _test_tap_skips_charge],
-		["Melee held past a moment starts the Charge", _test_charge_waits_a_moment],
-		["A full Charge takes half a second of holding melee", _test_full_from_the_press],
-		["Controller attacks on melee release", _test_attacks_on_melee_release],
-		["Controller locks attack until it finishes", _test_locks_attack_until_finished],
-		["Controller ends attack by floor contact", _test_ends_attack_by_floor_contact],
-		["Controller keeps charge through a jump", _test_keeps_charge_through_jump],
-		["Controller attacks in the air", _test_attacks_in_air],
 		["Controller reports each state change once", _test_reports_each_state_change_once],
 		["Controller is knocked back by a hit", _test_knocked_back_by_hit],
 		["Controller ignores input while stunned", _test_ignores_input_while_stunned],
 		["Controller cancels an attack when hit", _test_hit_cancels_attack],
 		["Controller reports a jump, not a walk off a ledge", _test_reports_jump],
-		["Controller fully charges after holding melee", _test_fully_charges],
-		["An Attack after a full Charge is a charged Attack", _test_charged_attack],
 	]
 
 
@@ -53,7 +40,7 @@ func _test_reports_jump() -> bool:
 
 
 func _test_knocked_back_by_hit() -> bool:
-	var controller := _charged_controller()
+	var controller := _slashing_controller()
 	var frame := _next_frame(controller)
 	frame.melee_held = true
 	frame.knockback = Vector2(90.0, -120.0)
@@ -86,8 +73,7 @@ func _test_ignores_input_while_stunned() -> bool:
 
 
 func _test_hit_cancels_attack() -> bool:
-	var controller := _charged_controller()
-	controller.step(_next_frame(controller), DELTA)
+	var controller := _slashing_controller()
 	var valid := controller.state == PlayerController.State.ATTACK
 	var frame := _next_frame(controller)
 	frame.knockback = Vector2(90.0, -120.0)
@@ -159,133 +145,6 @@ func _test_ignores_jump_while_airborne() -> bool:
 	return controller.state == PlayerController.State.JUMP and controller.velocity.y == 50.0
 
 
-func _test_charges_while_melee_held() -> bool:
-	var controller := PlayerController.new()
-	_hold_melee(controller, controller.charge_delay)
-	var valid := controller.state == PlayerController.State.CHARGE
-	valid = valid and not controller.is_moving
-
-	var frame := _next_frame(controller)
-	frame.melee_held = true
-	frame.direction = 1.0
-	controller.step(frame, DELTA)
-	valid = valid and controller.state == PlayerController.State.CHARGE
-	valid = valid and controller.velocity.x > 0.0
-	valid = valid and controller.is_moving
-	valid = valid and controller.facing == -1.0
-	return valid
-
-
-# A tap shorter than the moment before a Charge never shows one: letting go swings plainly.
-func _test_tap_skips_charge() -> bool:
-	var controller := PlayerController.new()
-	var valid := true
-	for i in 6:
-		var frame := _next_frame(controller)
-		frame.melee_held = true
-		controller.step(frame, FRAME)
-		valid = valid and controller.state == PlayerController.State.IDLE
-	controller.step(_next_frame(controller), FRAME)
-	valid = valid and controller.state == PlayerController.State.ATTACK
-	return valid and not controller.charged_attack
-
-
-func _test_charge_waits_a_moment() -> bool:
-	var controller := PlayerController.new()
-	var held := 0.0
-	while controller.state != PlayerController.State.CHARGE and held < 1.0:
-		var frame := _next_frame(controller)
-		frame.melee_held = true
-		controller.step(frame, FRAME)
-		held += FRAME
-	return held >= controller.charge_delay - 0.001 and held < controller.charge_delay + FRAME * 1.5
-
-
-# The moment before the Charge counts toward filling it: full half a second from the press.
-func _test_full_from_the_press() -> bool:
-	var controller := PlayerController.new()
-	var held := 0.0
-	while not controller.is_fully_charged() and held < 1.0:
-		var frame := _next_frame(controller)
-		frame.melee_held = true
-		controller.step(frame, FRAME)
-		held += FRAME
-	return absf(held - controller.charge_time) < FRAME * 1.5
-
-
-func _test_attacks_on_melee_release() -> bool:
-	var controller := _charged_controller()
-	controller.step(_next_frame(controller), DELTA)
-	return controller.state == PlayerController.State.ATTACK
-
-
-func _test_locks_attack_until_finished() -> bool:
-	var controller := _charged_controller()
-	controller.step(_next_frame(controller), DELTA)
-
-	var frame := _next_frame(controller)
-	frame.velocity = Vector2(200.0, 0.0)
-	frame.direction = 1.0
-	frame.jump_pressed = true
-	frame.melee_held = true
-	controller.step(frame, DELTA)
-
-	var valid := controller.state == PlayerController.State.ATTACK
-	valid = valid and controller.facing == -1.0
-	valid = valid and controller.velocity.x == 200.0 - controller.friction * DELTA
-	valid = valid and controller.velocity.y == 0.0
-	return valid
-
-
-func _test_ends_attack_by_floor_contact() -> bool:
-	var grounded := _charged_controller()
-	grounded.step(_next_frame(grounded), DELTA)
-	var frame := _next_frame(grounded)
-	frame.attack_finished = true
-	grounded.step(frame, DELTA)
-
-	var airborne := _charged_controller()
-	airborne.step(_next_frame(airborne), DELTA)
-	frame = _next_frame(airborne)
-	frame.attack_finished = true
-	frame.on_floor = false
-	airborne.step(frame, DELTA)
-
-	return (
-		grounded.state == PlayerController.State.IDLE
-		and airborne.state == PlayerController.State.JUMP
-	)
-
-
-func _test_keeps_charge_through_jump() -> bool:
-	var controller := _charged_controller()
-	var frame := _next_frame(controller)
-	frame.melee_held = true
-	frame.jump_pressed = true
-	controller.step(frame, DELTA)
-
-	return (
-		controller.state == PlayerController.State.CHARGE
-		and controller.velocity.y == controller.jump_velocity
-	)
-
-
-func _test_attacks_in_air() -> bool:
-	var controller := _charged_controller()
-	var frame := _next_frame(controller)
-	frame.on_floor = false
-	frame.velocity = Vector2(200.0, 0.0)
-	controller.step(frame, DELTA)
-	var valid := controller.state == PlayerController.State.ATTACK
-
-	frame = _next_frame(controller)
-	frame.on_floor = false
-	frame.direction = 1.0
-	controller.step(frame, DELTA)
-	valid = valid and controller.velocity.x == 200.0 - 2.0 * controller.friction * DELTA
-	return valid
-
-
 func _test_reports_each_state_change_once() -> bool:
 	var controller := PlayerController.new()
 	var changes: Array = []
@@ -300,11 +159,7 @@ func _test_reports_each_state_change_once() -> bool:
 	frame = _next_frame(controller)
 	frame.direction = 1.0
 	controller.step(frame, DELTA)
-	# Melee held while walking, short of the Charge; then a jump on the step the Charge starts.
-	frame = _next_frame(controller)
-	frame.direction = 1.0
-	frame.melee_held = true
-	controller.step(frame, DELTA)
+	# A jump and a melee press on one step: it jumps, then slashes, and reports only the slash.
 	frame = _next_frame(controller)
 	frame.direction = 1.0
 	frame.melee_held = true
@@ -315,67 +170,17 @@ func _test_reports_each_state_change_once() -> bool:
 		changes
 		== [
 			[PlayerController.State.IDLE, PlayerController.State.WALK],
-			[PlayerController.State.WALK, PlayerController.State.CHARGE],
+			[PlayerController.State.WALK, PlayerController.State.ATTACK],
 		]
 	)
 
 
-func _test_fully_charges() -> bool:
-	var controller := _charged_controller()
-	var valid: bool = not controller.is_fully_charged()
-	_hold_melee(controller, controller.charge_time)
-	valid = valid and controller.is_fully_charged()
-	# A jump mid-charge keeps it full.
-	var frame := _next_frame(controller)
-	frame.melee_held = true
-	frame.jump_pressed = true
-	controller.step(frame, DELTA)
-	valid = valid and controller.is_fully_charged()
-	controller.step(_next_frame(controller), DELTA)
-	return valid and not controller.is_fully_charged()
-
-
-func _test_charged_attack() -> bool:
-	# A quick tap swings plainly.
-	var controller := _charged_controller()
-	controller.step(_next_frame(controller), DELTA)
-	var valid := controller.state == PlayerController.State.ATTACK
-	valid = valid and not controller.charged_attack
-
-	var frame := _next_frame(controller)
-	frame.attack_finished = true
-	controller.step(frame, DELTA)
-	frame = _next_frame(controller)
-	frame.melee_held = true
-	controller.step(frame, DELTA)
-	_hold_melee(controller, controller.charge_time)
-	controller.step(_next_frame(controller), DELTA)
-	valid = valid and controller.state == PlayerController.State.ATTACK
-	valid = valid and controller.charged_attack
-
-	# The next quick tap is plain again.
-	frame = _next_frame(controller)
-	frame.attack_finished = true
-	controller.step(frame, DELTA)
-	frame = _next_frame(controller)
-	frame.melee_held = true
-	controller.step(frame, DELTA)
-	controller.step(_next_frame(controller), DELTA)
-	return valid and not controller.charged_attack
-
-
-# Keeps melee held for at least the given time.
-func _hold_melee(controller: PlayerController, time: float) -> void:
-	for i in ceili(time / DELTA) + 1:
-		var frame := _next_frame(controller)
-		frame.melee_held = true
-		controller.step(frame, DELTA)
-
-
-# A controller just into its Charge, melee held past the moment before one.
-func _charged_controller() -> PlayerController:
+# A controller mid-slash, melee just pressed.
+func _slashing_controller() -> PlayerController:
 	var controller := PlayerController.new()
-	_hold_melee(controller, controller.charge_delay)
+	var frame := _next_frame(controller)
+	frame.melee_held = true
+	controller.step(frame, DELTA)
 	return controller
 
 

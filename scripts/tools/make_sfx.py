@@ -120,6 +120,8 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     "player_land": lambda: mix(noise(0.07, 900, 200, seed=1), sweep(0.05, 120, 70)),
     # A whoosh as the sword comes round.
     "player_swing": lambda: noise(0.13, 5000, 600, seed=2),
+    # A full Charge let go: a bright, rising zing as the Sword Beam leaves the blade.
+    "player_beam": lambda: mix(sweep(0.22, 900, 2400, duty=0.125), sweep(0.22, 1800, 3600, duty=0.25)),
     # A crunch as the sword lands on something.
     "player_hit": lambda: mix(sweep(0.09, 220, 90, duty=0.125), noise(0.06, 6000, 1500, seed=3)),
     # A falling warble when the Player is struck.
