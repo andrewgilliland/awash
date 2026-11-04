@@ -34,6 +34,10 @@ func get_tests() -> Array:
 			_test_charged_sword_strength
 		],
 		["A full Charge makes the sword blink", _test_full_charge_blinks],
+		[
+			"A Charged Attack's swing glows steady; a quick one's does not",
+			_test_charged_swing_glows
+		],
 		["Scavenger has a body, hurtbox and spear", _test_scavenger_boxes],
 		["Palm shore keeps a Scavenger in its tidal pool", _test_scavenger_in_pool],
 	]
@@ -214,7 +218,34 @@ func _test_full_charge_blinks() -> bool:
 		lit = lit or sword.modulate != Color.WHITE
 		dim = dim or sword.modulate == Color.WHITE
 	valid = valid and lit and dim
+	player.free()
+	return valid
+
+
+# Let go from a full Charge, the sword stays lit through the whole swing, so the stronger hit
+# shows; a quick swing, and the Player after either, are plain.
+func _test_charged_swing_glows() -> bool:
+	var player := PLAYER_SCENE.instantiate() as CharacterBody2D
+	_root.add_child(player)
+	var controller := player.get("controller") as PlayerController
+	var sword := player.get_node("SwordSprite") as CanvasItem
+
+	_hold_melee(controller)
+	var glow := Color.WHITE
+	var steady := true
+	for i in 4:
+		_step(controller, {}, 0.05)
+		if i == 0:
+			glow = sword.modulate
+		steady = steady and sword.modulate == glow
+	var valid := controller.state == PlayerController.State.ATTACK and controller.charged_attack
+	valid = valid and glow != Color.WHITE and steady
+	_step(controller, {"attack_finished": true})
+	valid = valid and sword.modulate == Color.WHITE
+
+	_step(controller, {"melee_held": true})
 	_step(controller, {})
+	valid = valid and controller.state == PlayerController.State.ATTACK
 	valid = valid and sword.modulate == Color.WHITE
 	player.free()
 	return valid

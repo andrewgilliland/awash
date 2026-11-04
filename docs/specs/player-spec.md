@@ -38,7 +38,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - After a hit the Player is invulnerable for 1 second and blinks; hits during that time cost nothing.
 - The Player's Health carries from Room to Room; only a defeat or a new Run refills it.
 - At 0 Health the Player is defeated. It stops answering the controls, falls where it lands and flickers. Then it wakes at the first Room's `start` Entry with full Health, and the Run, its visited Rooms and its Map carry on.
-- The sword's hitbox is live only during `ATTACK`, 12 pixels in front of the Player by facing. A quick Attack costs an enemy 10 Health plus the Player's Strength; a Charged Attack, let go after 0.5 seconds of `CHARGE`, costs twice that, 20 at Strength 0. Once the Charge is full the sword blinks bright every 0.08 seconds until it is let go.
+- The sword's hitbox is live only during `ATTACK`, 12 pixels in front of the Player by facing. A quick Attack costs an enemy 10 Health plus the Player's Strength; a Charged Attack, let go after 0.5 seconds of `CHARGE`, costs twice that, 20 at Strength 0. Once the Charge is full the sword blinks bright every 0.08 seconds until it is let go, and the Charged Attack let go from it swings lit the whole way; a quick Attack's swing is plain.
 
 ## Growth
 

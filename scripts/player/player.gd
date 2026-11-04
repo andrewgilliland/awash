@@ -22,7 +22,7 @@ const KNOCKBACK := Vector2(90.0, -120.0)
 const SWORD_OFFSET := Vector2(12.0, -8.0)
 # A charged Attack costs this many times a quick one.
 const CHARGED_MULTIPLIER := 2
-# A full Charge makes the sword blink bright.
+# A full Charge makes the sword blink bright, and the Charged Attack let go from it swings lit.
 const CHARGED_GLOW := Color(2.0, 2.0, 2.0)
 const CHARGED_BLINK_TIME := 0.08
 
@@ -269,8 +269,11 @@ func _on_controller_stepped() -> void:
 	if _sword_hitbox.active != attacking:
 		_sword_hitbox.active = attacking
 	var lit := (
-		controller.is_fully_charged()
-		and fmod(controller.time_in_state, CHARGED_BLINK_TIME * 2.0) < CHARGED_BLINK_TIME
+		(attacking and controller.charged_attack)
+		or (
+			controller.is_fully_charged()
+			and fmod(controller.time_in_state, CHARGED_BLINK_TIME * 2.0) < CHARGED_BLINK_TIME
+		)
 	)
 	_sword_sprite.modulate = CHARGED_GLOW if lit else Color.WHITE
 
