@@ -160,7 +160,7 @@ func _test_stats_shows_growth() -> bool:
 				["Level", "2"],
 				["Experience", "45 / 100"],
 				["Health", "60 / 60"],
-				["Strength", "0"],
+				["Strength", "5"],
 				["Defense", "0"],
 			]
 		)
@@ -172,10 +172,25 @@ func _test_stats_shows_growth() -> bool:
 		and (
 			_stats_rows(body)
 			== [
-				["Level", "5"],
-				["Experience", "1045 / MAX"],
-				["Health", "90 / 90"],
-				["Strength", "10"],
+				["Level", "8"],
+				["Experience", "1045 / 1200"],
+				["Health", "120 / 120"],
+				["Strength", "35"],
+				["Defense", "0"],
+			]
+		)
+	)
+	player.call("gain_experience", 1000)
+	_reshow_stats(menu)
+	valid = (
+		valid
+		and (
+			_stats_rows(body)
+			== [
+				["Level", "10"],
+				["Experience", "2045 / MAX"],
+				["Health", "140 / 140"],
+				["Strength", "45"],
 				["Defense", "0"],
 			]
 		)

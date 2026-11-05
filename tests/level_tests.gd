@@ -5,7 +5,8 @@ const Level := preload("res://scripts/player/level.gd")
 
 func get_tests() -> Array:
 	return [
-		["Level table starts at nothing and rises in tens", _test_table_rises_in_tens],
+		["Level table runs ten Levels, each needing more Experience", _test_table_runs_ten],
+		["Each Level raises Health by 10 and Strength by 5", _test_each_level_raises],
 		["A new Run starts at Level 1", _test_starts_at_level_one],
 		["Each Level gives its row's stats", _test_each_level_gives_its_row],
 		["A Level is reached exactly at its threshold", _test_reached_at_threshold],
@@ -17,17 +18,23 @@ func get_tests() -> Array:
 	]
 
 
-# Every row needs more Experience than the last, and Health and Strength stay in tens.
-func _test_table_rises_in_tens() -> bool:
-	var valid := Level.LEVELS.size() >= 2 and Level.LEVELS[0].experience == 0
-	for index in Level.LEVELS.size():
+# The totals that reach each Level, each step about half again the last, so the climb lasts
+# through the Undertow.
+func _test_table_runs_ten() -> bool:
+	var reached := []
+	for row in Level.LEVELS:
+		reached.append(row.experience)
+	return reached == [0, 40, 100, 180, 300, 450, 650, 900, 1200, 1600]
+
+
+func _test_each_level_raises() -> bool:
+	var first: Dictionary = Level.LEVELS[0]
+	var valid: bool = first.max_health == 50 and first.strength == 0
+	for index in range(1, Level.LEVELS.size()):
 		var row: Dictionary = Level.LEVELS[index]
-		valid = valid and row.max_health % 10 == 0 and row.strength % 10 == 0
-		if index > 0:
-			var previous: Dictionary = Level.LEVELS[index - 1]
-			valid = valid and row.experience > previous.experience
-			valid = valid and row.max_health >= previous.max_health
-			valid = valid and row.strength >= previous.strength
+		var previous: Dictionary = Level.LEVELS[index - 1]
+		valid = valid and row.max_health - previous.max_health == 10
+		valid = valid and row.strength - previous.strength == 5
 	return valid
 
 

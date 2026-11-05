@@ -191,6 +191,7 @@ func _physics_process(delta: float) -> void:
 # and shows LEVEL UP; the Run keeps the total and the Health that comes with it.
 func gain_experience(amount: int) -> void:
 	var before := level.max_health()
+	var strength_before := level.strength()
 	var gained := level.gain(amount)
 	var run := get_node_or_null("/root/RunState") if is_inside_tree() else null
 	if run != null:
@@ -201,7 +202,7 @@ func gain_experience(amount: int) -> void:
 	if run != null:
 		run.set("player_health", health.current)
 	_sounds.play(PlayerSounds.LEVEL_UP)
-	_level_up.call("flash")
+	_level_up.call("flash", level.max_health() - before, level.strength() - strength_before)
 
 
 # Whether the Player's Health has run out: it no longer answers the controls.
