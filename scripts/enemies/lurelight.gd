@@ -14,7 +14,8 @@ const LurelightSounds := preload("res://scripts/enemies/lurelight_sounds.gd")
 const MAX_HEALTH := 20
 # What defeating a Lurelight earns the Player.
 const EXPERIENCE := 15
-# The chance a defeated Lurelight leaves a Brinecap where it fell.
+# The Supply a defeated Lurelight may leave where it fell, and the chance it does.
+const DROP := &"glowroe"
 const DROP_CHANCE := 0.2
 const INVULNERABLE_TIME := 0.3
 # Belly-up at the surface, then sinking out of sight.

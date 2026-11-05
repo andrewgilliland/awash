@@ -109,7 +109,7 @@ func use_supply(kind: StringName) -> bool:
 		return false
 	if health.current >= health.maximum:
 		return false
-	health.heal(Supplies.KINDS[kind].restores)
+	health.heal(Supplies.restores(kind, health.maximum))
 	supplies.spend(kind)
 	_write_supplies_to_run()
 	var run := _get_run()

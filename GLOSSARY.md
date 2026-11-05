@@ -145,8 +145,16 @@ The first Restorative: a Supply that restores 20 Health.
 _Avoid_: Potion, health potion
 
 **Brinecap**:
-A pale, salt-crusted mushroom from the coast's caves and tunnels: a Restorative that restores 10 Health. Enemies forage it, so a defeated one sometimes leaves one where it fell, for the Player to collect by touch.
+A pale, salt-crusted mushroom from the coast's caves and tunnels: a Restorative that restores 10 Health. Scavengers and Storm Wisps forage it, so a defeated one sometimes leaves one where it fell, for the Player to collect by touch.
 _Avoid_: Mushroom (as its name), food, snack
+
+**Glowroe**:
+A clutch of faintly glowing roe from the Undertow's pools: a Restorative that restores 20 Health. A defeated Lurelight sometimes leaves one where it fell.
+_Avoid_: Eggs, caviar
+
+**Mourning Salt**:
+Salt wept from a Wraith's robes: a Restorative that restores half of the Player's max Health, rounded down, so it keeps its worth as Levels raise it. A defeated Wraith sometimes leaves one where it fell.
+_Avoid_: Ectoplasm, soul salt
 
 **Salvage**:
 What the Player gathers from the wreck-strewn world and spends at shops. Defeated enemies drop it, Caches can hold it, and a defeat does not take it away.

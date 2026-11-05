@@ -3,8 +3,10 @@ extends RefCounted
 # The Supplies the Player carries in a Run: how many of each kind, up to the carry limit.
 
 const BRINECAP := &"brinecap"
+const GLOWROE := &"glowroe"
+const MOURNING_SALT := &"mourning_salt"
 # Every kind of Supply, in the order the Inventory lists them: its name, a description of two
-# lines at most, and the Health it restores.
+# lines at most, and the Health it restores, either a set amount or a share of max Health.
 const KINDS := {
 	BRINECAP:
 	{
@@ -12,11 +14,32 @@ const KINDS := {
 		description = "A salt-crusted cave mushroom. Restores 10 Health.",
 		restores = 10,
 	},
+	GLOWROE:
+	{
+		name = "Glowroe",
+		description = "Faintly glowing roe from an Undertow pool. Restores 20 Health.",
+		restores = 20,
+	},
+	MOURNING_SALT:
+	{
+		name = "Mourning Salt",
+		description = "Salt wept from a Wraith's robes. Restores half your Health.",
+		restores_share = 0.5,
+	},
 }
 # The most of any one kind the Player can carry.
 const CARRY_LIMIT := 9
 
 var _counts: Dictionary = {}
+
+
+# The Health one of a kind restores for a Player whose max Health is the given amount; a share
+# rounds down.
+static func restores(kind: StringName, max_health: int) -> int:
+	var supply: Dictionary = KINDS.get(kind, {})
+	if supply.has("restores_share"):
+		return floori(max_health * supply.restores_share)
+	return supply.get("restores", 0)
 
 
 # Starts from counts the Run carried; unknown kinds are dropped and counts held to the limit.
