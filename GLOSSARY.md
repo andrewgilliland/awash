@@ -237,7 +237,7 @@ What defeating an enemy earns the Player toward the next Level. Each kind of ene
 _Avoid_: XP, EXP, experience points
 
 **Strength**:
-The Player's own might, added to what each sword hit costs. Levels raise it; Armor does not.
+The Player's own might, added to what each sword hit costs. Levels raise it; Equipment does not.
 _Avoid_: Attack (the Player state), power, damage
 
 ## Equipment
@@ -247,12 +247,20 @@ What the Player wears or wields, one piece in each slot, kept for the whole Run 
 _Avoid_: Gear, outfit, loadout
 
 **Weapon**:
-The Equipment slot for what the Player wields: the sword each Attack swings. It is never empty; a new Run holds the Short Sword.
+The Equipment slot for what the Player wields: the sword each Attack swings, drawn in the Player's hand and in its Sword Beam. It is never empty; a new Run holds the Short Sword, and the Equipment Panel takes up any other Weapon owned.
 _Avoid_: Blade, arm, main hand
 
 **Short Sword**:
-The Weapon Mara pulls from the sand on the Waking Coast and hands to Vael: a plain blade that adds nothing to a hit yet.
+The Weapon Mara pulls from the sand on the Waking Coast and hands to Vael: a plain blade with Attack 0.
 _Avoid_: Starting weapon, default weapon
+
+**Oathblade**:
+A ceremonial blade from the oathkeepers the Wraiths once were: a Weapon with Attack 5. A defeated Wraith sometimes leaves it where it fell, until the Player owns it; touching it takes it up at once.
+_Avoid_: Wraith sword, ghost blade
+
+**Attack** (of a Weapon):
+What the Weapon held adds to each hit it lands, on top of the Player's Strength. Written `ATK` in the Equipment Panel.
+_Avoid_: Damage, power, weapon strength
 
 **Armor**:
 The Equipment slot for what the Player wears, chosen in the Equipment Panel from the Armor the Player owns, or left empty for no Defense. A new Run owns and wears the Worn Leather Tunic.
@@ -289,7 +297,7 @@ The Panel listing each kind of Supply the Player carries and how many. Choosing 
 _Avoid_: Supplies Panel, items menu, bag
 
 **Equipment Panel**:
-The Panel showing each Equipment slot with its piece above a divider, and below it the pieces owned for the slot last focused, the one equipped marked. Choosing a slot moves into its pieces; choosing one equips it, and None empties a slot that can be empty. Defense shows above the divider, with what it would become while an Armor is focused.
+The Panel showing each Equipment slot with its piece above a divider, and below it the pieces owned for the slot last focused, the one equipped marked. Choosing a slot moves into its pieces; choosing one equips it, and None empties a slot that can be empty. Attack and Defense show above the divider, each with what it would become while a Weapon, or an Armor, is focused.
 _Avoid_: Equip screen, gear menu, loadout
 
 **Description**:

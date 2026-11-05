@@ -1,8 +1,8 @@
 extends CharacterBody2D
 
-# A Supply lying where a defeated enemy fell: it drops to the ground, glints, and the Player
-# collects it by touching it. One the Player has no room for stays where it lies. It is lost if
-# it falls with no ground under it.
+# A Supply, or a Weapon, lying where a defeated enemy fell: it drops to the ground, glints, and
+# the Player collects it by touching it. One the Player cannot take stays where it lies. It is
+# lost if it falls with no ground under it.
 
 const GLINT_EVERY := 1.0
 const GLINT_TIME := 0.12
@@ -11,6 +11,8 @@ const GLINT := Color(1.8, 1.8, 1.8)
 const LOST_AFTER := 3.0
 
 @export var kind: StringName = &"brinecap"
+# What the Player is asked to take it with: collect for a Supply, collect_weapon for a Weapon.
+@export var collect_method: StringName = &"collect"
 
 var _time: float = 0.0
 var _falling_time: float = 0.0
@@ -34,6 +36,6 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	# Checked every frame, so a Player who makes room while standing on it still collects it.
 	for body in _reach.get_overlapping_bodies():
-		if body.has_method("collect") and body.call("collect", kind):
+		if body.has_method(collect_method) and body.call(collect_method, kind):
 			queue_free()
 			return

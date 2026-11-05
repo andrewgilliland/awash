@@ -17,6 +17,9 @@ const EXPERIENCE := 20
 # The Supply a defeated Wraith may leave where it fell, and the chance it does.
 const DROP := &"mourning_salt"
 const DROP_CHANCE := 0.35
+# The Weapon it may leave as well, on a roll of its own, until the Player owns it.
+const WEAPON_DROP := &"oathblade"
+const WEAPON_DROP_CHANCE := 0.1
 const INVULNERABLE_TIME := 0.3
 const DEFEAT_TIME := 0.6
 const DEFEAT_BLINK := 0.08

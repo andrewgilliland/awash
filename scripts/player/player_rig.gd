@@ -51,6 +51,19 @@ func _init(body: AnimatedSprite2D, sword: AnimatedSprite2D) -> void:
 	_sword.frame_changed.connect(_place_sword)
 
 
+# Draws the sword in hand from a Weapon's sheet, keeping whatever it is showing.
+func hold(sheet: Texture2D) -> void:
+	var animation := _sword.animation
+	var frame := _sword.frame
+	var playing := _sword.is_playing()
+	_sword.sprite_frames = _build_sprite_frames(sheet, SWORD_ANIMATIONS)
+	if _sword.sprite_frames.has_animation(animation):
+		_sword.animation = animation
+		_sword.frame = frame
+		if playing:
+			_sword.play()
+
+
 # Shows the Player for one step. Animations start only when the state changes, so a held
 # state keeps playing; the charge pose, mirroring and sword placement follow every call.
 func show(state: PlayerController.State, facing: float, is_moving: bool) -> void:
