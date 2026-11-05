@@ -4,6 +4,7 @@ const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
 const Supplies := preload("res://scripts/items/supplies.gd")
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 const BRINECAP := &"brinecap"
+const MOURNING_SALT := &"mourning_salt"
 
 # Needs a root that is already in the tree: the Player reads the Run from /root in _ready.
 var _root: Window
@@ -19,6 +20,7 @@ func get_tests() -> Array:
 		["Collecting a Brinecap carries it, into the Run", _test_collect_carries],
 		["Player carries no more than the limit", _test_collect_stops_at_limit],
 		["Eating a Brinecap restores 10 Health, with a chime", _test_use_eats_brinecap],
+		["Eating Mourning Salt restores half of max Health, raised by Level", _test_use_salt],
 		["Eating at full Health keeps the Brinecap", _test_use_at_full_keeps],
 		["Eating does nothing with none, held still or defeated", _test_use_does_nothing],
 	]
@@ -71,6 +73,23 @@ func _test_use_eats_brinecap() -> bool:
 	valid = valid and _playing(player, &"Eat")
 	valid = valid and _run().get("player_health") == health.current
 	valid = valid and _run().get("player_supplies") == {}
+	player.free()
+	_run().call("start_run")
+	return valid
+
+
+# At Level 3 max Health is 70, so the Salt restores 35.
+func _test_use_salt() -> bool:
+	_run().call("start_run")
+	var player := _player()
+	player.call("gain_experience", 100)
+	player.call("collect", MOURNING_SALT)
+	var health = player.get("health")
+	var valid: bool = health.maximum == 70
+	health.hurt(60, 0.0)
+	var used: bool = player.call("use_supply", MOURNING_SALT)
+	valid = valid and used and health.current == 45
+	valid = valid and player.get("supplies").count(MOURNING_SALT) == 0
 	player.free()
 	_run().call("start_run")
 	return valid

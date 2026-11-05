@@ -7,6 +7,9 @@ func get_tests() -> Array:
 	return [
 		["Supplies start empty", _test_start_empty],
 		["Every kind of Supply has a name and restores Health", _test_kinds_table],
+		["The Inventory lists Brinecap, Glowroe, then Mourning Salt", _test_kinds_order],
+		["Brinecap and Glowroe restore a set amount of Health", _test_flat_restores],
+		["Mourning Salt restores half of max Health, rounded down", _test_share_restores],
 		["Adding a Supply carries one more", _test_add_carries_more],
 		["Supplies stop at the carry limit", _test_stop_at_limit],
 		["Spending a Supply carries one fewer", _test_spend_carries_fewer],
@@ -24,6 +27,27 @@ func _test_start_empty() -> bool:
 func _test_kinds_table() -> bool:
 	var brinecap: Dictionary = Supplies.KINDS.get(Supplies.BRINECAP, {})
 	return brinecap.get("name") == "Brinecap" and brinecap.get("restores") == 10
+
+
+func _test_kinds_order() -> bool:
+	var valid := (
+		Supplies.KINDS.keys() == [Supplies.BRINECAP, Supplies.GLOWROE, Supplies.MOURNING_SALT]
+	)
+	valid = valid and Supplies.KINDS[Supplies.GLOWROE].get("name") == "Glowroe"
+	return valid and Supplies.KINDS[Supplies.MOURNING_SALT].get("name") == "Mourning Salt"
+
+
+func _test_flat_restores() -> bool:
+	var valid := Supplies.restores(Supplies.BRINECAP, 50) == 10
+	valid = valid and Supplies.restores(Supplies.BRINECAP, 140) == 10
+	valid = valid and Supplies.restores(Supplies.GLOWROE, 50) == 20
+	return valid and Supplies.restores(Supplies.GLOWROE, 140) == 20
+
+
+func _test_share_restores() -> bool:
+	var valid := Supplies.restores(Supplies.MOURNING_SALT, 50) == 25
+	valid = valid and Supplies.restores(Supplies.MOURNING_SALT, 140) == 70
+	return valid and Supplies.restores(Supplies.MOURNING_SALT, 55) == 27
 
 
 func _test_add_carries_more() -> bool:

@@ -4,20 +4,25 @@ const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
 const HEALTH_BAR_SCENE := preload("res://scenes/ui/health_bar.tscn")
 const BOSS_BAR_SCENE := preload("res://scenes/ui/boss_bar.tscn")
-const BRINECAP_SCENE := preload("res://scenes/items/brinecap.tscn")
+# The scene for each Supply an enemy can leave where it fell.
+const SUPPLY_SCENES := {
+	&"brinecap": preload("res://scenes/items/brinecap.tscn"),
+	&"glowroe": preload("res://scenes/items/glowroe.tscn"),
+	&"mourning_salt": preload("res://scenes/items/mourning_salt.tscn"),
+}
 const RunStateScript := preload("res://scripts/core/run_state.gd")
 const World := preload("res://scripts/core/world.gd")
 const ENEMY_GROUP := &"enemy"
 # Long enough to see the Player fall and hear the defeat sound before the Room is replaced.
 const DEFEAT_PAUSE := 1.2
 
-# Rolled once per enemy defeat, from 0 up to 1; under the enemy's DROP_CHANCE leaves a
-# Brinecap. Tests swap it for a fixed roll.
+# Rolled once per enemy defeat, from 0 up to 1; under the enemy's DROP_CHANCE leaves its DROP,
+# a Brinecap if it names none. Tests swap it for a fixed roll.
 var drop_roll: Callable = randf
 # Which Room this is, found in the World by its own scene; &"" when the World doesn't hold it.
 var _room_id: StringName = &""
-# Where defeated enemies left a Brinecap, waiting for the Room's next physics step.
-var _brinecaps_due: Array[Vector2] = []
+# Each Supply defeated enemies left, and where, waiting for the Room's next physics step.
+var _supplies_due: Array[Array] = []
 
 @onready var _player: CharacterBody2D = $Player
 @onready var _entries: Node = $Entries
@@ -70,7 +75,7 @@ func _add_background() -> void:
 
 
 # Every enemy defeated in this Room earns the Player its Experience, whatever struck it down, and
-# may leave a Brinecap where it fell.
+# may leave a Supply where it fell.
 func _hand_enemy_defeats_to_player() -> void:
 	if _player == null or not is_inside_tree():
 		return
@@ -82,19 +87,19 @@ func _hand_enemy_defeats_to_player() -> void:
 
 func _on_enemy_defeated(experience: int, enemy: Node2D) -> void:
 	_player.call("gain_experience", experience)
-	var chance: float = enemy.get_script().get_script_constant_map().get("DROP_CHANCE", 0.0)
-	if drop_roll.call() < chance:
-		_brinecaps_due.append(enemy.global_position)
+	var constants: Dictionary = enemy.get_script().get_script_constant_map()
+	if drop_roll.call() < constants.get("DROP_CHANCE", 0.0):
+		_supplies_due.append([constants.get("DROP", &"brinecap"), enemy.global_position])
 
 
 # An enemy falls while physics is reporting the hit, when nothing may join the world, so its
-# Brinecap joins on the Room's next step.
+# Supply joins on the Room's next step.
 func _physics_process(_delta: float) -> void:
-	for at in _brinecaps_due:
-		var brinecap := BRINECAP_SCENE.instantiate() as Node2D
-		add_child(brinecap)
-		brinecap.global_position = at
-	_brinecaps_due.clear()
+	for due in _supplies_due:
+		var supply := (SUPPLY_SCENES[due[0]] as PackedScene).instantiate() as Node2D
+		add_child(supply)
+		supply.global_position = due[1]
+	_supplies_due.clear()
 
 
 # After a beat to see it fall, a defeated Player wakes in the first Room with full Health; the
