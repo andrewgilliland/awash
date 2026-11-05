@@ -221,7 +221,7 @@ _Avoid_: Stun, daze
 ## Growth
 
 **Level**:
-How far the Player has grown in a Run, starting at 1. Enough Experience raises it, up to the highest Level, and each Level can raise the Player's maximum Health and Strength.
+How far the Player has grown in a Run, starting at 1. Enough Experience raises it, up to the highest Level, 10, and each Level raises the Player's maximum Health by 10 and Strength by 5.
 _Avoid_: XP level, rank, character level, level (for a Room)
 
 **Experience**:

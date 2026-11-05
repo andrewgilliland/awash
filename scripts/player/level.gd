@@ -6,13 +6,19 @@ extends RefCounted
 # experience_to_next() at the highest Level.
 const AT_HIGHEST := -1
 # One row per Level, from Level 1: the total Experience that reaches it, and the maximum Health
-# and Strength it gives. Health and Strength stay in tens; the last row is the highest Level.
+# and Strength it gives. Each Level raises Health by 10 and Strength by 5, and each takes about
+# half again the Experience of the last; the last row is the highest Level.
 const LEVELS := [
 	{experience = 0, max_health = 50, strength = 0},
-	{experience = 40, max_health = 60, strength = 0},
-	{experience = 100, max_health = 70, strength = 0},
-	{experience = 180, max_health = 80, strength = 0},
-	{experience = 300, max_health = 90, strength = 10},
+	{experience = 40, max_health = 60, strength = 5},
+	{experience = 100, max_health = 70, strength = 10},
+	{experience = 180, max_health = 80, strength = 15},
+	{experience = 300, max_health = 90, strength = 20},
+	{experience = 450, max_health = 100, strength = 25},
+	{experience = 650, max_health = 110, strength = 30},
+	{experience = 900, max_health = 120, strength = 35},
+	{experience = 1200, max_health = 130, strength = 40},
+	{experience = 1600, max_health = 140, strength = 45},
 ]
 
 # Read-only for callers: change them through gain().

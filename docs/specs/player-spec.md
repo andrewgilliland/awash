@@ -43,19 +43,24 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 ## Growth
 
 - Every enemy defeated in a Room earns the Player that enemy's Experience, every time, even one that has come back: 10 for a Scavenger, 15 for a Storm Wisp, 20 for a Wraith.
-- The Player's Level is read from its total Experience against the Level table in `scripts/player/level.gd`. Each row gives the total Experience that reaches the Level and its maximum Health and Strength, in tens; the last row is the highest Level.
+- The Player's Level is read from its total Experience against the Level table in `scripts/player/level.gd`. Each row gives the total Experience that reaches the Level and its maximum Health and Strength. Each Level raises Health by 10 and Strength by 5, and takes about half again the Experience of the last; the last row, Level 10, is the highest.
 
   | Level | Total Experience | Max Health | Strength |
   |---|---|---|---|
   | 1 | 0 | 50 | 0 |
-  | 2 | 40 | 60 | 0 |
-  | 3 | 100 | 70 | 0 |
-  | 4 | 180 | 80 | 0 |
-  | 5 | 300 | 90 | 10 |
+  | 2 | 40 | 60 | 5 |
+  | 3 | 100 | 70 | 10 |
+  | 4 | 180 | 80 | 15 |
+  | 5 | 300 | 90 | 20 |
+  | 6 | 450 | 100 | 25 |
+  | 7 | 650 | 110 | 30 |
+  | 8 | 900 | 120 | 35 |
+  | 9 | 1200 | 130 | 40 |
+  | 10 | 1600 | 140 | 45 |
 
 - One defeat can raise more than one Level. Past the highest Level, Experience still counts but raises nothing.
 - Reaching a Level raises the Health left by as much as the maximum rose; it is not a refill. Defeated Health stays defeated.
-- Reaching a Level plays `level_up` and shows LEVEL UP over the Player, rising 10 pixels and fading over 1 second, without pausing play. Near a screen edge it sits inside the screen rather than centred on the Player.
+- Reaching a Level plays `level_up` and shows LEVEL UP over the Player, with what it raised beneath (`HP +10  STR +5`, added up when one gain reaches several Levels), rising 10 pixels and fading over 1 second, without pausing play. Near a screen edge it sits inside the screen rather than centred on the Player.
 - The Run carries the total Experience from Room to Room and through a defeat; only a new Run resets it.
 - The Stats Panel shows the Level, Experience out of the total for the next Level (or `MAX` at the highest), Health and Strength.
 

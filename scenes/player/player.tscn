@@ -115,12 +115,20 @@ bus = &"SFX"
 
 [node name="LevelUp" type="Label" parent="."]
 visible = false
-offset_left = -24.0
+offset_left = -48.0
 offset_top = -34.0
-offset_right = 24.0
+offset_right = 48.0
 offset_bottom = -26.0
 theme = ExtResource("12_theme")
 theme_override_colors/font_color = Color(1, 1, 0.545098, 1)
 text = "LEVEL UP"
 horizontal_alignment = 1
 script = ExtResource("11_flash")
+
+[node name="Gains" type="Label" parent="LevelUp"]
+layout_mode = 0
+offset_top = 8.0
+offset_right = 96.0
+offset_bottom = 16.0
+theme_override_colors/font_color = Color(1, 1, 0.545098, 1)
+horizontal_alignment = 1
