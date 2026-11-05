@@ -18,6 +18,7 @@ const DROPS := [
 	[LURELIGHT_SCENE, 0.2, &"glowroe"],
 ]
 const BRINECAP_SCENE_PATH := "res://scenes/items/brinecap.tscn"
+const OATHBLADE_SCENE_PATH := "res://scenes/items/oathblade.tscn"
 const SUPPLY_SCENE_PATHS := [
 	BRINECAP_SCENE_PATH, "res://scenes/items/glowroe.tscn", "res://scenes/items/mourning_salt.tscn"
 ]
@@ -43,6 +44,10 @@ func get_tests() -> Array:
 		["A lucky roll leaves a Brinecap where the enemy fell", _test_lucky_roll_drops],
 		["A lucky roll leaves the Supply that enemy drops", _test_lucky_roll_drops_its_kind],
 		["An unlucky roll leaves nothing", _test_unlucky_roll_leaves_nothing],
+		["A Wraith may also leave the Oathblade, on a roll of its own", _test_wraith_weapon],
+		["A lucky Wraith leaves the Oathblade beside its Supply", _test_lucky_wraith_weapon],
+		["A Wraith leaves no Oathblade once the Player owns it", _test_no_second_oathblade],
+		["The Oathblade rests on the world, and a touch collects it", _test_oathblade_scene],
 		["Each dropped Supply rests on the world and watches for the Player", _test_supply_scenes],
 	]
 
@@ -154,12 +159,64 @@ func _test_lucky_roll_drops_its_kind() -> bool:
 	return valid
 
 
+func _test_wraith_weapon() -> bool:
+	var wraith := WRAITH_SCENE.instantiate()
+	var constants: Dictionary = wraith.get_script().get_script_constant_map()
+	var valid: bool = constants.get("WEAPON_DROP") == &"oathblade"
+	valid = valid and is_equal_approx(constants.get("WEAPON_DROP_CHANCE", -1.0), 0.1)
+	wraith.free()
+	for spec in [SCAVENGER_SCENE, STORM_WISP_SCENE, LURELIGHT_SCENE]:
+		var enemy := (spec as PackedScene).instantiate()
+		valid = valid and not enemy.get_script().get_script_constant_map().has("WEAPON_DROP")
+		enemy.free()
+	return valid
+
+
+func _test_lucky_wraith_weapon() -> bool:
+	var room := _palm_shore(0.0, [WRAITH_SCENE])
+	var wraith := room.get_node("Enemies/Wraith") as Node2D
+	wraith.emit_signal(&"defeated", _worth(wraith))
+	room.call("_physics_process", 0.0)
+	var weapons := _oathblades(room)
+	var valid := weapons.size() == 1 and _supplies(room).size() == 1
+	if valid:
+		valid = weapons[0].get("kind") == &"oathblade"
+		valid = valid and weapons[0].global_position == wraith.global_position + Vector2(8, 0)
+	room.free()
+	_root.get_node("RunState").call("start_run")
+	return valid
+
+
+func _test_no_second_oathblade() -> bool:
+	var room := _palm_shore(0.0, [WRAITH_SCENE])
+	room.get_node("Player").call("collect_weapon", &"oathblade")
+	var wraith := room.get_node("Enemies/Wraith") as Node2D
+	wraith.emit_signal(&"defeated", _worth(wraith))
+	room.call("_physics_process", 0.0)
+	var valid := _oathblades(room).is_empty() and _supplies(room).size() == 1
+	room.free()
+	_root.get_node("RunState").call("start_run")
+	return valid
+
+
+func _test_oathblade_scene() -> bool:
+	if not _rests_and_watches(OATHBLADE_SCENE_PATH):
+		return false
+	var oathblade := (load(OATHBLADE_SCENE_PATH) as PackedScene).instantiate()
+	var valid: bool = oathblade.get("collect_method") == &"collect_weapon"
+	oathblade.free()
+	var brinecap := (load(BRINECAP_SCENE_PATH) as PackedScene).instantiate()
+	valid = valid and brinecap.get("collect_method") == &"collect"
+	brinecap.free()
+	return valid
+
+
 func _test_unlucky_roll_leaves_nothing() -> bool:
 	var room := _palm_shore(0.99)
 	var scavenger := room.get_node("Enemies/Scavenger")
 	scavenger.emit_signal(&"defeated", _worth(scavenger))
 	room.call("_physics_process", 0.0)
-	var valid := _brinecaps(room).is_empty()
+	var valid := _brinecaps(room).is_empty() and _oathblades(room).is_empty()
 	room.free()
 	_root.get_node("RunState").call("start_run")
 	return valid
@@ -208,6 +265,12 @@ func _palm_shore(roll: float, extra: Array = []) -> Node:
 func _supplies(room: Node) -> Array:
 	return room.get_children().filter(
 		func(node: Node) -> bool: return node.scene_file_path in SUPPLY_SCENE_PATHS
+	)
+
+
+func _oathblades(room: Node) -> Array:
+	return room.get_children().filter(
+		func(node: Node) -> bool: return node.scene_file_path == OATHBLADE_SCENE_PATH
 	)
 
 

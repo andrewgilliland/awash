@@ -4,14 +4,25 @@ extends RefCounted
 # empty, and the Armor worn, if any, whose Defense takes Health off each hit that lands.
 
 const STARTING_WEAPON := &"short_sword"
-# Every Weapon: its name, a description of two lines at most, and its 8x8 icon. None adds to a
-# hit yet.
+const OATHBLADE := &"oathblade"
+# Every Weapon: its name, a description of two lines at most, its Attack (added to each hit it
+# lands), its 8x8 icon, and the sheet it is drawn from in the Player's hand.
 const WEAPONS := {
 	STARTING_WEAPON:
 	{
 		name = "Short Sword",
 		description = "A plain blade Mara pulled from the sand.",
+		attack = 0,
 		icon = "res://assets/items/short_sword.png",
+		sheet = "res://assets/player/sword_1.png",
+	},
+	OATHBLADE:
+	{
+		name = "Oathblade",
+		description = "A ceremonial blade a Wraith swore by. Attack 5.",
+		attack = 5,
+		icon = "res://assets/items/oathblade.png",
+		sheet = "res://assets/player/oathblade.png",
 	},
 }
 const STARTING_ARMOR := &"worn_leather_tunic"
@@ -31,7 +42,8 @@ const NO_ARMOR := "None"
 # The least Defense can bring a hit down to; a hit weaker than this costs what it is.
 const MIN_HIT := 5
 
-# Read-only for callers. The Weapon held and every Weapon owned; only the Short Sword so far.
+# Read-only for callers: change them through own_weapon() and hold(). The Weapon held, and every
+# Weapon owned, in the order found.
 var weapon: StringName = STARTING_WEAPON
 var owned_weapons: Array[StringName] = [STARTING_WEAPON]
 # Read-only for callers: change them through wear() and take_off(). The Armor worn, or &"" for
@@ -40,8 +52,14 @@ var armor: StringName = STARTING_ARMOR
 var owned: Array[StringName] = [STARTING_ARMOR]
 
 
-# Starts from what the Run carried. Unknown Armor is dropped, and whatever is worn is owned.
-func _init(armor_id: StringName = STARTING_ARMOR, owned_ids: Array = [STARTING_ARMOR]) -> void:
+# Starts from what the Run carried. Unknown Armor and Weapons are dropped, whatever is worn or
+# held is owned, and a hand left without a known Weapon holds the Short Sword.
+func _init(
+	armor_id: StringName = STARTING_ARMOR,
+	owned_ids: Array = [STARTING_ARMOR],
+	weapon_id: StringName = STARTING_WEAPON,
+	owned_weapon_ids: Array = [STARTING_WEAPON],
+) -> void:
 	owned = []
 	for id: StringName in owned_ids:
 		if ARMOR.has(id) and not owned.has(id):
@@ -49,6 +67,31 @@ func _init(armor_id: StringName = STARTING_ARMOR, owned_ids: Array = [STARTING_A
 	armor = armor_id if ARMOR.has(armor_id) else &""
 	if not armor.is_empty() and not owned.has(armor):
 		owned.append(armor)
+	owned_weapons = []
+	for id: StringName in owned_weapon_ids:
+		own_weapon(id)
+	weapon = weapon_id if WEAPONS.has(weapon_id) else STARTING_WEAPON
+	own_weapon(weapon)
+
+
+# Owns a known Weapon not owned yet, and returns whether it did.
+func own_weapon(weapon_id: StringName) -> bool:
+	if not WEAPONS.has(weapon_id) or owns_weapon(weapon_id):
+		return false
+	owned_weapons.append(weapon_id)
+	return true
+
+
+func owns_weapon(weapon_id: StringName) -> bool:
+	return owned_weapons.has(weapon_id)
+
+
+# Takes up a Weapon the Player owns, and returns whether it could.
+func hold(weapon_id: StringName) -> bool:
+	if not owns_weapon(weapon_id):
+		return false
+	weapon = weapon_id
+	return true
 
 
 # Puts on Armor the Player owns, and returns whether it could.
@@ -69,6 +112,15 @@ func weapon_name() -> String:
 
 func armor_name() -> String:
 	return ARMOR[armor].name if not armor.is_empty() else NO_ARMOR
+
+
+# What the Weapon held adds to each hit it lands.
+func attack() -> int:
+	return attack_with(weapon)
+
+
+func attack_with(weapon_id: StringName) -> int:
+	return WEAPONS[weapon_id].attack
 
 
 func defense() -> int:

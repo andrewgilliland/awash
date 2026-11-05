@@ -6,6 +6,7 @@ const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const MENU_ROOT := "CenterContainer/MenuPanel/MarginContainer/VBoxContainer/"
 const BODY := MENU_ROOT + "ContentRoot/EquipmentPanel/Body/"
 const SWORD_ICON := "res://assets/items/short_sword.png"
+const OATHBLADE_ICON := "res://assets/items/oathblade.png"
 const TUNIC_ICON := "res://assets/items/worn_leather_tunic.png"
 const PANEL := MENU_ROOT + "ContentRoot/EquipmentPanel/"
 const SWORD_TEXT := "A plain blade Mara pulled from the sand."
@@ -36,6 +37,8 @@ func get_tests() -> Array:
 		["Choosing None takes the Armor off; choosing the Armor puts it on", _test_choose_none],
 		["Choosing the piece equipped goes back and changes nothing", _test_choose_equipped],
 		["Defense shows, with what it would become while an Armor is focused", _test_defense],
+		["Choosing another Weapon owned holds it", _test_choose_weapon],
+		["Attack shows, with what it would become while a Weapon is focused", _test_attack],
 		["At the Panel's foot, a slot describes its piece and a piece itself", _test_descriptions],
 	]
 
@@ -168,6 +171,43 @@ func _test_defense() -> bool:
 	return valid
 
 
+func _test_choose_weapon() -> bool:
+	var menu := _equipment_menu(null, [&"oathblade"])
+	var weapon := _row(menu, "WeaponRow")
+	var valid := _piece(weapon) == "Oathblade" and weapon.icon.resource_path == OATHBLADE_ICON
+	valid = valid and _names(menu) == ["Short Sword", "Oathblade"]
+	valid = valid and _marks(menu) == ["", "Equipped"]
+	_navigate(menu, &"ui_down")
+	_navigate(menu, &"ui_accept")
+	valid = valid and (_choices(menu).get_child(1) as Button).has_focus()
+	_navigate(menu, &"ui_up")
+	_navigate(menu, &"ui_accept")
+	valid = valid and weapon.has_focus() and _player().get("equipment").weapon == &"short_sword"
+	valid = valid and _root.get_node("RunState").get("player_weapon") == &"short_sword"
+	valid = valid and _piece(weapon) == "Short Sword" and _marks(menu) == ["Equipped", ""]
+	_close(menu)
+	return valid
+
+
+func _test_attack() -> bool:
+	var menu := _equipment_menu(null, [&"oathblade"])
+	var attack := menu.get_node(BODY + "Defense/Attack") as Label
+	var valid := attack.text == "ATK 5"
+	_navigate(menu, &"ui_down")
+	_navigate(menu, &"ui_accept")
+	valid = valid and attack.text == "ATK 5 > 5"
+	_navigate(menu, &"ui_up")
+	valid = valid and attack.text == "ATK 5 > 0"
+	_navigate(menu, &"ui_up")
+	valid = valid and attack.text == "ATK 5"
+	# Armor focused previews only the Defense.
+	_navigate(menu, &"ui_down")
+	_navigate(menu, &"ui_accept")
+	valid = valid and attack.text == "ATK 5"
+	_close(menu)
+	return valid
+
+
 func _test_descriptions() -> bool:
 	var menu := _equipment_menu()
 	var strip := menu.get_node_or_null(PANEL + "Description") as Label
@@ -207,13 +247,15 @@ static func _strip_at_foot(panel: Node, strip: Label) -> bool:
 
 
 # The Pause menu, on the Equipment tab, with a Player in a fresh Run, in the given Equipment if
-# any.
-func _equipment_menu(equipment: Object = null) -> Control:
+# any, having collected the given Weapons.
+func _equipment_menu(equipment: Object = null, weapons: Array = []) -> Control:
 	_root.get_node("RunState").call("start_run")
 	var player := PLAYER_SCENE.instantiate() as CharacterBody2D
 	_root.add_child(player)
 	if equipment != null:
 		player.set("equipment", equipment)
+	for weapon: StringName in weapons:
+		player.call("collect_weapon", weapon)
 	var menu := PAUSE_MENU_SCENE.instantiate() as Control
 	_root.add_child(menu)
 	menu.call("toggle_pause")

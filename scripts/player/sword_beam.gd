@@ -13,9 +13,10 @@ const GLOW := Color(2.0, 2.0, 2.0)
 const TRAIL_SPACING := 6.0
 const TRAIL_ALPHAS: Array[float] = [0.45, 0.2]
 
-# Set before it joins the world.
+# Set before it joins the world, the sheet being the held Weapon's (null keeps the scene's).
 var facing: float = 1.0
 var damage: int = Hitbox.DEFAULT_DAMAGE * 2
+var sheet: Texture2D
 var _travelled: float = 0.0
 # It met the terrain: one more step to strike a hurtbox there, then it is gone.
 var _stopping: bool = false
@@ -31,6 +32,10 @@ func _ready() -> void:
 	_hitbox.active = true
 	_hitbox.struck.connect(_on_struck)
 	_terrain.body_entered.connect(_on_terrain_entered)
+	if sheet != null:
+		var blade := (_sprite.texture as AtlasTexture).duplicate() as AtlasTexture
+		blade.atlas = sheet
+		_sprite.texture = blade
 	_sprite.modulate = GLOW
 	_sprite.flip_h = facing > 0.0
 	for i in TRAIL_ALPHAS.size():

@@ -26,6 +26,8 @@ const CHARGED_MULTIPLIER := 2
 # A full Charge makes the sword blink bright, and the Charged Attack let go from it swings lit.
 const CHARGED_GLOW := Color(2.0, 2.0, 2.0)
 const CHARGED_BLINK_TIME := 0.08
+# Over the Player when it finds a Weapon.
+const GOT := "GOT %s"
 
 @export var move_speed: float = 80.0
 @export var acceleration: float = 600.0
@@ -40,8 +42,9 @@ var level: Level = Level.new()
 var health: Health = Health.new(level.max_health())
 # Read-only for callers: change it through collect() and use_supply().
 var supplies: Supplies = Supplies.new()
-# Read-only for callers: change it through wear_armor() and take_off_armor(). What the Player
-# wears, whose Defense takes Health off each hit.
+# Read-only for callers: change it through wear_armor(), take_off_armor(), collect_weapon() and
+# hold_weapon(). What the Player wears, whose Defense takes Health off each hit, and the Weapon
+# it holds, whose Attack adds to each hit it lands.
 var equipment: Equipment = Equipment.new()
 # While true the Player ignores walk, jump and melee input: dialogue and the intro hold it
 # still.
@@ -67,7 +70,12 @@ func _ready() -> void:
 		level = Level.new(run.get("player_experience"))
 		health = Health.new(level.max_health(), run.get("player_health"))
 		supplies = Supplies.new(run.get("player_supplies"))
-		equipment = Equipment.new(run.get("player_armor"), run.get("player_owned_armor"))
+		equipment = Equipment.new(
+			run.get("player_armor"),
+			run.get("player_owned_armor"),
+			run.get("player_weapon"),
+			run.get("player_owned_weapons")
+		)
 	controller.move_speed = move_speed
 	controller.acceleration = acceleration
 	controller.friction = friction
@@ -79,6 +87,7 @@ func _ready() -> void:
 	if _rig == null:
 		_rig = PlayerRig.new(_character_sprite, _sword_sprite)
 		_rig.attack_finished.connect(_on_rig_attack_finished)
+	_rig.hold(load(Equipment.WEAPONS[equipment.weapon].sheet))
 	if _sounds == null:
 		_sounds = PlayerSounds.new(_sound_players)
 		controller.state_changed.connect(_on_controller_state_changed)
@@ -130,6 +139,29 @@ func wear_armor(armor_id: StringName) -> bool:
 func take_off_armor() -> void:
 	equipment.take_off()
 	_write_armor_to_run()
+
+
+# Owns and takes up a Weapon found where an enemy fell, with a pickup sound and its name over the
+# Player. Returns whether it did: a Weapon already owned is not collected again.
+func collect_weapon(weapon_id: StringName) -> bool:
+	if not equipment.own_weapon(weapon_id):
+		return false
+	hold_weapon(weapon_id)
+	_sounds.play(PlayerSounds.PICKUP)
+	_level_up.call("announce", GOT % Equipment.WEAPONS[weapon_id].name.to_upper())
+	return true
+
+
+# Takes up a Weapon the Player owns, as chosen in the Equipment Panel; returns whether it could.
+func hold_weapon(weapon_id: StringName) -> bool:
+	if not equipment.hold(weapon_id):
+		return false
+	_rig.hold(load(Equipment.WEAPONS[weapon_id].sheet))
+	var run := _get_run()
+	if run != null:
+		run.set("player_weapon", equipment.weapon)
+		run.set("player_owned_weapons", equipment.owned_weapons.duplicate())
+	return true
 
 
 func _write_armor_to_run() -> void:
@@ -288,9 +320,9 @@ func _on_controller_state_changed(
 		_loose_sword_beam()
 
 
-# What a quick slash costs: the sword's hit and the Player's Strength.
+# What a quick slash costs: the sword's hit, the Player's Strength and the Weapon's Attack.
 func _quick_cost() -> int:
-	return Hitbox.DEFAULT_DAMAGE + level.strength()
+	return Hitbox.DEFAULT_DAMAGE + level.strength() + equipment.attack()
 
 
 # Sends a Sword Beam out from the blade along the Player's facing, into the Room.
@@ -298,6 +330,7 @@ func _loose_sword_beam() -> void:
 	var beam := SWORD_BEAM_SCENE.instantiate() as Node2D
 	beam.set("facing", controller.facing)
 	beam.set("damage", _quick_cost() * CHARGED_MULTIPLIER)
+	beam.set("sheet", load(Equipment.WEAPONS[equipment.weapon].sheet))
 	var world := get_parent() if get_parent() != null else self
 	world.add_child(beam)
 	beam.global_position = (
