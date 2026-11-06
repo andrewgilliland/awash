@@ -10,6 +10,7 @@ villagers:
   - Knot-weaver, on the log walkway, who keeps the memory-knot ritual
   - Bell-keeper, by the village bell, who tolls the curfew
   - Fisher, on the pier by the bomb crate, who keeps Bombs for the rocks
+  - Trader, at the market stall, who keeps the Supply Shop
 shops: [Supply Shop]
 visual: Weathered stilt houses, shell-strung walkways, and blue lanterns cluster above calm tidal pools.
 ---

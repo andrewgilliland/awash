@@ -46,7 +46,7 @@ Once the ceremonial landing site for wardens sworn to protect forbidden knowledg
 
 ### Exploration
 
-- Hide Supplies in optional wreck compartments, caves, and ledges visible from the main route. The first two caches, a Tide Draught each, are the wreck graveyard's stern compartment and the sea cave's shelf.
+- Hide Supplies in optional wreck compartments, caves, and ledges visible from the main route. The first two caches, a Meat Pie each, are the wreck graveyard's stern compartment and the sea cave's shelf.
 - Use broken ships as landmarks, and let the coast turn from open beach in the west to jungle by the Warden's gate, so players can orient without a detailed map.
 - Place the first rest point and Supply Shop in Tidefen Village at the end of the region. Ringing Tidefen's bell is the rest point.
 

@@ -5,6 +5,7 @@ const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
 const HEALTH_BAR_SCENE := preload("res://scenes/ui/health_bar.tscn")
 const SUB_WEAPON_COUNT_SCENE := preload("res://scenes/ui/sub_weapon_count.tscn")
 const GOLD_COUNT_SCENE := preload("res://scenes/ui/gold_count.tscn")
+const SHOP_PANEL_SCENE := preload("res://scenes/ui/shop_panel.tscn")
 const BOSS_BAR_SCENE := preload("res://scenes/ui/boss_bar.tscn")
 # The scene for each Supply an enemy can leave where it fell.
 const SUPPLY_SCENES := {
@@ -49,6 +50,7 @@ func _ready() -> void:
 	_ensure_health_bar()
 	_ensure_sub_weapon_count()
 	_ensure_gold_count()
+	_ensure_shop_panel()
 	_ensure_boss_bar()
 	_ensure_hit_stop()
 	_place_player_at_entry()
@@ -214,6 +216,16 @@ func _ensure_gold_count() -> void:
 	count.name = "GoldCount"
 	_canvas_layer.add_child(count)
 	_canvas_layer.move_child(count, 0)
+
+
+# The Supply Shop sits above everything, the Pause menu too, so it takes cancel and pause first
+# while it is open.
+func _ensure_shop_panel() -> void:
+	if _canvas_layer == null or _canvas_layer.get_node_or_null("ShopPanel") != null:
+		return
+	var panel := SHOP_PANEL_SCENE.instantiate()
+	panel.name = "ShopPanel"
+	_canvas_layer.add_child(panel)
 
 
 # The Boss Health bar sits under the Pause menu and the dialogue box too; it shows only while a

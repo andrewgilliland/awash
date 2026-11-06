@@ -200,6 +200,25 @@ func collect_sub_weapon(id: StringName) -> bool:
 	return true
 
 
+# Whether the Player has the Gold for a Supply at this price, and room to carry one more.
+func can_buy(kind: StringName, price: int) -> bool:
+	return gold >= price and supplies.count(kind) < Supplies.CARRY_LIMIT
+
+
+# Buys one Supply at the Supply Shop: spends its price and carries one more. Returns whether it
+# could.
+func buy_supply(kind: StringName, price: int) -> bool:
+	if not can_buy(kind, price) or not supplies.add(kind):
+		return false
+	gold -= price
+	var run := _get_run()
+	if run != null:
+		run.set("player_gold", gold)
+	_write_supplies_to_run()
+	_sounds.play(PlayerSounds.PICKUP)
+	return true
+
+
 # Earns Gold, as a defeated enemy gives it; the Run carries it.
 func gain_gold(amount: int) -> void:
 	gold += maxi(amount, 0)
