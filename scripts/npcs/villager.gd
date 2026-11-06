@@ -34,13 +34,18 @@ func conversation() -> Array:
 
 
 func _on_interacted(by: Node) -> void:
+	_face(by)
+	var box := get_tree().get_first_node_in_group(DIALOGUE_GROUP)
+	if box != null and not box.call("is_open"):
+		box.call("show_lines", conversation())
+
+
+# Turns to whoever is talking to them.
+func _face(by: Node) -> void:
 	if by is Node2D:
 		var dx := (by as Node2D).global_position.x - global_position.x
 		if not is_zero_approx(dx):
 			_sprite.flip_h = dx > 0.0
-	var box := get_tree().get_first_node_in_group(DIALOGUE_GROUP)
-	if box != null and not box.call("is_open"):
-		box.call("show_lines", conversation())
 
 
 static func _build_sprite_frames(texture: Texture2D) -> SpriteFrames:

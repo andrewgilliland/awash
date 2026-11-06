@@ -2,12 +2,19 @@ extends RefCounted
 
 # The Supplies the Player carries in a Run: how many of each kind, up to the carry limit.
 
+const MEAT_PIE := &"meat_pie"
 const BRINECAP := &"brinecap"
 const GLOWROE := &"glowroe"
 const MOURNING_SALT := &"mourning_salt"
 # Every kind of Supply, in the order the Inventory lists them: its name, a description of two
 # lines at most, and the Health it restores, either a set amount or a share of max Health.
 const KINDS := {
+	MEAT_PIE:
+	{
+		name = "Meat Pie",
+		description = "A fisher's meat pie from Tidefen, still warm. Restores 20 Health.",
+		restores = 20,
+	},
 	BRINECAP:
 	{
 		name = "Brinecap",

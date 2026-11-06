@@ -16,6 +16,7 @@ const LurelightPlaytests := preload("res://tests/lurelight_playtests.gd")
 const BombPlaytests := preload("res://tests/bomb_playtests.gd")
 const VillagerPlaytests := preload("res://tests/villager_playtests.gd")
 const RestPlaytests := preload("res://tests/rest_playtests.gd")
+const ShopPlaytests := preload("res://tests/shop_playtests.gd")
 
 
 func _init() -> void:
@@ -76,6 +77,9 @@ func _init() -> void:
 		await _run_playtest_async(playtest[0], playtest[1])
 	var rest_playtests := RestPlaytests.new(self)
 	for playtest in rest_playtests.get_playtests():
+		await _run_playtest_async(playtest[0], playtest[1])
+	var shop_playtests := ShopPlaytests.new(self)
+	for playtest in shop_playtests.get_playtests():
 		await _run_playtest_async(playtest[0], playtest[1])
 	await _run_playtest_async(
 		"Sword defeats the Scavenger and earns its Experience and Gold",

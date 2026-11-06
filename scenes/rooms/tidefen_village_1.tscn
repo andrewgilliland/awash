@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=4 uid="uid://bo2pll780fo42"]
+[gd_scene load_steps=39 format=4 uid="uid://bo2pll780fo42"]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_ltjx2"]
 
@@ -20,6 +20,8 @@
 [ext_resource type="Texture2D" path="res://assets/npcs/fisher/fisher.png" id="24_fisher"]
 
 [ext_resource type="PackedScene" path="res://scenes/world/rest_bell.tscn" id="25_bell"]
+
+[ext_resource type="PackedScene" path="res://scenes/npcs/trader.tscn" id="26_trader"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ehfn0"]
 atlas = ExtResource("4_r86vo")
@@ -309,6 +311,9 @@ position = Vector2(872, 80)
 speaker = "FISHER"
 lines = PackedStringArray("We keep Bombs for the rocks, not the fish.", "Take what you need from the crate.", "A Bomb would crack the stone in the sea cave.")
 sheet = ExtResource("24_fisher")
+
+[node name="Trader" parent="." instance=ExtResource("26_trader")]
+position = Vector2(600, 112)
 
 [node name="Player" parent="." instance=ExtResource("6_a2duh")]
 position = Vector2(12, 112)

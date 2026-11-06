@@ -85,6 +85,8 @@ const TREE_SUITES: Array[String] = [
 	"res://tests/health_bar_tests.gd",
 	"res://tests/sub_weapon_count_tests.gd",
 	"res://tests/gold_tests.gd",
+	"res://tests/shop_tests.gd",
+	"res://tests/shop_panel_tests.gd",
 	"res://tests/player_growth_tests.gd",
 	"res://tests/enemy_experience_tests.gd",
 	"res://tests/player_supplies_tests.gd",
