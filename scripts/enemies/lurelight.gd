@@ -10,6 +10,7 @@ signal defeated(experience: int)
 const LurelightBrain := preload("res://scripts/enemies/lurelight_brain.gd")
 const Health := preload("res://scripts/combat/health.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
+const HitFeel := preload("res://scripts/combat/hit_feel.gd")
 const LurelightSounds := preload("res://scripts/enemies/lurelight_sounds.gd")
 const MAX_HEALTH := 20
 # What defeating a Lurelight earns the Player.
@@ -113,6 +114,7 @@ func _on_hurtbox_hit(hitbox: Area2D) -> void:
 	var damage: int = hitbox.damage if hitbox is Hitbox else Hitbox.DEFAULT_DAMAGE
 	if not health.hurt(damage, INVULNERABLE_TIME):
 		return
+	HitFeel.enemy_struck(self, health.is_defeated())
 	_struck = true
 	_hurtbox.set_deferred("monitorable", false)
 	if health.is_defeated():

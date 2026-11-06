@@ -11,6 +11,7 @@ const Supplies := preload("res://scripts/items/supplies.gd")
 const Equipment := preload("res://scripts/items/equipment.gd")
 const SubWeapons := preload("res://scripts/items/sub_weapons.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
+const HitFeel := preload("res://scripts/combat/hit_feel.gd")
 const PlayerSounds := preload("res://scripts/player/player_sounds.gd")
 const SWORD_BEAM_SCENE := preload("res://scenes/player/sword_beam.tscn")
 const INTERACTABLE_GROUP := &"interactable"
@@ -342,6 +343,7 @@ func _on_hurtbox_hit(hitbox: Area2D) -> void:
 	var damage: int = hitbox.damage if hitbox is Hitbox else Hitbox.DEFAULT_DAMAGE
 	if not health.hurt(equipment.hit_cost(damage), INVULNERABLE_TIME):
 		return
+	HitFeel.player_hurt(self)
 	var away := signf(global_position.x - hitbox.global_position.x)
 	if away == 0.0:
 		away = -controller.facing

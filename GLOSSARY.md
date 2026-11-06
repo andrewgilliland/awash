@@ -202,6 +202,18 @@ _Avoid_: Hitbox (for the struck side), body
 The throw a landed hit gives the struck body, away from the Hitbox.
 _Avoid_: Recoil, push
 
+**Hit flash**:
+A struck enemy drawn pure white for a moment when a blow lands on it; one that glances off, or lands while it is invulnerable, does not flash it.
+_Avoid_: Damage flash, blink (the Player's invulnerable blink is its own)
+
+**Hit-stop**:
+Play freezing for a few frames as a blow connects: 3 when one lands on an enemy, 5 for a defeating blow or when the Player is hurt. Play runs at a hundredth of its speed meanwhile, and the freeze is timed in frames of play, so it lasts as long on any screen.
+_Avoid_: Freeze frame, hit pause, hitlag
+
+**Screen shake**:
+The camera jolting by whole pixels and settling, for the biggest moments: a Bomb's burst and the Nameless Warden's slam, 3 pixels; a Breakable wall crumbling and the Player being hurt, 2.
+_Avoid_: Camera shake (as the domain term), rumble
+
 **Scavenger**:
 The Waking Coast's fish-man enemy: it patrols a tidal pool and lunges with a hooked spear after a wind-up.
 _Avoid_: Sahagin, fish-man (as a name)

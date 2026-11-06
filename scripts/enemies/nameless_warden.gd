@@ -12,6 +12,7 @@ signal defeated(experience: int)
 const WardenBrain := preload("res://scripts/enemies/warden_brain.gd")
 const Health := preload("res://scripts/combat/health.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
+const HitFeel := preload("res://scripts/combat/hit_feel.gd")
 const WardenSounds := preload("res://scripts/enemies/warden_sounds.gd")
 const SHOCKWAVE_SCENE := preload("res://scenes/enemies/shockwave.tscn")
 # What the Boss Health bar calls it.
@@ -87,6 +88,7 @@ func _physics_process(delta: float) -> void:
 		_sounds.play(WardenSounds.for_state_change(previous, brain.state))
 	if brain.slammed:
 		_send_shockwaves()
+		HitFeel.slam(self)
 	velocity.x = brain.velocity.x
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -119,6 +121,7 @@ func _on_hurtbox_hit(hitbox: Area2D) -> void:
 	var damage: int = hitbox.damage if hitbox is Hitbox else Hitbox.DEFAULT_DAMAGE
 	if not health.hurt(damage, INVULNERABLE_TIME):
 		return
+	HitFeel.enemy_struck(self, health.is_defeated())
 	_sounds.play(WardenSounds.HURT)
 	if health.is_defeated():
 		_hurtbox.set_deferred("monitorable", false)

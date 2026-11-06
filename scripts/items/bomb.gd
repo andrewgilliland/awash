@@ -6,6 +6,7 @@ extends CharacterBody2D
 # and never the Player.
 
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
+const HitFeel := preload("res://scripts/combat/hit_feel.gd")
 # How it leaves the hand, facing right.
 const THROW := Vector2(100.0, -160.0)
 const FUSE_TIME := 1.0
@@ -66,3 +67,4 @@ func _burst_now() -> void:
 	_sprite.play(&"burst")
 	_fuse_sound.stop()
 	_burst_sound.play()
+	HitFeel.bomb_burst(self)

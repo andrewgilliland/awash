@@ -28,6 +28,8 @@ func get_tests() -> Array:
 		["While staggered, any hit costs the Warden Health", _test_staggered_hits_land],
 		["The Warden's touch costs 10, its bash 15; staggered, nothing", _test_touch],
 		["A slam sends a shockwave each way along the floor", _test_slam_shockwaves],
+		["A blow landing on the Warden flashes it; one off the Ward does not", _test_flash],
+		["The Warden's slam shakes the camera 3 pixels", _test_slam_shakes],
 		["A shockwave rolls along the floor, then fades", _test_shockwave_rolls],
 		["A defeated Warden kneels and reports its Experience once", _test_defeat],
 	]
@@ -153,6 +155,39 @@ func _test_defeat() -> bool:
 	var valid := reports == [100] and brain.state == WardenBrain.State.DEFEATED
 	valid = valid and not (warden.get_node("Hurtbox") as Area2D).monitorable
 	valid = valid and not (warden.get_node("TouchHitbox") as Hitbox).active
+	_clean_up(warden)
+	return valid
+
+
+func _test_flash() -> bool:
+	var warden := _warden()
+	var flash := warden.get_node_or_null("HitFlash")
+	if flash == null:
+		_clean_up(warden)
+		return false
+	var quick := _sword(10, false)
+	var charged := _sword(20, true)
+	warden.call("_on_hurtbox_hit", quick)
+	var valid: bool = not flash.call("is_flashing")
+	warden.call("_on_hurtbox_hit", charged)
+	_step(warden)
+	valid = valid and not flash.call("is_flashing")
+	warden.call("_on_hurtbox_hit", quick)
+	valid = valid and flash.call("is_flashing")
+	quick.free()
+	charged.free()
+	_clean_up(warden)
+	return valid
+
+
+func _test_slam_shakes() -> bool:
+	var warden := _warden()
+	for i in 200:
+		_step(warden)
+		if not _shockwaves().is_empty():
+			break
+	var shake := _root.get_tree().get_first_node_in_group(&"camera_shake")
+	var valid: bool = shake != null and shake.call("strength") == 3
 	_clean_up(warden)
 	return valid
 

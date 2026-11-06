@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bp00p0ropehmt"]
+[gd_scene load_steps=13 format=3 uid="uid://bp00p0ropehmt"]
 
 [ext_resource type="Script" uid="uid://dopxfmcxertkm" path="res://scripts/enemies/wraith.gd" id="1_wraith"]
 [ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
@@ -7,6 +7,8 @@
 [ext_resource type="AudioStream" uid="uid://b4o74pg6gntmg" path="res://assets/enemies/wraith/wraith_lash.wav" id="5_lash"]
 [ext_resource type="AudioStream" uid="uid://c2njlpqyqyfg" path="res://assets/enemies/wraith/wraith_hurt.wav" id="6_hurt"]
 [ext_resource type="AudioStream" uid="uid://cf80m0fh75olv" path="res://assets/enemies/wraith/wraith_defeat.wav" id="7_defeat"]
+
+[ext_resource type="Script" path="res://scripts/combat/hit_flash.gd" id="90_flash"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body0"]
 radius = 5.0
@@ -75,3 +77,6 @@ bus = &"SFX"
 stream = ExtResource("7_defeat")
 max_distance = 240.0
 bus = &"SFX"
+
+[node name="HitFlash" type="Node" parent="."]
+script = ExtResource("90_flash")
