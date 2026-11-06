@@ -209,6 +209,12 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     "bomb_fuse": lambda: mix(noise(1.0, 9000, 6000, seed=40), crackle(1.0, 30, seed=41)),
     # Its burst: a deep boom with a crack on top.
     "bomb_burst": lambda: mix(noise(0.5, 2200, 100, seed=42), sweep(0.4, 120, 35, duty=0.5)),
+    # A Breakable wall: a hollow knock when anything but a blast strikes it, and a rumbling
+    # crumble of rock as a blast breaks it.
+    "wall_knock": lambda: mix(sweep(0.09, 190, 150, duty=0.5), noise(0.04, 1800, 600, seed=50)),
+    "wall_crumble": lambda: mix(
+        noise(0.7, 1800, 120, seed=51), crackle(0.7, 40, seed=52), sweep(0.5, 90, 40, duty=0.5)
+    ),
     # Menus: a soft tick as the focus moves, and a rising chime when the game starts.
     "ui_move": lambda: sweep(0.04, 880, 820, duty=0.25),
     "ui_start": lambda: notes([392, 523, 659, 784], 0.07, duty=0.5),
@@ -237,6 +243,7 @@ HOMES = {
     "warden_": "assets/enemies/nameless_warden",
     "ui_": "assets/ui",
     "bomb_": "assets/items",
+    "wall_": "assets/world",
 }
 
 

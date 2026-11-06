@@ -18,6 +18,7 @@ func get_tests() -> Array:
 		["Run carries the Player's Sub Weapons, even through a defeat", _test_carries_sub_weapons],
 		["Run remembers each Boss defeated, even through a defeat", _test_remembers_bosses],
 		["Run remembers each Shortcut opened, even through a defeat", _test_remembers_shortcuts],
+		["Run remembers each Breakable wall broken, even through a defeat", _test_remembers_walls],
 		["Run remembers each Cache taken, even through a defeat", _test_remembers_caches],
 	]
 
@@ -141,6 +142,21 @@ func _test_remembers_bosses() -> bool:
 	valid = valid and run.has_defeated_boss(&"nameless_warden")
 	run.start_run()
 	valid = valid and not run.has_defeated_boss(&"nameless_warden")
+	run.free()
+	return valid
+
+
+func _test_remembers_walls() -> bool:
+	var run := RunStateScript.new()
+	var valid: bool = not run.has_broken_wall(&"sea_cave_rock")
+	run.break_wall(&"sea_cave_rock")
+	run.enter_room(&"undertow_3", &"west")
+	valid = valid and run.has_broken_wall(&"sea_cave_rock")
+	valid = valid and not run.has_broken_wall(&"somewhere_else")
+	run.recover_from_defeat()
+	valid = valid and run.has_broken_wall(&"sea_cave_rock")
+	run.start_run()
+	valid = valid and not run.has_broken_wall(&"sea_cave_rock")
 	run.free()
 	return valid
 

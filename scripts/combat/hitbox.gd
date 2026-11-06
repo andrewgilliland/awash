@@ -12,6 +12,8 @@ const DEFAULT_DAMAGE := 10
 @export var damage: int = DEFAULT_DAMAGE
 # Whether this hit is a Charged Attack's, which breaks a Ward.
 var charged: bool = false
+# Whether this hit is a Bomb's blast, which breaks a Breakable wall.
+var blast: bool = false
 
 var active: bool = false:
 	set(value):

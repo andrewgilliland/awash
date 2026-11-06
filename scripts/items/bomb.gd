@@ -2,7 +2,8 @@ extends CharacterBody2D
 
 # A Bomb: lobbed from the Player's hand along its facing, it bounces once on the world's terrain
 # and rests there while its fuse sputters, then bursts. Its blast strikes every enemy round it,
-# charged, so it breaks what a Sword Beam breaks, and never the Player.
+# charged, so it breaks what a Sword Beam breaks, and a blast, so it breaks a Breakable wall too,
+# and never the Player.
 
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 # How it leaves the hand, facing right.
@@ -29,6 +30,7 @@ var _gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 func _ready() -> void:
 	velocity = Vector2(THROW.x * facing, THROW.y)
 	_blast.charged = true
+	_blast.blast = true
 	_sprite.play(&"fuse")
 	_fuse_sound.play()
 

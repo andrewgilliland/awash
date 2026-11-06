@@ -125,7 +125,7 @@ An optional route off the Main path that rejoins it, such as the sea cave.
 _Avoid_: Side path, detour, secret area
 
 **Shortcut**:
-A one-way route that returns the Player quickly to an earlier point on the Main path, such as the cracked wall between the Undertow and the sea cave. It stays shut from its far end until first used from its near end.
+A one-way route that returns the Player quickly to an earlier point on the Main path, such as the cracked wall between the Undertow and the sea cave. It stays shut from its far end until first used from its near end, unless a Breakable wall stands across its far end: the sea cave's rock opens it to a Bomb.
 _Avoid_: Branch (for a one-way return), warp
 
 **Drop**:
@@ -135,6 +135,10 @@ _Avoid_: Pit, sinkhole, chute, hole (as the general term)
 **Gate**:
 A place on a route that stays shut until an ability unlock or a defeated Boss opens it, such as the ledge above the salt cliffs that double jump will reach, or the column of rune light across the trail east of the Warden's gate.
 _Avoid_: Lock, barrier, door
+
+**Breakable wall**:
+Cracked rock across a route that only a Bomb's blast breaks; a sword's hit, quick or charged, knocks hollow off it. It crumbles as it breaks and stays broken for the Run. The rock at the sea cave's end, across the Shortcut, is one: it keeps the Undertow shut from the coast until the Player brings Bombs back from Tidefen, and breaking it opens the Shortcut.
+_Avoid_: Bomb block, destructible wall, secret wall
 
 **Cache**:
 A hidden spot in a Room holding Supplies, or a Sub Weapon such as the Bombs in Tidefen's bomb crate, opened with Interact, that stays empty once taken for the Run. The first Bombs found are owned and taken up.
@@ -271,7 +275,7 @@ The Equipment slot for what Ranged Attack throws, chosen in the Equipment Panel 
 _Avoid_: Secondary weapon, subweapon, ammo (as the slot)
 
 **Bomb**:
-A Tidefen fisher's clay Bomb: a Sub Weapon. Lobbed along the Player's facing, it bounces once and rests while its fuse sputters for a second, then bursts, striking every enemy within 24 pixels for 20, as a charged hit, so it breaks what a Sword Beam breaks. Its blast never harms the Player. The bomb crate on Tidefen's pier, a Cache, holds the first 5.
+A Tidefen fisher's clay Bomb: a Sub Weapon. Lobbed along the Player's facing, it bounces once and rests while its fuse sputters for a second, then bursts, striking every enemy within 24 pixels for 20, as a charged hit, so it breaks what a Sword Beam breaks, and as a blast, so it breaks a Breakable wall. Its blast never harms the Player. The bomb crate on Tidefen's pier, a Cache, holds the first 5.
 _Avoid_: Grenade, explosive, powder keg
 
 **Armor**:

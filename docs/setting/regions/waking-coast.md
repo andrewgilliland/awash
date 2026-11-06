@@ -54,7 +54,7 @@ Once the ceremonial landing site for wardens sworn to protect forbidden knowledg
 
 - Keep the first visit completable with starting movement abilities.
 - Reserve elevated wrecks and hidden rune alcoves for the later double-jump return. Double jump opens two gates here: the crate ledge above the salt cliffs, up to the rune alcove and its Memory Relic, and Tidefen's rooftops, which hold a cache.
-- Let the return route reconnect to Tidefen through a short one-way drop. Tidefen's well drops into the undertow, a shortcut back west to the sea cave; it stays shut from the cave side until first used from Tidefen.
+- Let the return route reconnect to Tidefen through a short one-way drop. Tidefen's well drops into the undertow, a shortcut back west to the sea cave; from the cave side cracked rock, a Breakable wall, shuts it until a Bomb from Tidefen breaks it.
 
 ### Boss Test
 
