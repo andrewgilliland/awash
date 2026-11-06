@@ -3,21 +3,35 @@ extends Node2D
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
 const HEALTH_BAR_SCENE := preload("res://scenes/ui/health_bar.tscn")
+const SUB_WEAPON_COUNT_SCENE := preload("res://scenes/ui/sub_weapon_count.tscn")
 const BOSS_BAR_SCENE := preload("res://scenes/ui/boss_bar.tscn")
-const BRINECAP_SCENE := preload("res://scenes/items/brinecap.tscn")
+# The scene for each Supply an enemy can leave where it fell.
+const SUPPLY_SCENES := {
+	&"brinecap": preload("res://scenes/items/brinecap.tscn"),
+	&"glowroe": preload("res://scenes/items/glowroe.tscn"),
+	&"mourning_salt": preload("res://scenes/items/mourning_salt.tscn"),
+}
+# The scene for each Weapon an enemy can leave where it fell.
+const WEAPON_SCENES := {
+	&"oathblade": preload("res://scenes/items/oathblade.tscn"),
+}
+# A Weapon lies this far to the right of the Supply left with it, so both show.
+const WEAPON_BESIDE := Vector2(8.0, 0.0)
 const RunStateScript := preload("res://scripts/core/run_state.gd")
 const World := preload("res://scripts/core/world.gd")
 const ENEMY_GROUP := &"enemy"
 # Long enough to see the Player fall and hear the defeat sound before the Room is replaced.
 const DEFEAT_PAUSE := 1.2
 
-# Rolled once per enemy defeat, from 0 up to 1; under the enemy's DROP_CHANCE leaves a
-# Brinecap. Tests swap it for a fixed roll.
+# Rolled once per enemy defeat, from 0 up to 1; under the enemy's DROP_CHANCE leaves its DROP,
+# a Brinecap if it names none. An enemy with a WEAPON_DROP rolls again for it, under its
+# WEAPON_DROP_CHANCE, until the Player owns it. Tests swap it for a fixed roll.
 var drop_roll: Callable = randf
 # Which Room this is, found in the World by its own scene; &"" when the World doesn't hold it.
 var _room_id: StringName = &""
-# Where defeated enemies left a Brinecap, waiting for the Room's next physics step.
-var _brinecaps_due: Array[Vector2] = []
+# Each Supply or Weapon defeated enemies left, as its scene and where, waiting for the Room's
+# next physics step.
+var _supplies_due: Array[Array] = []
 
 @onready var _player: CharacterBody2D = $Player
 @onready var _entries: Node = $Entries
@@ -31,6 +45,7 @@ func _ready() -> void:
 	_ensure_pause_menu()
 	_ensure_dialogue_box()
 	_ensure_health_bar()
+	_ensure_sub_weapon_count()
 	_ensure_boss_bar()
 	_place_player_at_entry()
 	_play_region_music()
@@ -70,7 +85,7 @@ func _add_background() -> void:
 
 
 # Every enemy defeated in this Room earns the Player its Experience, whatever struck it down, and
-# may leave a Brinecap where it fell.
+# may leave a Supply where it fell.
 func _hand_enemy_defeats_to_player() -> void:
 	if _player == null or not is_inside_tree():
 		return
@@ -82,19 +97,25 @@ func _hand_enemy_defeats_to_player() -> void:
 
 func _on_enemy_defeated(experience: int, enemy: Node2D) -> void:
 	_player.call("gain_experience", experience)
-	var chance: float = enemy.get_script().get_script_constant_map().get("DROP_CHANCE", 0.0)
-	if drop_roll.call() < chance:
-		_brinecaps_due.append(enemy.global_position)
+	var constants: Dictionary = enemy.get_script().get_script_constant_map()
+	if drop_roll.call() < constants.get("DROP_CHANCE", 0.0):
+		var supply: StringName = constants.get("DROP", &"brinecap")
+		_supplies_due.append([SUPPLY_SCENES[supply], enemy.global_position])
+	var weapon: StringName = constants.get("WEAPON_DROP", &"")
+	if weapon.is_empty() or _player.get("equipment").owns_weapon(weapon):
+		return
+	if drop_roll.call() < constants.get("WEAPON_DROP_CHANCE", 0.0):
+		_supplies_due.append([WEAPON_SCENES[weapon], enemy.global_position + WEAPON_BESIDE])
 
 
 # An enemy falls while physics is reporting the hit, when nothing may join the world, so its
-# Brinecap joins on the Room's next step.
+# Supply or Weapon joins on the Room's next step.
 func _physics_process(_delta: float) -> void:
-	for at in _brinecaps_due:
-		var brinecap := BRINECAP_SCENE.instantiate() as Node2D
-		add_child(brinecap)
-		brinecap.global_position = at
-	_brinecaps_due.clear()
+	for due in _supplies_due:
+		var supply := (due[0] as PackedScene).instantiate() as Node2D
+		add_child(supply)
+		supply.global_position = due[1]
+	_supplies_due.clear()
 
 
 # After a beat to see it fall, a defeated Player wakes in the first Room with full Health; the
@@ -157,6 +178,16 @@ func _ensure_health_bar() -> void:
 	bar.name = "HealthBar"
 	_canvas_layer.add_child(bar)
 	_canvas_layer.move_child(bar, 0)
+
+
+# The Sub Weapon count sits under the Health bar, and under the Pause menu and dialogue box too.
+func _ensure_sub_weapon_count() -> void:
+	if _canvas_layer == null or _canvas_layer.get_node_or_null("SubWeaponCount") != null:
+		return
+	var count := SUB_WEAPON_COUNT_SCENE.instantiate()
+	count.name = "SubWeaponCount"
+	_canvas_layer.add_child(count)
+	_canvas_layer.move_child(count, 0)
 
 
 # The Boss Health bar sits under the Pause menu and the dialogue box too; it shows only while a

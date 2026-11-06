@@ -9,6 +9,7 @@ const Health := preload("res://scripts/combat/health.gd")
 const Level := preload("res://scripts/player/level.gd")
 const Supplies := preload("res://scripts/items/supplies.gd")
 const Equipment := preload("res://scripts/items/equipment.gd")
+const SubWeapons := preload("res://scripts/items/sub_weapons.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
 const PlayerSounds := preload("res://scripts/player/player_sounds.gd")
 const SWORD_BEAM_SCENE := preload("res://scenes/player/sword_beam.tscn")
@@ -26,6 +27,10 @@ const CHARGED_MULTIPLIER := 2
 # A full Charge makes the sword blink bright, and the Charged Attack let go from it swings lit.
 const CHARGED_GLOW := Color(2.0, 2.0, 2.0)
 const CHARGED_BLINK_TIME := 0.08
+# Where a Sub Weapon leaves the Player's hand, facing right.
+const THROW_OFFSET := Vector2(6.0, -10.0)
+# Over the Player when it finds a Weapon or Sub Weapon.
+const GOT := "GOT %s"
 
 @export var move_speed: float = 80.0
 @export var acceleration: float = 600.0
@@ -40,9 +45,13 @@ var level: Level = Level.new()
 var health: Health = Health.new(level.max_health())
 # Read-only for callers: change it through collect() and use_supply().
 var supplies: Supplies = Supplies.new()
-# Read-only for callers: change it through wear_armor() and take_off_armor(). What the Player
-# wears, whose Defense takes Health off each hit.
+# Read-only for callers: change it through wear_armor(), take_off_armor(), collect_weapon() and
+# hold_weapon(). What the Player wears, whose Defense takes Health off each hit, and the Weapon
+# it holds, whose Attack adds to each hit it lands.
 var equipment: Equipment = Equipment.new()
+# Read-only for callers: change it through collect_sub_weapon(), hold_sub_weapon() and
+# throw_sub_weapon(). The Sub Weapon Ranged Attack uses, and how many of each are carried.
+var sub_weapons: SubWeapons = SubWeapons.new()
 # While true the Player ignores walk, jump and melee input: dialogue and the intro hold it
 # still.
 var controls_locked: bool = false
@@ -52,6 +61,8 @@ var _attack_finished: bool = false
 var _knockback: Vector2 = Vector2.ZERO
 var _defeated: bool = false
 var _defeat_time: float = 0.0
+# The Sub Weapon thrown last, while it is still out.
+var _thrown: Node2D
 
 @onready var _character_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var _sword_sprite: AnimatedSprite2D = $SwordSprite
@@ -67,7 +78,17 @@ func _ready() -> void:
 		level = Level.new(run.get("player_experience"))
 		health = Health.new(level.max_health(), run.get("player_health"))
 		supplies = Supplies.new(run.get("player_supplies"))
-		equipment = Equipment.new(run.get("player_armor"), run.get("player_owned_armor"))
+		equipment = Equipment.new(
+			run.get("player_armor"),
+			run.get("player_owned_armor"),
+			run.get("player_weapon"),
+			run.get("player_owned_weapons")
+		)
+		sub_weapons = SubWeapons.new(
+			run.get("player_sub_weapon"),
+			run.get("player_owned_sub_weapons"),
+			run.get("player_sub_weapon_counts")
+		)
 	controller.move_speed = move_speed
 	controller.acceleration = acceleration
 	controller.friction = friction
@@ -79,6 +100,7 @@ func _ready() -> void:
 	if _rig == null:
 		_rig = PlayerRig.new(_character_sprite, _sword_sprite)
 		_rig.attack_finished.connect(_on_rig_attack_finished)
+	_rig.hold(load(Equipment.WEAPONS[equipment.weapon].sheet))
 	if _sounds == null:
 		_sounds = PlayerSounds.new(_sound_players)
 		controller.state_changed.connect(_on_controller_state_changed)
@@ -87,9 +109,13 @@ func _ready() -> void:
 	_on_controller_stepped()
 
 
+# Interact and Ranged Attack act on the press itself, so even the quickest tap is never missed.
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"interact") and not event.is_echo() and interact() != null:
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed(&"ranged_attack") and not event.is_echo():
+		if throw_sub_weapon() != null:
+			get_viewport().set_input_as_handled()
 
 
 # Carries one more of a kind of Supply, with a pickup sound, and returns whether there was room.
@@ -109,7 +135,7 @@ func use_supply(kind: StringName) -> bool:
 		return false
 	if health.current >= health.maximum:
 		return false
-	health.heal(Supplies.KINDS[kind].restores)
+	health.heal(Supplies.restores(kind, health.maximum))
 	supplies.spend(kind)
 	_write_supplies_to_run()
 	var run := _get_run()
@@ -130,6 +156,81 @@ func wear_armor(armor_id: StringName) -> bool:
 func take_off_armor() -> void:
 	equipment.take_off()
 	_write_armor_to_run()
+
+
+# Owns and takes up a Weapon found where an enemy fell, with a pickup sound and its name over the
+# Player. Returns whether it did: a Weapon already owned is not collected again.
+func collect_weapon(weapon_id: StringName) -> bool:
+	if not equipment.own_weapon(weapon_id):
+		return false
+	hold_weapon(weapon_id)
+	_sounds.play(PlayerSounds.PICKUP)
+	_level_up.call("announce", GOT % Equipment.WEAPONS[weapon_id].name.to_upper())
+	return true
+
+
+# Takes up a Weapon the Player owns, as chosen in the Equipment Panel; returns whether it could.
+func hold_weapon(weapon_id: StringName) -> bool:
+	if not equipment.hold(weapon_id):
+		return false
+	_rig.hold(load(Equipment.WEAPONS[weapon_id].sheet))
+	var run := _get_run()
+	if run != null:
+		run.set("player_weapon", equipment.weapon)
+		run.set("player_owned_weapons", equipment.owned_weapons.duplicate())
+	return true
+
+
+# Carries one more of a Sub Weapon found in a Cache, with a pickup sound. The first one found is
+# owned and taken up, its name shown over the Player. Returns whether there was room.
+func collect_sub_weapon(id: StringName) -> bool:
+	var found := sub_weapons.own(id)
+	if found:
+		sub_weapons.hold(id)
+		_level_up.call("announce", GOT % SubWeapons.KINDS[id].found)
+	if not sub_weapons.add(id) and not found:
+		return false
+	_write_sub_weapons_to_run()
+	_sounds.play(PlayerSounds.PICKUP)
+	return true
+
+
+# Takes up a Sub Weapon the Player owns, or none (&""), as chosen in the Equipment Panel; returns
+# whether it could.
+func hold_sub_weapon(id: StringName) -> bool:
+	if not sub_weapons.hold(id):
+		return false
+	_write_sub_weapons_to_run()
+	return true
+
+
+# Sends the held Sub Weapon out along the Player's facing, into the Room, spending one, and
+# returns it. Nothing is thrown with none held or carried, while the Player is held still or
+# defeated, or while the last one thrown is still out.
+func throw_sub_weapon() -> Node2D:
+	var id := sub_weapons.held
+	if id.is_empty() or controls_locked or _defeated or is_instance_valid(_thrown):
+		return null
+	if not sub_weapons.spend(id):
+		return null
+	_write_sub_weapons_to_run()
+	_thrown = (load(SubWeapons.KINDS[id].scene) as PackedScene).instantiate() as Node2D
+	_thrown.set("facing", controller.facing)
+	var world := get_parent() if get_parent() != null else self
+	world.add_child(_thrown)
+	_thrown.global_position = (
+		global_position + Vector2(THROW_OFFSET.x * controller.facing, THROW_OFFSET.y)
+	)
+	_sounds.play(PlayerSounds.THROW)
+	return _thrown
+
+
+func _write_sub_weapons_to_run() -> void:
+	var run := _get_run()
+	if run != null:
+		run.set("player_sub_weapon", sub_weapons.held)
+		run.set("player_owned_sub_weapons", sub_weapons.owned.duplicate())
+		run.set("player_sub_weapon_counts", sub_weapons.to_counts())
 
 
 func _write_armor_to_run() -> void:
@@ -191,6 +292,7 @@ func _physics_process(delta: float) -> void:
 # and shows LEVEL UP; the Run keeps the total and the Health that comes with it.
 func gain_experience(amount: int) -> void:
 	var before := level.max_health()
+	var strength_before := level.strength()
 	var gained := level.gain(amount)
 	var run := get_node_or_null("/root/RunState") if is_inside_tree() else null
 	if run != null:
@@ -201,7 +303,7 @@ func gain_experience(amount: int) -> void:
 	if run != null:
 		run.set("player_health", health.current)
 	_sounds.play(PlayerSounds.LEVEL_UP)
-	_level_up.call("flash")
+	_level_up.call("flash", level.max_health() - before, level.strength() - strength_before)
 
 
 # Whether the Player's Health has run out: it no longer answers the controls.
@@ -287,9 +389,9 @@ func _on_controller_state_changed(
 		_loose_sword_beam()
 
 
-# What a quick slash costs: the sword's hit and the Player's Strength.
+# What a quick slash costs: the sword's hit, the Player's Strength and the Weapon's Attack.
 func _quick_cost() -> int:
-	return Hitbox.DEFAULT_DAMAGE + level.strength()
+	return Hitbox.DEFAULT_DAMAGE + level.strength() + equipment.attack()
 
 
 # Sends a Sword Beam out from the blade along the Player's facing, into the Room.
@@ -297,6 +399,7 @@ func _loose_sword_beam() -> void:
 	var beam := SWORD_BEAM_SCENE.instantiate() as Node2D
 	beam.set("facing", controller.facing)
 	beam.set("damage", _quick_cost() * CHARGED_MULTIPLIER)
+	beam.set("sheet", load(Equipment.WEAPONS[equipment.weapon].sheet))
 	var world := get_parent() if get_parent() != null else self
 	world.add_child(beam)
 	beam.global_position = (

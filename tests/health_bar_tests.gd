@@ -29,7 +29,8 @@ func get_tests() -> Array:
 		["Health bar is slim: a thin fill inside its frame", _test_slim],
 		["Every Room puts the Health bar under its Pause menu", _test_room_has_bar],
 		["Stats shows Health left out of its total", _test_stats_shows_health],
-		["Stats shows Level, Experience, Strength and Defense", _test_stats_shows_growth],
+		["Stats shows Level, Experience, Strength, Attack and Defense", _test_stats_shows_growth],
+		["Stats shows the held Weapon's Attack", _test_stats_shows_attack],
 		["Stats lines up names on the left, values on the right", _test_stats_columns],
 		["A defeated Player stops answering controls", _test_defeat_locks_controls],
 	]
@@ -147,6 +148,7 @@ func _test_stats_shows_growth() -> bool:
 			["Experience", "0 / 40"],
 			["Health", "50 / 50"],
 			["Strength", "0"],
+			["Attack", "0"],
 			["Defense", "0"],
 		]
 	)
@@ -160,7 +162,8 @@ func _test_stats_shows_growth() -> bool:
 				["Level", "2"],
 				["Experience", "45 / 100"],
 				["Health", "60 / 60"],
-				["Strength", "0"],
+				["Strength", "5"],
+				["Attack", "0"],
 				["Defense", "0"],
 			]
 		)
@@ -172,10 +175,27 @@ func _test_stats_shows_growth() -> bool:
 		and (
 			_stats_rows(body)
 			== [
-				["Level", "5"],
-				["Experience", "1045 / MAX"],
-				["Health", "90 / 90"],
-				["Strength", "10"],
+				["Level", "8"],
+				["Experience", "1045 / 1200"],
+				["Health", "120 / 120"],
+				["Strength", "35"],
+				["Attack", "0"],
+				["Defense", "0"],
+			]
+		)
+	)
+	player.call("gain_experience", 1000)
+	_reshow_stats(menu)
+	valid = (
+		valid
+		and (
+			_stats_rows(body)
+			== [
+				["Level", "10"],
+				["Experience", "2045 / MAX"],
+				["Health", "140 / 140"],
+				["Strength", "45"],
+				["Attack", "0"],
 				["Defense", "0"],
 			]
 		)
@@ -194,7 +214,7 @@ func _test_stats_columns() -> bool:
 	_root.add_child(menu)
 	menu.call("toggle_pause")
 	var body := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/Body") as GridContainer
-	var valid := body != null and body.columns == 2 and body.get_child_count() == 10
+	var valid := body != null and body.columns == 2 and body.get_child_count() == 12
 	if valid:
 		for index in body.get_child_count():
 			var label := body.get_child(index) as Label
@@ -216,6 +236,21 @@ func _reshow_stats(menu: Control) -> void:
 
 
 # The Stats rows as [name, value] pairs, read from the Body's labels in order.
+func _test_stats_shows_attack() -> bool:
+	var player := _player()
+	player.call("collect_weapon", &"oathblade")
+	var menu := PAUSE_MENU_SCENE.instantiate() as Control
+	_root.add_child(menu)
+	menu.call("toggle_pause")
+	var body := menu.get_node(MENU_ROOT + "ContentRoot/StatsPanel/Body") as Container
+	var valid := _stats_rows(body).has(["Attack", "5"])
+	menu.get_tree().paused = false
+	menu.free()
+	player.free()
+	_root.get_node("RunState").call("start_run")
+	return valid
+
+
 func _stats_rows(body: Container) -> Array:
 	var rows := []
 	var labels := body.get_children()

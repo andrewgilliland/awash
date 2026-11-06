@@ -3,6 +3,7 @@ extends RefCounted
 const Equipment := preload("res://scripts/items/equipment.gd")
 const TUNIC := &"worn_leather_tunic"
 const SHORT_SWORD := &"short_sword"
+const OATHBLADE := &"oathblade"
 
 
 func get_tests() -> Array:
@@ -18,8 +19,12 @@ func get_tests() -> Array:
 		["Equipment starts from what the Run carried", _test_starts_from_run],
 		["Unknown Armor is neither owned nor worn", _test_unknown_armor_dropped],
 		["Every Armor has an icon", _test_every_armor_has_icon],
-		["A new Run holds the Short Sword, its only Weapon", _test_holds_short_sword],
-		["Every Weapon has an icon", _test_every_weapon_has_icon],
+		["A new Run holds the Short Sword, the only Weapon it owns", _test_holds_short_sword],
+		["Every Weapon has an icon and a sheet to be held in hand", _test_every_weapon_has_icon],
+		["The Short Sword adds no Attack; the Oathblade adds 5", _test_attack],
+		["A Weapon is owned once, and only a known one", _test_own_weapon],
+		["Only an owned Weapon can be held", _test_hold_owned_only],
+		["Equipment starts from the Weapons the Run carried", _test_starts_from_run_weapons],
 		["The Defense with any Armor, or none, can be read", _test_defense_with],
 	]
 
@@ -109,8 +114,48 @@ func _test_every_weapon_has_icon() -> bool:
 	var valid := not Equipment.WEAPONS.is_empty()
 	for id in Equipment.WEAPONS:
 		var icon: String = Equipment.WEAPONS[id].get("icon", "")
-		valid = valid and ResourceLoader.exists(icon)
+		var sheet: String = Equipment.WEAPONS[id].get("sheet", "")
+		valid = valid and ResourceLoader.exists(icon) and ResourceLoader.exists(sheet)
 	return valid
+
+
+func _test_attack() -> bool:
+	var equipment := Equipment.new()
+	var valid := equipment.attack() == 0
+	valid = valid and equipment.attack_with(SHORT_SWORD) == 0
+	valid = valid and equipment.attack_with(OATHBLADE) == 5
+	valid = valid and Equipment.WEAPONS[OATHBLADE].name == "Oathblade"
+	equipment.own_weapon(OATHBLADE)
+	equipment.hold(OATHBLADE)
+	return valid and equipment.attack() == 5 and equipment.weapon_name() == "Oathblade"
+
+
+func _test_own_weapon() -> bool:
+	var equipment := Equipment.new()
+	var valid := not equipment.owns_weapon(OATHBLADE)
+	valid = valid and equipment.own_weapon(OATHBLADE) and equipment.owns_weapon(OATHBLADE)
+	valid = valid and not equipment.own_weapon(OATHBLADE)
+	valid = valid and not equipment.own_weapon(&"nothing")
+	return valid and equipment.owned_weapons == [SHORT_SWORD, OATHBLADE]
+
+
+func _test_hold_owned_only() -> bool:
+	var equipment := Equipment.new()
+	var valid := not equipment.hold(OATHBLADE) and equipment.weapon == SHORT_SWORD
+	equipment.own_weapon(OATHBLADE)
+	valid = valid and equipment.hold(OATHBLADE) and equipment.weapon == OATHBLADE
+	return valid and equipment.hold(SHORT_SWORD) and equipment.weapon == SHORT_SWORD
+
+
+# Unknown Weapons are dropped, the one held is owned, and a hand left empty holds the Short Sword.
+func _test_starts_from_run_weapons() -> bool:
+	var carried := Equipment.new(TUNIC, [TUNIC], OATHBLADE, [SHORT_SWORD, OATHBLADE, &"nothing"])
+	var valid := carried.weapon == OATHBLADE
+	valid = valid and carried.owned_weapons == [SHORT_SWORD, OATHBLADE]
+	var held := Equipment.new(TUNIC, [TUNIC], OATHBLADE, [])
+	valid = valid and held.weapon == OATHBLADE and held.owned_weapons == [OATHBLADE]
+	var unknown := Equipment.new(TUNIC, [TUNIC], &"nothing", [SHORT_SWORD])
+	return valid and unknown.weapon == SHORT_SWORD and unknown.owned_weapons == [SHORT_SWORD]
 
 
 func _test_defense_with() -> bool:

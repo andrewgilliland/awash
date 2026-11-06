@@ -16,6 +16,7 @@ Persistent items that change the player's combat capabilities or defenses.
 
 - [Weapons](equipment/weapons.md)
 - [Armor](equipment/armor.md)
+- [Sub Weapons](equipment/sub-weapons.md)
 - [Accessories](equipment/accessories.md)
 
 ## Relics

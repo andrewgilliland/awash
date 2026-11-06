@@ -14,8 +14,11 @@ func get_tests() -> Array:
 		["Run carries the Player's Experience, even through a defeat", _test_carries_experience],
 		["Run carries the Player's Supplies, even through a defeat", _test_carries_supplies],
 		["Run carries the Player's Armor, even through a defeat", _test_carries_armor],
+		["Run carries the Player's Weapons, even through a defeat", _test_carries_weapons],
+		["Run carries the Player's Sub Weapons, even through a defeat", _test_carries_sub_weapons],
 		["Run remembers each Boss defeated, even through a defeat", _test_remembers_bosses],
 		["Run remembers each Shortcut opened, even through a defeat", _test_remembers_shortcuts],
+		["Run remembers each Breakable wall broken, even through a defeat", _test_remembers_walls],
 		["Run remembers each Cache taken, even through a defeat", _test_remembers_caches],
 	]
 
@@ -143,6 +146,21 @@ func _test_remembers_bosses() -> bool:
 	return valid
 
 
+func _test_remembers_walls() -> bool:
+	var run := RunStateScript.new()
+	var valid: bool = not run.has_broken_wall(&"sea_cave_rock")
+	run.break_wall(&"sea_cave_rock")
+	run.enter_room(&"undertow_3", &"west")
+	valid = valid and run.has_broken_wall(&"sea_cave_rock")
+	valid = valid and not run.has_broken_wall(&"somewhere_else")
+	run.recover_from_defeat()
+	valid = valid and run.has_broken_wall(&"sea_cave_rock")
+	run.start_run()
+	valid = valid and not run.has_broken_wall(&"sea_cave_rock")
+	run.free()
+	return valid
+
+
 func _test_remembers_shortcuts() -> bool:
 	var run := RunStateScript.new()
 	var valid: bool = not run.has_opened_shortcut(&"sea_cave_wall")
@@ -169,5 +187,38 @@ func _test_remembers_caches() -> bool:
 	valid = valid and run.has_taken_cache(&"wreck_chest")
 	run.start_run()
 	valid = valid and not run.has_taken_cache(&"wreck_chest")
+	run.free()
+	return valid
+
+
+func _test_carries_weapons() -> bool:
+	var run := RunStateScript.new()
+	var valid: bool = run.player_weapon == &"short_sword"
+	valid = valid and run.player_owned_weapons == [&"short_sword"]
+	run.player_weapon = &"oathblade"
+	run.player_owned_weapons = [&"short_sword", &"oathblade"]
+	run.enter_room(&"waking_coast_2", &"west")
+	run.recover_from_defeat()
+	valid = valid and run.player_weapon == &"oathblade" and run.player_owned_weapons.size() == 2
+	run.start_run()
+	valid = valid and run.player_weapon == &"short_sword"
+	valid = valid and run.player_owned_weapons == [&"short_sword"]
+	run.free()
+	return valid
+
+
+func _test_carries_sub_weapons() -> bool:
+	var run := RunStateScript.new()
+	var valid: bool = run.player_sub_weapon == &"" and run.player_owned_sub_weapons.is_empty()
+	valid = valid and run.player_sub_weapon_counts.is_empty()
+	run.player_sub_weapon = &"bomb"
+	run.player_owned_sub_weapons = [&"bomb"]
+	run.player_sub_weapon_counts = {&"bomb": 4}
+	run.recover_from_defeat()
+	valid = valid and run.player_sub_weapon == &"bomb" and run.player_owned_sub_weapons.size() == 1
+	valid = valid and run.player_sub_weapon_counts == {&"bomb": 4}
+	run.start_run()
+	valid = valid and run.player_sub_weapon == &"" and run.player_owned_sub_weapons.is_empty()
+	valid = valid and run.player_sub_weapon_counts.is_empty()
 	run.free()
 	return valid

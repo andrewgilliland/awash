@@ -21,6 +21,7 @@ func get_tests() -> Array:
 		["Player's Experience carries in the Run", _test_experience_carries_in_run],
 		["Strength adds to quick and Charged hits", _test_strength_adds_to_hits],
 		["Reaching a Level chimes and shows LEVEL UP", _test_level_up_feedback],
+		["Under LEVEL UP, what the Level raised", _test_level_up_shows_gains],
 		["Experience short of a Level stays quiet", _test_no_level_stays_quiet],
 		["LEVEL UP stays on screen at a Room's edge", _test_level_up_stays_on_screen],
 	]
@@ -108,6 +109,20 @@ func _test_level_up_feedback() -> bool:
 	player.call("gain_experience", Level.LEVELS[1].experience)
 	valid = valid and _playing(player, &"LevelUp")
 	valid = valid and label != null and label.visible and label.text == "LEVEL UP"
+	player.free()
+	_run().call("start_run")
+	return valid
+
+
+# One Level, then two at once: the line adds up everything they raised.
+func _test_level_up_shows_gains() -> bool:
+	_run().call("start_run")
+	var player := _player()
+	var gains := player.get_node_or_null("LevelUp/Gains") as Label
+	player.call("gain_experience", Level.LEVELS[1].experience)
+	var valid := gains != null and gains.is_visible_in_tree() and gains.text == "HP +10  STR +5"
+	player.call("gain_experience", Level.LEVELS[3].experience - Level.LEVELS[1].experience)
+	valid = valid and gains != null and gains.text == "HP +20  STR +10"
 	player.free()
 	_run().call("start_run")
 	return valid

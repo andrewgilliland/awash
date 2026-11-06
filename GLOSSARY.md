@@ -52,6 +52,10 @@ _Avoid_: Power attack, heavy attack, charge shot
 What a Charged Attack sends out along the Player's facing: a glowing copy of the blade that strikes the first thing in its way, for twice what a quick slash costs, and breaks a Ward or a Shortcut's cracked wall. It flies a screen and a half, and stops at the first thing it strikes or at the world's terrain.
 _Avoid_: Projectile, wave, shot
 
+**Ranged Attack**:
+The button that throws the held Sub Weapon: V, or B / Circle on a gamepad. Each press throws one, along the Player's facing, without stopping them; it does nothing with no Sub Weapon held or none left to throw, while the Player is held still, or while the last one thrown is still out.
+_Avoid_: Throw button, sub-weapon button, shoot
+
 ## World
 
 **World**:
@@ -94,6 +98,10 @@ _Avoid_: Biome, zone, area, level
 A small place with no enemies, where people, a Rest point and shops are. It may be a small Region of its own, such as Tidefen Village past the Waking Coast, with its own theme, Map name and colour.
 _Avoid_: Hub, village, town (as a kind of place)
 
+**Villager**:
+Someone who lives in a Safe spoke and talks when the Player uses them with Interact, named in the Dialogue box by the trade they keep, such as Tidefen's netter, knot-weaver, bell-keeper and fisher. They stand by their part of the village, idling, turn to face the Player, and say the same few lines each time.
+_Avoid_: NPC, townsperson, extra
+
 **Rest point**:
 A place in a Safe spoke where the Player recovers, and which a defeat returns them to without ending the Run.
 _Avoid_: Checkpoint, save point, bonfire
@@ -121,7 +129,7 @@ An optional route off the Main path that rejoins it, such as the sea cave.
 _Avoid_: Side path, detour, secret area
 
 **Shortcut**:
-A one-way route that returns the Player quickly to an earlier point on the Main path, such as the cracked wall between the Undertow and the sea cave. It stays shut from its far end until first used from its near end.
+A one-way route that returns the Player quickly to an earlier point on the Main path, such as the cracked wall between the Undertow and the sea cave. It stays shut from its far end until first used from its near end, unless a Breakable wall stands across its far end: the sea cave's rock opens it to a Bomb.
 _Avoid_: Branch (for a one-way return), warp
 
 **Drop**:
@@ -132,8 +140,12 @@ _Avoid_: Pit, sinkhole, chute, hole (as the general term)
 A place on a route that stays shut until an ability unlock or a defeated Boss opens it, such as the ledge above the salt cliffs that double jump will reach, or the column of rune light across the trail east of the Warden's gate.
 _Avoid_: Lock, barrier, door
 
+**Breakable wall**:
+Cracked rock across a route that only a Bomb's blast breaks; a sword's hit, quick or charged, knocks hollow off it. It crumbles as it breaks and stays broken for the Run. The rock at the sea cave's end, across the Shortcut, is one: it keeps the Undertow shut from the coast until the Player brings Bombs back from Tidefen, and breaking it opens the Shortcut.
+_Avoid_: Bomb block, destructible wall, secret wall
+
 **Cache**:
-A hidden spot in a Room holding Supplies, opened with Interact, that stays empty once taken for the Run.
+A hidden spot in a Room holding Supplies, or a Sub Weapon such as the Bombs in Tidefen's bomb crate, opened with Interact, that stays empty once taken for the Run. The first Bombs found are owned and taken up.
 _Avoid_: Crate, chest, stash, pickup
 
 **Supply**:
@@ -145,8 +157,16 @@ The first Restorative: a Supply that restores 20 Health.
 _Avoid_: Potion, health potion
 
 **Brinecap**:
-A pale, salt-crusted mushroom from the coast's caves and tunnels: a Restorative that restores 10 Health. Enemies forage it, so a defeated one sometimes leaves one where it fell, for the Player to collect by touch.
+A pale, salt-crusted mushroom from the coast's caves and tunnels: a Restorative that restores 10 Health. Scavengers and Storm Wisps forage it, so a defeated one sometimes leaves one where it fell, for the Player to collect by touch.
 _Avoid_: Mushroom (as its name), food, snack
+
+**Glowroe**:
+A clutch of faintly glowing roe from the Undertow's pools: a Restorative that restores 20 Health. A defeated Lurelight sometimes leaves one where it fell.
+_Avoid_: Eggs, caviar
+
+**Mourning Salt**:
+Salt wept from a Wraith's robes: a Restorative that restores half of the Player's max Health, rounded down, so it keeps its worth as Levels raise it. A defeated Wraith sometimes leaves one where it fell.
+_Avoid_: Ectoplasm, soul salt
 
 **Salvage**:
 What the Player gathers from the wreck-strewn world and spends at shops. Defeated enemies drop it, Caches can hold it, and a defeat does not take it away.
@@ -211,7 +231,7 @@ The Waking Coast's Boss: an armored spirit with a blank stone mask and a salt-cr
 _Avoid_: Warden (alone), sentinel, guardian
 
 **Ward**:
-The Nameless Warden's guard of pale rune light. Quick Attacks glance off it; a Charged Attack breaks it, and it returns after the Stagger.
+The Nameless Warden's guard of pale rune light. Quick Attacks glance off it; a Charged Attack, or a Bomb's blast, breaks it, and it returns after the Stagger.
 _Avoid_: Shield, barrier, armor
 
 **Stagger**:
@@ -221,7 +241,7 @@ _Avoid_: Stun, daze
 ## Growth
 
 **Level**:
-How far the Player has grown in a Run, starting at 1. Enough Experience raises it, up to the highest Level, and each Level can raise the Player's maximum Health and Strength.
+How far the Player has grown in a Run, starting at 1. Enough Experience raises it, up to the highest Level, 10, and each Level raises the Player's maximum Health by 10 and Strength by 5.
 _Avoid_: XP level, rank, character level, level (for a Room)
 
 **Experience**:
@@ -229,7 +249,7 @@ What defeating an enemy earns the Player toward the next Level. Each kind of ene
 _Avoid_: XP, EXP, experience points
 
 **Strength**:
-The Player's own might, added to what each sword hit costs. Levels raise it; Armor does not.
+The Player's own might, added to what each sword hit costs. Levels raise it; Equipment does not.
 _Avoid_: Attack (the Player state), power, damage
 
 ## Equipment
@@ -239,12 +259,28 @@ What the Player wears or wields, one piece in each slot, kept for the whole Run 
 _Avoid_: Gear, outfit, loadout
 
 **Weapon**:
-The Equipment slot for what the Player wields: the sword each Attack swings. It is never empty; a new Run holds the Short Sword.
+The Equipment slot for what the Player wields: the sword each Attack swings, drawn in the Player's hand and in its Sword Beam. It is never empty; a new Run holds the Short Sword, and the Equipment Panel takes up any other Weapon owned.
 _Avoid_: Blade, arm, main hand
 
 **Short Sword**:
-The Weapon Mara pulls from the sand on the Waking Coast and hands to Vael: a plain blade that adds nothing to a hit yet.
+The Weapon Mara pulls from the sand on the Waking Coast and hands to Vael: a plain blade with Attack 0.
 _Avoid_: Starting weapon, default weapon
+
+**Oathblade**:
+A ceremonial blade from the oathkeepers the Wraiths once were: a Weapon with Attack 5. A defeated Wraith sometimes leaves it where it fell, until the Player owns it; touching it takes it up at once.
+_Avoid_: Wraith sword, ghost blade
+
+**Attack** (of a Weapon):
+What the Weapon held adds to each hit it lands, on top of the Player's Strength. Written `ATK` in the Equipment Panel.
+_Avoid_: Damage, power, weapon strength
+
+**Sub Weapon**:
+The Equipment slot for what Ranged Attack throws, chosen in the Equipment Panel from the Sub Weapons the Player owns, or left empty. A new Run owns none. Unlike a Weapon, it is spent: the Player carries up to 9 of each, shown with its icon under the Health bar while it is held, and a defeat does not take them away.
+_Avoid_: Secondary weapon, subweapon, ammo (as the slot)
+
+**Bomb**:
+A Tidefen fisher's clay Bomb: a Sub Weapon. Lobbed along the Player's facing, it bounces once and rests while its fuse sputters for a second, then bursts, striking every enemy within 24 pixels for 20, as a charged hit, so it breaks what a Sword Beam breaks, and as a blast, so it breaks a Breakable wall. Its blast never harms the Player. The bomb crate on Tidefen's pier, a Cache, holds the first 5.
+_Avoid_: Grenade, explosive, powder keg
 
 **Armor**:
 The Equipment slot for what the Player wears, chosen in the Equipment Panel from the Armor the Player owns, or left empty for no Defense. A new Run owns and wears the Worn Leather Tunic.
@@ -281,7 +317,7 @@ The Panel listing each kind of Supply the Player carries and how many. Choosing 
 _Avoid_: Supplies Panel, items menu, bag
 
 **Equipment Panel**:
-The Panel showing each Equipment slot with its piece above a divider, and below it the pieces owned for the slot last focused, the one equipped marked. Choosing a slot moves into its pieces; choosing one equips it, and None empties a slot that can be empty. Defense shows above the divider, with what it would become while an Armor is focused.
+The Panel showing each Equipment slot with its piece above a divider, and below it the pieces owned for the slot last focused, the one equipped marked. Choosing a slot moves into its pieces; choosing one equips it, and None empties a slot that can be empty. Attack and Defense show above the divider, each with what it would become while a Weapon, or an Armor, is focused.
 _Avoid_: Equip screen, gear menu, loadout
 
 **Description**:

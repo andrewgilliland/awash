@@ -21,11 +21,21 @@ var player_supplies: Dictionary = {}
 # The Armor the Player wears this Run, or &"" for none, and every Armor it owns.
 var player_armor: StringName = Equipment.STARTING_ARMOR
 var player_owned_armor: Array[StringName] = [Equipment.STARTING_ARMOR]
+# The Weapon the Player holds this Run, and every Weapon it owns.
+var player_weapon: StringName = Equipment.STARTING_WEAPON
+var player_owned_weapons: Array[StringName] = [Equipment.STARTING_WEAPON]
+# The Sub Weapon the Player holds this Run, or &"" for none, every one it owns, and how many of
+# each it carries, as SubWeapons.to_counts() gives them.
+var player_sub_weapon: StringName = &""
+var player_owned_sub_weapons: Array[StringName] = []
+var player_sub_weapon_counts: Dictionary = {}
 var _visited_rooms: Dictionary = {FIRST_ROOM_ID: true}
 # Every Boss defeated this Run, by id.
 var _defeated_bosses: Dictionary = {}
 # Every Shortcut opened this Run, by id.
 var _opened_shortcuts: Dictionary = {}
+# Every Breakable wall broken this Run, by id.
+var _broken_walls: Dictionary = {}
 # Every Cache taken this Run, by id.
 var _taken_caches: Dictionary = {}
 
@@ -40,15 +50,21 @@ func start_run() -> void:
 	player_supplies = {}
 	player_armor = Equipment.STARTING_ARMOR
 	player_owned_armor = [Equipment.STARTING_ARMOR]
+	player_weapon = Equipment.STARTING_WEAPON
+	player_owned_weapons = [Equipment.STARTING_WEAPON]
+	player_sub_weapon = &""
+	player_owned_sub_weapons = []
+	player_sub_weapon_counts = {}
 	_visited_rooms = {FIRST_ROOM_ID: true}
 	_defeated_bosses = {}
 	_opened_shortcuts = {}
+	_broken_walls = {}
 	_taken_caches = {}
 
 
 # After a defeat the Run carries on: back at the first Room's default Entry with full Health,
-# keeping every Room visited, every Boss defeated, every Shortcut opened, every Cache taken, and
-# all the Player's Experience, Supplies and Equipment.
+# keeping every Room visited, every Boss defeated, every Shortcut opened, every Breakable wall
+# broken, every Cache taken, and all the Player's Experience, Supplies and Equipment.
 func recover_from_defeat() -> void:
 	room_id = FIRST_ROOM_ID
 	entry_id = DEFAULT_ENTRY_ID
@@ -87,6 +103,15 @@ func open_shortcut(shortcut_id: StringName) -> void:
 
 func has_opened_shortcut(shortcut_id: StringName) -> bool:
 	return _opened_shortcuts.has(shortcut_id)
+
+
+# A Breakable wall stays broken for the rest of the Run.
+func break_wall(wall_id: StringName) -> void:
+	_broken_walls[wall_id] = true
+
+
+func has_broken_wall(wall_id: StringName) -> bool:
+	return _broken_walls.has(wall_id)
 
 
 # A Cache stays empty for the rest of the Run.

@@ -13,7 +13,7 @@ The Wraith is the Waking Coast's third enemy (see `docs/enemies/wraith.md`): a s
 - Then its anchor is **exposed** for 1 second: solid and still, glowing. Only now can the sword hit it.
 - A sword hit costs it 10 Health, or 20 for a Charged Attack, pushes it away at 60 pixels a second, slowing over 0.35 seconds, and it phases again. One opening takes one hit.
 - After exposing or being hurt it stays phased for at least 1 second before it can manifest again.
-- At 0 Health it stops, blinks for 0.6 seconds, and is gone. Its defeat earns the Player 20 Experience, every time, and has a 35% chance to leave a Brinecap where it fell.
+- At 0 Health it stops, blinks for 0.6 seconds, and is gone. Its defeat earns the Player 20 Experience, every time, and has a 35% chance to leave a Mourning Salt where it fell, and, on a roll of its own, a 10% chance to leave the Oathblade beside it, until the Player owns it.
 - It floats about 16 pixels above the floor it haunts, where a swing from the ground reaches its anchor and its lash reaches the Player.
 
 ## Sound

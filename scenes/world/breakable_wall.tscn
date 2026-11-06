@@ -1,0 +1,75 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/breakable_wall.gd" id="1_wall"]
+[ext_resource type="Script" path="res://scripts/combat/hurtbox.gd" id="2_hurtbox"]
+[ext_resource type="Texture2D" path="res://assets/world/breakable_wall_rubble.png" id="3_rubble"]
+[ext_resource type="AudioStream" path="res://assets/world/wall_knock.wav" id="4_knock"]
+[ext_resource type="AudioStream" path="res://assets/world/wall_crumble.wav" id="5_crumble"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_rubble"]
+particles_animation = true
+particles_anim_h_frames = 3
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Gradient" id="Gradient_dust"]
+colors = PackedColorArray(0.78, 0.81, 0.87, 0.7, 0.57, 0.63, 0.73, 0)
+
+[node name="BreakableWall" type="StaticBody2D"]
+collision_mask = 0
+script = ExtResource("1_wall")
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 0
+script = ExtResource("2_hurtbox")
+
+[node name="Shape" type="CollisionShape2D" parent="Hurtbox"]
+
+[node name="Rubble" type="CPUParticles2D" parent="."]
+material = SubResource("CanvasItemMaterial_rubble")
+emitting = false
+amount = 4
+lifetime = 0.9
+one_shot = true
+explosiveness = 0.85
+texture = ExtResource("3_rubble")
+emission_shape = 3
+emission_rect_extents = Vector2(8, 8)
+direction = Vector2(0, -1)
+spread = 70.0
+gravity = Vector2(0, 360)
+initial_velocity_min = 30.0
+initial_velocity_max = 80.0
+angular_velocity_min = -360.0
+angular_velocity_max = 360.0
+anim_offset_max = 1.0
+
+[node name="Dust" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 16
+lifetime = 0.7
+one_shot = true
+explosiveness = 0.9
+emission_shape = 3
+emission_rect_extents = Vector2(8, 8)
+direction = Vector2(0, -1)
+spread = 180.0
+gravity = Vector2(0, -12)
+initial_velocity_min = 6.0
+initial_velocity_max = 20.0
+scale_amount_min = 2.0
+scale_amount_max = 4.0
+color_ramp = SubResource("Gradient_dust")
+
+[node name="Sounds" type="Node" parent="."]
+
+[node name="Knock" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("4_knock")
+bus = &"SFX"
+
+[node name="Crumble" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("5_crumble")
+bus = &"SFX"

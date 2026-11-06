@@ -14,7 +14,7 @@ The Lurelight is the Undertow's first enemy (see `docs/enemies/lurelight.md`): a
 - A sword hit costs it 10 Health, or 20 for a Charged Attack, and it **sinks** at once. One opening takes one hit.
 - After stranding or being hit, it sinks and its lure stays dark for 1.2 seconds before it lights again and it is Hidden.
 - Touching its body does no harm: only its jaws do.
-- At 0 Health it floats belly-up at the surface, its lure dark, then sinks out of sight. Its defeat earns the Player 15 Experience, every time, and has a 20% chance to leave a Brinecap resting on the water where it fell.
+- At 0 Health it floats belly-up at the surface, its lure dark, then sinks out of sight. Its defeat earns the Player 15 Experience, every time, and has a 20% chance to leave a Glowroe resting on the water where it fell.
 
 ## Sound
 

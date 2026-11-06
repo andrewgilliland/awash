@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=4 uid="uid://bo2pll780fo42"]
+[gd_scene load_steps=37 format=4 uid="uid://bo2pll780fo42"]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_ltjx2"]
 
@@ -10,6 +10,14 @@
 [ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="5_usmxo"]
 
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="6_a2duh"]
+[ext_resource type="PackedScene" path="res://scenes/world/cache.tscn" id="7_cache"]
+[ext_resource type="Texture2D" uid="uid://bgjt1tgvf1c20" path="res://assets/world/bomb_crate.png" id="8_crate"]
+
+[ext_resource type="PackedScene" path="res://scenes/npcs/villager.tscn" id="20_villager"]
+[ext_resource type="Texture2D" path="res://assets/npcs/netter/netter.png" id="21_netter"]
+[ext_resource type="Texture2D" path="res://assets/npcs/knot_weaver/knot_weaver.png" id="22_weaver"]
+[ext_resource type="Texture2D" path="res://assets/npcs/bell_keeper/bell_keeper.png" id="23_keeper"]
+[ext_resource type="Texture2D" path="res://assets/npcs/fisher/fisher.png" id="24_fisher"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ehfn0"]
 atlas = ExtResource("4_r86vo")
@@ -254,6 +262,45 @@ shape = SubResource("RectangleShape2D_0jmsj")
 
 [node name="west" type="Marker2D" parent="Entries"]
 position = Vector2(12, 112)
+
+[node name="BombCrate" parent="." instance=ExtResource("7_cache")]
+position = Vector2(790, 80)
+cache_id = &"bomb_crate"
+kind = &"bomb"
+count = 5
+collect_method = &"collect_sub_weapon"
+shut_frame = Rect2(0, 0, 32, 32)
+open_frame = Rect2(32, 0, 32, 32)
+
+[node name="Sprite2D" parent="BombCrate" index="0"]
+texture = ExtResource("8_crate")
+region_rect = Rect2(0, 0, 32, 32)
+
+[node name="Villagers" type="Node2D" parent="."]
+
+[node name="Netter" parent="Villagers" instance=ExtResource("20_villager")]
+position = Vector2(112, 122)
+speaker = "NETTER"
+lines = PackedStringArray("My father fished the deep water, before the lights.", "They glow beneath the waves. Pretty, till they bite.", "That old well drops into the dark. No climbing back.")
+sheet = ExtResource("21_netter")
+
+[node name="KnotWeaver" parent="Villagers" instance=ExtResource("20_villager")]
+position = Vector2(216, 64)
+speaker = "KNOT-WEAVER"
+lines = PackedStringArray("Every Tidefen child learns the memory-knot.", "One knot for each name you mean to keep.", "The storms strip names. Knots hold them.")
+sheet = ExtResource("22_weaver")
+
+[node name="BellKeeper" parent="Villagers" instance=ExtResource("20_villager")]
+position = Vector2(504, 112)
+speaker = "BELL-KEEPER"
+lines = PackedStringArray("I keep the bell. It tolls the curfew.", "When it rings, everyone comes in off the water.", "Nothing good is out there after dark.")
+sheet = ExtResource("23_keeper")
+
+[node name="Fisher" parent="Villagers" instance=ExtResource("20_villager")]
+position = Vector2(872, 80)
+speaker = "FISHER"
+lines = PackedStringArray("We keep Bombs for the rocks, not the fish.", "Take what you need from the crate.", "A Bomb would crack the stone in the sea cave.")
+sheet = ExtResource("24_fisher")
 
 [node name="Player" parent="." instance=ExtResource("6_a2duh")]
 position = Vector2(12, 112)

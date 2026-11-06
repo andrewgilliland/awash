@@ -1,7 +1,8 @@
 extends RefCounted
 
 # The Undertow's Shortcut home: a cracked wall at the west end of its passage, broken from the
-# Undertow side by a Charged Attack, into the sea cave. From the sea cave it is solid rock.
+# Undertow side by a Charged Attack, into the sea cave. From the sea cave it is a Breakable wall
+# that only a Bomb's blast breaks.
 
 const PASSAGE_PATH := "res://scenes/rooms/undertow_3.tscn"
 const SEA_CAVE_PATH := "res://scenes/rooms/waking_coast_5.tscn"
@@ -11,9 +12,11 @@ const WORLD_LAYER := 1
 # Where the Player's sword strikes: the layer it looks for hurtboxes on.
 const STRUCK_LAYER := 1 << 4
 # The passage and the sea cave are each two screens wide; the wall stands at the passage's west
-# end, the rock at the cave's east end.
+# end, the Breakable wall at the cave's east end.
 const ROOM_WIDTH := 320.0
 const NEAR_EDGE := 80.0
+const TILE := 16.0
+const SEA_CAVE_ROCK_ID := &"sea_cave_rock"
 
 # Needs a root that is already in the tree: a Room reads the Run in _ready.
 var _root: Window
@@ -27,7 +30,7 @@ func get_tests() -> Array:
 	return [
 		["A cracked wall shuts the passage's west end, toward the sea cave", _test_cracked_wall],
 		["A quick Attack glances off the wall; a Charged one breaks it", _test_charged_breaks],
-		["From the sea cave the Shortcut is solid rock, never broken", _test_rock_side],
+		["From the sea cave the Shortcut is a Breakable wall that opens it", _test_rock_side],
 		["With the Shortcut open, both its sides open without the wall", _test_stays_open],
 	]
 
@@ -67,15 +70,18 @@ func _test_charged_breaks() -> bool:
 
 func _test_rock_side() -> bool:
 	var room := _room(SEA_CAVE_PATH, &"waking_coast_5", &"north")
-	var wall := room.get_node_or_null("ShortcutWall") as StaticBody2D
-	var valid := wall != null and wall.collision_layer == WORLD_LAYER and _shut(wall)
+	var wall := room.get_node_or_null("BreakableWall") as StaticBody2D
+	var valid := wall != null and wall.collision_layer == WORLD_LAYER and wall.visible
 	if valid:
-		valid = wall.get("shortcut_id") == SHORTCUT_ID
-		valid = valid and wall.get_node_or_null("Hurtbox") == null
-		valid = valid and _east_edge(wall) >= ROOM_WIDTH
+		valid = room.get_node_or_null("ShortcutWall") == null
+		valid = valid and wall.get("wall_id") == SEA_CAVE_ROCK_ID
+		valid = valid and wall.get("shortcut_id") == SHORTCUT_ID
+		valid = valid and not wall.call("is_broken")
+		var size := Vector2(wall.get("size") as Vector2i) * TILE
+		valid = valid and wall.position.x + size.x >= ROOM_WIDTH
 		var east := room.get_node("Exits/east") as Area2D
 		valid = valid and east.get("room_id") == &"undertow_3"
-		valid = valid and east.position.x > _east_edge(wall)
+		valid = valid and east.position.x > wall.position.x + size.x
 	_close(room)
 	return valid
 
@@ -84,10 +90,13 @@ func _test_stays_open() -> bool:
 	_root.get_node("RunState").call("start_run")
 	_root.get_node("RunState").call("open_shortcut", SHORTCUT_ID)
 	var valid := true
-	for side in [[PASSAGE_PATH, &"undertow_3"], [SEA_CAVE_PATH, &"waking_coast_5"]]:
-		var room := _room(side[0], side[1], &"east", false)
-		valid = valid and not _shut(room.get_node("ShortcutWall"))
-		room.free()
+	var passage := _room(PASSAGE_PATH, &"undertow_3", &"west", false)
+	valid = valid and not _shut(passage.get_node("ShortcutWall"))
+	passage.free()
+	var sea_cave := _room(SEA_CAVE_PATH, &"waking_coast_5", &"east", false)
+	var rock := sea_cave.get_node_or_null("BreakableWall")
+	valid = valid and rock != null and rock.call("is_broken") and not rock.visible
+	sea_cave.free()
 	_root.get_node("RunState").call("start_run")
 	return valid
 
