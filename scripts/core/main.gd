@@ -120,14 +120,16 @@ func _physics_process(_delta: float) -> void:
 	_supplies_due.clear()
 
 
-# After a beat to see it fall, a defeated Player wakes in the first Room with full Health; the
-# Run carries on.
+# After a beat to see it fall, a defeated Player wakes at the Rest point last rung, or in the
+# first Room before there is one, with full Health; the Run carries on.
 func _on_player_defeated() -> void:
 	await get_tree().create_timer(DEFEAT_PAUSE).timeout
 	var run := _get_run()
+	var wake_in := RunStateScript.FIRST_ROOM_ID
 	if run != null:
 		run.recover_from_defeat()
-	get_tree().change_scene_to_file.call_deferred(World.scene(RunStateScript.FIRST_ROOM_ID))
+		wake_in = run.room_id
+	get_tree().change_scene_to_file.call_deferred(World.scene(wake_in))
 
 
 # The Run says which Entry the Player came through; this Room says where it is.

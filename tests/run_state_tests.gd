@@ -18,6 +18,7 @@ func get_tests() -> Array:
 		["Run carries the Player's Sub Weapons, even through a defeat", _test_carries_sub_weapons],
 		["Run remembers each Boss defeated, even through a defeat", _test_remembers_bosses],
 		["Run remembers each Shortcut opened, even through a defeat", _test_remembers_shortcuts],
+		["A defeat wakes the Player at the Run's Rest point, once there is one", _test_rest_point],
 		["Run remembers each Breakable wall broken, even through a defeat", _test_remembers_walls],
 		["Run remembers each Cache taken, even through a defeat", _test_remembers_caches],
 	]
@@ -157,6 +158,25 @@ func _test_remembers_walls() -> bool:
 	valid = valid and run.has_broken_wall(&"sea_cave_rock")
 	run.start_run()
 	valid = valid and not run.has_broken_wall(&"sea_cave_rock")
+	run.free()
+	return valid
+
+
+func _test_rest_point() -> bool:
+	var run := RunStateScript.new()
+	run.enter_room(&"tidefen_village_1", &"west")
+	run.recover_from_defeat()
+	var valid: bool = run.room_id == RunStateScript.FIRST_ROOM_ID
+	valid = valid and run.entry_id == RunStateScript.DEFAULT_ENTRY_ID
+	run.rest_at(&"tidefen_village_1", &"bell")
+	run.enter_room(&"waking_coast_9", &"east")
+	run.player_health = 10
+	run.recover_from_defeat()
+	valid = valid and run.room_id == &"tidefen_village_1" and run.entry_id == &"bell"
+	valid = valid and run.player_health == RunStateScript.FULL_HEALTH
+	run.start_run()
+	run.recover_from_defeat()
+	valid = valid and run.room_id == RunStateScript.FIRST_ROOM_ID
 	run.free()
 	return valid
 

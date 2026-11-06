@@ -215,6 +215,12 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     "wall_crumble": lambda: mix(
         noise(0.7, 1800, 120, seed=51), crackle(0.7, 40, seed=52), sweep(0.5, 90, 40, duty=0.5)
     ),
+    # Tidefen's bell, rung to rest: a deep toll with its ringing overtones.
+    "rest_bell_toll": lambda: mix(
+        sweep(1.4, 196, 194, duty=0.5),
+        sweep(1.4, 392, 389, duty=0.25),
+        sweep(1.0, 588, 584, duty=0.125),
+    ),
     # Menus: a soft tick as the focus moves, and a rising chime when the game starts.
     "ui_move": lambda: sweep(0.04, 880, 820, duty=0.25),
     "ui_start": lambda: notes([392, 523, 659, 784], 0.07, duty=0.5),
@@ -244,6 +250,7 @@ HOMES = {
     "ui_": "assets/ui",
     "bomb_": "assets/items",
     "wall_": "assets/world",
+    "rest_": "assets/world",
 }
 
 

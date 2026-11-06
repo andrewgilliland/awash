@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/rest_bell.gd" id="1_bell"]
+[ext_resource type="Script" path="res://scripts/world/interactable.gd" id="2_interact"]
+[ext_resource type="AudioStream" path="res://assets/world/rest_bell_toll.wav" id="3_toll"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ring"]
+size = Vector2(32, 24)
+
+[node name="RestBell" type="Node2D"]
+script = ExtResource("1_bell")
+
+[node name="Interactable" type="Area2D" parent="."]
+collision_layer = 128
+collision_mask = 2
+monitorable = false
+script = ExtResource("2_interact")
+prompt_offset = Vector2(0, -26)
+
+[node name="Shape" type="CollisionShape2D" parent="Interactable"]
+position = Vector2(0, -12)
+shape = SubResource("RectangleShape2D_ring")
+
+[node name="Sounds" type="Node" parent="."]
+
+[node name="Toll" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("3_toll")
+bus = &"SFX"

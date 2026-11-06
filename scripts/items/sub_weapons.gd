@@ -66,6 +66,12 @@ func held_name() -> String:
 
 
 # Carries one more of an owned Sub Weapon, and returns whether there was room.
+# Tops up every owned Sub Weapon to as many as can be carried, as a rest does.
+func refill() -> void:
+	for id in owned:
+		_counts[id] = CARRY_LIMIT
+
+
 func add(id: StringName) -> bool:
 	if not owns(id) or count(id) >= CARRY_LIMIT:
 		return false

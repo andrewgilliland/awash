@@ -32,6 +32,7 @@ const CHARGED_BLINK_TIME := 0.08
 const THROW_OFFSET := Vector2(6.0, -10.0)
 # Over the Player when it finds a Weapon or Sub Weapon.
 const GOT := "GOT %s"
+const RESTED := "RESTED"
 
 @export var move_speed: float = 80.0
 @export var acceleration: float = 600.0
@@ -194,6 +195,17 @@ func collect_sub_weapon(id: StringName) -> bool:
 	_write_sub_weapons_to_run()
 	_sounds.play(PlayerSounds.PICKUP)
 	return true
+
+
+# A rest at a Rest point: Health back to full and every Sub Weapon owned refilled, with RESTED.
+func rest() -> void:
+	health.heal(health.maximum)
+	sub_weapons.refill()
+	var run := _get_run()
+	if run != null:
+		run.set("player_health", health.current)
+	_write_sub_weapons_to_run()
+	_level_up.call("announce", RESTED)
 
 
 # Takes up a Sub Weapon the Player owns, or none (&""), as chosen in the Equipment Panel; returns
