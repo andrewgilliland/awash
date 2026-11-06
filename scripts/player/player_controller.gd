@@ -17,6 +17,7 @@ enum State {
 class Frame:
 	var direction: float = 0.0
 	var jump_pressed: bool = false
+	var jump_held: bool = false
 	var melee_held: bool = false
 	var on_floor: bool = true
 	var attack_finished: bool = false
@@ -33,6 +34,12 @@ var jump_velocity: float = -260.0
 var stun_time: float = 0.3
 # How long melee must be held, from the press, for a full Charge.
 var charge_time: float = 0.5
+# How long after walking off a ledge a jump still leaves it.
+var coyote_time: float = 0.1
+# How long a jump pressed too soon, in the air or mid-Attack, waits to happen.
+var jump_buffer_time: float = 0.1
+# What a jump keeps of its rise when jump is let go before the top.
+var jump_cut: float = 0.5
 
 var state: State = State.IDLE
 var facing: float = -1.0
@@ -48,6 +55,12 @@ var _stun_left: float = 0.0
 # How long melee has been held since it was pressed.
 var _melee_held_for: float = 0.0
 var _melee_was_held: bool = false
+# What is left of the grace for jumping after walking off a ledge.
+var _coyote_left: float = 0.0
+# What is left of the wait for a jump pressed too soon.
+var _jump_buffer_left: float = 0.0
+# Whether the Player is still rising from a jump of its own, which letting go of jump can cut.
+var _rising: bool = false
 
 
 # Advances one physics frame. Emits state_changed at most once, after all transitions settle,
@@ -67,6 +80,9 @@ func step(frame: Frame, delta: float) -> void:
 		state = State.JUMP
 		_melee_held_for = 0.0
 		_melee_was_held = frame.melee_held
+		_coyote_left = 0.0
+		_jump_buffer_left = 0.0
+		_rising = false
 	else:
 		_step_in_control(frame, delta)
 
@@ -81,6 +97,15 @@ func step(frame: Frame, delta: float) -> void:
 func _step_in_control(frame: Frame, delta: float) -> void:
 	is_moving = frame.direction != 0.0
 	var on_floor := frame.on_floor
+	if on_floor:
+		_coyote_left = coyote_time
+	else:
+		_coyote_left = maxf(_coyote_left - delta, 0.0)
+	if _rising and velocity.y >= 0.0:
+		_rising = false
+	elif _rising and not frame.jump_held:
+		velocity.y *= jump_cut
+		_rising = false
 
 	var was_full := is_fully_charged()
 	var pressed := frame.melee_held and not _melee_was_held
@@ -94,12 +119,19 @@ func _step_in_control(frame: Frame, delta: float) -> void:
 		else:
 			state = State.IDLE if on_floor else State.JUMP
 
-	if state != State.ATTACK and frame.jump_pressed and on_floor:
+	if frame.jump_pressed:
+		_jump_buffer_left = jump_buffer_time
+	if state != State.ATTACK and _jump_buffer_left > 0.0 and (on_floor or _coyote_left > 0.0):
 		velocity.y = jump_velocity
 		jumped.emit()
 		on_floor = false
+		_coyote_left = 0.0
+		_jump_buffer_left = 0.0
+		_rising = true
 		if state != State.CHARGE:
 			state = State.JUMP
+	else:
+		_jump_buffer_left = maxf(_jump_buffer_left - delta, 0.0)
 
 	if state == State.CHARGE and not frame.melee_held:
 		# Let go: a full Charge swings a charged Attack; short of full, the Charge just ends.

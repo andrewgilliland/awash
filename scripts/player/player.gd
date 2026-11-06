@@ -316,6 +316,7 @@ func _read_frame() -> PlayerController.Frame:
 	if not controls_locked and not _defeated:
 		frame.direction = Input.get_axis(&"move_left", &"move_right")
 		frame.jump_pressed = Input.is_action_just_pressed(&"jump")
+		frame.jump_held = Input.is_action_pressed(&"jump")
 		frame.melee_held = Input.is_action_pressed(&"melee_attack")
 	frame.on_floor = is_on_floor()
 	frame.attack_finished = _attack_finished

@@ -25,6 +25,7 @@ func _init() -> void:
 	await process_frame
 	await _run_scenario("Player walks right", _scenario_walks_right)
 	await _run_scenario("Player jumps and lands", _scenario_jumps_and_lands)
+	await _run_scenario("A tap of jump hops lower than a held jump", _scenario_tap_hops_lower)
 	await _run_scenario("Player attack plays out", _scenario_attack_plays_out)
 	await _run_scenario("Pause freezes and resumes play", _scenario_pause_freezes_play)
 	await _run_scenario("Left and right page the Pause menu", _scenario_pause_menu_pages)
@@ -142,14 +143,39 @@ func _scenario_walks_right(player: CharacterBody2D) -> bool:
 	return valid
 
 
+# A jump let go at once is a short hop, under a tile; held to the top it rises two tiles.
+func _scenario_tap_hops_lower(player: CharacterBody2D) -> bool:
+	var floor_y := player.global_position.y
+	_press(&"jump")
+	await _frames(1)
+	_release(&"jump")
+	var hop := await _peak_height(player, floor_y)
+	_press(&"jump")
+	var full := await _peak_height(player, floor_y)
+	_release(&"jump")
+	return hop > 4.0 and hop < 16.0 and full > 30.0
+
+
+# How high above the floor the Player rises before landing again.
+func _peak_height(player: CharacterBody2D, floor_y: float) -> float:
+	var peak := 0.0
+	for i in 120:
+		await _frames(1)
+		peak = maxf(peak, floor_y - player.global_position.y)
+		if player.is_on_floor() and peak > 1.0:
+			break
+	await _frames(5)
+	return peak
+
+
 func _scenario_jumps_and_lands(player: CharacterBody2D) -> bool:
 	var floor_y := player.global_position.y
 	var controller := player.get("controller") as PlayerController
 	var sprite := player.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	# Held through the rise, for the whole jump.
 	_press(&"jump")
-	await _frames(1)
-	_release(&"jump")
 	await _frames(10)
+	_release(&"jump")
 	var valid := player.global_position.y < floor_y - 10.0 and not player.is_on_floor()
 	valid = valid and controller.state == PlayerController.State.JUMP
 	valid = valid and sprite.animation == &"jump"
