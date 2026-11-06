@@ -34,6 +34,8 @@ var _visited_rooms: Dictionary = {FIRST_ROOM_ID: true}
 var _defeated_bosses: Dictionary = {}
 # Every Shortcut opened this Run, by id.
 var _opened_shortcuts: Dictionary = {}
+# Every Breakable wall broken this Run, by id.
+var _broken_walls: Dictionary = {}
 # Every Cache taken this Run, by id.
 var _taken_caches: Dictionary = {}
 
@@ -56,12 +58,13 @@ func start_run() -> void:
 	_visited_rooms = {FIRST_ROOM_ID: true}
 	_defeated_bosses = {}
 	_opened_shortcuts = {}
+	_broken_walls = {}
 	_taken_caches = {}
 
 
 # After a defeat the Run carries on: back at the first Room's default Entry with full Health,
-# keeping every Room visited, every Boss defeated, every Shortcut opened, every Cache taken, and
-# all the Player's Experience, Supplies and Equipment.
+# keeping every Room visited, every Boss defeated, every Shortcut opened, every Breakable wall
+# broken, every Cache taken, and all the Player's Experience, Supplies and Equipment.
 func recover_from_defeat() -> void:
 	room_id = FIRST_ROOM_ID
 	entry_id = DEFAULT_ENTRY_ID
@@ -100,6 +103,15 @@ func open_shortcut(shortcut_id: StringName) -> void:
 
 func has_opened_shortcut(shortcut_id: StringName) -> bool:
 	return _opened_shortcuts.has(shortcut_id)
+
+
+# A Breakable wall stays broken for the rest of the Run.
+func break_wall(wall_id: StringName) -> void:
+	_broken_walls[wall_id] = true
+
+
+func has_broken_wall(wall_id: StringName) -> bool:
+	return _broken_walls.has(wall_id)
 
 
 # A Cache stays empty for the rest of the Run.

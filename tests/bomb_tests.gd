@@ -24,7 +24,10 @@ func get_tests() -> Array:
 		["A Bomb is lobbed along its facing, up and then down", _test_lobbed],
 		["A Bomb lands on the world's terrain", _test_lands_on_terrain],
 		["A Bomb's fuse sputters for 1 second, then it bursts where it is", _test_fuse],
-		["A Bomb's blast strikes enemies, charged, for 20, 24 pixels round", _test_blast],
+		[
+			"A Bomb's blast strikes enemies, charged and a blast, for 20, 24 pixels round",
+			_test_blast
+		],
 		["A Bomb is gone once its burst has played", _test_gone_after_burst],
 		["A Bomb hisses while its fuse burns, and booms as it bursts", _test_sounds],
 	]
@@ -72,7 +75,7 @@ func _test_fuse() -> bool:
 func _test_blast() -> bool:
 	var bomb := _bomb(1.0)
 	var hitbox := bomb.get_node_or_null("Blast") as Hitbox
-	var valid := hitbox != null and hitbox.charged and hitbox.damage == DAMAGE
+	var valid := hitbox != null and hitbox.charged and hitbox.blast and hitbox.damage == DAMAGE
 	if valid:
 		# Enemies only: the Player's hurtbox is never in its mask.
 		valid = hitbox.collision_layer == PLAYER_HITBOX_LAYER
