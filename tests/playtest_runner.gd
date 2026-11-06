@@ -78,7 +78,8 @@ func _init() -> void:
 	for playtest in rest_playtests.get_playtests():
 		await _run_playtest_async(playtest[0], playtest[1])
 	await _run_playtest_async(
-		"Sword defeats the Scavenger and earns its Experience", _playtest_sword_defeats_scavenger
+		"Sword defeats the Scavenger and earns its Experience and Gold",
+		_playtest_sword_defeats_scavenger
 	)
 	await _run_playtest_async("Scavenger's lunge hurts the Player", _playtest_lunge_hurts_player)
 	await _run_playtest_async(

@@ -4,6 +4,7 @@ const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
 const HEALTH_BAR_SCENE := preload("res://scenes/ui/health_bar.tscn")
 const SUB_WEAPON_COUNT_SCENE := preload("res://scenes/ui/sub_weapon_count.tscn")
+const GOLD_COUNT_SCENE := preload("res://scenes/ui/gold_count.tscn")
 const BOSS_BAR_SCENE := preload("res://scenes/ui/boss_bar.tscn")
 # The scene for each Supply an enemy can leave where it fell.
 const SUPPLY_SCENES := {
@@ -47,6 +48,7 @@ func _ready() -> void:
 	_ensure_dialogue_box()
 	_ensure_health_bar()
 	_ensure_sub_weapon_count()
+	_ensure_gold_count()
 	_ensure_boss_bar()
 	_ensure_hit_stop()
 	_place_player_at_entry()
@@ -86,8 +88,8 @@ func _add_background() -> void:
 	move_child(background, 0)
 
 
-# Every enemy defeated in this Room earns the Player its Experience, whatever struck it down, and
-# may leave a Supply where it fell.
+# Every enemy defeated in this Room earns the Player its Experience and Gold, whatever struck it
+# down, and may leave a Supply where it fell.
 func _hand_enemy_defeats_to_player() -> void:
 	if _player == null or not is_inside_tree():
 		return
@@ -100,6 +102,7 @@ func _hand_enemy_defeats_to_player() -> void:
 func _on_enemy_defeated(experience: int, enemy: Node2D) -> void:
 	_player.call("gain_experience", experience)
 	var constants: Dictionary = enemy.get_script().get_script_constant_map()
+	_player.call("gain_gold", constants.get("GOLD", 0))
 	if drop_roll.call() < constants.get("DROP_CHANCE", 0.0):
 		var supply: StringName = constants.get("DROP", &"brinecap")
 		_supplies_due.append([SUPPLY_SCENES[supply], enemy.global_position])
@@ -199,6 +202,16 @@ func _ensure_sub_weapon_count() -> void:
 		return
 	var count := SUB_WEAPON_COUNT_SCENE.instantiate()
 	count.name = "SubWeaponCount"
+	_canvas_layer.add_child(count)
+	_canvas_layer.move_child(count, 0)
+
+
+# The Gold count sits under the Sub Weapon count, and under the Pause menu and dialogue box too.
+func _ensure_gold_count() -> void:
+	if _canvas_layer == null or _canvas_layer.get_node_or_null("GoldCount") != null:
+		return
+	var count := GOLD_COUNT_SCENE.instantiate()
+	count.name = "GoldCount"
 	_canvas_layer.add_child(count)
 	_canvas_layer.move_child(count, 0)
 

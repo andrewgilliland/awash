@@ -15,6 +15,8 @@ const LurelightSounds := preload("res://scripts/enemies/lurelight_sounds.gd")
 const MAX_HEALTH := 20
 # What defeating a Lurelight earns the Player.
 const EXPERIENCE := 15
+# The Gold its defeat earns the Player.
+const GOLD := 3
 # The Supply a defeated Lurelight may leave where it fell, and the chance it does.
 const DROP := &"glowroe"
 const DROP_CHANCE := 0.2

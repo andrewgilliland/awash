@@ -29,6 +29,8 @@ var player_owned_weapons: Array[StringName] = [Equipment.STARTING_WEAPON]
 var player_sub_weapon: StringName = &""
 var player_owned_sub_weapons: Array[StringName] = []
 var player_sub_weapon_counts: Dictionary = {}
+# The Gold the Player carries this Run.
+var player_gold: int = 0
 # Where a defeat wakes the Player: the Rest point last rung this Run, or none yet (&"").
 var rest_room_id: StringName = &""
 var rest_entry_id: StringName = &""
@@ -58,6 +60,7 @@ func start_run() -> void:
 	player_sub_weapon = &""
 	player_owned_sub_weapons = []
 	player_sub_weapon_counts = {}
+	player_gold = 0
 	_visited_rooms = {FIRST_ROOM_ID: true}
 	rest_room_id = &""
 	rest_entry_id = &""
@@ -70,7 +73,7 @@ func start_run() -> void:
 # After a defeat the Run carries on: back at the Rest point last rung, or the first Room's
 # default Entry before there is one, with full Health, keeping every Room visited, every Boss
 # defeated, every Shortcut opened, every Breakable wall broken, every Cache taken, and all the
-# Player's Experience, Supplies and Equipment.
+# Player's Experience, Supplies, Equipment and Gold.
 func recover_from_defeat() -> void:
 	var resting := not rest_room_id.is_empty()
 	room_id = rest_room_id if resting else FIRST_ROOM_ID
