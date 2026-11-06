@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=4 uid="uid://bo2pll780fo42"]
+[gd_scene load_steps=38 format=4 uid="uid://bo2pll780fo42"]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_ltjx2"]
 
@@ -18,6 +18,8 @@
 [ext_resource type="Texture2D" path="res://assets/npcs/knot_weaver/knot_weaver.png" id="22_weaver"]
 [ext_resource type="Texture2D" path="res://assets/npcs/bell_keeper/bell_keeper.png" id="23_keeper"]
 [ext_resource type="Texture2D" path="res://assets/npcs/fisher/fisher.png" id="24_fisher"]
+
+[ext_resource type="PackedScene" path="res://scenes/world/rest_bell.tscn" id="25_bell"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ehfn0"]
 atlas = ExtResource("4_r86vo")
@@ -263,6 +265,12 @@ shape = SubResource("RectangleShape2D_0jmsj")
 [node name="west" type="Marker2D" parent="Entries"]
 position = Vector2(12, 112)
 
+[node name="bell" type="Marker2D" parent="Entries"]
+position = Vector2(524, 112)
+
+[node name="RestBell" parent="." instance=ExtResource("25_bell")]
+position = Vector2(536, 112)
+
 [node name="BombCrate" parent="." instance=ExtResource("7_cache")]
 position = Vector2(790, 80)
 cache_id = &"bomb_crate"
@@ -291,7 +299,7 @@ lines = PackedStringArray("Every Tidefen child learns the memory-knot.", "One kn
 sheet = ExtResource("22_weaver")
 
 [node name="BellKeeper" parent="Villagers" instance=ExtResource("20_villager")]
-position = Vector2(504, 112)
+position = Vector2(488, 112)
 speaker = "BELL-KEEPER"
 lines = PackedStringArray("I keep the bell. It tolls the curfew.", "When it rings, everyone comes in off the water.", "Nothing good is out there after dark.")
 sheet = ExtResource("23_keeper")

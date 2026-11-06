@@ -13,7 +13,18 @@ func get_tests() -> Array:
 		["Up to 9 of an owned Sub Weapon are carried", _test_carries_up_to_nine],
 		["Spending one needs one carried", _test_spend],
 		["Sub Weapons start from what the Run carried", _test_starts_from_run],
+		["A refill tops up every owned Sub Weapon to its limit", _test_refill],
 	]
+
+
+func _test_refill() -> bool:
+	var sub_weapons := SubWeapons.new()
+	sub_weapons.refill()
+	var valid := sub_weapons.count(BOMB) == 0
+	sub_weapons.own(BOMB)
+	sub_weapons.add(BOMB)
+	sub_weapons.refill()
+	return valid and sub_weapons.count(BOMB) == SubWeapons.CARRY_LIMIT
 
 
 func _test_starts_empty() -> bool:

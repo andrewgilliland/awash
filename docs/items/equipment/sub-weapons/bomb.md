@@ -3,7 +3,7 @@ name: Bomb
 type: sub_weapon
 category: Equipment
 item_type: Sub Weapons
-acquisition: The bomb crate on Tidefen's pier, a Cache, holds the first 5.
+acquisition: The bomb crate on Tidefen's pier, a Cache, holds the first 5; resting at Tidefen's bell refills them to 9.
 carry_limit: 9
 damage: 20
 blast_radius: 24

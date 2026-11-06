@@ -103,7 +103,7 @@ Someone who lives in a Safe spoke and talks when the Player uses them with Inter
 _Avoid_: NPC, townsperson, extra
 
 **Rest point**:
-A place in a Safe spoke where the Player recovers, and which a defeat returns them to without ending the Run.
+A place in a Safe spoke where the Player recovers, and which a defeat returns them to without ending the Run. Tidefen's is its bell: rung with Interact, it tolls, refills Health and every Sub Weapon owned, shows RESTED, and from then on a defeat wakes the Player at its foot. It can be rung again at any time.
 _Avoid_: Checkpoint, save point, bonfire
 
 **Background**:
@@ -187,7 +187,7 @@ The Player's Health on screen: a framed bar in the top-left corner, filled to th
 _Avoid_: HP bar, life bar, hearts
 
 **Defeat**:
-The Player's Health running out. Vael falls where he lands and stops answering the controls, then wakes at the first Room's start Entry with full Health, and later at the last Rest point he used. The Run carries on, keeping his Level, Experience and Supplies.
+The Player's Health running out. Vael falls where he lands and stops answering the controls, then wakes with full Health at the Rest point he last rang, or at the first Room's start Entry before he has rung one. The Run carries on, keeping his Level, Experience and Supplies.
 _Avoid_: Death, game over, dying
 
 **Hitbox**:
@@ -287,7 +287,7 @@ What the Weapon held adds to each hit it lands, on top of the Player's Strength.
 _Avoid_: Damage, power, weapon strength
 
 **Sub Weapon**:
-The Equipment slot for what Ranged Attack throws, chosen in the Equipment Panel from the Sub Weapons the Player owns, or left empty. A new Run owns none. Unlike a Weapon, it is spent: the Player carries up to 9 of each, shown with its icon under the Health bar while it is held, and a defeat does not take them away.
+The Equipment slot for what Ranged Attack throws, chosen in the Equipment Panel from the Sub Weapons the Player owns, or left empty. A new Run owns none. Unlike a Weapon, it is spent: the Player carries up to 9 of each, shown with its icon under the Health bar while it is held, and a defeat does not take them away. Resting at a Rest point refills every one owned to 9.
 _Avoid_: Secondary weapon, subweapon, ammo (as the slot)
 
 **Bomb**:

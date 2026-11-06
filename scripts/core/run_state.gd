@@ -29,6 +29,9 @@ var player_owned_weapons: Array[StringName] = [Equipment.STARTING_WEAPON]
 var player_sub_weapon: StringName = &""
 var player_owned_sub_weapons: Array[StringName] = []
 var player_sub_weapon_counts: Dictionary = {}
+# Where a defeat wakes the Player: the Rest point last rung this Run, or none yet (&"").
+var rest_room_id: StringName = &""
+var rest_entry_id: StringName = &""
 var _visited_rooms: Dictionary = {FIRST_ROOM_ID: true}
 # Every Boss defeated this Run, by id.
 var _defeated_bosses: Dictionary = {}
@@ -56,21 +59,31 @@ func start_run() -> void:
 	player_owned_sub_weapons = []
 	player_sub_weapon_counts = {}
 	_visited_rooms = {FIRST_ROOM_ID: true}
+	rest_room_id = &""
+	rest_entry_id = &""
 	_defeated_bosses = {}
 	_opened_shortcuts = {}
 	_broken_walls = {}
 	_taken_caches = {}
 
 
-# After a defeat the Run carries on: back at the first Room's default Entry with full Health,
-# keeping every Room visited, every Boss defeated, every Shortcut opened, every Breakable wall
-# broken, every Cache taken, and all the Player's Experience, Supplies and Equipment.
+# After a defeat the Run carries on: back at the Rest point last rung, or the first Room's
+# default Entry before there is one, with full Health, keeping every Room visited, every Boss
+# defeated, every Shortcut opened, every Breakable wall broken, every Cache taken, and all the
+# Player's Experience, Supplies and Equipment.
 func recover_from_defeat() -> void:
-	room_id = FIRST_ROOM_ID
-	entry_id = DEFAULT_ENTRY_ID
+	var resting := not rest_room_id.is_empty()
+	room_id = rest_room_id if resting else FIRST_ROOM_ID
+	entry_id = rest_entry_id if resting else DEFAULT_ENTRY_ID
 	intro_pending = false
 	player_health = FULL_HEALTH
-	_visited_rooms[FIRST_ROOM_ID] = true
+	_visited_rooms[room_id] = true
+
+
+# Rings a Rest point: a defeat wakes the Player at this Room's Entry from now on.
+func rest_at(rest_room: StringName, rest_entry: StringName) -> void:
+	rest_room_id = rest_room
+	rest_entry_id = rest_entry
 
 
 func enter_room(next_room_id: StringName, next_entry_id: StringName) -> void:
