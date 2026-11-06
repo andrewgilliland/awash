@@ -98,6 +98,10 @@ _Avoid_: Biome, zone, area, level
 A small place with no enemies, where people, a Rest point and shops are. It may be a small Region of its own, such as Tidefen Village past the Waking Coast, with its own theme, Map name and colour.
 _Avoid_: Hub, village, town (as a kind of place)
 
+**Villager**:
+Someone who lives in a Safe spoke and talks when the Player uses them with Interact, named in the Dialogue box by the trade they keep, such as Tidefen's netter, knot-weaver, bell-keeper and fisher. They stand by their part of the village, idling, turn to face the Player, and say the same few lines each time.
+_Avoid_: NPC, townsperson, extra
+
 **Rest point**:
 A place in a Safe spoke where the Player recovers, and which a defeat returns them to without ending the Run.
 _Avoid_: Checkpoint, save point, bonfire
