@@ -54,6 +54,8 @@ var equipment: Equipment = Equipment.new()
 # Read-only for callers: change it through collect_sub_weapon(), hold_sub_weapon() and
 # throw_sub_weapon(). The Sub Weapon Ranged Attack uses, and how many of each are carried.
 var sub_weapons: SubWeapons = SubWeapons.new()
+# Read-only for callers: change it through gain_gold(). The Gold the Player carries.
+var gold: int = 0
 # While true the Player ignores walk, jump and melee input: dialogue and the intro hold it
 # still.
 var controls_locked: bool = false
@@ -91,6 +93,7 @@ func _ready() -> void:
 			run.get("player_owned_sub_weapons"),
 			run.get("player_sub_weapon_counts")
 		)
+		gold = run.get("player_gold")
 	controller.move_speed = move_speed
 	controller.acceleration = acceleration
 	controller.friction = friction
@@ -195,6 +198,14 @@ func collect_sub_weapon(id: StringName) -> bool:
 	_write_sub_weapons_to_run()
 	_sounds.play(PlayerSounds.PICKUP)
 	return true
+
+
+# Earns Gold, as a defeated enemy gives it; the Run carries it.
+func gain_gold(amount: int) -> void:
+	gold += maxi(amount, 0)
+	var run := _get_run()
+	if run != null:
+		run.set("player_gold", gold)
 
 
 # A rest at a Rest point: Health back to full and every Sub Weapon owned refilled, with RESTED.

@@ -168,9 +168,9 @@ _Avoid_: Eggs, caviar
 Salt wept from a Wraith's robes: a Restorative that restores half of the Player's max Health, rounded down, so it keeps its worth as Levels raise it. A defeated Wraith sometimes leaves one where it fell.
 _Avoid_: Ectoplasm, soul salt
 
-**Salvage**:
-What the Player gathers from the wreck-strewn world and spends at shops. Defeated enemies drop it, Caches can hold it, and a defeat does not take it away.
-_Avoid_: Gold, coins, money, currency
+**Gold**:
+What the Player spends at the Supply Shop. Each enemy defeated adds its own Gold at once, with its Experience. The Run carries it, a defeat does not take it away, and it shows as a coin and a count under the Health bar and on the Stats Panel.
+_Avoid_: Salvage, coins, money, currency
 
 **Memory Relic**:
 A rune that restores a flash of Vael's past when found, such as the one waiting in the rune alcove above the salt cliffs.

@@ -15,6 +15,8 @@ const StormWispSounds := preload("res://scripts/enemies/storm_wisp_sounds.gd")
 const MAX_HEALTH := 20
 # What defeating a Storm Wisp earns the Player.
 const EXPERIENCE := 15
+# The Gold its defeat earns the Player.
+const GOLD := 3
 # The chance a defeated Storm Wisp leaves a Brinecap where it fell.
 const DROP_CHANCE := 0.2
 const INVULNERABLE_TIME := 0.3

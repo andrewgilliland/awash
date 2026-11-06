@@ -16,6 +16,7 @@ func get_tests() -> Array:
 		["Run carries the Player's Armor, even through a defeat", _test_carries_armor],
 		["Run carries the Player's Weapons, even through a defeat", _test_carries_weapons],
 		["Run carries the Player's Sub Weapons, even through a defeat", _test_carries_sub_weapons],
+		["Run carries the Player's Gold, even through a defeat", _test_carries_gold],
 		["Run remembers each Boss defeated, even through a defeat", _test_remembers_bosses],
 		["Run remembers each Shortcut opened, even through a defeat", _test_remembers_shortcuts],
 		["A defeat wakes the Player at the Run's Rest point, once there is one", _test_rest_point],
@@ -177,6 +178,18 @@ func _test_rest_point() -> bool:
 	run.start_run()
 	run.recover_from_defeat()
 	valid = valid and run.room_id == RunStateScript.FIRST_ROOM_ID
+	run.free()
+	return valid
+
+
+func _test_carries_gold() -> bool:
+	var run := RunStateScript.new()
+	var valid: bool = run.player_gold == 0
+	run.player_gold = 17
+	run.recover_from_defeat()
+	valid = valid and run.player_gold == 17
+	run.start_run()
+	valid = valid and run.player_gold == 0
 	run.free()
 	return valid
 

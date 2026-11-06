@@ -47,6 +47,8 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 - A hit that lands on the Player freezes play for 5 frames (Hit-stop) and shakes the screen 2 pixels for 0.15 seconds. A blow the Player lands on an enemy flashes it white for 0.08 seconds and freezes play for 3 frames, or 5 if it was the defeating blow. `scripts/combat/hit_feel.gd` sets each moment's freeze and shake.
 
+- Each enemy defeated earns the Player its Gold (`gain_gold()`), which the Run carries through a defeat and a new Run sets back to 0.
+
 ## Growth
 
 - Every enemy defeated in a Room earns the Player that enemy's Experience, every time, even one that has come back: 10 for a Scavenger, 15 for a Storm Wisp, 20 for a Wraith.

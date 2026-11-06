@@ -20,6 +20,8 @@ const BOSS_NAME := "Nameless Warden"
 const MAX_HEALTH := 120
 # What defeating the Warden earns the Player.
 const EXPERIENCE := 100
+# The Gold its defeat earns the Player.
+const GOLD := 30
 # A Boss leaves nothing where it falls; the trail it opens is the reward.
 const DROP_CHANCE := 0.0
 const INVULNERABLE_TIME := 0.3

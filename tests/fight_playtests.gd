@@ -184,8 +184,10 @@ func _playtest_sword_defeats_scavenger() -> bool:
 	var scavenger := current_scene.get_node_or_null(SCAVENGER_PATH) if player != null else null
 	var valid := scavenger != null
 	var worth: int = scavenger.get("EXPERIENCE") if valid else 0
+	var gold_worth: int = scavenger.get("GOLD") if valid else 0
 	var run := root.get_node("RunState")
 	var before: int = run.get("player_experience")
+	var gold_before: int = run.get("player_gold")
 	if valid:
 		await _strike_down_scavenger(player, scavenger)
 	valid = (
@@ -193,6 +195,7 @@ func _playtest_sword_defeats_scavenger() -> bool:
 	)
 	valid = valid and worth > 0 and run.get("player_experience") == before + worth
 	valid = valid and player.get("level").experience == before + worth
+	valid = valid and gold_worth > 0 and run.get("player_gold") == gold_before + gold_worth
 	await _leave_scene()
 	return valid
 

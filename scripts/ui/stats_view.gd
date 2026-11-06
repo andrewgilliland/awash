@@ -2,8 +2,8 @@ extends GridContainer
 
 # The Stats Panel's readout, one row per stat with its name on the left and its value on the
 # right: the Player's Level, Experience toward the next one (MAX at the highest), Health left
-# out of its total, Strength, the Weapon's Attack and the Armor's Defense, read each time the
-# Panel opens.
+# out of its total, Strength, the Weapon's Attack, the Armor's Defense and the Gold carried, read
+# each time the Panel opens.
 
 const PLAYER_GROUP := &"player"
 const NO_PLAYER := "No stats yet"
@@ -38,6 +38,7 @@ func _refresh() -> void:
 	var equipment: Object = player.get("equipment")
 	_add_row("Attack", str(equipment.call("attack")) if equipment != null else "0")
 	_add_row("Defense", str(equipment.call("defense")) if equipment != null else "0")
+	_add_row("Gold", str(player.get("gold")))
 
 
 func _add_row(stat: String, value: String) -> void:

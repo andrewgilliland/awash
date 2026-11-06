@@ -11,6 +11,8 @@ const ScavengerSounds := preload("res://scripts/enemies/scavenger_sounds.gd")
 const MAX_HEALTH := 30
 # What defeating a Scavenger earns the Player.
 const EXPERIENCE := 10
+# The Gold its defeat earns the Player.
+const GOLD := 2
 # The chance a defeated Scavenger leaves a Brinecap where it fell.
 const DROP_CHANCE := 0.25
 const INVULNERABLE_TIME := 0.3

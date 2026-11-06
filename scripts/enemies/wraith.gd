@@ -15,6 +15,8 @@ const WraithSounds := preload("res://scripts/enemies/wraith_sounds.gd")
 const MAX_HEALTH := 30
 # What defeating a Wraith earns the Player.
 const EXPERIENCE := 20
+# The Gold its defeat earns the Player.
+const GOLD := 5
 # The Supply a defeated Wraith may leave where it fell, and the chance it does.
 const DROP := &"mourning_salt"
 const DROP_CHANCE := 0.35
