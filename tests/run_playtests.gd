@@ -77,6 +77,8 @@ func _playtest_start_begins_run() -> bool:
 	if run == null:
 		return false
 	run.call("enter_room", &"waking_coast_2", &"west")
+	# No Saved Run, so the menu opens on START.
+	DirAccess.remove_absolute(run.get("save_path"))
 	change_scene_to_file(START_SCREEN_PATH)
 	# Long enough for the theme to start and fade in.
 	await _frames(80)
@@ -113,6 +115,8 @@ func _playtest_new_game_intro() -> bool:
 	var run := root.get_node_or_null("RunState")
 	if run == null:
 		return false
+	# A first launch: no Saved Run, so the menu opens on START.
+	DirAccess.remove_absolute(run.get("save_path"))
 	change_scene_to_file(START_SCREEN_PATH)
 	await _frames(20)
 	await _tap(&"ui_accept")

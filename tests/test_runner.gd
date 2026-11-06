@@ -15,6 +15,7 @@ const SUITES: Array[String] = [
 	"res://tests/player_melee_tests.gd",
 	"res://tests/player_rig_tests.gd",
 	"res://tests/run_state_tests.gd",
+	"res://tests/saved_run_tests.gd",
 	"res://tests/region_tile_sheets_tests.gd",
 	"res://tests/tropical_island_tileset_tests.gd",
 	"res://tests/waking_coast_room_tests.gd",
@@ -74,6 +75,7 @@ const TREE_SUITES: Array[String] = [
 	"res://tests/bomb_tests.gd",
 	"res://tests/player_sound_scene_tests.gd",
 	"res://tests/start_screen_tests.gd",
+	"res://tests/start_screen_save_tests.gd",
 	"res://tests/music_tests.gd",
 	"res://tests/intro_tests.gd",
 	"res://tests/dialogue_box_placement_tests.gd",
@@ -102,6 +104,7 @@ const TREE_SUITES: Array[String] = [
 	"res://tests/breakable_wall_tests.gd",
 	"res://tests/cache_tests.gd",
 	"res://tests/rest_bell_tests.gd",
+	"res://tests/saving_tests.gd",
 	"res://tests/boss_bar_tests.gd",
 ]
 

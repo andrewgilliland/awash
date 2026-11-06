@@ -8,6 +8,10 @@ _Avoid_: World map, level list, Map (for what the Map draws)
 One playthrough from a new game. It remembers where the Player is in the world and what they have done. Only START begins a new one; a defeat keeps it.
 _Avoid_: Session, save, runtime state
 
+**Saved Run**:
+The Run as last written to disk, which CONTINUE on the Start screen picks up at the Entry of the Room it was saved in. The game saves it on its own, silently: on entering a Room, ringing a Rest point, and quitting. There is one; START over it asks first, then replaces it.
+_Avoid_: Save file, save slot, save game
+
 **Room**:
 One area of the world, loaded as a single scene.
 _Avoid_: Level, map, screen
