@@ -8,7 +8,7 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 - `move_left`: move horizontally to the left.
 - `move_right`: move horizontally to the right.
-- `jump`: jump while grounded.
+- `jump`: jump while grounded; held, the jump rises to its full height.
 - `melee_attack`: hold to charge, release to attack.
 - `ranged_attack`: throw the held Sub Weapon, on the press itself.
 
@@ -17,6 +17,9 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - Horizontal input accelerates the player toward the configured movement speed.
 - Releasing horizontal input applies friction until horizontal velocity reaches zero.
 - Pressing jump while grounded applies the configured upward jump velocity.
+- For 0.1 seconds after walking off a ledge the Player can still jump as if grounded. That grace is never given after a jump, or while tumbling from a hit.
+- A jump pressed up to 0.1 seconds before it can happen, in the air just before landing or near the end of an `ATTACK`, happens as soon as it can.
+- Letting go of jump while still rising from a jump halves the upward speed, once: held to the top, a jump rises two tiles; let go at once, it is a short hop under a tile. Letting go does nothing once falling, or to a hit's knockback.
 - Gravity applies while the player is airborne.
 - The player faces the most recent horizontal movement direction, except while facing is locked.
 - Facing is locked during `CHARGE` and `ATTACK`.
