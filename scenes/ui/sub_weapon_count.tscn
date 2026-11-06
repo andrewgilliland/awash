@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/sub_weapon_count.gd" id="1_count"]
+[ext_resource type="Theme" uid="uid://cgm30v4u24jhi" path="res://assets/ui/awash_theme.tres" id="2_theme"]
+
+[node name="SubWeaponCount" type="Control"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_left = 4.0
+offset_top = 13.0
+offset_right = 24.0
+offset_bottom = 21.0
+mouse_filter = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_count")
+
+[node name="Icon" type="TextureRect" parent="."]
+texture_filter = 1
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+mouse_filter = 2
+
+[node name="Count" type="Label" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_right = 20.0
+offset_bottom = 8.0
+vertical_alignment = 1
+mouse_filter = 2

@@ -8,6 +8,7 @@ const BODY := MENU_ROOT + "ContentRoot/EquipmentPanel/Body/"
 const SWORD_ICON := "res://assets/items/short_sword.png"
 const OATHBLADE_ICON := "res://assets/items/oathblade.png"
 const TUNIC_ICON := "res://assets/items/worn_leather_tunic.png"
+const BOMB_ICON := "res://assets/items/bomb.png"
 const PANEL := MENU_ROOT + "ContentRoot/EquipmentPanel/"
 const SWORD_TEXT := "A plain blade Mara pulled from the sand."
 const TUNIC_TEXT := "Faded by salt. Light, but gives no Defense."
@@ -32,13 +33,15 @@ func get_tests() -> Array:
 	return [
 		["The Equipment Panel shows the Weapon and the Armor above a divider", _test_slot_rows],
 		["Below the divider are the focused slot's pieces, the equipped one marked", _test_choices],
-		["Down from the Armor goes to Resume; up comes back", _test_slots_to_resume],
+		["The Sub Weapon slot sits under the Armor, None until one is found", _test_sub_row],
+		["Down from the Sub Weapon goes to Resume; up comes back", _test_slots_to_resume],
 		["Choosing a slot moves into its pieces; up from the top goes back", _test_move_into],
 		["Choosing None takes the Armor off; choosing the Armor puts it on", _test_choose_none],
 		["Choosing the piece equipped goes back and changes nothing", _test_choose_equipped],
 		["Defense shows, with what it would become while an Armor is focused", _test_defense],
 		["Choosing another Weapon owned holds it", _test_choose_weapon],
 		["Attack shows, with what it would become while a Weapon is focused", _test_attack],
+		["Choosing a Sub Weapon owned holds it; choosing None puts it away", _test_choose_sub],
 		["At the Panel's foot, a slot describes its piece and a piece itself", _test_descriptions],
 	]
 
@@ -79,14 +82,24 @@ func _test_choices() -> bool:
 	return valid
 
 
+func _test_sub_row() -> bool:
+	var menu := _equipment_menu()
+	var armor := _row(menu, "ArmorRow")
+	var sub := _row(menu, "SubWeaponRow")
+	var valid := sub != null and sub.text == "Sub Weapon" and _piece(sub) == "None"
+	valid = valid and sub.icon == null and armor.get_index() + 1 == sub.get_index()
+	_close(menu)
+	return valid
+
+
 func _test_slots_to_resume() -> bool:
 	var menu := _equipment_menu()
-	for i in 3:
+	for i in 4:
 		_navigate(menu, &"ui_down")
 	var valid := (menu.get_node(MENU_ROOT + "ResumeButton") as Button).has_focus()
-	valid = valid and _names(menu) == ["None", "Worn Leather Tunic"]
+	valid = valid and _names(menu) == ["None"]
 	_navigate(menu, &"ui_up")
-	valid = valid and _row(menu, "ArmorRow").has_focus()
+	valid = valid and _row(menu, "SubWeaponRow").has_focus()
 	_close(menu)
 	return valid
 
@@ -208,6 +221,24 @@ func _test_attack() -> bool:
 	return valid
 
 
+func _test_choose_sub() -> bool:
+	var menu := _equipment_menu(null, [], [&"bomb"])
+	var sub := _row(menu, "SubWeaponRow")
+	var valid := _piece(sub) == "Bomb" and sub.icon.resource_path == BOMB_ICON
+	for i in 3:
+		_navigate(menu, &"ui_down")
+	valid = valid and _names(menu) == ["None", "Bomb"] and _marks(menu) == ["", "Equipped"]
+	_navigate(menu, &"ui_accept")
+	valid = valid and (_choices(menu).get_child(1) as Button).has_focus()
+	_navigate(menu, &"ui_up")
+	_navigate(menu, &"ui_accept")
+	valid = valid and sub.has_focus() and _player().get("sub_weapons").held == &""
+	valid = valid and _root.get_node("RunState").get("player_sub_weapon") == &""
+	valid = valid and _piece(sub) == "None" and _marks(menu) == ["Equipped", ""]
+	_close(menu)
+	return valid
+
+
 func _test_descriptions() -> bool:
 	var menu := _equipment_menu()
 	var strip := menu.get_node_or_null(PANEL + "Description") as Label
@@ -247,8 +278,10 @@ static func _strip_at_foot(panel: Node, strip: Label) -> bool:
 
 
 # The Pause menu, on the Equipment tab, with a Player in a fresh Run, in the given Equipment if
-# any, having collected the given Weapons.
-func _equipment_menu(equipment: Object = null, weapons: Array = []) -> Control:
+# any, having collected the given Weapons and Sub Weapons.
+func _equipment_menu(
+	equipment: Object = null, weapons: Array = [], sub_weapons: Array = []
+) -> Control:
 	_root.get_node("RunState").call("start_run")
 	var player := PLAYER_SCENE.instantiate() as CharacterBody2D
 	_root.add_child(player)
@@ -256,6 +289,8 @@ func _equipment_menu(equipment: Object = null, weapons: Array = []) -> Control:
 		player.set("equipment", equipment)
 	for weapon: StringName in weapons:
 		player.call("collect_weapon", weapon)
+	for sub_weapon: StringName in sub_weapons:
+		player.call("collect_sub_weapon", sub_weapon)
 	var menu := PAUSE_MENU_SCENE.instantiate() as Control
 	_root.add_child(menu)
 	menu.call("toggle_pause")

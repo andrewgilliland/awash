@@ -2,6 +2,7 @@ extends RefCounted
 
 const Equipment := preload("res://scripts/items/equipment.gd")
 const Supplies := preload("res://scripts/items/supplies.gd")
+const SubWeapons := preload("res://scripts/items/sub_weapons.gd")
 # A description strip's line, in cells of the compact font, and how many lines it shows.
 const LINE_CHARS := 35
 const LINES := 2
@@ -12,7 +13,10 @@ const BRINECAP := "A salt-crusted cave mushroom. Restores 10 Health."
 
 func get_tests() -> Array:
 	return [
-		["Every Weapon and Armor has a description that fits", _test_equipment_described],
+		[
+			"Every Weapon, Armor and Sub Weapon has a description that fits",
+			_test_equipment_described
+		],
 		["Every kind of Supply has a description that fits", _test_supplies_described],
 	]
 
@@ -21,7 +25,7 @@ func _test_equipment_described() -> bool:
 	var sword: Dictionary = Equipment.WEAPONS[Equipment.STARTING_WEAPON]
 	var tunic: Dictionary = Equipment.ARMOR[Equipment.STARTING_ARMOR]
 	var valid: bool = sword.get("description") == SWORD and tunic.get("description") == TUNIC
-	for table: Dictionary in [Equipment.WEAPONS, Equipment.ARMOR]:
+	for table: Dictionary in [Equipment.WEAPONS, Equipment.ARMOR, SubWeapons.KINDS]:
 		for id in table:
 			valid = valid and _fits(table[id].get("description", ""))
 	return valid

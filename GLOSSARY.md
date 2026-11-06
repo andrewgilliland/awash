@@ -52,6 +52,10 @@ _Avoid_: Power attack, heavy attack, charge shot
 What a Charged Attack sends out along the Player's facing: a glowing copy of the blade that strikes the first thing in its way, for twice what a quick slash costs, and breaks a Ward or a Shortcut's cracked wall. It flies a screen and a half, and stops at the first thing it strikes or at the world's terrain.
 _Avoid_: Projectile, wave, shot
 
+**Ranged Attack**:
+The button that throws the held Sub Weapon: V, or B / Circle on a gamepad. Each press throws one, along the Player's facing, without stopping them; it does nothing with no Sub Weapon held or none left to throw, while the Player is held still, or while the last one thrown is still out.
+_Avoid_: Throw button, sub-weapon button, shoot
+
 ## World
 
 **World**:
@@ -133,7 +137,7 @@ A place on a route that stays shut until an ability unlock or a defeated Boss op
 _Avoid_: Lock, barrier, door
 
 **Cache**:
-A hidden spot in a Room holding Supplies, opened with Interact, that stays empty once taken for the Run.
+A hidden spot in a Room holding Supplies, or a Sub Weapon such as the Bombs in Tidefen's bomb crate, opened with Interact, that stays empty once taken for the Run. The first Bombs found are owned and taken up.
 _Avoid_: Crate, chest, stash, pickup
 
 **Supply**:
@@ -219,7 +223,7 @@ The Waking Coast's Boss: an armored spirit with a blank stone mask and a salt-cr
 _Avoid_: Warden (alone), sentinel, guardian
 
 **Ward**:
-The Nameless Warden's guard of pale rune light. Quick Attacks glance off it; a Charged Attack breaks it, and it returns after the Stagger.
+The Nameless Warden's guard of pale rune light. Quick Attacks glance off it; a Charged Attack, or a Bomb's blast, breaks it, and it returns after the Stagger.
 _Avoid_: Shield, barrier, armor
 
 **Stagger**:
@@ -261,6 +265,14 @@ _Avoid_: Wraith sword, ghost blade
 **Attack** (of a Weapon):
 What the Weapon held adds to each hit it lands, on top of the Player's Strength. Written `ATK` in the Equipment Panel.
 _Avoid_: Damage, power, weapon strength
+
+**Sub Weapon**:
+The Equipment slot for what Ranged Attack throws, chosen in the Equipment Panel from the Sub Weapons the Player owns, or left empty. A new Run owns none. Unlike a Weapon, it is spent: the Player carries up to 9 of each, shown with its icon under the Health bar while it is held, and a defeat does not take them away.
+_Avoid_: Secondary weapon, subweapon, ammo (as the slot)
+
+**Bomb**:
+A Tidefen fisher's clay Bomb: a Sub Weapon. Lobbed along the Player's facing, it bounces once and rests while its fuse sputters for a second, then bursts, striking every enemy within 24 pixels for 20, as a charged hit, so it breaks what a Sword Beam breaks. Its blast never harms the Player. The bomb crate on Tidefen's pier, a Cache, holds the first 5.
+_Avoid_: Grenade, explosive, powder keg
 
 **Armor**:
 The Equipment slot for what the Player wears, chosen in the Equipment Panel from the Armor the Player owns, or left empty for no Defense. A new Run owns and wears the Worn Leather Tunic.
