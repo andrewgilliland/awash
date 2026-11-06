@@ -37,7 +37,7 @@ func _on_interacted(by: Node) -> void:
 	_face(by)
 	var box := get_tree().get_first_node_in_group(DIALOGUE_GROUP)
 	if box != null and not box.call("is_open"):
-		box.call("show_lines", conversation())
+		box.call("show_lines", conversation(), self)
 
 
 # Turns to whoever is talking to them.

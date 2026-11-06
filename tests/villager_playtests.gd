@@ -29,7 +29,8 @@ func get_playtests() -> Array:
 
 
 # Beside each Villager in turn, the Player presses Interact: the Villager turns to face them and
-# talks in its own name, and the Player reads on until the box closes.
+# talks in its own name, with the Dialogue box clear of them both, and the Player reads on until
+# the box closes.
 func _talks_to_each() -> bool:
 	var player: CharacterBody2D = await _harness.call(
 		"_enter_room", &"tidefen_village_1", &"west", TIDEFEN_PATH
@@ -51,6 +52,7 @@ func _talks_to_each() -> bool:
 		await _harness.call("_frames", 3)
 		var box: Control = _harness.call("_dialogue_box")
 		valid = valid and box.visible and _harness.call("_speaker") == spec[1]
+		valid = valid and _harness.call("_dialogue_box_clears", [player, villager])
 		var sprite := villager.get_node("AnimatedSprite2D") as AnimatedSprite2D
 		# Its sheet faces west; it turns east to the Player.
 		valid = valid and sprite.flip_h

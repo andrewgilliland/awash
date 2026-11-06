@@ -40,7 +40,7 @@ func walk_to(x: float) -> void:
 func _on_interacted(_by: Node) -> void:
 	var box := get_tree().get_first_node_in_group(DIALOGUE_GROUP)
 	if box != null and not box.call("is_open"):
-		box.call("show_lines", REMINDER)
+		box.call("show_lines", REMINDER, self)
 
 
 # Her sheet holds a two-step walk; the first step doubles as standing still.

@@ -1,7 +1,7 @@
 # Menus
 
 **Dialogue box**:
-Shows a conversation one line at a time, typed out, with the speaker's name; a press finishes a line or moves to the next. The Player is held still while it is open.
+Shows a conversation one line at a time, typed out, with the speaker's name; a press finishes a line or moves to the next. The Player is held still while it is open. It sits at the foot of the screen, or at the top when the foot would cover the Player or whoever is speaking, and keeps that side until the conversation ends.
 _Avoid_: Text box, speech bubble, message window
 
 **Start screen**:

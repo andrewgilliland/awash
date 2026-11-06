@@ -76,6 +76,7 @@ const TREE_SUITES: Array[String] = [
 	"res://tests/start_screen_tests.gd",
 	"res://tests/music_tests.gd",
 	"res://tests/intro_tests.gd",
+	"res://tests/dialogue_box_placement_tests.gd",
 	"res://tests/interaction_tests.gd",
 	"res://tests/villager_tests.gd",
 	"res://tests/scavenger_sound_scene_tests.gd",
