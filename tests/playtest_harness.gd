@@ -149,6 +149,16 @@ func _speaker() -> String:
 	return (_dialogue_box().get_node("%Speaker") as Label).text
 
 
+# True when the Dialogue box's panel leaves each talker in view, from their feet up a sprite.
+func _dialogue_box_clears(talkers: Array) -> bool:
+	var panel := (_dialogue_box().get_node("Panel") as Control).get_global_rect()
+	for talker: Node2D in talkers:
+		var feet := talker.get_global_transform_with_canvas().origin
+		if panel.intersects(Rect2(feet - Vector2(4, 16), Vector2(8, 16))):
+			return false
+	return true
+
+
 # Presses on through every line, as a player would; false if the box never closes.
 func _read_through_dialogue() -> bool:
 	for i in 60:

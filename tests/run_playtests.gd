@@ -133,6 +133,7 @@ func _playtest_new_game_intro() -> bool:
 		await _leave_scene()
 		return false
 	valid = player.get("controls_locked") and _speaker() == "MARA"
+	valid = valid and _dialogue_box_clears([player, mara])
 	valid = valid and absf(mara.global_position.x - player.global_position.x) < 32.0
 	valid = valid and await _read_through_dialogue()
 	await _frames(3)
@@ -166,6 +167,8 @@ func _playtest_talk_to_mara() -> bool:
 	await _frames(2)
 	valid = valid and _dialogue_box().visible and _speaker() == "MARA"
 	valid = valid and _current_player().get("controls_locked")
+	var mara := current_scene.get_node("Mara") as Node2D
+	valid = valid and _dialogue_box_clears([_current_player(), mara])
 	valid = valid and await _read_through_dialogue()
 	await _leave_scene()
 	return valid

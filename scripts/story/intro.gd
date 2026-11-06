@@ -72,7 +72,7 @@ func _play() -> void:
 	await _mara.call("walk_to", rest_x)
 	var box := get_tree().get_first_node_in_group(DIALOGUE_GROUP)
 	box.connect(&"cued", _on_cued)
-	box.call("show_lines", LINES)
+	box.call("show_lines", LINES, _mara)
 
 
 # Where Mara starts, just off the west edge of the screen the camera opens on Vael at vael_x.
