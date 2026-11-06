@@ -1,7 +1,8 @@
 extends Node2D
 
 # A Rest point's bell. Rung with Interact, it tolls and rests the Player, and a defeat wakes the
-# Player at this Room's Entry beside it from then on. It can be rung again at any time.
+# Player at this Room's Entry beside it from then on, and the Run is saved. It can be rung again
+# at any time.
 
 const RunStateScript := preload("res://scripts/core/run_state.gd")
 
@@ -23,4 +24,5 @@ func _on_interacted(by: Node) -> void:
 	var run := get_node_or_null("/root/RunState") as RunStateScript
 	if run != null:
 		run.rest_at(run.room_id, entry_id)
+		run.save()
 	_toll.play()

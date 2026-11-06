@@ -1,5 +1,7 @@
 extends Control
 
+# Ends the game once Quit to Desktop has saved the Run; tests swap it so the run goes on.
+var quit_game: Callable
 # Each menu button's Panel, paired by name in _ready: <Name>Panel shows once <Name>Button takes
 # focus, until another menu button does.
 var _panels: Dictionary = {}
@@ -123,5 +125,12 @@ func _on_resume_button_pressed() -> void:
 		_apply_pause_state(false)
 
 
+# Saves the Run, so CONTINUE picks up here, then quits.
 func _on_quit_button_pressed() -> void:
-	get_tree().quit()
+	var run := get_node_or_null("/root/RunState")
+	if run != null:
+		run.call("save")
+	if quit_game.is_valid():
+		quit_game.call()
+	else:
+		get_tree().quit()

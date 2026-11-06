@@ -93,7 +93,9 @@ func _test_plays_looping_theme() -> bool:
 	return valid
 
 
+# With no Saved Run, so the menu opens on START.
 func _screen() -> Node:
+	DirAccess.remove_absolute(_root.get_node("RunState").get("save_path"))
 	var screen := START_SCREEN.instantiate()
 	_root.add_child(screen)
 	return screen

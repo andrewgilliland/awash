@@ -5,11 +5,11 @@ Shows a conversation one line at a time, typed out, with the speaker's name; a p
 _Avoid_: Text box, speech bubble, message window
 
 **Start screen**:
-Where the game opens: the AWASH logo over the coast, its looping theme, and a PRESS START prompt that opens START and QUIT. START begins a new Run.
+Where the game opens: the AWASH logo over the coast, its looping theme, and a PRESS START prompt that opens START and QUIT, with CONTINUE first when there is a Saved Run. CONTINUE takes up the Saved Run; START begins a new Run, asking first whether to lose the Saved Run when there is one.
 _Avoid_: Title screen, main menu, splash
 
 **Pause menu**:
-Pauses play and offers Resume, Quit and its Panels.
+Pauses play and offers Resume, Quit and its Panels. Quit saves the Run before it ends the game.
 _Avoid_: Options menu, start menu
 
 **Panel**:

@@ -58,6 +58,20 @@ func _ready() -> void:
 	if _player != null and not _player.is_connected(&"defeated", _on_player_defeated):
 		_player.connect(&"defeated", _on_player_defeated)
 	_hand_enemy_defeats_to_player()
+	_save_run()
+
+
+# Closing the window saves the Run too, as Quit to Desktop does.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		_save_run()
+
+
+# Entering a Room saves the Run, so CONTINUE picks up here.
+func _save_run() -> void:
+	var run := get_node_or_null("/root/RunState") if is_inside_tree() else null
+	if run != null:
+		run.call("save")
 
 
 func _find_self_in_world() -> void:
