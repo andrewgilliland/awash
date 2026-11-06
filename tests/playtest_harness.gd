@@ -200,6 +200,14 @@ func _walk_until_scene(action: StringName, scene_path: String) -> bool:
 	return landed and arrived
 
 
+# Clears the current Room's enemies, for a walk that plays its layout rather than its fights.
+func _clear_enemies() -> void:
+	var enemies := current_scene.get_node_or_null("Enemies") if current_scene != null else null
+	if enemies != null:
+		for enemy in enemies.get_children():
+			enemy.free()
+
+
 func _current_player() -> CharacterBody2D:
 	if current_scene == null:
 		return null

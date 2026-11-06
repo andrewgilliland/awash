@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=4]
+[gd_scene load_steps=11 format=4]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_main"]
 
@@ -12,6 +12,8 @@
 [ext_resource type="Script" path="res://scripts/world/shortcut_wall.gd" id="6_wall"]
 
 [ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="7_hurtbox"]
+
+[ext_resource type="PackedScene" uid="uid://bp00p0ropehmt" path="res://scenes/enemies/wraith.tscn" id="enemy_wraith"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_edge"]
 size = Vector2(8, 144)
@@ -58,6 +60,11 @@ tile_map_data = PackedByteArray("AAAAAAEAAgAPAA0AAAABAAEAAgAQAA0AAAACAAEAAgARAA0
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Enemies" type="Node2D" parent="."]
+
+[node name="Wraith" parent="Enemies" instance=ExtResource("enemy_wraith")]
+position = Vector2(192, 80)
+haunt_left = 128.0
+haunt_right = 248.0
 
 [node name="Exits" type="Node2D" parent="."]
 

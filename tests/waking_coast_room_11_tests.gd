@@ -2,6 +2,7 @@ extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_11.tscn"
 const RoomReach := preload("res://tests/room_reach.gd")
+const RoomEnemies := preload("res://tests/room_enemies.gd")
 # One screen wide and two tall: up from the salt cliffs' top to the cliff tops.
 const ROOM_SIZE := Vector2i(160, 288)
 const SCREEN_HEIGHT := 144
@@ -33,6 +34,7 @@ func get_tests() -> Array:
 		["Gull ledges' planks are one-way ledges", _test_planks_one_way],
 		["Gull ledges wall the top screen's west edge", _test_west_wall],
 		["Gull ledges lead west to the salt cliffs and east to the cliff tops", _test_exits],
+		["A Storm Wisp rides the wind halfway up the gull ledges", _test_storm_wisp],
 	]
 
 
@@ -138,3 +140,19 @@ static func _vertical_span(shape_node: CollisionShape2D) -> Vector2:
 	var owner_y := (shape_node.get_parent() as Node2D).position.y
 	var top := owner_y + shape_node.position.y - rectangle.size.y / 2.0
 	return Vector2(top, top + rectangle.size.y)
+
+
+# It drifts across the ledges in open air, in the middle third of the climb.
+func _test_storm_wisp() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var wisp := room.get_node_or_null("Enemies/StormWisp") as Node2D
+	var valid := wisp != null
+	if valid:
+		var terrain := room.get_node("Terrain") as TileMapLayer
+		valid = RoomEnemies.drifts_clear(terrain, wisp)
+		valid = valid and wisp.position.y > ROOM_SIZE.y / 3.0
+		valid = valid and wisp.position.y < ROOM_SIZE.y * 2.0 / 3.0
+	room.free()
+	return valid

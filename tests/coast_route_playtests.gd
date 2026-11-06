@@ -1,7 +1,9 @@
 extends RefCounted
 
 # The Waking Coast's walks through the Rooms built from the Plan, played by
-# tests/playtest_runner.gd with its harness: real Rooms, real input and physics.
+# tests/playtest_runner.gd with its harness: real Rooms, real input and physics. The walks play
+# each Room's layout, so where an enemy stands on the route it is cleared away first; the fights
+# have playtests of their own.
 
 const PALM_SHORE_PATH := "res://scenes/rooms/waking_coast_2.tscn"
 const SALT_CLIFFS_PATH := "res://scenes/rooms/waking_coast_3.tscn"
@@ -86,6 +88,7 @@ func _walks_to_cliffs() -> bool:
 	if not valid:
 		await _harness.call("_leave_scene")
 		return false
+	_harness.call("_clear_enemies")
 	await _harness.call("_wade_to", player, TIDE_POOLS_EAST)
 	valid = valid and await _harness.call("_walk_until_scene", &"move_right", SALT_CLIFFS_PATH)
 	valid = valid and run.get("room_id") == &"waking_coast_3"
@@ -100,6 +103,7 @@ func _walks_to_cliffs() -> bool:
 	if not valid:
 		await _harness.call("_leave_scene")
 		return false
+	_harness.call("_clear_enemies")
 	await _harness.call("_wade_to", player, TIDE_POOLS_WEST)
 	valid = valid and await _harness.call("_walk_until_scene", &"move_left", PALM_SHORE_PATH)
 	valid = valid and run.get("room_id") == &"waking_coast_2"
@@ -125,6 +129,7 @@ func _climbs_gull_ledges() -> bool:
 	player = _harness.call("_current_player")
 	valid = valid and player != null and player.global_position.x < 40.0
 	valid = valid and absf(player.global_position.y - GULL_LEDGES_GROUND_Y) < 1.0
+	_harness.call("_clear_enemies")
 	for step in GULL_LEDGES_CLIMB:
 		if not valid:
 			break

@@ -1,7 +1,9 @@
 extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_10.tscn"
+const SCAVENGER_PATH := "res://scenes/enemies/scavenger.tscn"
 const RoomReach := preload("res://tests/room_reach.gd")
+const RoomEnemies := preload("res://tests/room_enemies.gd")
 # Two screens wide, between the palm shore and the salt cliffs, level with both beaches.
 const ROOM_SIZE := Vector2i(320, 144)
 const TILE := 16
@@ -32,6 +34,7 @@ func get_tests() -> Array:
 		["Tide pools beach runs east, wading the pools", _test_runs_east],
 		["A stepping stone stands in the widest pool, a hop up", _test_rock],
 		["Tide pools lead west to the palm shore and east to the salt cliffs", _test_exits],
+		["Two Scavengers wade the tide pools, one on each screen", _test_scavengers],
 	]
 
 
@@ -124,3 +127,21 @@ func _test_exits() -> bool:
 	valid = valid and room.get_node("Entries/east").position == EAST_ENTRY
 	room.free()
 	return valid
+
+
+func _test_scavengers() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var screens := {}
+	var valid := true
+	var count := 0
+	for enemy in room.get_node("Enemies").get_children():
+		if enemy.scene_file_path != SCAVENGER_PATH:
+			continue
+		count += 1
+		valid = valid and RoomEnemies.wades(terrain, enemy)
+		screens[RoomEnemies.screen_of(enemy.position)] = true
+	room.free()
+	return valid and count == 2 and screens.size() == 2
