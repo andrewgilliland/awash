@@ -24,6 +24,11 @@ var player_owned_armor: Array[StringName] = [Equipment.STARTING_ARMOR]
 # The Weapon the Player holds this Run, and every Weapon it owns.
 var player_weapon: StringName = Equipment.STARTING_WEAPON
 var player_owned_weapons: Array[StringName] = [Equipment.STARTING_WEAPON]
+# The Sub Weapon the Player holds this Run, or &"" for none, every one it owns, and how many of
+# each it carries, as SubWeapons.to_counts() gives them.
+var player_sub_weapon: StringName = &""
+var player_owned_sub_weapons: Array[StringName] = []
+var player_sub_weapon_counts: Dictionary = {}
 var _visited_rooms: Dictionary = {FIRST_ROOM_ID: true}
 # Every Boss defeated this Run, by id.
 var _defeated_bosses: Dictionary = {}
@@ -45,6 +50,9 @@ func start_run() -> void:
 	player_owned_armor = [Equipment.STARTING_ARMOR]
 	player_weapon = Equipment.STARTING_WEAPON
 	player_owned_weapons = [Equipment.STARTING_WEAPON]
+	player_sub_weapon = &""
+	player_owned_sub_weapons = []
+	player_sub_weapon_counts = {}
 	_visited_rooms = {FIRST_ROOM_ID: true}
 	_defeated_bosses = {}
 	_opened_shortcuts = {}

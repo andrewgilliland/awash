@@ -132,6 +132,8 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     "player_level_up": lambda: notes([523, 659, 784, 1047, 1319], 0.07, duty=0.25),
     # A quick pluck for collecting a Supply.
     "player_pickup": lambda: notes([880, 1175], 0.05, duty=0.25),
+    # A short toss as a Bomb leaves the Player's hand.
+    "player_throw": lambda: mix(noise(0.1, 2500, 900, seed=15), sweep(0.08, 300, 520, duty=0.25)),
     # A crunch under a rising chime, for eating a Brinecap.
     "player_eat": lambda: mix(noise(0.18, 1800, 600, seed=14), notes([392, 523, 659], 0.08, duty=0.5)),
     # The Scavenger's wind-up: a gurgling growl that rises over the whole wind-up, so the
@@ -203,6 +205,10 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     "warden_defeat": lambda: mix(
         notes([392, 330, 262, 196, 131], 0.16, duty=0.5), noise(0.9, 2500, 150, seed=24)
     ),
+    # A Bomb's fuse: a sputtering hiss that lasts the whole fuse.
+    "bomb_fuse": lambda: mix(noise(1.0, 9000, 6000, seed=40), crackle(1.0, 30, seed=41)),
+    # Its burst: a deep boom with a crack on top.
+    "bomb_burst": lambda: mix(noise(0.5, 2200, 100, seed=42), sweep(0.4, 120, 35, duty=0.5)),
     # Menus: a soft tick as the focus moves, and a rising chime when the game starts.
     "ui_move": lambda: sweep(0.04, 880, 820, duty=0.25),
     "ui_start": lambda: notes([392, 523, 659, 784], 0.07, duty=0.5),
@@ -230,6 +236,7 @@ HOMES = {
     "lurelight_": "assets/enemies/lurelight",
     "warden_": "assets/enemies/nameless_warden",
     "ui_": "assets/ui",
+    "bomb_": "assets/items",
 }
 
 

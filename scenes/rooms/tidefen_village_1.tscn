@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=4 uid="uid://bo2pll780fo42"]
+[gd_scene load_steps=32 format=4 uid="uid://bo2pll780fo42"]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_ltjx2"]
 
@@ -10,6 +10,8 @@
 [ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="5_usmxo"]
 
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="6_a2duh"]
+[ext_resource type="PackedScene" path="res://scenes/world/cache.tscn" id="7_cache"]
+[ext_resource type="Texture2D" uid="uid://bgjt1tgvf1c20" path="res://assets/world/bomb_crate.png" id="8_crate"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ehfn0"]
 atlas = ExtResource("4_r86vo")
@@ -254,6 +256,19 @@ shape = SubResource("RectangleShape2D_0jmsj")
 
 [node name="west" type="Marker2D" parent="Entries"]
 position = Vector2(12, 112)
+
+[node name="BombCrate" parent="." instance=ExtResource("7_cache")]
+position = Vector2(790, 80)
+cache_id = &"bomb_crate"
+kind = &"bomb"
+count = 5
+collect_method = &"collect_sub_weapon"
+shut_frame = Rect2(0, 0, 32, 32)
+open_frame = Rect2(32, 0, 32, 32)
+
+[node name="Sprite2D" parent="BombCrate" index="0"]
+texture = ExtResource("8_crate")
+region_rect = Rect2(0, 0, 32, 32)
 
 [node name="Player" parent="." instance=ExtResource("6_a2duh")]
 position = Vector2(12, 112)

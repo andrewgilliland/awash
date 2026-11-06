@@ -3,6 +3,7 @@ extends Node2D
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/pause_menu.tscn")
 const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/dialogue_box.tscn")
 const HEALTH_BAR_SCENE := preload("res://scenes/ui/health_bar.tscn")
+const SUB_WEAPON_COUNT_SCENE := preload("res://scenes/ui/sub_weapon_count.tscn")
 const BOSS_BAR_SCENE := preload("res://scenes/ui/boss_bar.tscn")
 # The scene for each Supply an enemy can leave where it fell.
 const SUPPLY_SCENES := {
@@ -44,6 +45,7 @@ func _ready() -> void:
 	_ensure_pause_menu()
 	_ensure_dialogue_box()
 	_ensure_health_bar()
+	_ensure_sub_weapon_count()
 	_ensure_boss_bar()
 	_place_player_at_entry()
 	_play_region_music()
@@ -176,6 +178,16 @@ func _ensure_health_bar() -> void:
 	bar.name = "HealthBar"
 	_canvas_layer.add_child(bar)
 	_canvas_layer.move_child(bar, 0)
+
+
+# The Sub Weapon count sits under the Health bar, and under the Pause menu and dialogue box too.
+func _ensure_sub_weapon_count() -> void:
+	if _canvas_layer == null or _canvas_layer.get_node_or_null("SubWeaponCount") != null:
+		return
+	var count := SUB_WEAPON_COUNT_SCENE.instantiate()
+	count.name = "SubWeaponCount"
+	_canvas_layer.add_child(count)
+	_canvas_layer.move_child(count, 0)
 
 
 # The Boss Health bar sits under the Pause menu and the dialogue box too; it shows only while a

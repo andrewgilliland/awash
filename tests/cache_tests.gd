@@ -11,6 +11,13 @@ const HOLDS := 2
 const CARRY_LIMIT := 9
 const INTERACTABLE_SCRIPT := preload("res://scripts/world/interactable.gd")
 const SHEET := "res://assets/packs/underwater/sunken_treasures.png"
+# Tidefen's bomb crate: a Cache holding Bombs, under the stilt houses.
+const VILLAGE_PATH := "res://scenes/rooms/tidefen_village_1.tscn"
+const VILLAGE_ID := &"tidefen_village_1"
+const CRATE_ID := &"bomb_crate"
+const CRATE_SHEET := "res://assets/world/bomb_crate.png"
+const BOMB := &"bomb"
+const BOMBS_HELD := 5
 
 # Needs a root that is already in the tree: a Room reads the Run in _ready.
 var _root: Window
@@ -26,6 +33,8 @@ func get_tests() -> Array:
 		["Opening a Cache gives its Supplies, and the Run remembers it empty", _test_opens],
 		["A Cache taken this Run stays empty", _test_stays_empty],
 		["A Cache stays shut while the Player has no room for its Supplies", _test_no_room],
+		["Tidefen's bomb crate stands shut in the village, holding 5 Bombs", _test_crate_shut],
+		["Opening the bomb crate gives the Bombs, owned and held", _test_crate_opens],
 	]
 
 
@@ -88,16 +97,44 @@ func _test_no_room() -> bool:
 	return valid
 
 
-func _room(new_run := true) -> Node2D:
+func _test_crate_shut() -> bool:
+	var room := _room(true, VILLAGE_PATH, VILLAGE_ID)
+	var crate := room.get_node_or_null("BombCrate") as Node2D
+	var valid: bool = crate != null and crate.get("cache_id") == CRATE_ID
+	if valid:
+		valid = crate.get("kind") == BOMB and crate.get("count") == BOMBS_HELD
+		valid = valid and not crate.call("is_open")
+		var sprite := crate.get_node("Sprite2D") as Sprite2D
+		valid = valid and sprite.texture.resource_path == CRATE_SHEET
+	_close(room)
+	return valid
+
+
+func _test_crate_opens() -> bool:
+	var room := _room(true, VILLAGE_PATH, VILLAGE_ID)
+	var run := _root.get_node("RunState")
+	var player := room.get_node("Player")
+	var crate := room.get_node_or_null("BombCrate")
+	var valid := crate != null
+	if valid:
+		crate.get_node("Interactable").call("use", player)
+		var sub_weapons = player.get("sub_weapons")
+		valid = sub_weapons.held == BOMB and sub_weapons.count(BOMB) == BOMBS_HELD
+		valid = valid and crate.call("is_open") and run.call("has_taken_cache", CRATE_ID)
+	_close(room)
+	return valid
+
+
+func _room(new_run := true, path := ROOM_PATH, room_id := ROOM_ID) -> Node2D:
 	var run := _root.get_node("RunState")
 	if new_run:
 		run.call("start_run")
-	run.call("enter_room", ROOM_ID, &"west")
-	if not ResourceLoader.exists(ROOM_PATH):
+	run.call("enter_room", room_id, &"west")
+	if not ResourceLoader.exists(path):
 		var empty := Node2D.new()
 		_root.add_child(empty)
 		return empty
-	var room := (load(ROOM_PATH) as PackedScene).instantiate() as Node2D
+	var room := (load(path) as PackedScene).instantiate() as Node2D
 	_root.add_child(room)
 	return room
 

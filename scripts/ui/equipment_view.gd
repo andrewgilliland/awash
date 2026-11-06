@@ -5,15 +5,19 @@ extends VBoxContainer
 # beneath them. Below it,
 # the pieces owned for the slot last focused, the equipped one marked. Choosing a slot moves focus
 # into its pieces; choosing one equips it and goes back to the slot, as does up from the top.
-# None leads the pieces of a slot that can be empty. The strip at the Panel's foot describes the
-# piece a focused slot holds, or the piece focused.
+# None leads the pieces of a slot that can be empty: the Armor and the Sub Weapon. The strip at
+# the Panel's foot describes the piece a focused slot holds, or the piece focused.
 
 const Equipment := preload("res://scripts/items/equipment.gd")
+const SubWeapons := preload("res://scripts/items/sub_weapons.gd")
 const PLAYER_GROUP := &"player"
 const WEAPON := 0
 const ARMOR := 1
-const SLOT_NAMES := ["Weapon", "Armor"]
+const SUB_WEAPON := 2
+const SLOT_NAMES := ["Weapon", "Armor", "Sub Weapon"]
 const EQUIPPED := "Equipped"
+# What an empty slot reads, and the choice that empties it.
+const NONE := "None"
 const DEFENSE := "DEF %d"
 const DEFENSE_PREVIEW := "DEF %d > %d"
 const ATTACK := "ATK %d"
@@ -53,7 +57,7 @@ func focus_rows() -> Array[Button]:
 func _build() -> void:
 	for slot in SLOT_NAMES.size():
 		var row := Button.new()
-		row.name = SLOT_NAMES[slot] + "Row"
+		row.name = SLOT_NAMES[slot].replace(" ", "") + "Row"
 		row.text = SLOT_NAMES[slot]
 		row.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		row.icon_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -98,7 +102,7 @@ func _show_equipped() -> void:
 		var row := _slot_rows[slot]
 		var id := _equipped(slot)
 		(row.get_node("Piece") as Label).text = (
-			_pieces(slot)[id].name if not id.is_empty() else Equipment.NO_ARMOR
+			_pieces(slot)[id].name if not id.is_empty() else NONE
 		)
 		row.icon = load(_pieces(slot)[id].icon) if not id.is_empty() else null
 	_defense.text = DEFENSE % (equipment.defense() if equipment != null else 0)
@@ -116,12 +120,12 @@ func _show_choices(slot: int) -> void:
 		row.queue_free()
 	_shown_slot = slot
 	_shown_ids.clear()
-	if slot == ARMOR:
+	if slot != WEAPON:
 		_shown_ids.append(&"")
 	_shown_ids.append_array(_owned(slot))
 	for id in _shown_ids:
 		var row := Button.new()
-		row.text = _pieces(slot)[id].name if not id.is_empty() else Equipment.NO_ARMOR
+		row.text = _pieces(slot)[id].name if not id.is_empty() else NONE
 		row.icon = load(_pieces(slot)[id].icon) if not id.is_empty() else _no_icon
 		row.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		row.focus_mode = Control.FOCUS_NONE
@@ -163,6 +167,8 @@ func _on_piece_chosen(id: StringName) -> void:
 	if player != null and id != _equipped(_shown_slot):
 		if _shown_slot == WEAPON:
 			player.call("hold_weapon", id)
+		elif _shown_slot == SUB_WEAPON:
+			player.call("hold_sub_weapon", id)
 		elif id.is_empty():
 			player.call("take_off_armor")
 		else:
@@ -218,6 +224,9 @@ func _show_attack(preview: Variant) -> void:
 
 
 func _equipped(slot: int) -> StringName:
+	if slot == SUB_WEAPON:
+		var sub_weapons := _sub_weapons()
+		return sub_weapons.held if sub_weapons != null else &""
 	var equipment := _equipment()
 	if equipment == null:
 		return &""
@@ -225,6 +234,9 @@ func _equipped(slot: int) -> StringName:
 
 
 func _owned(slot: int) -> Array:
+	if slot == SUB_WEAPON:
+		var sub_weapons := _sub_weapons()
+		return sub_weapons.owned if sub_weapons != null else []
 	var equipment := _equipment()
 	if equipment == null:
 		return []
@@ -232,7 +244,7 @@ func _owned(slot: int) -> Array:
 
 
 func _pieces(slot: int) -> Dictionary:
-	return Equipment.WEAPONS if slot == WEAPON else Equipment.ARMOR
+	return [Equipment.WEAPONS, Equipment.ARMOR, SubWeapons.KINDS][slot]
 
 
 func _right_label(label_name: String, room: float) -> Label:
@@ -253,3 +265,8 @@ func _player() -> Node:
 func _equipment() -> Object:
 	var player := _player()
 	return player.get("equipment") if player != null else null
+
+
+func _sub_weapons() -> Object:
+	var player := _player()
+	return player.get("sub_weapons") if player != null else null
