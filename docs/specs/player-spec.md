@@ -44,6 +44,8 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 - At 0 Health the Player is defeated. It stops answering the controls, falls where it lands and flickers. Then it wakes at the first Room's `start` Entry with full Health, and the Run, its visited Rooms and its Map carry on.
 - The sword's hitbox is live only during a quick slash's `ATTACK`, 12 pixels in front of the Player by facing, and costs an enemy 10 Health plus the Player's Strength and the Weapon's Attack. A Charged Attack's swing strikes nothing: it looses a Sword Beam from the blade, which flies along the Player's facing at 240 pixels a second for up to 240 pixels and costs the first thing it strikes twice a slash, 20 at Strength 0 with the Short Sword, charged, so it breaks a Ward or a Shortcut's cracked wall. It stops there, or at the world's terrain. Once the Charge is full the sword blinks bright every 0.08 seconds until it is let go, and the Charged Attack let go from it swings lit the whole way; a quick Attack's swing is plain.
 
+- A hit that lands on the Player freezes play for 5 frames (Hit-stop) and shakes the screen 2 pixels for 0.15 seconds. A blow the Player lands on an enemy flashes it white for 0.08 seconds and freezes play for 3 frames, or 5 if it was the defeating blow. `scripts/combat/hit_feel.gd` sets each moment's freeze and shake.
+
 ## Growth
 
 - Every enemy defeated in a Room earns the Player that enemy's Experience, every time, even one that has come back: 10 for a Scavenger, 15 for a Storm Wisp, 20 for a Wraith.

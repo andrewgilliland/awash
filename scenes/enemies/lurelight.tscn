@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/lurelight.gd" id="1_lurelight"]
 [ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
@@ -7,6 +7,8 @@
 [ext_resource type="AudioStream" path="res://assets/enemies/lurelight/lurelight_snap.wav" id="5_snap"]
 [ext_resource type="AudioStream" path="res://assets/enemies/lurelight/lurelight_hurt.wav" id="6_hurt"]
 [ext_resource type="AudioStream" path="res://assets/enemies/lurelight/lurelight_defeat.wav" id="7_defeat"]
+
+[ext_resource type="Script" path="res://scripts/combat/hit_flash.gd" id="90_flash"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body0"]
 size = Vector2(16, 8)
@@ -75,3 +77,6 @@ bus = &"SFX"
 stream = ExtResource("7_defeat")
 max_distance = 240.0
 bus = &"SFX"
+
+[node name="HitFlash" type="Node" parent="."]
+script = ExtResource("90_flash")

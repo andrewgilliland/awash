@@ -19,6 +19,7 @@ const WEAPON_SCENES := {
 const WEAPON_BESIDE := Vector2(8.0, 0.0)
 const RunStateScript := preload("res://scripts/core/run_state.gd")
 const World := preload("res://scripts/core/world.gd")
+const HitStop := preload("res://scripts/combat/hit_stop.gd")
 const ENEMY_GROUP := &"enemy"
 # Long enough to see the Player fall and hear the defeat sound before the Room is replaced.
 const DEFEAT_PAUSE := 1.2
@@ -47,6 +48,7 @@ func _ready() -> void:
 	_ensure_health_bar()
 	_ensure_sub_weapon_count()
 	_ensure_boss_bar()
+	_ensure_hit_stop()
 	_place_player_at_entry()
 	_play_region_music()
 	if _player != null and not _player.is_connected(&"defeated", _on_player_defeated):
@@ -168,6 +170,15 @@ func _ensure_pause_menu() -> void:
 	var pause_menu := PAUSE_MENU_SCENE.instantiate()
 	pause_menu.name = "PauseMenu"
 	_canvas_layer.add_child(pause_menu)
+
+
+# Freezes play a few frames as blows connect: the Room's own, so leaving it lets play go.
+func _ensure_hit_stop() -> void:
+	if get_node_or_null(^"HitStop") != null:
+		return
+	var stop := HitStop.new()
+	stop.name = "HitStop"
+	add_child(stop)
 
 
 # The Health bar sits under the Pause menu and the dialogue box, so both draw over it.

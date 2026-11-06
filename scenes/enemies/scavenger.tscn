@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://b7jkme67anbk7"]
+[gd_scene load_steps=13 format=3 uid="uid://b7jkme67anbk7"]
 
 [ext_resource type="Script" uid="uid://4yjhvi7vclm2" path="res://scripts/enemies/scavenger.gd" id="1_scav"]
 [ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
@@ -7,6 +7,8 @@
 [ext_resource type="AudioStream" uid="uid://bkbno6c6q03lp" path="res://assets/enemies/scavenger/scavenger_lunge.wav" id="5_lunge"]
 [ext_resource type="AudioStream" uid="uid://dxi6b8subkgvi" path="res://assets/enemies/scavenger/scavenger_hurt.wav" id="6_hurt"]
 [ext_resource type="AudioStream" uid="uid://fq1telygdugx" path="res://assets/enemies/scavenger/scavenger_defeat.wav" id="7_defeat"]
+
+[ext_resource type="Script" path="res://scripts/combat/hit_flash.gd" id="90_flash"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body0"]
 size = Vector2(10, 14)
@@ -72,3 +74,6 @@ bus = &"SFX"
 stream = ExtResource("7_defeat")
 max_distance = 240.0
 bus = &"SFX"
+
+[node name="HitFlash" type="Node" parent="."]
+script = ExtResource("90_flash")

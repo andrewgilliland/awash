@@ -9,6 +9,7 @@ extends StaticBody2D
 
 const RunStateScript := preload("res://scripts/core/run_state.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
+const HitFeel := preload("res://scripts/combat/hit_feel.gd")
 const TILES := preload("res://assets/world/breakable_wall.png")
 const TILE := 16
 # The cracked blocks side by side in its sheet; each tile draws one.
@@ -87,6 +88,7 @@ func _on_hurtbox_hit(hitbox: Area2D) -> void:
 	_rubble.restart()
 	_dust.restart()
 	_crumble.play()
+	HitFeel.wall_crumble(self)
 
 
 # Its shapes and its rubble cover every tile it stands across.

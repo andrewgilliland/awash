@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://ugyt4tg4hruo"]
+[gd_scene load_steps=13 format=3 uid="uid://ugyt4tg4hruo"]
 
 [ext_resource type="Script" uid="uid://cc0xpujahbe5w" path="res://scripts/enemies/storm_wisp.gd" id="1_wisp"]
 [ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
@@ -7,6 +7,8 @@
 [ext_resource type="AudioStream" uid="uid://ds8vwxnvhiyw3" path="res://assets/enemies/storm_wisp/storm_wisp_zap.wav" id="5_zap"]
 [ext_resource type="AudioStream" uid="uid://bjoypxrbk77mi" path="res://assets/enemies/storm_wisp/storm_wisp_hurt.wav" id="6_hurt"]
 [ext_resource type="AudioStream" uid="uid://dpqfsiv3fhla3" path="res://assets/enemies/storm_wisp/storm_wisp_defeat.wav" id="7_defeat"]
+
+[ext_resource type="Script" path="res://scripts/combat/hit_flash.gd" id="90_flash"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body0"]
 radius = 5.0
@@ -70,3 +72,6 @@ bus = &"SFX"
 stream = ExtResource("7_defeat")
 max_distance = 240.0
 bus = &"SFX"
+
+[node name="HitFlash" type="Node" parent="."]
+script = ExtResource("90_flash")

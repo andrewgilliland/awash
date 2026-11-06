@@ -6,6 +6,7 @@ signal defeated(experience: int)
 const ScavengerBrain := preload("res://scripts/enemies/scavenger_brain.gd")
 const Health := preload("res://scripts/combat/health.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
+const HitFeel := preload("res://scripts/combat/hit_feel.gd")
 const ScavengerSounds := preload("res://scripts/enemies/scavenger_sounds.gd")
 const MAX_HEALTH := 30
 # What defeating a Scavenger earns the Player.
@@ -104,6 +105,7 @@ func _on_hurtbox_hit(hitbox: Area2D) -> void:
 	var damage: int = hitbox.damage if hitbox is Hitbox else Hitbox.DEFAULT_DAMAGE
 	if not health.hurt(damage, INVULNERABLE_TIME):
 		return
+	HitFeel.enemy_struck(self, health.is_defeated())
 	var toward := signf(global_position.x - hitbox.global_position.x)
 	_knocked_toward = toward if toward != 0.0 else -brain.facing
 	if health.is_defeated():

@@ -68,6 +68,8 @@ const SUITES: Array[String] = [
 const TREE_SUITES: Array[String] = [
 	"res://tests/pause_menu_tests.gd",
 	"res://tests/combat_scene_tests.gd",
+	"res://tests/combat_feel_tests.gd",
+	"res://tests/hit_feel_wiring_tests.gd",
 	"res://tests/sword_beam_tests.gd",
 	"res://tests/bomb_tests.gd",
 	"res://tests/player_sound_scene_tests.gd",
