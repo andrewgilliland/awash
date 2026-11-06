@@ -14,6 +14,7 @@ const CoastRoutePlaytests := preload("res://tests/coast_route_playtests.gd")
 const UndertowPlaytests := preload("res://tests/undertow_playtests.gd")
 const LurelightPlaytests := preload("res://tests/lurelight_playtests.gd")
 const BombPlaytests := preload("res://tests/bomb_playtests.gd")
+const VillagerPlaytests := preload("res://tests/villager_playtests.gd")
 
 
 func _init() -> void:
@@ -67,6 +68,9 @@ func _init() -> void:
 		await _run_playtest_async(playtest[0], playtest[1])
 	var bomb_playtests := BombPlaytests.new(self)
 	for playtest in bomb_playtests.get_playtests():
+		await _run_playtest_async(playtest[0], playtest[1])
+	var villager_playtests := VillagerPlaytests.new(self)
+	for playtest in villager_playtests.get_playtests():
 		await _run_playtest_async(playtest[0], playtest[1])
 	await _run_playtest_async(
 		"Sword defeats the Scavenger and earns its Experience", _playtest_sword_defeats_scavenger
