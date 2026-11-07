@@ -29,7 +29,7 @@ A Tidefen fisher's clay Bomb: a Sub Weapon. Lobbed along the Player's facing, it
 _Avoid_: Grenade, explosive, powder keg
 
 **Armor**:
-The Equipment slot for what the Player wears, chosen in the Equipment Panel from the Armor the Player owns, or left empty for no Defense. A new Run owns and wears the Worn Leather Tunic.
+The Equipment slot for what the Player wears, chosen in the Equipment Panel from the Armor the Player owns, or left empty for no Defense. A new Run owns and wears the Worn Leather Tunic; more is found, such as the Scale Mail in a Cache.
 _Avoid_: Armour, clothing, outfit
 
 **Defense**:
@@ -39,3 +39,7 @@ _Avoid_: AC, armor class, resistance, guard
 **Worn Leather Tunic**:
 The Armor Vael wakes in on the Waking Coast: sea-weathered leather that gives no Defense yet.
 _Avoid_: Saltworn Leathers, starting armor, default armor
+
+**Scale Mail**:
+Armor found in the Undertow wreck's chest: a drowned warden's scale mail, green with rust, giving 3 Defense. Taken up, it is owned and worn at once.
+_Avoid_: Drowned Scale Mail, chain mail, scale armor

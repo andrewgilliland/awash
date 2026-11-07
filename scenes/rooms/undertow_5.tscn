@@ -37,7 +37,9 @@ tile_set = ExtResource("scenery_tiles")
 
 [node name="Cache" parent="." instance=ExtResource("6_cache")]
 position = Vector2(280, 240)
-cache_id = &"wreck_chest"
+cache_id = &"wreck_mail"
+kind = &"scale_mail"
+count = 1
 
 [node name="Enemies" type="Node2D" parent="."]
 

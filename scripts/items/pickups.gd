@@ -1,6 +1,6 @@
 extends RefCounted
 
-# The pickup each Supply, Sub Weapon or Weapon lies as in a Room, left where an enemy fell or
+# The pickup each Supply, Sub Weapon, Weapon or Armor lies as in a Room, left where an enemy fell or
 # spilled from a Cache.
 
 const SCENES := {
@@ -10,6 +10,7 @@ const SCENES := {
 	&"mourning_salt": preload("res://scenes/items/mourning_salt.tscn"),
 	&"bomb": preload("res://scenes/items/bomb_pickup.tscn"),
 	&"oathblade": preload("res://scenes/items/oathblade.tscn"),
+	&"scale_mail": preload("res://scenes/items/scale_mail.tscn"),
 }
 
 
