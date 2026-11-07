@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=4]
+[gd_scene load_steps=12 format=4]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_main"]
 
@@ -14,6 +14,7 @@
 [ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="7_hurtbox"]
 
 [ext_resource type="PackedScene" uid="uid://bp00p0ropehmt" path="res://scenes/enemies/wraith.tscn" id="enemy_wraith"]
+[ext_resource type="PackedScene" path="res://scenes/world/cache.tscn" id="cache_scene"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_edge"]
 size = Vector2(8, 144)
@@ -58,6 +59,12 @@ shape = SubResource("RectangleShape2D_wall")
 position = Vector2(-32, -48)
 tile_map_data = PackedByteArray("AAAAAAEAAgAPAA0AAAABAAEAAgAQAA0AAAACAAEAAgARAA0AAAADAAEAAgASAA0AAAAAAAIAAgAPAA4AAAABAAIAAgAQAA4AAAACAAIAAgARAA4AAAADAAIAAgASAA4AAAAAAAMAAgAPAA8AAAABAAMAAgAQAA8AAAACAAMAAgARAA8AAAADAAMAAgASAA8AAAAAAAQAAgAPABAAAAABAAQAAgAQABAAAAACAAQAAgARABAAAAADAAQAAgASABAAAAAAAAUAAgAPABEAAAABAAUAAgAQABEAAAACAAUAAgARABEAAAADAAUAAgASABEAAAA=")
 tile_set = ExtResource("scenery_tiles")
+
+[node name="Chest" parent="." instance=ExtResource("cache_scene")]
+position = Vector2(192, 96)
+cache_id = &"passage_chest"
+kind = &"mourning_salt"
+count = 2
 
 [node name="Enemies" type="Node2D" parent="."]
 

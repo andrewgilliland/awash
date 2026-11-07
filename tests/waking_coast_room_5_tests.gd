@@ -3,6 +3,7 @@ extends RefCounted
 const ROOM_PATH := "res://scenes/rooms/waking_coast_5.tscn"
 const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 const RoomReach := preload("res://tests/room_reach.gd")
+const RoomCaches := preload("res://tests/room_caches.gd")
 # Two screens wide, under the salt cliffs' foot.
 const ROOM_SIZE := Vector2i(320, 144)
 const TILE := 16
@@ -18,7 +19,6 @@ const EAST_ENTRY := Vector2(308, 96)
 const EAST_FLOOR := Vector2i(19, 6)
 const WEST_FLOOR := Vector2i(1, 6)
 const SHELF := Vector2i(14, 4)
-const CRATE := Vector2i(10, 3)
 # Landmark cells from assets/regions/waking_coast/room_layouts/waking_coast_5.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
@@ -33,11 +33,10 @@ const LANDMARKS := {
 		Vector2i(7, 6): Vector2i(3, 1),
 		Vector2i(8, 6): Vector2i(1, 1),
 		Vector2i(10, 6): Vector2i(3, 1),
-		# a shelf up out of the way, with the cave's crate
+		# a shelf up out of the way, for the cave's crate
 		Vector2i(13, 4): Vector2i(4, 4),
 		Vector2i(15, 4): Vector2i(7, 4),
 	},
-	&"Props": {Vector2i(14, 3): CRATE},
 }
 
 
@@ -47,7 +46,7 @@ func get_tests() -> Array:
 		["Sea cave's roof opens only under the salt cliffs' foot", _test_roofed],
 		["Sea cave climbs up through its roof to the salt cliffs", _test_climbs_out],
 		["Sea cave floor runs from its east end to its west wall", _test_floor_runs_west],
-		["Sea cave shelf holds a crate a jump up", _test_shelf_holds_crate],
+		["Sea cave shelf holds a crate Cache of two Meat Pies, a jump up", _test_shelf_holds_crate],
 		["Sea cave leads east to the Undertow's passage", _test_leads_east],
 	]
 
@@ -141,10 +140,15 @@ func _test_shelf_holds_crate() -> bool:
 	if room == null:
 		return false
 	var terrain := room.get_node("Terrain") as TileMapLayer
-	var props := room.get_node("Props") as TileMapLayer
 	var reached := RoomReach.reachable(terrain, EAST_FLOOR)
 	var valid := RoomReach.span_at(reached, SHELF) != null
-	valid = valid and props.get_cell_atlas_coords(SHELF + Vector2i.UP) == CRATE
+	var crate := room.get_node_or_null("Crate") as Node2D
+	valid = (
+		valid and RoomCaches.holds(crate, &"sea_cave_crate", &"meat_pie", 2, RoomCaches.CRATE_SHEET)
+	)
+	valid = valid and RoomCaches.on_floor(terrain, crate, SHELF.y)
+	var props := room.get_node_or_null("Props") as TileMapLayer
+	valid = valid and (props == null or props.get_used_cells().is_empty())
 	room.free()
 	return valid
 

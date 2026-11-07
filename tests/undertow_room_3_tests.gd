@@ -3,6 +3,10 @@ extends RefCounted
 const ROOM_PATH := "res://scenes/rooms/undertow_3.tscn"
 const RoomReach := preload("res://tests/room_reach.gd")
 const RoomEnemies := preload("res://tests/room_enemies.gd")
+const RoomCaches := preload("res://tests/room_caches.gd")
+# The colonnade's middle arch, in columns, and the passage floor's row.
+const MIDDLE_ARCH := Vector2i(10, 13)
+const FLOOR_ROW := 6
 # Two screens wide: the passage from the temple hall west to the Shortcut's wall.
 const ROOM_SIZE := Vector2i(320, 144)
 const TILE := 16
@@ -27,6 +31,7 @@ func get_tests() -> Array:
 		["Undertow passage's floor runs from the hall to the wall", _test_floor_runs_west],
 		["Undertow passage leads west to the sea cave and east to the hall", _test_exits],
 		["A Wraith haunts the passage under its arches", _test_wraith],
+		["A chest of two Mourning Salts stands under the middle arch", _test_chest],
 	]
 
 
@@ -103,5 +108,22 @@ func _test_wraith() -> bool:
 		var left: float = wraith.get("haunt_left")
 		var right: float = wraith.get("haunt_right")
 		valid = valid and RoomEnemies.clear_of_entries(room, left, right)
+	room.free()
+	return valid
+
+
+func _test_chest() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var chest := room.get_node_or_null("Chest") as Node2D
+	var valid := RoomCaches.holds(
+		chest, &"passage_chest", &"mourning_salt", 2, RoomCaches.CHEST_SHEET
+	)
+	if valid:
+		var terrain := room.get_node("Terrain") as TileMapLayer
+		valid = RoomCaches.on_floor(terrain, chest, FLOOR_ROW)
+		var column := int(chest.position.x / TILE)
+		valid = valid and column >= MIDDLE_ARCH.x and column <= MIDDLE_ARCH.y
 	room.free()
 	return valid

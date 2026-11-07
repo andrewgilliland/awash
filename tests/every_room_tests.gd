@@ -4,6 +4,10 @@ extends RefCounted
 # landmarks, Entries, walls and Exits, enemies and props.
 
 const World := preload("res://scripts/core/world.gd")
+const CACHE_PATH := "res://scenes/world/cache.tscn"
+# Every Cache in the World: Tidefen's bomb crate, the wreck's chest, the salt cliffs' high crate,
+# the sea cave's crate, the passage's chest and the lake's chest.
+const CACHES := 6
 const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 # One screen in tiles.
 const SCREEN_CELLS := Vector2i(10, 9)
@@ -43,6 +47,7 @@ func get_tests() -> Array:
 		["No Room scene holds its own Background", _test_scene_leaves_background],
 		["Every Room draws its Region's Background behind all else", _test_background],
 		["Every Room's Region has a looping theme", _test_region_theme],
+		["Every Cache in the World has an id of its own", _test_cache_ids],
 	]
 
 
@@ -352,3 +357,20 @@ static func _region_has_theme(room_id: StringName, _room: Node2D) -> bool:
 	var path := World.theme(room_id)
 	var theme := load(path) as AudioStreamWAV if not path.is_empty() else null
 	return theme != null and theme.loop_mode == AudioStreamWAV.LOOP_FORWARD
+
+
+# The Run remembers a Cache taken by its id, so two sharing one would empty each other.
+func _test_cache_ids() -> bool:
+	var seen := {}
+	for room_id in World.room_ids():
+		var room := (load(World.scene(room_id)) as PackedScene).instantiate()
+		for node in room.get_children():
+			if node.scene_file_path != CACHE_PATH:
+				continue
+			var id: StringName = node.get("cache_id")
+			if id.is_empty() or seen.has(id):
+				room.free()
+				return false
+			seen[id] = true
+		room.free()
+	return seen.size() >= CACHES

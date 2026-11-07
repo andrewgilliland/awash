@@ -25,7 +25,7 @@ Cracked rock across a route that only a Bomb's blast breaks; a sword's hit, quic
 _Avoid_: Bomb block, destructible wall, secret wall
 
 **Cache**:
-A hidden spot in a Room holding Supplies, or a Sub Weapon such as the Bombs in Tidefen's bomb crate, opened with Interact, that stays empty once taken for the Run. The first Bombs found are owned and taken up.
+A hidden spot in a Room holding Supplies, or a Sub Weapon such as the Bombs in Tidefen's bomb crate, opened with Interact, that stays empty once taken for the Run. The first Bombs found are owned and taken up. A crate or chest drawn in a Room is a Cache; one that never opens is not drawn.
 _Avoid_: Crate, chest, stash, pickup
 
 **Supply**:

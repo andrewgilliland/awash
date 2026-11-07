@@ -104,6 +104,7 @@ const TREE_SUITES: Array[String] = [
 	"res://tests/shortcut_wall_tests.gd",
 	"res://tests/breakable_wall_tests.gd",
 	"res://tests/cache_tests.gd",
+	"res://tests/sign_tests.gd",
 	"res://tests/rest_bell_tests.gd",
 	"res://tests/saving_tests.gd",
 	"res://tests/boss_bar_tests.gd",
