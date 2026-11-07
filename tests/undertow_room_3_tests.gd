@@ -2,6 +2,7 @@ extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/undertow_3.tscn"
 const RoomReach := preload("res://tests/room_reach.gd")
+const RoomEnemies := preload("res://tests/room_enemies.gd")
 # Two screens wide: the passage from the temple hall west to the Shortcut's wall.
 const ROOM_SIZE := Vector2i(320, 144)
 const TILE := 16
@@ -25,6 +26,7 @@ func get_tests() -> Array:
 		["Undertow passage lays out two screens", _test_lays_out],
 		["Undertow passage's floor runs from the hall to the wall", _test_floor_runs_west],
 		["Undertow passage leads west to the sea cave and east to the hall", _test_exits],
+		["A Wraith haunts the passage under its arches", _test_wraith],
 	]
 
 
@@ -81,5 +83,25 @@ func _test_exits() -> bool:
 			valid = valid and terrain.get_cell_source_id(below + Vector2i.UP) == -1
 	valid = valid and room.get_node("Entries/west").position == WEST_ENTRY
 	valid = valid and room.get_node("Entries/east").position == EAST_ENTRY
+	room.free()
+	return valid
+
+
+# It floats over the passage floor between its two Entries, under the arches.
+func _test_wraith() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var wraith := room.get_node_or_null("Enemies/Wraith") as Node2D
+	var valid := wraith != null
+	if valid:
+		var terrain := room.get_node("Terrain") as TileMapLayer
+		valid = RoomEnemies.haunts_floor(terrain, wraith)
+		valid = (
+			valid and is_equal_approx(wraith.position.y + RoomEnemies.WRAITH_HOVER, WEST_ENTRY.y)
+		)
+		var left: float = wraith.get("haunt_left")
+		var right: float = wraith.get("haunt_right")
+		valid = valid and RoomEnemies.clear_of_entries(room, left, right)
 	room.free()
 	return valid

@@ -2,6 +2,7 @@ extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/undertow_6.tscn"
 const RoomReach := preload("res://tests/room_reach.gd")
+const RoomEnemies := preload("res://tests/room_enemies.gd")
 # One screen wide and two tall: a stair down from the pools, in the drowned temple.
 const ROOM_SIZE := Vector2i(160, 288)
 const SCREEN_HEIGHT := 144
@@ -28,6 +29,7 @@ func get_tests() -> Array:
 		["Temple stair's landings are one-way", _test_one_way],
 		["Temple stair walls its top-west and foot-east edges", _test_walls],
 		["Temple stair leads east to the pools and west to the lake", _test_exits],
+		["A Wraith haunts the foot of the temple stair", _test_wraith],
 	]
 
 
@@ -126,3 +128,23 @@ static func _vertical_span(shape_node: CollisionShape2D) -> Vector2:
 	var owner_y := (shape_node.get_parent() as Node2D).position.y
 	var top := owner_y + shape_node.position.y - rectangle.size.y / 2.0
 	return Vector2(top, top + rectangle.size.y)
+
+
+# It floats over the stair's foot, the floor the lake's Exit opens from.
+func _test_wraith() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var wraith := room.get_node_or_null("Enemies/Wraith") as Node2D
+	var valid := wraith != null
+	if valid:
+		var terrain := room.get_node("Terrain") as TileMapLayer
+		valid = RoomEnemies.haunts_floor(terrain, wraith)
+		valid = (
+			valid and is_equal_approx(wraith.position.y + RoomEnemies.WRAITH_HOVER, WEST_ENTRY.y)
+		)
+		var left: float = wraith.get("haunt_left")
+		var right: float = wraith.get("haunt_right")
+		valid = valid and RoomEnemies.clear_of_entries(room, left, right)
+	room.free()
+	return valid

@@ -2,6 +2,7 @@ extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_12.tscn"
 const RoomReach := preload("res://tests/room_reach.gd")
+const RoomEnemies := preload("res://tests/room_enemies.gd")
 # Two screens wide, along the cliff tops from the gull ledges to the wreck graveyard.
 const ROOM_SIZE := Vector2i(320, 144)
 const TILE := 16
@@ -35,6 +36,7 @@ func get_tests() -> Array:
 		["Cliff tops run east, down through a hollow and over a rock", _test_runs_east],
 		["A mossy rock on the cliff tops is a jump high", _test_rock],
 		["Cliff tops lead west to the gull ledges and east to the graveyard", _test_exits],
+		["A Wraith haunts the cliff tops beside the mossy rock", _test_wraith],
 	]
 
 
@@ -111,5 +113,23 @@ func _test_exits() -> bool:
 			valid = valid and terrain.get_cell_source_id(below + Vector2i.UP) == -1
 	valid = valid and room.get_node("Entries/west").position == WEST_ENTRY
 	valid = valid and room.get_node("Entries/east").position == EAST_ENTRY
+	room.free()
+	return valid
+
+
+# It floats over the cliff top between the hollow and the rock, its haunt ending at the rock.
+func _test_wraith() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var wraith := room.get_node_or_null("Enemies/Wraith") as Node2D
+	var valid := wraith != null
+	if valid:
+		var terrain := room.get_node("Terrain") as TileMapLayer
+		valid = RoomEnemies.haunts_floor(terrain, wraith)
+		var rock_face := ROCK_TOP.x * TILE
+		valid = valid and wraith.get("haunt_left") >= (HOLLOW.end.x) * TILE
+		valid = valid and wraith.get("haunt_right") <= rock_face
+		valid = valid and wraith.get("haunt_right") >= rock_face - TILE
 	room.free()
 	return valid
