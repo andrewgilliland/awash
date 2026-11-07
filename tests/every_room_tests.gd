@@ -8,6 +8,8 @@ const CACHE_PATH := "res://scenes/world/cache.tscn"
 # Every Cache in the World: Tidefen's bomb crate, the wreck's chest, the salt cliffs' high crate,
 # the sea cave's crate, the passage's chest and the lake's chest.
 const CACHES := 6
+const RoomCaches := preload("res://tests/room_caches.gd")
+const PICKUPS_PATH := "res://scripts/items/pickups.gd"
 const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 # One screen in tiles.
 const SCREEN_CELLS := Vector2i(10, 9)
@@ -48,6 +50,8 @@ func get_tests() -> Array:
 		["Every Room draws its Region's Background behind all else", _test_background],
 		["Every Room's Region has a looping theme", _test_region_theme],
 		["Every Cache in the World has an id of its own", _test_cache_ids],
+		["Every Cache is drawn whole, shut and open", _test_caches_drawn_whole],
+		["Every Cache has a pickup for what it holds", _test_caches_spill],
 	]
 
 
@@ -374,3 +378,43 @@ func _test_cache_ids() -> bool:
 			seen[id] = true
 		room.free()
 	return seen.size() >= CACHES
+
+
+# Each frame of a Cache holds all of its art on the sheet: nothing drawn runs on past either
+# side of it, so no Cache shows cut off.
+func _test_caches_drawn_whole() -> bool:
+	var valid := true
+	for room_id in World.room_ids():
+		var room := (load(World.scene(room_id)) as PackedScene).instantiate()
+		for node in room.get_children():
+			if node.scene_file_path != CACHE_PATH:
+				continue
+			var sheet := (node.get_node("Sprite2D") as Sprite2D).texture.get_image()
+			for frame: Rect2 in [node.get("shut_frame"), node.get("open_frame")]:
+				if not RoomCaches.drawn_whole(sheet, Rect2i(frame)):
+					push_error("Cache '%s' is cut off at %s." % [node.get("cache_id"), frame])
+					valid = false
+		room.free()
+	return valid
+
+
+# What each Cache holds lies as a pickup of its own kind once spilled.
+func _test_caches_spill() -> bool:
+	if not ResourceLoader.exists(PICKUPS_PATH):
+		return false
+	var pickups := load(PICKUPS_PATH) as GDScript
+	var valid := true
+	for room_id in World.room_ids():
+		var room := (load(World.scene(room_id)) as PackedScene).instantiate()
+		for node in room.get_children():
+			if node.scene_file_path != CACHE_PATH:
+				continue
+			var scene := pickups.call("scene", node.get("kind")) as PackedScene
+			var pickup := scene.instantiate() if scene != null else null
+			if pickup == null or pickup.get("kind") != node.get("kind"):
+				push_error("Cache '%s' has no pickup to spill." % node.get("cache_id"))
+				valid = false
+			if pickup != null:
+				pickup.free()
+		room.free()
+	return valid

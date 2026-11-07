@@ -7,16 +7,8 @@ const SUB_WEAPON_COUNT_SCENE := preload("res://scenes/ui/sub_weapon_count.tscn")
 const GOLD_COUNT_SCENE := preload("res://scenes/ui/gold_count.tscn")
 const SHOP_PANEL_SCENE := preload("res://scenes/ui/shop_panel.tscn")
 const BOSS_BAR_SCENE := preload("res://scenes/ui/boss_bar.tscn")
-# The scene for each Supply an enemy can leave where it fell.
-const SUPPLY_SCENES := {
-	&"brinecap": preload("res://scenes/items/brinecap.tscn"),
-	&"glowroe": preload("res://scenes/items/glowroe.tscn"),
-	&"mourning_salt": preload("res://scenes/items/mourning_salt.tscn"),
-}
-# The scene for each Weapon an enemy can leave where it fell.
-const WEAPON_SCENES := {
-	&"oathblade": preload("res://scenes/items/oathblade.tscn"),
-}
+# The scene each Supply or Weapon an enemy can leave where it fell lies as.
+const Pickups := preload("res://scripts/items/pickups.gd")
 # A Weapon lies this far to the right of the Supply left with it, so both show.
 const WEAPON_BESIDE := Vector2(8.0, 0.0)
 const RunStateScript := preload("res://scripts/core/run_state.gd")
@@ -121,12 +113,12 @@ func _on_enemy_defeated(experience: int, enemy: Node2D) -> void:
 	_player.call("gain_gold", constants.get("GOLD", 0))
 	if drop_roll.call() < constants.get("DROP_CHANCE", 0.0):
 		var supply: StringName = constants.get("DROP", &"brinecap")
-		_supplies_due.append([SUPPLY_SCENES[supply], enemy.global_position])
+		_supplies_due.append([Pickups.scene(supply), enemy.global_position])
 	var weapon: StringName = constants.get("WEAPON_DROP", &"")
 	if weapon.is_empty() or _player.get("equipment").owns_weapon(weapon):
 		return
 	if drop_roll.call() < constants.get("WEAPON_DROP_CHANCE", 0.0):
-		_supplies_due.append([WEAPON_SCENES[weapon], enemy.global_position + WEAPON_BESIDE])
+		_supplies_due.append([Pickups.scene(weapon), enemy.global_position + WEAPON_BESIDE])
 
 
 # An enemy falls while physics is reporting the hit, when nothing may join the world, so its

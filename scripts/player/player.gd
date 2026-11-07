@@ -200,6 +200,13 @@ func collect_sub_weapon(id: StringName) -> bool:
 	return true
 
 
+# Whether the Player could carry one more of a Supply or Sub Weapon; one not owned yet fits.
+func has_room_for(kind: StringName) -> bool:
+	if SubWeapons.KINDS.has(kind):
+		return not sub_weapons.owns(kind) or sub_weapons.count(kind) < SubWeapons.CARRY_LIMIT
+	return Supplies.KINDS.has(kind) and supplies.count(kind) < Supplies.CARRY_LIMIT
+
+
 # Whether the Player has the Gold for a Supply at this price, and room to carry one more.
 func can_buy(kind: StringName, price: int) -> bool:
 	return gold >= price and supplies.count(kind) < Supplies.CARRY_LIMIT

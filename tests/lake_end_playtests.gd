@@ -1,7 +1,7 @@
 extends RefCounted
 
 # The lake's west end, played by tests/playtest_runner.gd with its harness: the real Room, real
-# input and physics. Its chest gives two Glowroe, and its sealed door says it is sealed.
+# input and physics. Its chest spills two Glowroe, and its sealed door says it is sealed.
 
 const LAKE_PATH := "res://scenes/rooms/undertow_7.tscn"
 # Set down on the west bank, east of the chest, above the sand.
@@ -9,6 +9,8 @@ const ON_BANK := Vector2(60, 80)
 const CHEST_X := 52.0
 const DOOR_X := 26.0
 const GLOWROE := &"glowroe"
+# Long enough for a spill to land.
+const LAND_FRAMES := 60
 
 # The runner: its input, frame and Room helpers.
 var _harness: SceneTree
@@ -20,11 +22,15 @@ func _init(harness: SceneTree) -> void:
 
 func get_playtests() -> Array:
 	return [
-		["Player opens the lake's chest, then reads its sealed door", _chest_and_door],
+		[
+			"Player opens the lake's chest, takes its Glowroe as they land, reads its door",
+			_chest_and_door
+		],
 	]
 
 
-# At the chest, Interact opens it for two Glowroe. At the door, Interact shows Vael's two lines
+# At the chest, Interact opens it and spills two Glowroe, taken not while they fly but once they
+# land. At the door, Interact shows Vael's two lines
 # about it, read on until the box closes.
 func _chest_and_door() -> bool:
 	var player: CharacterBody2D = await _harness.call(
@@ -43,7 +49,10 @@ func _chest_and_door() -> bool:
 	await _harness.call("_frames", 3)
 	var chest := _harness.current_scene.get_node("Chest")
 	var valid: bool = chest.call("is_open")
-	valid = valid and player.get("supplies").count(GLOWROE) == 2
+	var supplies = player.get("supplies")
+	valid = valid and supplies.count(GLOWROE) == 0
+	var both := func() -> bool: return supplies.count(GLOWROE) == 2
+	valid = valid and await _harness.call("_frames_until", both, LAND_FRAMES)
 	await _harness.call("_walk_to_x", player, DOOR_X)
 	await _harness.call("_frames", 5)
 	await _harness.call("_tap", &"interact")
