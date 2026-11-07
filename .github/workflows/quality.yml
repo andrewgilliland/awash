@@ -82,10 +82,18 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: tools/world-editor/package-lock.json
+          cache-dependency-path: |
+            tools/world-editor/package-lock.json
+            tools/codex/package-lock.json
 
       # The World editor's own typecheck and tests (its reading of Godot's files, the World's layout).
       - name: World editor
         run: |
           npm ci --prefix tools/world-editor
           npm test --prefix tools/world-editor
+
+      # The Codex's own typecheck and tests (its reading of the game's scripts, scenes and docs).
+      - name: Codex
+        run: |
+          npm ci --prefix tools/codex
+          npm test --prefix tools/codex

@@ -1,9 +1,11 @@
 {
   "name": "awash",
   "private": true,
-  "description": "Only to start the World editor from the repo root; its own package is tools/world-editor.",
+  "description": "Only to start the local tools from the repo root: the World editor (tools/world-editor) and the Codex (tools/codex), each its own package.",
   "scripts": {
     "world-editor": "npm --prefix tools/world-editor run dev",
-    "world-editor:test": "npm --prefix tools/world-editor test"
+    "world-editor:test": "npm --prefix tools/world-editor test",
+    "codex": "npm --prefix tools/codex run dev",
+    "codex:test": "npm --prefix tools/codex test"
   }
 }

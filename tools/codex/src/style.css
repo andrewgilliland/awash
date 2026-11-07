@@ -1,0 +1,121 @@
+/* The Codex's look, the World editor's: black, near-black hairline panels with square corners,
+   JetBrains Mono, uppercase bold for headings and labels, and one pale amber accent. The game's own
+   pictures keep the game's colours, drawn crisp. */
+
+:root {
+  --bg: #000;
+  --panel: #101010;
+  --panel-2: #171717;
+  --line: #1f1f1f;
+  --line-strong: #3a3a3a;
+  --fg: #fff;
+  --muted: #a3a3a3;
+  --accent: #f8e18e;
+  --boss: #ff7a6b;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+  color: var(--fg);
+  font: 13px/1.5 var(--mono);
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+h1, h2, h3, .label, dt, .tab, .badge { text-transform: uppercase; letter-spacing: 0.02em; }
+h1, h2, h3 { font-weight: 700; margin: 0; }
+h1 { font-size: 15px; color: var(--accent); }
+h2 { font-size: 20px; }
+h3 { font-size: 12px; color: var(--accent); margin: 18px 0 6px; }
+h3::before { content: "// "; }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  min-height: 0;
+  overflow: auto;
+}
+
+#sidebar { display: flex; flex-direction: column; gap: 10px; padding: 14px; }
+#page { padding: 20px 24px; }
+
+.tabs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
+.tab, .filter button {
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--panel-2);
+  border: 1px solid var(--line-strong);
+  padding: 6px 8px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+.tab[aria-current="page"], .filter button[aria-pressed="true"] { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+.tab:hover, .filter button:hover { border-color: var(--accent); }
+.filter { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.filter button { text-transform: uppercase; }
+
+input[type="search"] {
+  font: inherit;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  padding: 7px 9px;
+}
+input[type="search"]:focus { outline: none; border-color: var(--accent); }
+
+ul.list { list-style: none; margin: 0; padding: 0; overflow: auto; }
+ul.list a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 6px;
+  color: var(--fg);
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+ul.list a:hover { border-color: var(--line-strong); }
+ul.list a[aria-current="page"] { border-color: var(--accent); background: var(--panel-2); }
+ul.list .thumb { width: 24px; height: 24px; flex: none; display: grid; place-items: center; }
+ul.list .name { flex: 1; }
+.planned { color: var(--muted); }
+
+.badge { font-size: 10px; font-weight: 700; padding: 1px 5px; border: 1px solid var(--line-strong); color: var(--muted); }
+.badge.boss { color: var(--boss); border-color: var(--boss); }
+.badge.planned { border-style: dashed; }
+
+.title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.meta { color: var(--muted); margin: 4px 0 0; }
+.quote { color: var(--accent); margin: 10px 0; }
+
+img.pixel, canvas.pixel { image-rendering: pixelated; }
+
+.sprite { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-end; margin-top: 16px; }
+.sprite figure { margin: 0; }
+.sprite figcaption { font-size: 10px; color: var(--muted); text-transform: uppercase; margin-top: 4px; }
+.frames { display: flex; gap: 2px; background: #0b1622; padding: 6px; border: 1px solid var(--line); }
+
+dl.stats { display: grid; grid-template-columns: max-content 1fr; gap: 4px 18px; margin: 0; }
+dl.stats dt { color: var(--muted); font-size: 11px; }
+dl.stats dd { margin: 0; }
+
+ul.facts { margin: 0; padding-left: 18px; }
+ul.facts li { margin: 2px 0; }
+a.link { color: var(--accent); }
+.swatch { display: inline-block; width: 12px; height: 12px; border: 1px solid var(--line-strong); vertical-align: -1px; margin-right: 6px; }
+.empty { color: var(--muted); }
