@@ -10,7 +10,7 @@ const World := preload("res://scripts/core/world.gd")
 const MENU_ROOT := "CenterContainer/MenuPanel/MarginContainer/VBoxContainer/"
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 # The Map Panel's view as the Pause menu lays it out on the game's screen.
-const MAP_VIEW_SIZE := Vector2(142, 83)
+const MAP_VIEW_SIZE := Vector2(142, 73)
 # The smallest a screen may be drawn and still read as a block with its walls.
 const SMALLEST_SCREEN := Vector2(6, 5)
 
