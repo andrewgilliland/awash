@@ -29,6 +29,25 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+# The Map key opens the menu on the Map, turns to it from another Panel, and closes the menu from
+# it; ahead of the menu's buttons, which would take its key as moving focus on. While something
+# else holds play paused, such as the Shop, it does nothing.
+func _input(event: InputEvent) -> void:
+	if not event.is_action_pressed("map"):
+		return
+	var map_button := _menu_buttons.get_node_or_null("MapButton") as Button
+	if map_button == null or (get_tree().paused and not _menu_panel.visible):
+		return
+	get_viewport().set_input_as_handled()
+	if not get_tree().paused:
+		_apply_pause_state(true)
+	elif (_panels[map_button] as Control).visible:
+		_apply_pause_state(false)
+		return
+	_on_menu_button_focused(map_button)
+	map_button.grab_focus()
+
+
 func toggle_pause() -> void:
 	_apply_pause_state(not get_tree().paused)
 
