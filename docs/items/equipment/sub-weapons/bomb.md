@@ -10,5 +10,5 @@ blast_radius: 24
 fuse_seconds: 1.0
 breaks: [Ward, Shortcut cracked wall, Breakable wall]
 description: A Tidefen fisher's clay Bomb, lobbed along Vael's facing; it bounces once, sputters for a second and bursts, striking every enemy round it.
-visual: A round terracotta clay pot with a pale cord neck and a sparking wick (`assets/items/bomb.aseprite`, lit from `assets/items/bomb_lit.aseprite`, bursting from `assets/items/bomb_burst.aseprite`), kept in a roped crate with a Bomb painted on it (`assets/world/bomb_crate.aseprite`).
+visual: A round clay pot fired near black, dark iron-grey, with a pale cord neck and a sparking wick (`assets/items/bomb.aseprite`, lit from `assets/items/bomb_lit.aseprite`, bursting from `assets/items/bomb_burst.aseprite`), kept in a roped crate with a Bomb painted on it (`assets/world/bomb_crate.aseprite`).
 ---
