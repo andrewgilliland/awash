@@ -26,6 +26,7 @@ const WEAPONS := {
 	},
 }
 const STARTING_ARMOR := &"worn_leather_tunic"
+const SCALE_MAIL := &"scale_mail"
 # Every Armor: its name, a description of two lines at most, its Defense (the Health it takes
 # off each hit), and its 8x8 icon.
 const ARMOR := {
@@ -35,6 +36,13 @@ const ARMOR := {
 		description = "Faded by salt. Light, but gives no Defense.",
 		defense = 0,
 		icon = "res://assets/items/worn_leather_tunic.png",
+	},
+	SCALE_MAIL:
+	{
+		name = "Scale Mail",
+		description = "A drowned warden's scale mail, green with rust. Defense 3.",
+		defense = 3,
+		icon = "res://assets/items/scale_mail.png",
 	},
 }
 # What the Armor slot reads with nothing worn.
@@ -92,6 +100,18 @@ func hold(weapon_id: StringName) -> bool:
 		return false
 	weapon = weapon_id
 	return true
+
+
+# Owns a known Armor not owned yet, without putting it on, and returns whether it did.
+func own_armor(armor_id: StringName) -> bool:
+	if not ARMOR.has(armor_id) or owns_armor(armor_id):
+		return false
+	owned.append(armor_id)
+	return true
+
+
+func owns_armor(armor_id: StringName) -> bool:
+	return owned.has(armor_id)
 
 
 # Puts on Armor the Player owns, and returns whether it could.

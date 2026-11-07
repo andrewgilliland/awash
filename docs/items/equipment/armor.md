@@ -3,5 +3,5 @@ name: Armor
 type: item_type
 category: Equipment
 description: Items worn to improve defense and resistance.
-items: [armor/wayfarer-leathers.md]
+items: [armor/wayfarer-leathers.md, armor/scale-mail.md]
 ---

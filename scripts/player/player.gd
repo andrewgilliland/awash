@@ -163,6 +163,17 @@ func take_off_armor() -> void:
 	_write_armor_to_run()
 
 
+# Owns and puts on Armor found in a Cache, with a pickup sound and its name over the Player.
+# Returns whether it did: Armor already owned is not collected again.
+func collect_armor(armor_id: StringName) -> bool:
+	if not equipment.own_armor(armor_id):
+		return false
+	wear_armor(armor_id)
+	_sounds.play(PlayerSounds.PICKUP)
+	_level_up.call("announce", GOT % Equipment.ARMOR[armor_id].name.to_upper())
+	return true
+
+
 # Owns and takes up a Weapon found where an enemy fell, with a pickup sound and its name over the
 # Player. Returns whether it did: a Weapon already owned is not collected again.
 func collect_weapon(weapon_id: StringName) -> bool:
@@ -200,8 +211,11 @@ func collect_sub_weapon(id: StringName) -> bool:
 	return true
 
 
-# Whether the Player could carry one more of a Supply or Sub Weapon; one not owned yet fits.
+# Whether the Player could carry one more of a Supply or Sub Weapon, or take up an Armor; one not
+# owned yet fits, and an Armor owned already does not.
 func has_room_for(kind: StringName) -> bool:
+	if Equipment.ARMOR.has(kind):
+		return not equipment.owns_armor(kind)
 	if SubWeapons.KINDS.has(kind):
 		return not sub_weapons.owns(kind) or sub_weapons.count(kind) < SubWeapons.CARRY_LIMIT
 	return Supplies.KINDS.has(kind) and supplies.count(kind) < Supplies.CARRY_LIMIT
