@@ -43,6 +43,8 @@ const ROOMS := {
 	},
 }
 const SCREEN_CENTRE := Vector2(80, 72)
+# The made-up Rooms and one far off past them: 31 screens wide and 4 tall in all.
+const WIDE_SPAN := Vector2i(31, 4)
 # Where the cove and the cliffs sit on a Map centred on the cove.
 const COVE := Rect2(62, 18, 20, 18)
 const CLIFFS := Rect2(82, 18, 40, 18)
@@ -58,6 +60,9 @@ func get_tests() -> Array:
 		["Map walls each Room, with a gap at each Exit", _test_walls_with_exit_gaps],
 		["Map draws faint lines between a Room's screens", _test_screen_lines],
 		["Map marks a Boss or Rest point on its screen", _test_markers],
+		["At World zoom the whole World fits the view, wherever the Player is", _test_world_fits],
+		["At World zoom marks are small dots, with no lines between screens", _test_world_detail],
+		["Near zoom centres the current Room at half the size", _test_near_centres],
 		["The whole World shows every Room, the planned ones in outline", _test_whole_world],
 		["The whole World names each Region above its Rooms", _test_region_names],
 	]
@@ -176,6 +181,70 @@ func _test_region_names() -> bool:
 		valid = valid and coast.x == blocks.map(func(b: Rect2) -> float: return b.position.x).min()
 		valid = valid and coast.y < blocks[0].position.y and reef.x > coast.x
 	return valid
+
+
+func _test_world_fits() -> bool:
+	var rooms := _wide_rooms()
+	var visited := rooms.keys()
+	var at_cove := MapLayout.layout(rooms, &"cove", visited, SCREEN_CENTRE, VIEW_SIZE, &"world")
+	var at_far := MapLayout.layout(rooms, &"far", visited, SCREEN_CENTRE, VIEW_SIZE, &"world")
+	var view := Rect2(Vector2.ZERO, VIEW_SIZE)
+	var valid: bool = at_cove.rooms.size() == rooms.size()
+	for block: Rect2 in _blocks(at_cove):
+		valid = valid and view.encloses(block)
+	# Framed on the whole World, not on the Player: it stands still as they move.
+	valid = valid and _blocks(at_cove) == _blocks(at_far)
+	# As large as fits, about the shape of a screen.
+	var screen: Vector2 = _room_at(at_cove, &"cove", rooms).block.size
+	valid = valid and screen.x == floorf(VIEW_SIZE.x / WIDE_SPAN.x)
+	valid = valid and screen.y == floorf(screen.x * 0.9)
+	valid = valid and view.has_point(at_far.dot)
+	return valid
+
+
+func _test_world_detail() -> bool:
+	var rooms := _wide_rooms()
+	var layout := MapLayout.layout(rooms, &"cove", rooms.keys(), SCREEN_CENTRE, VIEW_SIZE, &"world")
+	var cliffs := _room_at(layout, &"cliffs", rooms)
+	var valid: bool = cliffs.lines.is_empty() and cliffs.markers.size() == 1
+	if valid:
+		valid = cliffs.markers[0].at.size == MapLayout.SMALL_MARKER_SIZE
+		valid = valid and cliffs.block.encloses(cliffs.markers[0].at)
+	# The cove's east Exit still shows as a gap in its wall.
+	var cove := _room_at(layout, &"cove", rooms)
+	var east_middle := Vector2(cove.block.end.x - 0.5, cove.block.get_center().y)
+	valid = valid and not _walled(cove, east_middle)
+	valid = valid and _walled(cove, Vector2(cove.block.position.x + 0.5, east_middle.y))
+	return valid
+
+
+func _test_near_centres() -> bool:
+	var layout := MapLayout.layout(ROOMS, &"cove", [&"cove"], SCREEN_CENTRE, VIEW_SIZE, &"near")
+	var block: Rect2 = layout.current
+	var valid := block.size == MapLayout.CELL_SIZE / 2.0
+	valid = valid and (block.get_center() - VIEW_SIZE / 2.0).length() <= 1.0
+	valid = valid and block.has_point(layout.dot)
+	return valid
+
+
+# The made-up Rooms, and a far one off past them, all built.
+static func _wide_rooms() -> Dictionary:
+	var rooms := ROOMS.duplicate(true)
+	rooms[&"reef"].planned = false
+	rooms[&"far"] = {
+		cell = WIDE_SPAN - Vector2i.ONE,
+		size = Vector2i(1, 1),
+		region = "Black Reef",
+		colour = REEF,
+		exits = [],
+		markers = {},
+	}
+	return rooms
+
+
+# The laid-out Room that is the one given, with every Room shown, in the World's order.
+static func _room_at(layout: Dictionary, room_id: StringName, rooms: Dictionary) -> Dictionary:
+	return layout.rooms[rooms.keys().find(room_id)]
 
 
 static func _blocks(layout: Dictionary) -> Array:

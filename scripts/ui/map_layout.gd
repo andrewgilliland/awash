@@ -1,11 +1,18 @@
 extends RefCounted
 
 const World := preload("res://scripts/core/world.gd")
-# One screen on the Map, keeping the screen's shape.
+# The Map's zooms, out to in: the whole World at once, then Near and Close round the Player.
+const ZOOMS: Array[StringName] = [&"world", &"near", &"close"]
+# One screen on the Map Close up, keeping the screen's shape; Near is half as large.
 const CELL_SIZE := Vector2(20, 18)
-# How wide an Exit's gap in a Room's wall is.
+const NEAR_CELL_SIZE := Vector2(10, 9)
+# How wide an Exit's gap in a Room's wall is, Close up; it shrinks with the screen, to no less
+# than the smallest gap.
 const EXIT_GAP := 6.0
+const SMALLEST_GAP := 2.0
 const MARKER_SIZE := Vector2(5, 5)
+# A Rest point or Boss on a screen too small for its mark is a dot in its colour.
+const SMALL_MARKER_SIZE := Vector2(2, 2)
 # Room around the whole World's picture, with space above for the Regions' names.
 const MARGIN := Vector2(4, 12)
 const LABEL_RISE := 3.0
@@ -17,30 +24,59 @@ const SIDES := {
 }
 
 
-# Lays out the Map around the current Room: the visited Rooms, the current Room's block, the
-# Player's dot and the region name. Rooms map each id to its cell, size, region name and colour,
-# Exits and markers, as the World lists them. Empty when the current Room is not on the Map.
+# Lays out the Map at a zoom: Near or Close round the current Room, or the whole World at once,
+# as large as fits the view. Shows the visited Rooms, the current Room's block, the Player's dot
+# and the region name. Rooms map each id to its cell, size, region name and colour, Exits and
+# markers, as the World lists them. Empty when the current Room is not on the Map.
 static func layout(
 	rooms: Dictionary,
 	current_id: StringName,
 	visited_ids: Array,
 	player_position: Vector2,
-	view_size: Vector2
+	view_size: Vector2,
+	zoom: StringName = &"close"
 ) -> Dictionary:
 	if not rooms.has(current_id):
 		return {}
 
 	var current: Dictionary = rooms[current_id]
-	var current_centre := (Vector2(current.cell) + Vector2(current.size) / 2.0) * CELL_SIZE
-	var offset := (view_size / 2.0 - current_centre).floor()
+	var cell := NEAR_CELL_SIZE if zoom == &"near" else CELL_SIZE
+	var offset: Vector2
+	if zoom == &"world":
+		var span := _span(rooms)
+		cell = _fitted_cell(span, view_size)
+		offset = ((view_size - Vector2(span.size) * cell) / 2.0 - Vector2(span.position) * cell)
+	else:
+		var current_centre := (Vector2(current.cell) + Vector2(current.size) / 2.0) * cell
+		offset = view_size / 2.0 - current_centre
+	offset = offset.floor()
 	var shown: Array = []
 	for room_id in rooms:
 		if room_id == current_id or room_id in visited_ids:
-			shown.append(_room(rooms[room_id], offset, room_id == current_id))
+			shown.append(_room(rooms[room_id], offset, room_id == current_id, cell))
 
-	var current_block := _block(current, offset)
-	var dot := current_block.position + (player_position / World.SCREEN_SIZE * CELL_SIZE).floor()
+	var current_block := _block(current, offset, cell)
+	var dot := current_block.position + (player_position / World.SCREEN_SIZE * cell).floor()
 	return {rooms = shown, current = current_block, dot = dot, region = current.region}
+
+
+# The screens every Room spans, together.
+static func _span(rooms: Dictionary) -> Rect2i:
+	var corner := Vector2i.MAX
+	var far := Vector2i.MIN
+	for room: Dictionary in rooms.values():
+		corner = corner.min(room.cell)
+		far = far.max(room.cell + room.size)
+	return Rect2i(corner, far - corner)
+
+
+# The largest screen that fits the whole span in the view, about a screen's shape, never larger
+# than Close up.
+static func _fitted_cell(span: Rect2i, view_size: Vector2) -> Vector2:
+	var shape := CELL_SIZE.y / CELL_SIZE.x
+	var width := floorf(minf(view_size.x / span.size.x, view_size.y / (span.size.y * shape)))
+	width = clampf(width, 1.0, CELL_SIZE.x)
+	return Vector2(width, maxf(1.0, floorf(width * shape)))
 
 
 # Lays out every Room at once, the planned ones too, for a picture of the whole World: each
@@ -48,16 +84,12 @@ static func layout(
 static func whole(rooms: Dictionary) -> Dictionary:
 	if rooms.is_empty():
 		return {rooms = [], labels = [], size = Vector2.ZERO}
-	var corner := Vector2i.MAX
-	var far := Vector2i.MIN
-	for room: Dictionary in rooms.values():
-		corner = corner.min(room.cell)
-		far = far.max(room.cell + room.size)
-	var offset := MARGIN - Vector2(corner) * CELL_SIZE
+	var span := _span(rooms)
+	var offset := MARGIN - Vector2(span.position) * CELL_SIZE
 	var shown: Array = []
 	var name_at := {}
 	for room: Dictionary in rooms.values():
-		var laid := _room(room, offset, false)
+		var laid := _room(room, offset, false, CELL_SIZE)
 		shown.append(laid)
 		var top_left: Vector2 = laid.block.position
 		var held: Vector2 = name_at.get(room.region, top_left)
@@ -67,31 +99,33 @@ static func whole(rooms: Dictionary) -> Dictionary:
 	var labels: Array = []
 	for region: String in name_at:
 		labels.append({text = region, at = name_at[region] - Vector2(0, LABEL_RISE)})
-	var size := Vector2(far - corner) * CELL_SIZE + MARGIN * 2.0
+	var size := Vector2(span.size) * CELL_SIZE + MARGIN * 2.0
 	return {rooms = shown, labels = labels, size = size}
 
 
-static func _room(room: Dictionary, offset: Vector2, is_current: bool) -> Dictionary:
-	var block := _block(room, offset)
+static func _room(room: Dictionary, offset: Vector2, is_current: bool, cell: Vector2) -> Dictionary:
+	var block := _block(room, offset, cell)
+	var fits_mark := cell.x >= MARKER_SIZE.x + 2.0 and cell.y >= MARKER_SIZE.y + 2.0
+	var mark_size := MARKER_SIZE if fits_mark else SMALL_MARKER_SIZE
 	var markers: Array = []
 	var room_markers: Dictionary = room.get("markers", {})
 	for kind: StringName in room_markers:
-		var screen := _screen(block, room_markers[kind])
-		var at := (screen.get_center() - MARKER_SIZE / 2.0).floor()
-		markers.append({kind = kind, at = Rect2(at, MARKER_SIZE)})
+		var screen := _screen(block, room_markers[kind], cell)
+		var at := (screen.get_center() - mark_size / 2.0).floor()
+		markers.append({kind = kind, at = Rect2(at, mark_size)})
 	return {
 		block = block,
 		colour = room.get("colour", Color.TRANSPARENT),
 		current = is_current,
 		planned = room.get("planned", false),
-		walls = _walls(room, block),
-		lines = _lines(room, block),
+		walls = _walls(room, block, cell),
+		lines = _lines(room, block, cell) if fits_mark else [],
 		markers = markers,
 	}
 
 
 # One pixel round the Room's edge, screen by screen, open in the middle where an Exit leaves.
-static func _walls(room: Dictionary, block: Rect2) -> Array:
+static func _walls(room: Dictionary, block: Rect2, cell: Vector2) -> Array:
 	var open := {}
 	for exit: Dictionary in room.get("exits", []):
 		open[[exit.screen, exit.side]] = true
@@ -104,8 +138,9 @@ static func _walls(room: Dictionary, block: Rect2) -> Array:
 				var beyond: Vector2i = screen + SIDES[side]
 				if Rect2i(Vector2i.ZERO, room_size).has_point(beyond):
 					continue
-				var edge := _edge(_screen(block, screen), side)
-				walls.append_array(_open(edge, side) if open.has([screen, side]) else [edge])
+				var edge := _edge(_screen(block, screen, cell), side)
+				var gap := maxf(SMALLEST_GAP, roundf(EXIT_GAP * cell.x / CELL_SIZE.x))
+				walls.append_array(_open(edge, side, gap) if open.has([screen, side]) else [edge])
 	return walls
 
 
@@ -122,36 +157,36 @@ static func _edge(screen: Rect2, side: StringName) -> Rect2:
 
 
 # The edge in two, with the Exit's gap in its middle.
-static func _open(edge: Rect2, side: StringName) -> Array:
+static func _open(edge: Rect2, side: StringName, gap: float) -> Array:
 	var along := 0 if side == &"north" or side == &"south" else 1
 	var length := edge.size[along]
-	var gap_start := floorf((length - EXIT_GAP) / 2.0)
+	var gap_start := floorf((length - gap) / 2.0)
 	var before := edge
 	before.size[along] = gap_start
 	var after := edge
-	after.position[along] += gap_start + EXIT_GAP
-	after.size[along] = length - gap_start - EXIT_GAP
+	after.position[along] += gap_start + gap
+	after.size[along] = length - gap_start - gap
 	return [before, after]
 
 
 # Where one of the Room's screens meets the next, inside its walls.
-static func _lines(room: Dictionary, block: Rect2) -> Array:
+static func _lines(room: Dictionary, block: Rect2, cell: Vector2) -> Array:
 	var lines: Array = []
 	var room_size: Vector2i = room.size
 	for x in range(1, room_size.x):
 		lines.append(
-			Rect2(block.position.x + x * CELL_SIZE.x, block.position.y + 1, 1, block.size.y - 2)
+			Rect2(block.position.x + x * cell.x, block.position.y + 1, 1, block.size.y - 2)
 		)
 	for y in range(1, room_size.y):
 		lines.append(
-			Rect2(block.position.x + 1, block.position.y + y * CELL_SIZE.y, block.size.x - 2, 1)
+			Rect2(block.position.x + 1, block.position.y + y * cell.y, block.size.x - 2, 1)
 		)
 	return lines
 
 
-static func _screen(block: Rect2, screen: Vector2i) -> Rect2:
-	return Rect2(block.position + Vector2(screen) * CELL_SIZE, CELL_SIZE)
+static func _screen(block: Rect2, screen: Vector2i, cell: Vector2) -> Rect2:
+	return Rect2(block.position + Vector2(screen) * cell, cell)
 
 
-static func _block(room: Dictionary, offset: Vector2) -> Rect2:
-	return Rect2(offset + Vector2(room.cell) * CELL_SIZE, Vector2(room.size) * CELL_SIZE)
+static func _block(room: Dictionary, offset: Vector2, cell: Vector2) -> Rect2:
+	return Rect2(offset + Vector2(room.cell) * cell, Vector2(room.size) * cell)

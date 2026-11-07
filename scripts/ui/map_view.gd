@@ -7,8 +7,13 @@ const RunStateScript := preload("res://scripts/core/run_state.gd")
 const PLAYER_GROUP := &"player"
 const BLINK_SECONDS := 0.4
 
+# The zoom chosen last, kept while the game runs; the Map opens on the whole World.
+static var _zoom: StringName = &"world"
+
 # Shows the current Room's region name.
 @export var region_label: Label
+# Jump zooms in and Attack out while this, the Map's button, has focus.
+@export var zoom_button: Control
 
 var _blink_time: float = 0.0
 
@@ -24,6 +29,27 @@ func _process(delta: float) -> void:
 	_blink_time += delta
 	if _dot_lit() != was_lit:
 		queue_redraw()
+
+
+# Ahead of the menu's buttons, which would take Jump's key as pressing them.
+func _input(event: InputEvent) -> void:
+	if not is_visible_in_tree() or zoom_button == null or not zoom_button.has_focus():
+		return
+	var step := 0
+	if event.is_action_pressed(&"jump"):
+		step = 1
+	elif event.is_action_pressed(&"melee_attack"):
+		step = -1
+	else:
+		return
+	get_viewport().set_input_as_handled()
+	var at := clampi(MapLayout.ZOOMS.find(_zoom) + step, 0, MapLayout.ZOOMS.size() - 1)
+	_zoom = MapLayout.ZOOMS[at]
+	queue_redraw()
+
+
+func zoom() -> StringName:
+	return _zoom
 
 
 func _draw() -> void:
@@ -51,7 +77,7 @@ func _layout() -> Dictionary:
 		rooms[map_room_id] = map_room(map_room_id)
 		if map_room_id == room_id or (run != null and run.has_visited_room(map_room_id)):
 			visited.append(map_room_id)
-	return MapLayout.layout(rooms, room_id, visited, _player_position(), size)
+	return MapLayout.layout(rooms, room_id, visited, _player_position(), size, _zoom)
 
 
 # A Room as the Map lays it out, from the World: as it is, or as the World's plan lays it out.
