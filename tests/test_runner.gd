@@ -145,13 +145,30 @@ func _init() -> void:
 	quit(0)
 
 
-# Runs every test each file gives, built with the tree's root when it is given one.
+# Runs every test each file gives, built with the tree's root when it is given one. A file that
+# does not load counts as a failure, so a suite that stops parsing can never pass by running
+# nothing.
 func _run_suites(paths: Array[String], tree_root: Window = null) -> void:
 	for path in paths:
-		var script := load(path) as GDScript
-		var suite: RefCounted = script.new(tree_root) if tree_root != null else script.new()
+		var suite := _load_suite(path, tree_root)
+		if suite == null:
+			_failures += 1
+			push_error("FAIL: suite %s did not load; its tests did not run" % path)
+			continue
 		for test: Array in suite.call("get_tests"):
 			_run_test(test[0], test[1])
+
+
+# The suite at the path, or null when it does not parse, cannot be built or gives no tests. Its
+# own function, so an error building it ends only this call and not the run of the rest.
+func _load_suite(path: String, tree_root: Window) -> Object:
+	var script := load(path) as GDScript
+	if script == null or not script.can_instantiate():
+		return null
+	var suite: Object = script.new(tree_root) if tree_root != null else script.new()
+	if suite == null or not suite.has_method("get_tests"):
+		return null
+	return suite
 
 
 func _run_test(name: String, test_callable: Callable) -> void:
