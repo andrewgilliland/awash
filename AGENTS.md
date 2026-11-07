@@ -30,6 +30,7 @@ This file provides guidance for coding agents working in this repository.
 - Tests: `./scripts/quality/test.sh`
 - Playtests: `./scripts/quality/playtest.sh`
 - World editor: `npm run world-editor` (local only, at `localhost:5174`); its typecheck and tests: `npm run world-editor:test` (run `npm ci --prefix tools/world-editor` once first)
+- Codex: `npm run codex` (local only, at `localhost:5175`); its typecheck and tests: `npm run codex:test` (run `npm ci --prefix tools/codex` once first)
 
 ## Pre-commit
 
