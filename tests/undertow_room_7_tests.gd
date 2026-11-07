@@ -2,6 +2,7 @@ extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/undertow_7.tscn"
 const RoomReach := preload("res://tests/room_reach.gd")
+const RoomCaches := preload("res://tests/room_caches.gd")
 # Three screens wide: a shallow lake at the bottom of the Undertow, west to a sealed temple door.
 const ROOM_SIZE := Vector2i(480, 144)
 const TILE := 16
@@ -25,6 +26,7 @@ func get_tests() -> Array:
 		["Undertow lake's shallows run between sand banks", _test_shallows],
 		["Undertow lake runs west to the sealed door, wading its shallows", _test_runs_west],
 		["Undertow lake leads east to the stair; its west end is shut", _test_exits],
+		["A chest of two Glowroe waits on the west bank, by the sealed door", _test_chest],
 	]
 
 
@@ -91,5 +93,22 @@ func _test_exits() -> bool:
 	valid = valid and bounds != null and bounds.collision_layer == WORLD_LAYER
 	var west := bounds.get_node_or_null("West") as CollisionShape2D if valid else null
 	valid = valid and west != null and west.position.x < 0.0
+	room.free()
+	return valid
+
+
+# On the dry sand west of the first shallows, where the lake ends at the door.
+func _test_chest() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var chest := room.get_node_or_null("Chest") as Node2D
+	var valid := RoomCaches.holds(chest, &"lake_chest", &"glowroe", 2, RoomCaches.CHEST_SHEET)
+	if valid:
+		var terrain := room.get_node("Terrain") as TileMapLayer
+		valid = RoomCaches.on_floor(terrain, chest, WEST_END.y)
+		var below := Vector2i(chest.position / TILE)
+		valid = valid and not RoomReach.is_water(terrain, below)
+		valid = valid and below.x < (SHALLOWS[0] as Rect2i).position.x
 	room.free()
 	return valid

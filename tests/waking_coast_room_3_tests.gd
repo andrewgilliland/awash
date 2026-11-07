@@ -2,6 +2,7 @@ extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/waking_coast_3.tscn"
 const RoomReach := preload("res://tests/room_reach.gd")
+const RoomCaches := preload("res://tests/room_caches.gd")
 # Two screens tall.
 const ROOM_SIZE := Vector2i(160, 288)
 const CELLS := Rect2i(0, 0, 10, 18)
@@ -51,8 +52,7 @@ const LANDMARKS := {
 	},
 	&"Props":
 	{
-		# a crate on the high ledge, Tidefen's bell on the cliff top
-		Vector2i(5, 0): Vector2i(10, 3),
+		# Tidefen's bell on the cliff top
 		Vector2i(8, 3): Vector2i(0, 0),
 	},
 }
@@ -63,6 +63,7 @@ func get_tests() -> Array:
 		["Salt cliffs Room lays out two screens tall", _test_lays_out_two_screens_tall],
 		["Salt cliffs climb one jump at a time to the top", _test_climb_reaches_top],
 		["Salt cliffs high ledge waits for a double jump", _test_high_ledge_out_of_reach],
+		["A crate Cache of two Meat Pies waits on the high ledge", _test_high_crate],
 		["Salt cliffs west Entry stands on the beach", _test_west_entry_on_beach],
 		["Salt cliffs lead east from the top and back west from the beach", _test_edges],
 		["A Scavenger hunts the salt cliffs' tidal pool", _test_scavenger_in_pool],
@@ -239,3 +240,23 @@ static func _vertical_span(shape_node: CollisionShape2D) -> Vector2:
 	var owner_y := (shape_node.get_parent() as Node2D).position.y
 	var top := owner_y + shape_node.position.y - rectangle.size.y / 2.0
 	return Vector2(top, top + rectangle.size.y)
+
+
+# The crate on the high ledge is a Cache, opened once the double jump reaches it; the crate drawn
+# in the Props layer is gone.
+func _test_high_crate() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var crate := room.get_node_or_null("HighCrate") as Node2D
+	var valid := RoomCaches.holds(
+		crate, &"high_ledge_crate", &"meat_pie", 2, RoomCaches.CRATE_SHEET
+	)
+	if valid:
+		var terrain := room.get_node("Terrain") as TileMapLayer
+		valid = RoomCaches.on_floor(terrain, crate, HIGH_LEDGE.y)
+		var props := room.get_node("Props") as TileMapLayer
+		valid = valid and props.get_cell_source_id(Vector2i(5, 0)) == -1
+		valid = valid and props.get_cell_source_id(Vector2i(6, 0)) == -1
+	room.free()
+	return valid

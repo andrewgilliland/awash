@@ -32,6 +32,10 @@ _Avoid_: Action button, use, talk
 Anything Interact can use, such as Mara. It reports being used and shows a bobbing arrow above itself while the Player is in reach; what using it does is up to its owner.
 _Avoid_: Usable, trigger, hotspot
 
+**Sign**:
+Something in a Room the Player looks at with Interact, such as the lake's sealed temple door, which shows a few lines in the Dialogue box in its speaker's name, "???" for Vael's own thoughts.
+_Avoid_: Notice, inspectable, examine point
+
 **Charge**:
 The Player state melee goes on into when it is still held as the slash it pressed finishes: the sword is held out ready, movement continues, and facing is locked. Let go before it is full and it just ends, with no second swing.
 _Avoid_: Wind-up, hold
