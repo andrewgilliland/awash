@@ -93,6 +93,19 @@ ul.list a:hover { border-color: var(--line-strong); }
 ul.list a[aria-current="page"] { border-color: var(--accent); background: var(--panel-2); }
 ul.list .thumb { width: 24px; height: 24px; flex: none; display: grid; place-items: center; }
 ul.list .name { flex: 1; }
+ul.list li.group {
+  display: flex;
+  justify-content: space-between;
+  margin: 12px 6px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid var(--line-strong);
+}
+ul.list li.group:first-child { margin-top: 0; }
+ul.list li.group .count { color: var(--muted); }
 .planned { color: var(--muted); }
 
 .badge { font-size: 10px; font-weight: 700; padding: 1px 5px; border: 1px solid var(--line-strong); color: var(--muted); }

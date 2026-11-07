@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatRoute, frameRect, parseRoute, shown } from "../src/select";
+import { byKind, formatRoute, frameRect, parseRoute, shown } from "../src/select";
 
 describe("where the page is", () => {
   it("reads a section and an entry from the address, defaulting to the enemies", () => {
@@ -31,6 +31,48 @@ describe("which entries the list shows", () => {
   it("narrows them by a search, in any case, anywhere in the name", () => {
     expect(shown(entries, "all", "CRAB").map((entry) => entry.name)).toEqual(["Silt Crab"]);
     expect(shown(entries, "all", " s ").length).toBe(3);
+  });
+});
+
+describe("the items, split by type", () => {
+  const items = [
+    { name: "Meat Pie", kind: "Supply" },
+    { name: "Scale Mail", kind: "Armor" },
+    { name: "Bomb", kind: "Sub Weapon" },
+    { name: "Bracer", kind: "Accessory" },
+    { name: "Short Sword", kind: "Weapon" },
+    { name: "Brinecap", kind: "Supply" },
+    { name: "Throwing Knives", kind: "Ammunition" },
+    { name: "Tidewalk Relic", kind: "Traversal Relic" },
+    { name: "Worn Leather Tunic", kind: "Armor" },
+    { name: "Drowned Key", kind: "Key" },
+  ];
+  const groups = byKind(items);
+
+  it("puts the Equipment first, then what you carry, then what you use up, then the rest A to Z", () => {
+    expect(groups.map((group) => group.title)).toEqual([
+      "Weapons",
+      "Armor",
+      "Accessories",
+      "Sub Weapons",
+      "Ammunition",
+      "Supplies",
+      "Keys",
+      "Traversal Relics",
+    ]);
+  });
+
+  it("keeps each type's items in the order they came", () => {
+    expect(groups.find((group) => group.title === "Armor")?.entries.map((item) => item.name)).toEqual([
+      "Scale Mail",
+      "Worn Leather Tunic",
+    ]);
+    expect(groups.find((group) => group.title === "Supplies")?.entries.length).toBe(2);
+  });
+
+  it("leaves out a type with nothing in it", () => {
+    expect(byKind([{ name: "Bomb", kind: "Sub Weapon" }]).map((group) => group.title)).toEqual(["Sub Weapons"]);
+    expect(byKind([])).toEqual([]);
   });
 });
 
