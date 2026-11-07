@@ -2,6 +2,17 @@ extends RefCounted
 
 const SubWeapons := preload("res://scripts/items/sub_weapons.gd")
 const BOMB := &"bomb"
+# Where a Bomb's body is drawn, below its fuse: on its icon and its lit frames, and painted on the
+# bomb crate's side.
+const BOMB_BODIES := {
+	"res://assets/items/bomb.png": Rect2i(0, 2, 8, 6),
+	"res://assets/items/bomb_lit.png": Rect2i(0, 2, 16, 6),
+	"res://assets/world/bomb_crate.png": Rect2i(14, 23, 4, 4),
+}
+# Dark iron is grey: no more colour in it than this. A pixel darker than black's limit shows no
+# colour at all, whatever its tint.
+const IRON_SATURATION := 0.3
+const BLACK_VALUE := 0.2
 
 
 func get_tests() -> Array:
@@ -14,7 +25,28 @@ func get_tests() -> Array:
 		["Spending one needs one carried", _test_spend],
 		["Sub Weapons start from what the Run carried", _test_starts_from_run],
 		["A refill tops up every owned Sub Weapon to its limit", _test_refill],
+		["A Bomb is drawn in dark iron, not brown clay", _test_bomb_dark],
 	]
+
+
+func _test_bomb_dark() -> bool:
+	var valid := true
+	for path: String in BOMB_BODIES:
+		var image := (load(path) as Texture2D).get_image()
+		image.decompress()
+		var body: Rect2i = BOMB_BODIES[path]
+		var drawn := 0
+		for y in range(body.position.y, body.end.y):
+			for x in range(body.position.x, body.end.x):
+				var pixel := image.get_pixel(x, y)
+				if pixel.a == 0.0:
+					continue
+				drawn += 1
+				if pixel.v >= BLACK_VALUE and pixel.s > IRON_SATURATION:
+					push_error("%s is coloured at (%d, %d): %s" % [path, x, y, pixel.to_html()])
+					valid = false
+		valid = valid and drawn > 0
+	return valid
 
 
 func _test_refill() -> bool:
