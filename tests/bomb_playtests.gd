@@ -12,6 +12,9 @@ const BOMB := &"bomb"
 const PIER_Y := 80.0
 const ON_PIER := Vector2(840, 60)
 const CRATE_X := 790.0
+# The crate's Bombs land within this of it, given long enough.
+const SPILL_REACH := 14.0
+const LAND_FRAMES := 60
 # Back from the Shortcut's wall, out of the sword's reach of it.
 const BACK_FROM_WALL_X := 100.0
 # In the sea cave, back from the rock across the Shortcut to lob a Bomb at it, and up against it.
@@ -33,14 +36,15 @@ func _init(harness: SceneTree) -> void:
 
 func get_playtests() -> Array:
 	return [
-		["Player opens Tidefen's bomb crate and lobs a Bomb onto the pier", _crate_and_lob],
+		["Player opens the bomb crate, gathers its Bombs, lobs one onto the pier", _crate_and_lob],
 		["A Bomb's blast breaks the Shortcut's wall", _bomb_breaks_wall],
 		["A Bomb breaks the sea cave's rock, and the Shortcut leads on", _bomb_breaks_rock],
 		["A Charged Attack knocks off the sea cave's rock", _charge_knocks_rock],
 	]
 
 
-# Set down on the pier, the Player walks to the bomb crate and opens it, then throws a Bomb
+# Set down on the pier, the Player walks to the bomb crate, opens it and gathers the Bombs it
+# spills, then throws a Bomb
 # east: it lands and rests on the pier's planks, then bursts and is gone.
 func _crate_and_lob() -> bool:
 	var player: CharacterBody2D = await _harness.call(
@@ -53,7 +57,10 @@ func _crate_and_lob() -> bool:
 	await _harness.call("_frames_until", player.is_on_floor, 60)
 	await _harness.call("_walk_to_x", player, CRATE_X)
 	await _harness.call("_tap", &"interact")
-	await _harness.call("_frames", 10)
+	await _harness.call("_frames", LAND_FRAMES)
+	# The Bombs land spread out either side of the crate, gathered by walking over them.
+	for x in [CRATE_X - SPILL_REACH, CRATE_X + SPILL_REACH, CRATE_X]:
+		await _harness.call("_walk_to_x", player, x)
 	var sub_weapons = player.get("sub_weapons")
 	var valid: bool = sub_weapons.held == BOMB and sub_weapons.count(BOMB) == 5
 	await _harness.call("_tap", &"move_right")

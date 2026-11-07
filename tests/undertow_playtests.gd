@@ -34,6 +34,8 @@ const LAKE_FLOOR_Y := 96.0
 # at a time: [direction, launch x, height landed on].
 const DEAD_END_FLOOR_Y := 240.0
 const CACHE_X := 268.0
+# The wreck's Cache itself, where what it spills lands.
+const SPILL_X := 280.0
 const DEAD_END_CLIMB := [
 	[-1, 256.0, 208.0],
 	[-1, 200.0, 176.0],
@@ -239,7 +241,7 @@ func _pools_and_back() -> bool:
 
 
 # From the pools east into the dead end, off its ledge down to the wreck, Interact with the Cache
-# for its Brinecaps, then back up the ledges and out west to the pools.
+# and take the Brinecaps it spills, then back up the ledges and out west to the pools.
 func _opens_cache() -> bool:
 	var player: CharacterBody2D = await _harness.call(
 		"_enter_room", &"undertow_4", &"east", POOLS_PATH
@@ -257,8 +259,10 @@ func _opens_cache() -> bool:
 	await _harness.call("_walk_to_x", player, CACHE_X)
 	valid = absf(player.global_position.y - DEAD_END_FLOOR_Y) < 1.0
 	await _harness.call("_tap", &"interact")
-	await _harness.call("_frames", 10)
-	valid = valid and player.get("supplies").count(&"brinecap") == 2
+	await _harness.call("_walk_to_x", player, SPILL_X)
+	var supplies = player.get("supplies")
+	var both := func() -> bool: return supplies.count(&"brinecap") == 2
+	valid = valid and await _harness.call("_frames_until", both, 60)
 	valid = valid and run.call("has_taken_cache", &"wreck_chest")
 	for step in DEAD_END_CLIMB:
 		if not valid:

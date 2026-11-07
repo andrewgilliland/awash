@@ -22,3 +22,16 @@ static func on_floor(terrain: TileMapLayer, cache: Node2D, row: int) -> bool:
 	var below := Vector2i(cache.position / TILE)
 	var valid := terrain.get_cell_source_id(below) != -1 and below.y == row
 	return valid and terrain.get_cell_source_id(below + Vector2i.UP) == -1
+
+
+# Nothing drawn on the sheet runs on past either side of the frame: the column just outside it,
+# left and right, is clear along the frame's height. Frames on a sheet may sit one on another,
+# so above and below are not asked.
+static func drawn_whole(sheet: Image, frame: Rect2i) -> bool:
+	for x in [frame.position.x - 1, frame.end.x]:
+		if x < 0 or x >= sheet.get_width():
+			continue
+		for y in range(frame.position.y, frame.end.y):
+			if sheet.get_pixel(x, y).a > 0.0:
+				return false
+	return true

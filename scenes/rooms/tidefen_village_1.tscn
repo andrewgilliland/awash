@@ -278,7 +278,6 @@ position = Vector2(790, 80)
 cache_id = &"bomb_crate"
 kind = &"bomb"
 count = 5
-collect_method = &"collect_sub_weapon"
 shut_frame = Rect2(0, 0, 32, 32)
 open_frame = Rect2(32, 0, 32, 32)
 
