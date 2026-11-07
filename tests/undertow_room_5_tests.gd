@@ -2,6 +2,7 @@ extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/undertow_5.tscn"
 const RoomReach := preload("res://tests/room_reach.gd")
+const RoomEnemies := preload("res://tests/room_enemies.gd")
 # Two screens square: east of the pools, a dead end down to a sunken wreck and its Cache.
 const ROOM_SIZE := Vector2i(320, 288)
 const SCREEN_HEIGHT := 144
@@ -25,6 +26,7 @@ func get_tests() -> Array:
 		["Undertow dead end drops to the wreck and climbs back up", _test_both_ways],
 		["The dead end's Cache lies in the wreck, on its floor", _test_cache_on_floor],
 		["Undertow dead end leads only west, to the pools", _test_only_west],
+		["A Silt Crab clings under a ledge over the wreck's floor", _test_silt_crab],
 	]
 
 
@@ -96,5 +98,22 @@ func _test_only_west() -> bool:
 	valid = valid and bounds != null and bounds.collision_layer == WORLD_LAYER
 	var entry := room.get_node_or_null("Entries/west") as Marker2D
 	valid = valid and entry != null and entry.position == WEST_ENTRY
+	room.free()
+	return valid
+
+
+func _test_silt_crab() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var crab := room.get_node_or_null("Enemies/SiltCrab") as Node2D
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var valid := RoomEnemies.clings(terrain, crab) == FLOOR.y
+	if valid:
+		var x := crab.position.x
+		var reach := RoomEnemies.CRAB_NOTICE
+		valid = RoomEnemies.clear_of_entries(room, x - reach, x + reach)
+		var cache := room.get_node("Cache") as Node2D
+		valid = valid and absf(cache.position.x - x) > reach
 	room.free()
 	return valid

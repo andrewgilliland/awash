@@ -46,6 +46,7 @@ Each linked file stores the entity's `name`, `type`, `category`, `size`, `moveme
 ### Enemies
 
 - [Lurelight](lurelight.md)
+- [Silt Crab](silt-crab.md)
 
 ### Boss
 

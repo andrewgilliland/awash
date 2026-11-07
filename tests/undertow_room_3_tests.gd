@@ -32,6 +32,7 @@ func get_tests() -> Array:
 		["Undertow passage leads west to the sea cave and east to the hall", _test_exits],
 		["A Wraith haunts the passage under its arches", _test_wraith],
 		["A chest of two Mourning Salts stands under the middle arch", _test_chest],
+		["A Silt Crab clings under the colonnade, west of the Wraith", _test_silt_crab],
 	]
 
 
@@ -125,5 +126,24 @@ func _test_chest() -> bool:
 		valid = RoomCaches.on_floor(terrain, chest, FLOOR_ROW)
 		var column := int(chest.position.x / TILE)
 		valid = valid and column >= MIDDLE_ARCH.x and column <= MIDDLE_ARCH.y
+	room.free()
+	return valid
+
+
+func _test_silt_crab() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var crab := room.get_node_or_null("Enemies/SiltCrab") as Node2D
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var valid := RoomEnemies.clings(terrain, crab) == FLOOR_ROW
+	if valid:
+		var x := crab.position.x
+		var reach := RoomEnemies.CRAB_NOTICE
+		valid = RoomEnemies.clear_of_entries(room, x - reach, x + reach)
+		var wraith := room.get_node("Enemies/Wraith") as Node2D
+		valid = valid and x + reach < wraith.get("haunt_left")
+		var chest := room.get_node("Chest") as Node2D
+		valid = valid and absf(chest.position.x - x) > reach
 	room.free()
 	return valid

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=4]
+[gd_scene load_steps=10 format=4]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_main"]
 
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="5_player"]
 
 [ext_resource type="PackedScene" path="res://scenes/world/cache.tscn" id="6_cache"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/silt_crab.tscn" id="enemy_silt_crab"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_edge"]
 size = Vector2(8, 144)
@@ -39,6 +40,9 @@ position = Vector2(280, 240)
 cache_id = &"wreck_chest"
 
 [node name="Enemies" type="Node2D" parent="."]
+
+[node name="SiltCrab" parent="Enemies" instance=ExtResource("enemy_silt_crab")]
+position = Vector2(168, 200)
 
 [node name="Bounds" type="StaticBody2D" parent="."]
 collision_mask = 0
