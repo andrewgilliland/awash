@@ -241,7 +241,8 @@ func _pools_and_back() -> bool:
 
 
 # From the pools east into the dead end, off its ledge down to the wreck, Interact with the Cache
-# and take the Brinecaps it spills, then back up the ledges and out west to the pools.
+# and take the Scale Mail it spills, worn at once, then back up the ledges and out west to the
+# pools.
 func _opens_cache() -> bool:
 	var player: CharacterBody2D = await _harness.call(
 		"_enter_room", &"undertow_4", &"east", POOLS_PATH
@@ -260,10 +261,10 @@ func _opens_cache() -> bool:
 	valid = absf(player.global_position.y - DEAD_END_FLOOR_Y) < 1.0
 	await _harness.call("_tap", &"interact")
 	await _harness.call("_walk_to_x", player, SPILL_X)
-	var supplies = player.get("supplies")
-	var both := func() -> bool: return supplies.count(&"brinecap") == 2
-	valid = valid and await _harness.call("_frames_until", both, 60)
-	valid = valid and run.call("has_taken_cache", &"wreck_chest")
+	var equipment = player.get("equipment")
+	var worn := func() -> bool: return equipment.armor == &"scale_mail"
+	valid = valid and await _harness.call("_frames_until", worn, 60)
+	valid = valid and run.call("has_taken_cache", &"wreck_mail")
 	for step in DEAD_END_CLIMB:
 		if not valid:
 			break

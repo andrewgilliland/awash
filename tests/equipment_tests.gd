@@ -4,6 +4,7 @@ const Equipment := preload("res://scripts/items/equipment.gd")
 const TUNIC := &"worn_leather_tunic"
 const SHORT_SWORD := &"short_sword"
 const OATHBLADE := &"oathblade"
+const SCALE_MAIL := &"scale_mail"
 
 
 func get_tests() -> Array:
@@ -23,6 +24,8 @@ func get_tests() -> Array:
 		["Every Weapon has an icon and a sheet to be held in hand", _test_every_weapon_has_icon],
 		["The Short Sword adds no Attack; the Oathblade adds 5", _test_attack],
 		["A Weapon is owned once, and only a known one", _test_own_weapon],
+		["Scale Mail is Armor that gives 3 Defense", _test_scale_mail],
+		["Armor is owned once, and only a known one", _test_own_armor],
 		["Only an owned Weapon can be held", _test_hold_owned_only],
 		["Equipment starts from the Weapons the Run carried", _test_starts_from_run_weapons],
 		["The Defense with any Armor, or none, can be read", _test_defense_with],
@@ -128,6 +131,23 @@ func _test_attack() -> bool:
 	equipment.own_weapon(OATHBLADE)
 	equipment.hold(OATHBLADE)
 	return valid and equipment.attack() == 5 and equipment.weapon_name() == "Oathblade"
+
+
+func _test_scale_mail() -> bool:
+	var equipment := Equipment.new()
+	var valid := equipment.own_armor(SCALE_MAIL) and equipment.wear(SCALE_MAIL)
+	valid = valid and equipment.defense() == 3 and equipment.armor_name() == "Scale Mail"
+	return valid and equipment.cost_after_defense(10, equipment.defense()) == 7
+
+
+func _test_own_armor() -> bool:
+	var equipment := Equipment.new()
+	var valid := not equipment.owns_armor(SCALE_MAIL)
+	valid = valid and equipment.own_armor(SCALE_MAIL) and equipment.owns_armor(SCALE_MAIL)
+	valid = valid and not equipment.own_armor(SCALE_MAIL)
+	valid = valid and not equipment.own_armor(&"nothing")
+	# Owning it does not put it on.
+	return valid and equipment.owned == [TUNIC, SCALE_MAIL] and equipment.armor == TUNIC
 
 
 func _test_own_weapon() -> bool:

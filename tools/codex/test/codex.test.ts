@@ -109,6 +109,8 @@ describe("the Codex's items", () => {
     expect(item("oathblade")?.effect).toBe("Attack +5");
     expect(item("oathblade")?.droppedBy).toEqual([{ enemy: "wraith", chance: 0.1 }]);
     expect(item("worn_leather_tunic")?.kind).toBe("Armor");
+    expect(item("scale_mail")).toMatchObject({ kind: "Armor", effect: "Defense +3", planned: false });
+    expect(item("scale_mail")?.caches).toEqual([{ id: "wreck_mail", room: "undertow_5", count: 1 }]);
   });
 
   it("lists items only in the docs as planned, one of their kind", () => {
@@ -144,7 +146,7 @@ describe("the Codex's Regions", () => {
     expect(undertow?.rooms.length).toBe(8);
     expect(undertow?.enemies).toEqual(expect.arrayContaining(["lurelight", "silt_crab", "wraith"]));
     expect(undertow?.caches.map((cache) => cache.id)).toEqual(
-      expect.arrayContaining(["passage_chest", "lake_chest", "wreck_chest"]),
+      expect.arrayContaining(["passage_chest", "lake_chest", "wreck_mail"]),
     );
     const tidefen = codex.regions.find((region) => region.name === "Tidefen Village");
     expect(tidefen?.restPoints).toEqual(["tidefen_village_1"]);
