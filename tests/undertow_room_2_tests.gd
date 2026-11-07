@@ -30,6 +30,7 @@ func get_tests() -> Array:
 		["Temple hall walls its east edge above the tunnel", _test_east_wall],
 		["Temple hall leads west to the passage and east to the tunnel", _test_exits],
 		["A Wraith haunts the temple hall's lower floor", _test_wraith],
+		["A Silt Crab clings over the temple hall's upper floor", _test_silt_crab],
 	]
 
 
@@ -149,5 +150,22 @@ func _test_wraith() -> bool:
 		var left: float = wraith.get("haunt_left")
 		var right: float = wraith.get("haunt_right")
 		valid = valid and RoomEnemies.clear_of_entries(room, left, right)
+	room.free()
+	return valid
+
+
+func _test_silt_crab() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var crab := room.get_node_or_null("Enemies/SiltCrab") as Node2D
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	# Over the floor the passage leads on to, at its west Entry's height.
+	var valid := RoomEnemies.clings(terrain, crab) == int(WEST_ENTRY.y / TILE)
+	if valid:
+		var x := crab.position.x
+		valid = RoomEnemies.clear_of_entries(
+			room, x - RoomEnemies.CRAB_NOTICE, x + RoomEnemies.CRAB_NOTICE
+		)
 	room.free()
 	return valid

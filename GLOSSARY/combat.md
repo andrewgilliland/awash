@@ -56,6 +56,10 @@ _Avoid_: Core, weak point, heart
 The Undertow's pool enemy: a fish lurking under the dark water, its lure a pale rune light. It drifts toward the Player, dims, then snaps straight up and lies stranded at the surface, open to a single hit.
 _Avoid_: Angler, anglerfish, eel, lure fish
 
+**Silt Crab**:
+The Undertow's ceiling enemy: a pale cave crab clinging to its low ceilings. As the Player passes under it, it shakes silt down, then drops on them; it lies stunned where it lands, then scuttles after them. A hit while it still clings knocks it down harmlessly.
+_Avoid_: Dropper, ceiling crab, cave crab
+
 **Boss**:
 An enemy that guards a Region's end, with its own Health bar along the bottom of the screen while it fights. Defeating it opens a Gate, and it stays defeated for the Run, through the Player's own defeat; a new Run brings it back.
 _Avoid_: Miniboss, guardian (as the general term)

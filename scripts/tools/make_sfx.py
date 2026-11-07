@@ -187,6 +187,17 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     ),
     # Defeated: it gurgles as it sinks.
     "lurelight_defeat": lambda: mix(bubbles(7, 0.05, 140, 380, seed=33), sweep(0.5, 300, 80, duty=0.5)),
+    # The Silt Crab shaking on the ceiling: dry clicks of its legs and silt trickling, over the
+    # whole shake, so its drop can be heard coming.
+    "silt_crab_skitter": lambda: mix(crackle(0.5, 40, seed=60), noise(0.5, 2500, 1200, seed=61)),
+    # It lands: a dull thud of shell on stone.
+    "silt_crab_thud": lambda: mix(noise(0.12, 1200, 200, seed=62), sweep(0.1, 140, 60, duty=0.5)),
+    # Struck: a hard crack of shell and a click.
+    "silt_crab_hurt": lambda: mix(noise(0.07, 7000, 2000, seed=63), sweep(0.08, 700, 350, duty=0.125)),
+    # Defeated: its shell splits and its legs rattle still.
+    "silt_crab_defeat": lambda: mix(
+        noise(0.2, 4000, 500, seed=64), [0.0] * int(RATE * 0.1) + crackle(0.4, 22, seed=65)
+    ),
     # Nameless Warden: a deep swell as it sets its shield, then the move it makes.
     "warden_windup": lambda: growl(0.6, 70, 140, tremolo_hz=12),
     # The shield bash: a heavy rush.
@@ -246,6 +257,7 @@ HOMES = {
     "storm_wisp_": "assets/enemies/storm_wisp",
     "wraith_": "assets/enemies/wraith",
     "lurelight_": "assets/enemies/lurelight",
+    "silt_crab_": "assets/enemies/silt_crab",
     "warden_": "assets/enemies/nameless_warden",
     "ui_": "assets/ui",
     "bomb_": "assets/items",

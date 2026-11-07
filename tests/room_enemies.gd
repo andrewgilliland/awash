@@ -7,6 +7,12 @@ const RoomReach := preload("res://tests/room_reach.gd")
 const TILE := 16
 # How far above its floor a Wraith floats.
 const WRAITH_HOVER := 16.0
+# A Silt Crab's feet are this far above its middle while it clings; how close sideways it notices
+# a Player below; and the most it may drop to the floor under it.
+const CRAB_FEET := 8.0
+const CRAB_NOTICE := 24.0
+const CRAB_MOST_DROP := 6
+const SILT_CRAB_SCENE := "res://scenes/enemies/silt_crab.tscn"
 # How finely a span is walked, in pixels.
 const STEP := 8.0
 
@@ -51,6 +57,23 @@ static func haunts_floor(terrain: TileMapLayer, wraith: Node2D) -> bool:
 			return false
 		x += STEP
 	return true
+
+
+# A Silt Crab clings: Terrain right above its feet, open air where it hangs, and a floor below it,
+# no more than its most drop down, to land on. Returns that floor's row, or -1.
+static func clings(terrain: TileMapLayer, crab: Node2D) -> int:
+	if crab == null or crab.scene_file_path != SILT_CRAB_SCENE:
+		return -1
+	var column := int(crab.position.x / TILE)
+	var ceiling := int((crab.position.y - CRAB_FEET - 1.0) / TILE)
+	if terrain.get_cell_source_id(Vector2i(column, ceiling)) == -1:
+		return -1
+	if not is_equal_approx(crab.position.y - CRAB_FEET, (ceiling + 1) * TILE):
+		return -1
+	for row in range(ceiling + 1, ceiling + 2 + CRAB_MOST_DROP):
+		if terrain.get_cell_source_id(Vector2i(column, row)) != -1:
+			return row if row > ceiling + 1 else -1
+	return -1
 
 
 # Keeps two tiles clear of every Entry, so a Player arriving never lands in its reach.
