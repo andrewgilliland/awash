@@ -32,6 +32,32 @@ export function shown<T extends { name: string; planned?: boolean }>(entries: T[
   });
 }
 
+// The Items list's types: the Equipment first, then what you carry, then what you use up. Any other
+// type follows, A to Z.
+const KIND_ORDER = ["Weapon", "Armor", "Accessory", "Sub Weapon", "Ammunition", "Supply"];
+const PLURALS: Record<string, string> = {
+  Weapon: "Weapons",
+  Armor: "Armor",
+  Accessory: "Accessories",
+  "Sub Weapon": "Sub Weapons",
+  Ammunition: "Ammunition",
+  Supply: "Supplies",
+};
+
+export type Group<T> = { kind: string; title: string; entries: T[] };
+
+// Items split by their type, in the list's order, each keeping its items in the order they came.
+export function byKind<T extends { kind: string }>(items: T[]): Group<T>[] {
+  const groups = new Map<string, T[]>();
+  for (const item of items) {
+    groups.set(item.kind, [...(groups.get(item.kind) ?? []), item]);
+  }
+  const rank = (kind: string) => (KIND_ORDER.includes(kind) ? KIND_ORDER.indexOf(kind) : KIND_ORDER.length);
+  return [...groups.keys()]
+    .sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))
+    .map((kind) => ({ kind, title: PLURALS[kind] ?? `${kind}s`, entries: groups.get(kind) ?? [] }));
+}
+
 export type Rect = { x: number; y: number; w: number; h: number };
 
 // Where a frame lies on its sheet: by a frame's size along one row, by a grid across and down, or

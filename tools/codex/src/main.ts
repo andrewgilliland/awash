@@ -4,7 +4,7 @@
 import "@fontsource/jetbrains-mono/400.css";
 import "@fontsource/jetbrains-mono/700.css";
 import type { Character, Codex, Enemy, Item, Region, Sprite } from "../server/codex";
-import { formatRoute, frameCount, frameRect, parseRoute, shown, SECTIONS, type Filter, type Route, type Section } from "./select";
+import { byKind, formatRoute, frameCount, frameRect, parseRoute, shown, SECTIONS, type Filter, type Route, type Section } from "./select";
 
 const SCALE = 4;
 const THUMB = 24;
@@ -71,6 +71,8 @@ interface Listed {
   id: string;
   name: string;
   planned: boolean;
+  // An item's type, which the Items list is split by.
+  kind?: string;
   thumb: Node | null;
   badges: HTMLElement[];
 }
@@ -90,8 +92,9 @@ function listed(section: Section): Listed[] {
         id: item.id,
         name: item.name,
         planned: item.planned,
+        kind: item.kind,
         thumb: item.icon ? icon(item.icon, 16) : null,
-        badges: [badge(item.kind)],
+        badges: [],
       }));
     case "characters":
       return codex.characters.map((character) => ({
@@ -161,25 +164,33 @@ function showSidebar(route: Route): void {
 
 function showList(route: Route, list: HTMLElement): void {
   const entries = shown(listed(route.section), route.section === "regions" ? "all" : filter, query);
-  list.replaceChildren(
-    ...entries.map((entry) =>
+  const row = (entry: Listed) =>
+    el(
+      "li",
+      {},
       el(
-        "li",
-        {},
-        el(
-          "a",
-          {
-            href: formatRoute({ section: route.section, id: entry.id }),
-            ariaCurrent: entry.id === route.id ? "page" : null,
-          },
-          el("span", { className: "thumb" }, entry.thumb),
-          el("span", { className: `name ${entry.planned ? "planned" : ""}` }, entry.name),
-          ...entry.badges,
-          entry.planned ? badge("Planned", "planned") : null,
-        ),
+        "a",
+        {
+          href: formatRoute({ section: route.section, id: entry.id }),
+          ariaCurrent: entry.id === route.id ? "page" : null,
+        },
+        el("span", { className: "thumb" }, entry.thumb),
+        el("span", { className: `name ${entry.planned ? "planned" : ""}` }, entry.name),
+        ...entry.badges,
+        entry.planned ? badge("Planned", "planned") : null,
       ),
-    ),
-  );
+    );
+  if (route.section === "items") {
+    // The items under a heading for each type, with how many it holds.
+    list.replaceChildren(
+      ...byKind(entries.map((entry) => ({ ...entry, kind: entry.kind ?? "" }))).flatMap((group) => [
+        el("li", { className: "group" }, el("span", {}, group.title), el("span", { className: "count" }, String(group.entries.length))),
+        ...group.entries.map(row),
+      ]),
+    );
+  } else {
+    list.replaceChildren(...entries.map(row));
+  }
   if (entries.length === 0) {
     list.append(el("li", { className: "empty" }, "Nothing matches."));
   }
