@@ -40,11 +40,11 @@ static func _draw_room(canvas: CanvasItem, room: Dictionary) -> void:
 	for wall: Rect2 in room.walls:
 		canvas.draw_rect(wall, PLANNED_WALL if room.planned else WALL)
 	for marker: Dictionary in room.markers:
-		_draw_marker(canvas, marker.kind, marker.at)
+		draw_marker(canvas, marker.kind, marker.at)
 
 
 # A marker laid out smaller than its pattern is a dot in its colour.
-static func _draw_marker(canvas: CanvasItem, kind: StringName, mark: Rect2) -> void:
+static func draw_marker(canvas: CanvasItem, kind: StringName, mark: Rect2) -> void:
 	var pattern: Dictionary = MARKERS.get(kind, {})
 	var rows: Array = pattern.get("rows", [])
 	if mark.size.y < rows.size():
