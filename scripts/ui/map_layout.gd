@@ -24,31 +24,33 @@ const SIDES := {
 }
 
 
-# Lays out the Map at a zoom: Near or Close round the current Room, or the whole World at once,
-# as large as fits the view. Shows the visited Rooms, the current Room's block, the Player's dot
-# and the region name. Rooms map each id to its cell, size, region name and colour, Exits and
-# markers, as the World lists them. Empty when the current Room is not on the Map.
+# Lays out the Map at a zoom: Near or Close round the current Room, looking the pan away from its
+# middle, in screens, as far as the World's edge; or the whole World at once, as large as fits
+# the view, where a pan changes nothing. Shows the visited Rooms, the current Room's block, the
+# Player's dot and the region name. Rooms map each id to its cell, size, region name and colour,
+# Exits and markers, as the World lists them. Empty when the current Room is not on the Map.
 static func layout(
 	rooms: Dictionary,
 	current_id: StringName,
 	visited_ids: Array,
 	player_position: Vector2,
 	view_size: Vector2,
-	zoom: StringName = &"close"
+	zoom: StringName = &"close",
+	pan := Vector2.ZERO
 ) -> Dictionary:
 	if not rooms.has(current_id):
 		return {}
 
 	var current: Dictionary = rooms[current_id]
-	var cell := NEAR_CELL_SIZE if zoom == &"near" else CELL_SIZE
+	var cell := cell_for(zoom)
 	var offset: Vector2
 	if zoom == &"world":
 		var span := _span(rooms)
 		cell = _fitted_cell(span, view_size)
 		offset = ((view_size - Vector2(span.size) * cell) / 2.0 - Vector2(span.position) * cell)
 	else:
-		var current_centre := (Vector2(current.cell) + Vector2(current.size) / 2.0) * cell
-		offset = view_size / 2.0 - current_centre
+		var looked_at := _middle(current) + clamp_pan(rooms, current_id, pan)
+		offset = view_size / 2.0 - looked_at * cell
 	offset = offset.floor()
 	var shown: Array = []
 	for room_id in rooms:
@@ -58,6 +60,27 @@ static func layout(
 	var current_block := _block(current, offset, cell)
 	var dot := current_block.position + (player_position / World.SCREEN_SIZE * cell).floor()
 	return {rooms = shown, current = current_block, dot = dot, region = current.region}
+
+
+# One screen at Near or Close.
+static func cell_for(zoom: StringName) -> Vector2:
+	return NEAR_CELL_SIZE if zoom == &"near" else CELL_SIZE
+
+
+# The pan, held so the spot it looks at stays within the World: its edge comes no further than
+# the middle of the view.
+static func clamp_pan(rooms: Dictionary, current_id: StringName, pan: Vector2) -> Vector2:
+	if not rooms.has(current_id):
+		return Vector2.ZERO
+	var span := _span(rooms)
+	var middle := _middle(rooms[current_id])
+	var looked_at := (middle + pan).clamp(Vector2(span.position), Vector2(span.end))
+	return looked_at - middle
+
+
+# The middle of a Room, in screens.
+static func _middle(room: Dictionary) -> Vector2:
+	return Vector2(room.cell) + Vector2(room.size) / 2.0
 
 
 # The screens every Room spans, together.

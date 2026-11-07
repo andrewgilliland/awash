@@ -63,6 +63,9 @@ func get_tests() -> Array:
 		["At World zoom the whole World fits the view, wherever the Player is", _test_world_fits],
 		["At World zoom marks are small dots, with no lines between screens", _test_world_detail],
 		["Near zoom centres the current Room at half the size", _test_near_centres],
+		["A pan moves the Near and Close views by screens", _test_pan_moves_view],
+		["A pan stops with the World's edge at the middle of the view", _test_pan_stops_at_edge],
+		["At World zoom a pan changes nothing", _test_world_ignores_pan],
 		["The whole World shows every Room, the planned ones in outline", _test_whole_world],
 		["The whole World names each Region above its Rooms", _test_region_names],
 	]
@@ -225,6 +228,43 @@ func _test_near_centres() -> bool:
 	valid = valid and (block.get_center() - VIEW_SIZE / 2.0).length() <= 1.0
 	valid = valid and block.has_point(layout.dot)
 	return valid
+
+
+func _test_pan_moves_view() -> bool:
+	var valid := true
+	for zoom: StringName in [&"near", &"close"]:
+		var still := MapLayout.layout(ROOMS, &"cove", [&"cove"], SCREEN_CENTRE, VIEW_SIZE, zoom)
+		var panned := MapLayout.layout(
+			ROOMS, &"cove", [&"cove"], SCREEN_CENTRE, VIEW_SIZE, zoom, Vector2(1, 0)
+		)
+		var cell: Vector2 = MapLayout.cell_for(zoom)
+		# Looking a screen east, the Room sits a screen west, and the Player's dot with it.
+		valid = valid and panned.current.position == still.current.position - Vector2(cell.x, 0)
+		valid = valid and panned.dot == still.dot - Vector2(cell.x, 0)
+	return valid
+
+
+func _test_pan_stops_at_edge() -> bool:
+	# The made-up Rooms span screens 0 to 4 across and 0 to 1 down; the cove's middle is (0.5, 0.5).
+	var far := MapLayout.clamp_pan(ROOMS, &"cove", Vector2(50, -50))
+	var valid := far == Vector2(3.5, -0.5)
+	valid = valid and MapLayout.clamp_pan(ROOMS, &"cove", Vector2(1, 0.25)) == Vector2(1, 0.25)
+	var beyond := MapLayout.layout(
+		ROOMS, &"cove", [&"cove"], SCREEN_CENTRE, VIEW_SIZE, &"close", Vector2(50, -50)
+	)
+	var at_edge := MapLayout.layout(
+		ROOMS, &"cove", [&"cove"], SCREEN_CENTRE, VIEW_SIZE, &"close", far
+	)
+	return valid and beyond.current == at_edge.current
+
+
+func _test_world_ignores_pan() -> bool:
+	var rooms := _wide_rooms()
+	var still := MapLayout.layout(rooms, &"cove", [&"cove"], SCREEN_CENTRE, VIEW_SIZE, &"world")
+	var panned := MapLayout.layout(
+		rooms, &"cove", [&"cove"], SCREEN_CENTRE, VIEW_SIZE, &"world", Vector2(3, 1)
+	)
+	return panned.current == still.current
 
 
 # The made-up Rooms, and a far one off past them, all built.
