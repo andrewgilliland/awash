@@ -7,7 +7,7 @@ planned: true
 legendary: false
 weapon_class: Straight sword
 region: Underroot
-description: A blade struck from the ore of an old Underroot vein, its edge still flecked with the mineral that glows in the deep caves. Defeated enemies give 50% more Experience.
+description: A blade struck from the ore of an old Underroot vein, its edge still flecked with the mineral that glows in the deep caves.
 acquisition: Found in a Cache in a collapsed mine seam, down a Branch off the Underroot Cave System.
 trait: Defeated enemies give 50% more Experience.
 needs: Nothing new, as Experience is in the game.

@@ -7,7 +7,7 @@ planned: true
 legendary: false
 weapon_class: Straight sword
 region: Blackreef Approach
-description: The sidearm of the castle's marshals, made for the duels that decided command. Hits on a Boss cost 25% more.
+description: The sidearm of the castle's marshals, made for the duels that decided command.
 acquisition: Found in a Cache in the Warden-Marshal's old quarters, down a Branch off the Castle Approach.
 trait: Hits on a Boss cost 25% more.
 needs: Nothing new, as Bosses are in the game.

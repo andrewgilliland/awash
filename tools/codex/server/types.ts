@@ -45,6 +45,10 @@ export interface Item {
   planned: boolean;
   description: string;
   effect: string;
+  // The one upside its doc gives it besides its numbers, such as an Armor trait.
+  trait: string;
+  // Whether the game does what the trait says yet: its doc's trait_built, false until set.
+  traitBuilt: boolean;
   icon: string | null;
   price: number | null;
   caches: { id: string; room: string; count: number }[];

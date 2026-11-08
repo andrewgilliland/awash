@@ -308,6 +308,12 @@ function showItem(item: Item): Node[] {
   if (item.description) {
     parts.push(el("p", { className: "quote" }, `“${item.description}”`));
   }
+  if (item.trait) {
+    parts.push(
+      el("h3", {}, "Trait"),
+      el("p", {}, item.trait, " ", item.traitBuilt ? null : badge("Not built yet", "planned")),
+    );
+  }
   if (!item.planned) {
     const where: (Node | string)[] = [];
     if (item.price !== null) {

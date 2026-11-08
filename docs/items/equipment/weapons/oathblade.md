@@ -8,6 +8,7 @@ weapon_class: Straight sword
 acquisition: A defeated Wraith sometimes leaves it where it fell, until Vael owns it.
 ranged_attack: false
 trait: Its Sword Beam passes through every enemy in its way.
+trait_built: false
 needs: Nothing new, as the Sword Beam is in the game. Not built yet; the Oathblade's Sword Beam stops at the first enemy until it is.
 upgrade_count: 0
 forms:

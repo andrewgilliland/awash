@@ -5,7 +5,7 @@ category: Equipment
 item_type: Armor
 planned: true
 region: Low Canopy Jungle
-description: A corsair's long sea coat, its lining sewn with coin pockets, left behind in a smuggler's stash. Defeated enemies give 50% more Gold.
+description: A corsair's long sea coat, its lining sewn with coin pockets, left behind in a smuggler's stash.
 acquisition: Found in a pirate stash in Smuggler Inlet, down a Branch off the way to the Pirate Fort.
 trait: Defeated enemies give 50% more Gold.
 needs: Nothing new, as Gold is in the game.

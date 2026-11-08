@@ -7,7 +7,7 @@ planned: true
 legendary: false
 weapon_class: Curved sword
 region: High Canopy
-description: A light curved blade from the canopy's hunters, balanced to strike at what flies past the platforms. Hits on flying enemies cost 50% more.
+description: A light curved blade from the canopy's hunters, balanced to strike at what flies past the platforms.
 acquisition: Found in a Cache in a Hunter's blind high in the canopy, down a Branch.
 trait: Hits on flying enemies cost 50% more.
 needs: Flying enemies told apart from those that walk, swim or burrow.
