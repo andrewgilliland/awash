@@ -5,6 +5,27 @@ export interface Codex {
   items: Item[];
   characters: Character[];
   regions: Region[];
+  rooms: MapRoom[];
+}
+
+// What a Room on the World map holds, and the page it links to (by id, in its kind's section).
+export type MarkKind = "cache" | "rest" | "shop" | "character" | "boss" | "enemy";
+export interface Mark {
+  kind: MarkKind;
+  id: string;
+  label: string;
+}
+
+// A Room as the World map draws it: where it sits, in screens, and what it holds. A planned Room
+// has no scene yet.
+export interface MapRoom {
+  id: string;
+  region: string;
+  cell: [number, number];
+  size: [number, number];
+  planned: boolean;
+  exits: { screen: [number, number]; side: "north" | "south" | "east" | "west" }[];
+  marks: Mark[];
 }
 
 export interface Encounter {
