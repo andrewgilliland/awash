@@ -13,8 +13,20 @@ The Weapon Mara pulls from the sand on the Waking Coast and hands to Vael: a pla
 _Avoid_: Starting weapon, default weapon
 
 **Oathblade**:
-A ceremonial blade from the oathkeepers the Wraiths once were: a Weapon with Attack 5. A defeated Wraith sometimes leaves it where it fell, until the Player owns it; touching it takes it up at once.
+A ceremonial blade from the oathkeepers the Wraiths once were: a Weapon with Attack 5. A defeated Wraith sometimes leaves it where it fell, until the Player owns it; touching it takes it up at once. It is the Waking Coast's found Weapon. Its planned Weapon trait, not built yet: its Sword Beam passes through every enemy in its way.
 _Avoid_: Wraith sword, ghost blade
+
+**Blacktide**:
+The planned legendary Weapon, a black sea-metal curved sword recovered from a wreck on the Waking Coast once the Nameless Warden is defeated. The Smiths upgrade it: Recovered Blacktide (Attack 3), then Reforged Blacktide (12) at Emberroot, then Awakened Blacktide (25) at Ironwake. Its quick slashes break a Ward.
+_Avoid_: Legendary sword, black blade, Vael's sword
+
+**Found Weapon**:
+A Weapon found rather than started with or upgraded, one per major Region. Each is in a Cache down a Branch, except the Oathblade, which Wraiths drop. Each gives Attack and a Weapon trait, and no Smith upgrades it.
+_Avoid_: Loot weapon, rare weapon, side weapon
+
+**Weapon trait**:
+The one upside a found Weapon gives besides its Attack, such as a Sword Beam that passes through enemies. It never takes anything away. Blacktide has none; it gives more plain Attack, and its quick slashes break a Ward.
+_Avoid_: Perk, bonus, passive, enchantment
 
 **Attack** (of a Weapon):
 What the Weapon held adds to each hit it lands, on top of the Player's Strength. Written `ATK` in the Equipment Panel.
@@ -83,3 +95,31 @@ _Avoid_: Brigandine, mercenary armor, riveted coat
 **Oathkeeper's Plate**:
 Planned found Armor of Blackreef Castle, in a sealed chapel off the Doctrine halls: Defense 9. Its Armor trait is that, once per Rest, a hit that would defeat the Player leaves 1 Health instead.
 _Avoid_: Oath plate, warden plate, last stand
+
+**Thornbite**:
+Planned found Weapon of the Low Canopy Jungle, in a Spore Beast's lair: Attack 6. Its Weapon trait is that hits poison an enemy, costing it 2 a second for 3 seconds.
+_Avoid_: Poison blade, thorn sword, Spore blade
+
+**Deepvein Blade**:
+Planned found Weapon of the Underroot, in a collapsed mine seam: Attack 10. Its Weapon trait is that defeated enemies give 50% more Experience.
+_Avoid_: Ore blade, vein sword, Experience blade
+
+**Kestrel Blade**:
+Planned found Weapon of the High Canopy, in a Hunter's blind: Attack 9. Its Weapon trait is that hits on flying enemies cost 50% more.
+_Avoid_: Hunter's blade, falcon blade, sky blade
+
+**Galecutter**:
+Planned found Weapon of the Northern Reaches, on a Gale-scoured islet: Attack 10. Its Weapon trait is that slashes in the air cost 50% more.
+_Avoid_: Wind blade, Gale sword, air blade
+
+**Stormglass Edge**:
+Planned found Weapon of Stormwatch Tower, in the ritual laboratory: Attack 11. Its Weapon trait is that its Sword Beam leaps to one more enemy nearby.
+_Avoid_: Storm blade, lightning sword, glass sword
+
+**Marshal's Edge**:
+Planned found Weapon of the Blackreef Approach, in the Warden-Marshal's old quarters: Attack 20. Its Weapon trait is that hits on a Boss cost 25% more.
+_Avoid_: Marshal's sword, Boss blade, dueling blade
+
+**Vaultkeeper's Blade**:
+Planned found Weapon of Blackreef Castle, in the Book Vault's outer stacks: Attack 22. Its Weapon trait is that each hit in a row costs 5 more, up to 20 more, until the Player is hit.
+_Avoid_: Keeper's sword, streak blade, combo blade

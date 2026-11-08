@@ -55,7 +55,7 @@ Item categories are defined in the [item catalog](../items/README.md).
 ## Shop Types
 
 - **Supply Shop**: Sells [Supplies](../items/README.md#supplies) for Gold, which each defeated enemy earns.
-- **Smith**: Upgrades [Blacktide](../items/equipment/weapons/blacktide.md)'s Attack and Special Attack, plus [Wayfarer Leathers](../items/equipment/armor/wayfarer-leathers.md)' Defense and Guard.
+- **Smith**: Upgrades [Blacktide](../items/equipment/weapons/blacktide.md)'s Attack, plus [Wayfarer Leathers](../items/equipment/armor/wayfarer-leathers.md)' Defense and Guard.
 - **Mystic**: Sells [Relics](../items/README.md#relics).
 
 ## World Map

@@ -42,7 +42,7 @@ Once the ceremonial landing site for wardens sworn to protect forbidden knowledg
 - Use Storm Wisps to teach Throwing Knives against enemies that are difficult to reach with Blacktide.
 - Use Wraiths to teach observation by exposing their rune anchors between phasing attacks.
 - Place Throwing Knife caches before ranged encounters and allow defeated enemies to replenish a limited supply.
-- Introduce minor magical barriers that Blacktide can cut with Special Attack before the boss uses a stronger ward.
+- Introduce minor magical barriers that a Charged Attack can cut before the boss uses a stronger ward.
 
 ### Exploration
 
@@ -59,5 +59,5 @@ Once the ceremonial landing site for wardens sworn to protect forbidden knowledg
 ### Boss Test
 
 - The Nameless Warden combines shield counters, ground shockwaves, and a magical guard.
-- Guarding answers its predictable strikes, jumping avoids its shockwaves, and Special Attack breaks its ward.
+- Guarding answers its predictable strikes, jumping avoids its shockwaves, and a Charged Attack breaks its ward.
 - Throwing Knives provide a safe option during brief periods when the Warden controls the ground nearby.
