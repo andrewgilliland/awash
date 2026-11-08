@@ -159,6 +159,26 @@ describe("the Codex's items", () => {
   });
 });
 
+describe("the Codex's World", () => {
+  const room = (id: string) => codex.rooms.find((entry) => entry.id === id);
+  const kinds = (id: string) => room(id)?.marks.map((mark) => mark.kind);
+
+  it("holds every Room in the World, built or planned, with its cell, size and exits", () => {
+    expect(codex.rooms.length).toBe(21);
+    expect(room("waking_coast_1")).toMatchObject({ region: "waking_coast", cell: [-1, 0], size: [2, 1], planned: false });
+    expect(room("undertow_8")).toMatchObject({ region: "undertow", cell: [6, 3], size: [2, 2], planned: true });
+    expect(room("undertow_8")?.exits).toEqual([{ screen: [1, 1], side: "east" }]);
+  });
+
+  it("marks what each Room holds: its Caches, Rest point, Shop, Characters, Boss and enemies", () => {
+    expect(room("undertow_5")?.marks).toContainEqual({ kind: "cache", id: "scale_mail", label: "Cache wreck_mail: Scale Mail" });
+    expect(kinds("tidefen_village_1")).toEqual(expect.arrayContaining(["rest", "shop", "character"]));
+    expect(room("waking_coast_7")?.marks).toContainEqual({ kind: "boss", id: "nameless_warden", label: "Nameless Warden" });
+    expect(codex.rooms.flatMap((entry) => entry.marks).some((mark) => mark.kind === "enemy" && mark.id === "scavenger")).toBe(true);
+    expect(room("undertow_8")?.marks).toEqual([]);
+  });
+});
+
 describe("the Codex's characters", () => {
   it("joins a story character's doc to them in the game", () => {
     const mara = codex.characters.find((entry) => entry.name === "Mara Venn");

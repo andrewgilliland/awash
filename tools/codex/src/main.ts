@@ -4,6 +4,7 @@
 import "@fontsource/jetbrains-mono/400.css";
 import "@fontsource/jetbrains-mono/700.css";
 import type { Character, Codex, Enemy, Item, Region, Sprite } from "../server/codex";
+import { worldMap } from "./worldMap";
 import { byKind, formatRoute, frameCount, frameRect, parseRoute, shown, SECTIONS, type Filter, type Route, type Section } from "./select";
 
 const SCALE = 4;
@@ -354,6 +355,7 @@ function showCharacter(character: Character): Node[] {
 function showRegion(region: Region): Node[] {
   return [
     el("div", { className: "title" }, el("span", { className: "swatch", style: `background:${region.colour}` }), el("h2", {}, region.name)),
+    worldMap(codex, region.id),
     el("h3", {}, "Rooms"),
     facts(region.rooms.map((room) => `${room.id} — ${room.size[0]}×${room.size[1]} screens`), "None built."),
     el("h3", {}, "Enemies"),
@@ -374,6 +376,10 @@ function showRegion(region: Region): Node[] {
 
 function showPage(route: Route): void {
   const entry = route.id ? findEntry(route) : null;
+  if (!entry && route.section === "regions") {
+    page.replaceChildren(el("h2", {}, "World map"), el("p", { className: "meta" }, "Every Room, built or planned. Choose a Region to see it."), worldMap(codex));
+    return;
+  }
   if (!entry) {
     page.replaceChildren(el("h2", {}, TITLES[route.section]), el("p", { className: "meta" }, "Choose one from the list."));
     return;

@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 import { isCall, isName, isRef, type DictEntry, type Value } from "./gdscript.ts";
 import { readScene, type Scene } from "./tscn.ts";
+import type { MapRoom } from "./types.ts";
 
 // What the Codex's readers share: the repo's files, its built Rooms, the docs' frontmatter, and
 // the values read from Godot's files.
@@ -11,7 +12,14 @@ export interface World {
   regions: Record<string, { name: string; colour: string }>;
   rooms: Record<
     string,
-    { scene?: string; region: string; size: [number, number]; markers?: Record<string, unknown> }
+    {
+      scene?: string;
+      region: string;
+      cell: [number, number];
+      size: [number, number];
+      exits?: MapRoom["exits"];
+      markers?: Record<string, unknown>;
+    }
   >;
 }
 

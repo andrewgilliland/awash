@@ -2,6 +2,7 @@ import { readEnemies } from "./enemies.ts";
 import { caches, readItems } from "./items.ts";
 import { readCharacters, readRegions } from "./people.ts";
 import { Files, readRooms, type World } from "./repo.ts";
+import { readMapRooms } from "./world.ts";
 import type { Codex } from "./types.ts";
 
 // The Codex: the game's enemies, items, characters and Regions, read afresh from its own files
@@ -19,5 +20,6 @@ export async function buildCodex(repo: string): Promise<Codex> {
   const items = await readItems(files, allCaches, enemies);
   const characters = await readCharacters(files, rooms);
   const regions = readRegions(world, rooms, allCaches);
-  return { enemies, items, characters, regions };
+  const mapRooms = readMapRooms(world, rooms, allCaches, items, characters, enemies);
+  return { enemies, items, characters, regions, rooms: mapRooms };
 }

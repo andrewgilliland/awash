@@ -4,7 +4,7 @@ import { readScene } from "./tscn.ts";
 import { field, local, preloadPath, readDocs, titled, type Files, type Room, type World } from "./repo.ts";
 import type { Character, Region } from "./types.ts";
 
-const TRADER_SCENE = "res://scenes/npcs/trader.tscn";
+export const TRADER_SCENE = "res://scenes/npcs/trader.tscn";
 
 // --- Characters ----------------------------------------------------------------------------------
 
