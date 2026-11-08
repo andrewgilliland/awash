@@ -8,7 +8,7 @@ const Hitbox := preload("res://scripts/combat/hitbox.gd")
 var _root: Window
 
 
-# Armor with Defense 5, standing in for the upgrades that will give it.
+# Armor with Defense 5, standing in for a found Armor.
 class GuardedEquipment:
 	extends "res://scripts/items/equipment.gd"
 

@@ -10,11 +10,8 @@ ranged_attack: false
 trait: Its Sword Beam passes through every enemy in its way.
 trait_built: false
 needs: Nothing new, as the Sword Beam is in the game. Not built yet; the Oathblade's Sword Beam stops at the first enemy until it is.
-upgrade_count: 0
 forms:
   - name: Oathblade
-    upgrade: 0
-    smith: null
     attack: 5
     in_game: "A ceremonial blade, still sworn to the rune light. Attack 5. Your Sword Beam passes through foes."
     description: A ceremonial blade from the drowned oathkeepers the Wraiths once were, still sworn to the rune light.

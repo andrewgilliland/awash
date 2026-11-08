@@ -13,15 +13,12 @@ acquisition: Found in a Cache in a Hunter's blind high in the canopy, down a Bra
 trait: Hits on flying enemies cost 50% more.
 needs: Flying enemies told apart from those that walk, swim or burrow.
 ranged_attack: false
-upgrade_count: 0
 forms:
   - name: Kestrel Blade
-    upgrade: 0
-    smith: null
-    attack: 9
+    attack: 14
     icon: res://assets/items/kestrel_blade.png
-    in_game: "A canopy hunter's light blade. Attack 9. Hits on flying foes cost more."
+    in_game: "A canopy hunter's light blade. Attack 14. Hits on flying foes cost more."
     visual: A slim swept blade of pale steel with a falcon-feather wrap on the grip (`assets/items/kestrel_blade.aseprite`).
 ---
 
-Found Weapon of the High Canopy: Attack 9, and its Weapon trait, hits on flying enemies cost 50% more. Like every found Weapon, it gives less plain Attack than Blacktide once a Smith has upgraded it for its part of the game (Reforged Blacktide, 12, until the Ironwake Smith; Awakened Blacktide, 25, after), and no Smith upgrades it. It swings like every Weapon, with the same reach and timing, and it has its own held sprite and Sword Beam. An enemy counts as flying when its doc's `movement` is Flying, not Floating.
+Found Weapon of the High Canopy: Attack 14, and its Weapon trait, hits on flying enemies cost 50% more. Like every Weapon, it is found as it is and never upgraded. Each Region's find gives a little more Attack than the last, and its trait is what keeps an older one worth holding. It swings like every Weapon, with the same reach and timing, and it has its own held sprite and Sword Beam. An enemy counts as flying when its doc's `movement` is Flying, not Floating.

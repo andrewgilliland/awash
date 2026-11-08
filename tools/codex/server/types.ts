@@ -50,8 +50,6 @@ export interface Item {
   // Whether the game does what the trait says yet: its doc's trait_built, false until set.
   traitBuilt: boolean;
   icon: string | null;
-  // Each form an upgraded item takes, with its own icon, in upgrade order; none for one form.
-  forms: { name: string; icon: string | null }[];
   price: number | null;
   caches: { id: string; room: string; count: number }[];
   droppedBy: { enemy: string; chance: number }[];

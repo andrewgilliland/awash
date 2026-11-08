@@ -302,18 +302,7 @@ function spriteBlock(sprite: Sprite): HTMLElement {
 
 function showItem(item: Item): Node[] {
   const parts: Node[] = heading(item.name, [badge(item.kind), item.planned ? badge("Planned", "planned") : null], item.effect);
-  if (item.forms.length > 0) {
-    // Each form side by side, in upgrade order.
-    parts.push(
-      el(
-        "div",
-        { className: "sprite" },
-        ...item.forms.map((form) =>
-          el("figure", {}, el("div", { className: "frames" }, form.icon ? icon(form.icon, 64) : null), el("figcaption", {}, form.name)),
-        ),
-      ),
-    );
-  } else if (item.icon) {
+  if (item.icon) {
     parts.push(el("div", { className: "sprite" }, el("div", { className: "frames" }, icon(item.icon, 64))));
   }
   if (item.description) {

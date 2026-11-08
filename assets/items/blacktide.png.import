@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bv3m133hyx4t8"
-path="res://.godot/imported/blacktide_recovered.png-9aeae5697c2dae6e76c4bf3dc1548776.ctex"
+uid="uid://cw30wdswaf6dj"
+path="res://.godot/imported/blacktide.png-788dd108e64ebd9c7e0b64e9b1dd7f67.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/items/blacktide_recovered.png"
-dest_files=["res://.godot/imported/blacktide_recovered.png-9aeae5697c2dae6e76c4bf3dc1548776.ctex"]
+source_file="res://assets/items/blacktide.png"
+dest_files=["res://.godot/imported/blacktide.png-788dd108e64ebd9c7e0b64e9b1dd7f67.ctex"]
 
 [params]
 
