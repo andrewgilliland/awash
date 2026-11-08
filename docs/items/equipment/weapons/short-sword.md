@@ -13,7 +13,8 @@ forms:
     upgrade: 0
     smith: null
     attack: 0
-    special_attack: 0
     description: A plain, sea-worn blade, the first Weapon Vael holds.
     visual: A short straight steel blade with a plain crossguard and a leather-wrapped grip.
 ---
+
+The Weapon every Run starts with. It has no Weapon trait, and no Smith upgrades it.
