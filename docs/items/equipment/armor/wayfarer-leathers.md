@@ -31,3 +31,4 @@ forms:
 
 Defense is the Health each form takes off a hit that lands (a hit still costs at least 5). `guard` is kept for when blocking exists; the game does not use it yet.
 
+Once a Smith upgrades them, the Leathers give more plain Defense than any found Armor of that part of the game. A found Armor is worn for its Armor trait instead.
