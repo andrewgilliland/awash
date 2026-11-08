@@ -13,15 +13,12 @@ acquisition: Found in a Cache in a Spore Beast's lair, down a Branch off the Low
 trait: Hits poison an enemy, costing it 2 a second for 3 seconds.
 needs: Poison on enemies, Health lost over time and shown on the enemy.
 ranged_attack: false
-upgrade_count: 0
 forms:
   - name: Thornbite
-    upgrade: 0
-    smith: null
-    attack: 6
+    attack: 8
     icon: res://assets/items/thornbite.png
-    in_game: "A thorn-backed jungle blade. Attack 6. Hits poison foes."
+    in_game: "A thorn-backed jungle blade. Attack 8. Hits poison foes."
     visual: A short hooked blade of dark green-black wood-steel, with thorn barbs along its back and a vine-wrapped grip (`assets/items/thornbite.aseprite`).
 ---
 
-Found Weapon of the Low Canopy Jungle: Attack 6, and its Weapon trait, hits poison an enemy, costing it 2 a second for 3 seconds. Like every found Weapon, it gives less plain Attack than Blacktide once a Smith has upgraded it for its part of the game (Reforged Blacktide, 12, until the Ironwake Smith; Awakened Blacktide, 25, after), and no Smith upgrades it. It swings like every Weapon, with the same reach and timing, and it has its own held sprite and Sword Beam. A hit poisons again rather than adding a second poison, so the 3 seconds start over.
+Found Weapon of the Low Canopy Jungle: Attack 8, and its Weapon trait, hits poison an enemy, costing it 2 a second for 3 seconds. Like every Weapon, it is found as it is and never upgraded. Each Region's find gives a little more Attack than the last, and its trait is what keeps an older one worth holding. It swings like every Weapon, with the same reach and timing, and it has its own held sprite and Sword Beam. A hit poisons again rather than adding a second poison, so the 3 seconds start over.

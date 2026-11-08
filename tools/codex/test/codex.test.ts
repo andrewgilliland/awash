@@ -121,9 +121,9 @@ describe("the Codex's items", () => {
   });
 
   it("reads a planned item's Attack, Defense or effect, and its trait, from its doc", () => {
-    expect(item("galecutter")).toMatchObject({ effect: "Attack +10", trait: "Slashes in the air cost 50% more." });
-    expect(item("shoalglass_mail")).toMatchObject({ effect: "Defense +4", trait: "Supplies restore 50% more Health." });
-    expect(item("blacktide")?.effect).toBe("Attack +3 → +12 → +25");
+    expect(item("galecutter")).toMatchObject({ effect: "Attack +16", trait: "Slashes in the air cost 50% more." });
+    expect(item("shoalglass_mail")).toMatchObject({ effect: "Defense +6", trait: "Supplies restore 50% more Health." });
+    expect(item("blacktide")?.effect).toBe("Attack +8");
     expect(item("blacktide")?.trait).toContain("quick slashes break a Ward");
     expect(item("bracer")?.effect).toBe("Increases Throwing Knife damage.");
     expect(item("bracer")?.trait).toBe("");
@@ -143,14 +143,10 @@ describe("the Codex's items", () => {
     expect(item("marshals_edge")?.icon).toBe("assets/items/marshals_edge.png");
   });
 
-  it("shows each form of an upgraded Weapon with its own icon, the first as the item's", () => {
-    expect(item("blacktide")?.icon).toBe("assets/items/blacktide_recovered.png");
-    expect(item("blacktide")?.forms).toEqual([
-      { name: "Recovered Blacktide", icon: "assets/items/blacktide_recovered.png" },
-      { name: "Reforged Blacktide", icon: "assets/items/blacktide_reforged.png" },
-      { name: "Awakened Blacktide", icon: "assets/items/blacktide_awakened.png" },
-    ]);
-    expect(item("galecutter")?.forms).toEqual([]);
+  it("reads a Weapon or Armor as one item, found as it is, with one icon", () => {
+    expect(item("blacktide")).toMatchObject({ planned: true, icon: "assets/items/blacktide.png" });
+    expect(item("blacktide")).not.toHaveProperty("forms");
+    expect(item("worn_leather_tunic")?.lore).not.toContain("Smith");
   });
 
   it("leaves the trait out of a planned item's words from the docs", () => {

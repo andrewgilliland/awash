@@ -10,7 +10,7 @@ status: alive
 description: A rogue whose erased identity contrasts with his intact instincts for survival, melee combat, and ranged combat.
 equipment:
   - ../items/equipment/weapons/blacktide.md
-  - ../items/equipment/armor/wayfarer-leathers.md
+  - ../items/equipment/armor/worn-leather-tunic.md
   - ../items/supplies/ammunition/throwing-knives.md
 ---
 

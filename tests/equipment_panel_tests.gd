@@ -17,7 +17,7 @@ const TUNIC_TEXT := "Faded by salt. Light, but gives no Defense."
 var _root: Window
 
 
-# Armor that gives Defense 5, standing in for the upgrades that will give it.
+# Armor that gives Defense 5, standing in for a found Armor.
 class GuardedEquipment:
 	extends "res://scripts/items/equipment.gd"
 

@@ -34,7 +34,6 @@ export async function readItems(files: Files, allCaches: Region["caches"], enemi
         trait: "",
         traitBuilt: false,
         icon,
-        forms: [],
         price: null,
         caches: [],
         droppedBy: [],
@@ -176,9 +175,8 @@ async function loreFromDocs(files: Files, items: Item[]): Promise<void> {
     } else {
       const planned = plannedItem(field(doc.data, "name"), field(doc.data, "item_type") || titled(type), words);
       planned.id = field(doc.data, "id") || planned.id;
-      const icons = forms.map((form) => ({ name: field(form, "name"), icon: field(form, "icon") ? local(field(form, "icon")) : null }));
-      planned.icon = icons.find((form) => form.icon)?.icon ?? null;
-      planned.forms = icons.length > 1 ? icons : [];
+      const icon = forms.map((form) => field(form, "icon")).find(Boolean);
+      planned.icon = icon ? local(icon) : null;
       planned.effect = docEffect(doc.data, forms);
       planned.trait = trait;
       items.push(planned);
@@ -186,16 +184,15 @@ async function loreFromDocs(files: Files, items: Item[]): Promise<void> {
   }
 }
 
-// What a planned item does, by its doc: its forms' Attack or Defense, each upgrade in turn, or the
-// effect it states.
+// What a planned item does, by its doc: its Attack or Defense, or the effect it states.
 function docEffect(data: Record<string, unknown>, forms: Record<string, unknown>[]): string {
   for (const [stat, label] of [
     ["attack", "Attack"],
     ["defense", "Defense"],
   ]) {
-    const values = forms.map((form) => form[stat]).filter((value): value is number => typeof value === "number");
-    if (values.length > 0) {
-      return `${label} ${values.map((value) => `+${value}`).join(" → ")}`;
+    const value = forms.map((form) => form[stat]).find((entry) => typeof entry === "number");
+    if (typeof value === "number") {
+      return `${label} +${value}`;
     }
   }
   return field(data, "effect");
@@ -217,7 +214,6 @@ function plannedItem(name: string, kind: string, lore: string): Item {
     trait: "",
     traitBuilt: false,
     icon: null,
-    forms: [],
     price: null,
     caches: [],
     droppedBy: [],

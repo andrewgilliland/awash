@@ -17,15 +17,15 @@ A ceremonial blade from the oathkeepers the Wraiths once were: a Weapon with Att
 _Avoid_: Wraith sword, ghost blade
 
 **Blacktide**:
-The planned legendary Weapon, a black sea-metal curved sword recovered from a wreck on the Waking Coast once the Nameless Warden is defeated. The Smiths upgrade it: Recovered Blacktide (Attack 3), then Reforged Blacktide (12) at Emberroot, then Awakened Blacktide (25) at Ironwake. Its quick slashes break a Ward.
+The planned legendary Weapon, a black sea-metal curved sword recovered from a wreck on the Waking Coast once the Nameless Warden is defeated: Attack 8. Its quick slashes break a Ward. Like every Weapon, it is found as it is and never upgraded.
 _Avoid_: Legendary sword, black blade, Vael's sword
 
 **Found Weapon**:
-A Weapon found rather than started with or upgraded, one per major Region. Each is in a Cache down a Branch, except the Oathblade, which Wraiths drop. Each gives Attack and a Weapon trait, and no Smith upgrades it.
+A Weapon found rather than started with, one per major Region. Each is in a Cache down a Branch, except the Oathblade, which Wraiths drop. Each gives Attack and a Weapon trait, and each Region's find gives a little more Attack than the last. No Weapon is ever upgraded.
 _Avoid_: Loot weapon, rare weapon, side weapon
 
 **Weapon trait**:
-The one upside a found Weapon gives besides its Attack, such as a Sword Beam that passes through enemies. It never takes anything away. Blacktide has none; it gives more plain Attack, and its quick slashes break a Ward.
+The one upside a found Weapon gives besides its Attack, such as a Sword Beam that passes through enemies. It never takes anything away, and it is what keeps an older Weapon worth holding. Blacktide's own is that its quick slashes break a Ward.
 _Avoid_: Perk, bonus, passive, enchantment
 
 **Attack** (of a Weapon):
@@ -41,7 +41,7 @@ A Tidefen fisher's clay Bomb: a Sub Weapon. Lobbed along the Player's facing, it
 _Avoid_: Grenade, explosive, powder keg
 
 **Armor**:
-The Equipment slot for what the Player wears, chosen in the Equipment Panel from the Armor the Player owns, or left empty for no Defense. A new Run owns and wears the Worn Leather Tunic; the Smiths upgrade it into the rest of the Wayfarer Leathers. More is found: one found Armor per major Region, each in a Cache, such as the Scale Mail.
+The Equipment slot for what the Player wears, chosen in the Equipment Panel from the Armor the Player owns, or left empty for no Defense. A new Run owns and wears the Worn Leather Tunic. Every other Armor is found, one per major Region, each in a Cache, such as the Scale Mail; none is ever upgraded.
 _Avoid_: Armour, clothing, outfit
 
 **Defense**:
@@ -49,19 +49,15 @@ How much Health the Player's Armor takes off each hit that lands. A hit always c
 _Avoid_: AC, armor class, resistance, guard
 
 **Armor trait**:
-The one upside a found Armor gives besides its Defense, such as more Gold from defeated enemies. It never takes anything away. The Wayfarer Leathers have none; they give more plain Defense instead.
+The one upside a found Armor gives besides its Defense, such as more Gold from defeated enemies. It never takes anything away, and it is what keeps an older Armor worth wearing. The Worn Leather Tunic has none.
 _Avoid_: Perk, bonus, passive, set bonus
 
 **Found Armor**:
-Armor found in a Cache down a Branch, one per major Region, rather than worn from the start. No Smith upgrades it, and each gives Defense and an Armor trait.
+Armor found in a Cache down a Branch, one per major Region, rather than worn from the start. Each gives Defense and an Armor trait, and each Region's find gives a little more Defense than the last. No Armor is ever upgraded.
 _Avoid_: Loot armor, rare armor
 
-**Wayfarer Leathers**:
-The Armor Vael wakes in, which the Smiths upgrade: the Worn Leather Tunic (Defense 0), then Reinforced Leathers (5) at Emberroot, then Runed Leathers (10) at Ironwake. Only the Worn Leather Tunic is in the game so far.
-_Avoid_: Starting armor set, leather armor
-
 **Worn Leather Tunic**:
-The Armor Vael wakes in on the Waking Coast: sea-weathered leather that gives no Defense yet.
+The Armor Vael wakes in on the Waking Coast: sea-weathered leather that gives no Defense.
 _Avoid_: Saltworn Leathers, starting armor, default armor
 
 **Scale Mail**:
@@ -77,15 +73,15 @@ Planned found Armor of the Underroot, in a vent cave: hide cured hard over Ember
 _Avoid_: Ember armor, Emberplate, cinder mail
 
 **Courier's Silks**:
-Planned found Armor of the High Canopy, in a nest in the Canopy Shaft: Defense 3. Its Armor trait is that the double jump goes higher.
+Planned found Armor of the High Canopy, in a nest in the Canopy Shaft: Defense 5. Its Armor trait is that the double jump goes higher.
 _Avoid_: Courier armor, silk armor, canopy silks
 
 **Shoalglass Mail**:
-Planned found Armor of the Northern Reaches, on a sunk causeway span in the North Shoals: Defense 4. Its Armor trait is that Supplies restore 50% more Health.
+Planned found Armor of the Northern Reaches, on a sunk causeway span in the North Shoals: Defense 6. Its Armor trait is that Supplies restore 50% more Health.
 _Avoid_: Glass armor, Glassmire mail, sea-glass mail
 
 **Stormward Mantle**:
-Planned found Armor of Stormwatch Tower, in a weather engine room: Defense 4. Its Armor trait is that Projectile hits cost 5 less.
+Planned found Armor of Stormwatch Tower, in a weather engine room: Defense 7. Its Armor trait is that Projectile hits cost 5 less.
 _Avoid_: Storm cloak, copper mantle
 
 **Mercenary's Brigandine**:
@@ -93,33 +89,33 @@ Planned found Armor of the Blackreef Approach, in an abandoned mercenary camp: D
 _Avoid_: Brigandine, mercenary armor, riveted coat
 
 **Oathkeeper's Plate**:
-Planned found Armor of Blackreef Castle, in a sealed chapel off the Doctrine halls: Defense 9. Its Armor trait is that, once per Rest, a hit that would defeat the Player leaves 1 Health instead.
+Planned found Armor of Blackreef Castle, in a sealed chapel off the Doctrine halls: Defense 10. Its Armor trait is that, once per Rest, a hit that would defeat the Player leaves 1 Health instead.
 _Avoid_: Oath plate, warden plate, last stand
 
 **Thornbite**:
-Planned found Weapon of the Low Canopy Jungle, in a Spore Beast's lair: Attack 6. Its Weapon trait is that hits poison an enemy, costing it 2 a second for 3 seconds.
+Planned found Weapon of the Low Canopy Jungle, in a Spore Beast's lair: Attack 8. Its Weapon trait is that hits poison an enemy, costing it 2 a second for 3 seconds.
 _Avoid_: Poison blade, thorn sword, Spore blade
 
 **Deepvein Blade**:
-Planned found Weapon of the Underroot, in a collapsed mine seam: Attack 10. Its Weapon trait is that defeated enemies give 50% more Experience.
+Planned found Weapon of the Underroot, in a collapsed mine seam: Attack 12. Its Weapon trait is that defeated enemies give 50% more Experience.
 _Avoid_: Ore blade, vein sword, Experience blade
 
 **Kestrel Blade**:
-Planned found Weapon of the High Canopy, in a Hunter's blind: Attack 9. Its Weapon trait is that hits on flying enemies cost 50% more.
+Planned found Weapon of the High Canopy, in a Hunter's blind: Attack 14. Its Weapon trait is that hits on flying enemies cost 50% more.
 _Avoid_: Hunter's blade, falcon blade, sky blade
 
 **Galecutter**:
-Planned found Weapon of the Northern Reaches, on a Gale-scoured islet: Attack 10. Its Weapon trait is that slashes in the air cost 50% more.
+Planned found Weapon of the Northern Reaches, on a Gale-scoured islet: Attack 16. Its Weapon trait is that slashes in the air cost 50% more.
 _Avoid_: Wind blade, Gale sword, air blade
 
 **Stormglass Edge**:
-Planned found Weapon of Stormwatch Tower, in the ritual laboratory: Attack 11. Its Weapon trait is that its Sword Beam leaps to one more enemy nearby.
+Planned found Weapon of Stormwatch Tower, in the ritual laboratory: Attack 18. Its Weapon trait is that its Sword Beam leaps to one more enemy nearby.
 _Avoid_: Storm blade, lightning sword, glass sword
 
 **Marshal's Edge**:
-Planned found Weapon of the Blackreef Approach, in the Warden-Marshal's old quarters: Attack 20. Its Weapon trait is that hits on a Boss cost 25% more.
+Planned found Weapon of the Blackreef Approach, in the Warden-Marshal's old quarters: Attack 22. Its Weapon trait is that hits on a Boss cost 25% more.
 _Avoid_: Marshal's sword, Boss blade, dueling blade
 
 **Vaultkeeper's Blade**:
-Planned found Weapon of Blackreef Castle, in the Book Vault's outer stacks: Attack 22. Its Weapon trait is that each hit in a row costs 5 more, up to 20 more, until the Player is hit.
+Planned found Weapon of Blackreef Castle, in the Book Vault's outer stacks: Attack 25. Its Weapon trait is that each hit in a row costs 5 more, up to 20 more, until the Player is hit.
 _Avoid_: Keeper's sword, streak blade, combo blade

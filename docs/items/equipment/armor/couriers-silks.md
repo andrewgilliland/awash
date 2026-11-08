@@ -10,15 +10,12 @@ description: Light silks worn by the canopy couriers who ran messages between vi
 acquisition: Found in a nest high in the Canopy Shaft, down a Branch only the double jump reaches.
 trait: The double jump goes higher.
 needs: The double jump, unlocked in the Underroot's Relic Chamber.
-upgrade_count: 0
 forms:
   - name: Courier's Silks
-    upgrade: 0
-    smith: null
-    defense: 3
+    defense: 5
     icon: res://assets/items/couriers_silks.png
-    in_game: "A canopy courier's light silks. Defense 3. Your double jump goes higher."
+    in_game: "A canopy courier's light silks. Defense 5. Your double jump goes higher."
     visual: Light green-gold silks with wrapped sleeves and a short sash that trails behind a jump (`assets/items/couriers_silks.aseprite`).
 ---
 
-Found Armor of the High Canopy: Defense 3, and its Armor trait, the double jump goes higher. Like every found Armor, it gives less plain Defense than the Wayfarer Leathers once a Smith has upgraded them for its part of the game (Reinforced Leathers, 5, until the Ironwake Smith; Runed Leathers, 10, after), and no Smith upgrades it. It lets Vael reach a few ledges early, but never one a Region's own gate holds shut.
+Found Armor of the High Canopy: Defense 5, and its Armor trait, the double jump goes higher. Like every Armor, it is found as it is and never upgraded. Each Region's find gives a little more Defense than the last, and its trait is what keeps an older one worth wearing. It lets Vael reach a few ledges early, but never one a Region's own gate holds shut.
