@@ -175,7 +175,8 @@ async function loreFromDocs(files: Files, items: Item[]): Promise<void> {
     } else {
       const planned = plannedItem(field(doc.data, "name"), field(doc.data, "item_type") || titled(type), words);
       planned.id = field(doc.data, "id") || planned.id;
-      const icon = forms.map((form) => field(form, "icon")).find(Boolean);
+      // Its icon: the doc's own, or its form's.
+      const icon = field(doc.data, "icon") || forms.map((form) => field(form, "icon")).find(Boolean);
       planned.icon = icon ? local(icon) : null;
       planned.effect = docEffect(doc.data, forms);
       planned.trait = trait;

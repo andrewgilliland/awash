@@ -115,7 +115,7 @@ describe("the Codex's items", () => {
 
   it("lists items only in the docs as planned, one of their kind", () => {
     expect(item("blacktide")).toMatchObject({ kind: "Weapon", planned: true });
-    expect(item("bracer")).toMatchObject({ kind: "Accessory", planned: true, icon: null });
+    expect(item("bracer")).toMatchObject({ kind: "Accessory", planned: true, icon: "assets/items/bracer.png" });
     expect(item("shoalglass_mail")).toMatchObject({ kind: "Armor", planned: true, icon: "assets/items/shoalglass_mail.png" });
     expect(item("galecutter")).toMatchObject({ kind: "Weapon", planned: true, icon: "assets/items/galecutter.png" });
   });
@@ -141,6 +141,11 @@ describe("the Codex's items", () => {
     expect(item("corsairs_coat")).toMatchObject({ name: "Corsair's Coat", icon: "assets/items/corsairs_coat.png" });
     expect(item("corsair_s_coat")).toBeUndefined();
     expect(item("marshals_edge")?.icon).toBe("assets/items/marshals_edge.png");
+  });
+
+  it("reads an Accessory's id and icon from the top of its doc", () => {
+    expect(item("salvagers_coin")).toMatchObject({ name: "Salvager's Coin", icon: "assets/items/salvagers_coin.png" });
+    expect(item("salvager_s_coin")).toBeUndefined();
   });
 
   it("reads a Weapon or Armor as one item, found as it is, with one icon", () => {
