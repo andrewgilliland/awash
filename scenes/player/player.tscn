@@ -21,13 +21,13 @@
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2x6a2"]
 radius = 6.0
-height = 20.0
+height = 28.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt0"]
-size = Vector2(10, 20)
+size = Vector2(10, 28)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sword"]
-size = Vector2(16, 20)
+size = Vector2(32, 28)
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 collision_layer = 2
@@ -35,20 +35,20 @@ floor_snap_length = 6.0
 script = ExtResource("1_3h4r8")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -10)
+position = Vector2(0, -14)
 shape = SubResource("CapsuleShape2D_2x6a2")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -8)
+position = Vector2(0, -24)
 texture_filter = 1
 
 [node name="SwordSprite" type="AnimatedSprite2D" parent="."]
-position = Vector2(-8, -8)
+position = Vector2(-16, -22)
 texture_filter = 1
 visible = false
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(0, -36)
+position = Vector2(0, -44)
 position_smoothing_enabled = true
 position_smoothing_speed = 6.0
 
@@ -62,11 +62,11 @@ monitoring = false
 script = ExtResource("2_hurt")
 
 [node name="Shape" type="CollisionShape2D" parent="Hurtbox"]
-position = Vector2(0, -10)
+position = Vector2(0, -14)
 shape = SubResource("RectangleShape2D_hurt0")
 
 [node name="SwordHitbox" type="Area2D" parent="."]
-position = Vector2(-12, -8)
+position = Vector2(-4, -14)
 collision_layer = 4
 collision_mask = 16
 monitoring = false
@@ -74,6 +74,7 @@ monitorable = false
 script = ExtResource("3_hit")
 
 [node name="Shape" type="CollisionShape2D" parent="SwordHitbox"]
+position = Vector2(-16, 0)
 shape = SubResource("RectangleShape2D_sword")
 
 [node name="Sounds" type="Node" parent="."]

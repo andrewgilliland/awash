@@ -204,8 +204,10 @@ func _scenario_jumps_and_lands(player: CharacterBody2D) -> bool:
 	var landed := await _frames_until(func() -> bool: return player.is_on_floor(), 120)
 	await _frames(2)
 	valid = valid and landed and controller.state == PlayerController.State.IDLE
-	valid = valid and sprite.animation == &"idle"
-	return valid
+	# It lands, then stands.
+	valid = valid and sprite.animation == &"land"
+	var stood := await _frames_until(func() -> bool: return sprite.animation == &"idle", 30)
+	return valid and stood
 
 
 func _scenario_attack_plays_out(player: CharacterBody2D) -> bool:
