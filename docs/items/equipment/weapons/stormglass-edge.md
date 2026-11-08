@@ -7,7 +7,7 @@ planned: true
 legendary: false
 weapon_class: Straight sword
 region: Stormwatch Tower
-description: A blade of dark storm-glass from the tower's ritual laboratory, which holds a charge and lets it jump. Its Sword Beam leaps to one more enemy nearby.
+description: A blade of dark storm-glass from the tower's ritual laboratory, which holds a charge and lets it jump.
 acquisition: Found in a Cache in the tower's ritual laboratory, down a Branch.
 trait: Its Sword Beam leaps to one more enemy nearby.
 needs: A Sword Beam that can leap from the enemy it strikes to the nearest other enemy within a few tiles.

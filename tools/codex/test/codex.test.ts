@@ -119,6 +119,27 @@ describe("the Codex's items", () => {
     expect(item("shoalglass_mail")).toMatchObject({ kind: "Armor", planned: true, icon: null });
     expect(item("galecutter")).toMatchObject({ kind: "Weapon", planned: true, icon: null });
   });
+
+  it("reads a planned item's Attack, Defense or effect, and its trait, from its doc", () => {
+    expect(item("galecutter")).toMatchObject({ effect: "Attack +10", trait: "Slashes in the air cost 50% more." });
+    expect(item("shoalglass_mail")).toMatchObject({ effect: "Defense +4", trait: "Supplies restore 50% more Health." });
+    expect(item("blacktide")?.effect).toBe("Attack +3 → +12 → +25");
+    expect(item("blacktide")?.trait).toContain("quick slashes break a Ward");
+    expect(item("bracer")?.effect).toBe("Increases Throwing Knife damage.");
+    expect(item("bracer")?.trait).toBe("");
+  });
+
+  it("keeps an item in the game's own effect, and adds its doc's trait", () => {
+    expect(item("scale_mail")).toMatchObject({ effect: "Defense +3", trait: "Hits push Vael back half as far." });
+    expect(item("scale_mail")?.traitBuilt).toBe(false);
+    expect(item("galecutter")?.traitBuilt).toBe(false);
+    expect(item("oathblade")?.trait).toBe("Its Sword Beam passes through every enemy in its way.");
+    expect(item("meat_pie")?.trait).toBe("");
+  });
+
+  it("leaves the trait out of a planned item's words from the docs", () => {
+    expect(item("galecutter")?.lore).not.toContain("cost 50% more");
+  });
 });
 
 describe("the Codex's characters", () => {

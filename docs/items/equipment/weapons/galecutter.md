@@ -7,7 +7,7 @@ planned: true
 legendary: false
 weapon_class: Straight sword
 region: Northern Reaches
-description: A thin blade worn smooth by the northern winds, said to cut cleanest when its wielder is off the ground. Slashes in the air cost 50% more.
+description: A thin blade worn smooth by the northern winds, said to cut cleanest when its wielder is off the ground.
 acquisition: Found in a Cache on a Gale-scoured islet off the Floating Causeway, down a Branch.
 trait: Slashes in the air cost 50% more.
 needs: Nothing new, as jumping and slashing are in the game.

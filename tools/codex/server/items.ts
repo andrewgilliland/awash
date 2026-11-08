@@ -31,6 +31,8 @@ export async function readItems(files: Files, allCaches: Region["caches"], enemi
         planned: false,
         description: typeof fields.description === "string" ? fields.description : "",
         effect: effect(fields),
+        trait: "",
+        traitBuilt: false,
         icon,
         price: null,
         caches: [],
@@ -163,12 +165,35 @@ async function loreFromDocs(files: Files, items: Item[]): Promise<void> {
     const words = withoutFiles(
       [field(doc.data, "description"), field(doc.data, "acquisition")].filter(Boolean).join(" "),
     );
+    const trait = field(doc.data, "trait") || field(doc.data, "legendary_trait");
     if (item) {
       item.lore ||= words;
+      if (!item.trait && trait) {
+        item.trait = trait;
+        item.traitBuilt = doc.data.trait_built === true;
+      }
     } else {
-      items.push(plannedItem(field(doc.data, "name"), field(doc.data, "item_type") || titled(type), words));
+      const planned = plannedItem(field(doc.data, "name"), field(doc.data, "item_type") || titled(type), words);
+      planned.effect = docEffect(doc.data, forms);
+      planned.trait = trait;
+      items.push(planned);
     }
   }
+}
+
+// What a planned item does, by its doc: its forms' Attack or Defense, each upgrade in turn, or the
+// effect it states.
+function docEffect(data: Record<string, unknown>, forms: Record<string, unknown>[]): string {
+  for (const [stat, label] of [
+    ["attack", "Attack"],
+    ["defense", "Defense"],
+  ]) {
+    const values = forms.map((form) => form[stat]).filter((value): value is number => typeof value === "number");
+    if (values.length > 0) {
+      return `${label} ${values.map((value) => `+${value}`).join(" → ")}`;
+    }
+  }
+  return field(data, "effect");
 }
 
 // The docs' words without the files they point at, such as (`assets/items/brinecap.aseprite`).
@@ -184,6 +209,8 @@ function plannedItem(name: string, kind: string, lore: string): Item {
     planned: true,
     description: "",
     effect: "",
+    trait: "",
+    traitBuilt: false,
     icon: null,
     price: null,
     caches: [],

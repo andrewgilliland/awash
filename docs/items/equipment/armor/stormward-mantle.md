@@ -5,7 +5,7 @@ category: Equipment
 item_type: Armor
 planned: true
 region: Stormwatch Tower
-description: A mantle threaded with copper by the tower's weather-keepers, which bends bolts and shards aside. Projectile hits cost 5 less.
+description: A mantle threaded with copper by the tower's weather-keepers, which bends bolts and shards aside.
 acquisition: Found in a weather engine room off the tower's climb, down a Branch.
 trait: Projectile hits cost 5 less.
 needs: Enemy Projectiles told apart from other hits.

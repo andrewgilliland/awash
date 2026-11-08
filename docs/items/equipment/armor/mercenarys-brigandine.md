@@ -5,7 +5,7 @@ category: Equipment
 item_type: Armor
 planned: true
 region: Blackreef Approach
-description: A riveted brigandine from one of Voss's hired swords, left in a camp that broke before the castle road. Defeating an enemy restores 3 Health.
+description: A riveted brigandine from one of Voss's hired swords, left in a camp that broke before the castle road.
 acquisition: Found in an abandoned mercenary camp on the Castle Approach, down a Branch.
 trait: Defeating an enemy restores 3 Health.
 needs: Nothing new, as defeats are in the game.

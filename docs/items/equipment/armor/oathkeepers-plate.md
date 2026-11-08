@@ -5,7 +5,7 @@ category: Equipment
 item_type: Armor
 planned: true
 region: Blackreef Castle
-description: The last whole plate of the oathkeepers the Wraiths once were, kept unbroken in Blackreef while their order drowned. Once per Rest, a killing hit leaves 1 Health instead.
+description: The last whole plate of the oathkeepers the Wraiths once were, kept unbroken in Blackreef while their order drowned.
 acquisition: Found in a sealed chapel off the Doctrine halls, down a Branch.
 trait: Once per Rest, a killing hit leaves 1 Health instead.
 needs: A count of what has been spent since the last Rest, kept in a Saved Run.

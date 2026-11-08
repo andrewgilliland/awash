@@ -7,7 +7,7 @@ planned: true
 legendary: false
 weapon_class: Curved sword
 region: Low Canopy Jungle
-description: A hooked jungle blade whose thorned back is cut from a spore-tree's spine; what it nicks keeps bleeding sap-dark. Hits poison an enemy, costing it 2 a second for 3 seconds.
+description: A hooked jungle blade whose thorned back is cut from a spore-tree's spine; what it nicks keeps bleeding sap-dark.
 acquisition: Found in a Cache in a Spore Beast's lair, down a Branch off the Low Canopy.
 trait: Hits poison an enemy, costing it 2 a second for 3 seconds.
 needs: Poison on enemies, Health lost over time and shown on the enemy.

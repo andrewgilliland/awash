@@ -5,7 +5,7 @@ category: Equipment
 item_type: Armor
 planned: true
 region: Northern Reaches
-description: Mail of pale sea-glass plates, made by Glassmire's glassworkers for the causeway's wardens; under its cool glass, wounds close quicker. Supplies restore 50% more Health.
+description: Mail of pale sea-glass plates, made by Glassmire's glassworkers for the causeway's wardens; under its cool glass, wounds close quicker.
 acquisition: Found on a sunk causeway span in the North Shoals, down a Branch off the Floating Causeway.
 trait: Supplies restore 50% more Health.
 needs: Nothing new, as Supplies are in the game.

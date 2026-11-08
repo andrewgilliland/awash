@@ -5,7 +5,7 @@ category: Equipment
 item_type: Armor
 planned: true
 region: Underroot
-description: Hide cured over Emberroot's mineral vents until it hardened like slate, still warm to the touch. Touching an enemy's body costs 5 less.
+description: Hide cured over Emberroot's mineral vents until it hardened like slate, still warm to the touch.
 acquisition: Found in a vent cave off the Underroot Cave System, down a Branch near Emberroot's mineral vents.
 trait: Touching an enemy's body costs 5 less.
 needs: Touching an enemy's body told apart from its attacks, so the trait takes off only the touch.

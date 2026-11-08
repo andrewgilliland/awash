@@ -7,7 +7,7 @@ planned: true
 legendary: false
 weapon_class: Straight sword
 region: Blackreef Castle
-description: The blade of the vault's keepers, who were taught to strike without stopping until a threat to the books was ended. Each hit in a row costs 5 more, up to 20 more, until the Player is hit.
+description: The blade of the vault's keepers, who were taught to strike without stopping until a threat to the books was ended.
 acquisition: Found in a Cache in the Book Vault's outer stacks, down a Branch.
 trait: Each hit in a row costs 5 more, up to 20 more, until the Player is hit.
 needs: A streak of hits landed since the Player was last hit, kept while the Player stays in the Room.

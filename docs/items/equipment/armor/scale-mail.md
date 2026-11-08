@@ -5,6 +5,7 @@ category: Equipment
 item_type: Armor
 acquisition: Found in the chest in the Undertow's sunken wreck, at the dead end past its pools.
 trait: Hits push Vael back half as far.
+trait_built: false
 needs: Nothing new, as knockback is in the game. Not built yet; Scale Mail gives Defense only until it is.
 upgrade_count: 0
 forms:

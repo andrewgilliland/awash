@@ -5,7 +5,7 @@ category: Equipment
 item_type: Armor
 planned: true
 region: High Canopy
-description: Light silks worn by the canopy couriers who ran messages between villages through the treetops. The double jump goes higher.
+description: Light silks worn by the canopy couriers who ran messages between villages through the treetops.
 acquisition: Found in a nest high in the Canopy Shaft, down a Branch only the double jump reaches.
 trait: The double jump goes higher.
 needs: The double jump, unlocked in the Underroot's Relic Chamber.
