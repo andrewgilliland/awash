@@ -14,7 +14,7 @@ forms:
   - name: Shoalglass Mail
     defense: 6
     icon: res://assets/items/shoalglass_mail.png
-    in_game: "Pale plates of sea-glass. Defense 6. Supplies restore more Health."
+    in_game: "Pale plates of sea-glass. Defense 6. Supplies restore 50% more Health."
     visual: Pale blue-white translucent plates overlapping on grey padding, catching the light like shallow water (`assets/items/shoalglass_mail.aseprite`).
 ---
 

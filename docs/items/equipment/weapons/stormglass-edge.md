@@ -21,4 +21,4 @@ forms:
     visual: A smoky dark-glass blade with a copper core line that flickers with blue light (`assets/items/stormglass_edge.aseprite`).
 ---
 
-Found Weapon of the Stormwatch Tower: Attack 18, and its Weapon trait, its Sword Beam leaps to one more enemy nearby. Like every Weapon, it is found as it is and never upgraded. Each Region's find gives a little more Attack than the last, and its trait is what keeps an older one worth holding. It swings like every Weapon, with the same reach and timing, and it has its own held sprite and Sword Beam. The leap costs what the Sword Beam does, and it never comes back to the enemy it left.
+Found Weapon of the Stormwatch Tower: Attack 18, and its Weapon trait, its Sword Beam leaps to one more enemy nearby. Like every Weapon, it is found as it is and never upgraded. Each Region's find gives a little more Attack than the last, and its trait is what keeps an older one worth holding. It swings like every Weapon, with the same reach and timing, and it has its own held sprite and Sword Beam. The leap takes as much Health from the second enemy as the Sword Beam took from the first, and it never comes back to the enemy it left.

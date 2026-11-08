@@ -14,7 +14,7 @@ forms:
   - name: Corsair's Coat
     defense: 2
     icon: res://assets/items/corsairs_coat.png
-    in_game: "A smuggler's coat lined with coin pockets. Defense 2. Foes give more Gold."
+    in_game: "A smuggler's coat lined with coin pockets. Defense 2. Foes give 50% more Gold."
     visual: A faded crimson long coat with tarnished brass buttons and a row of stitched coin pockets inside the hem (`assets/items/corsairs_coat.aseprite`).
 ---
 
