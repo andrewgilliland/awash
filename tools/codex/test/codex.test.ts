@@ -116,6 +116,7 @@ describe("the Codex's items", () => {
   it("lists items only in the docs as planned, one of their kind", () => {
     expect(item("blacktide")).toMatchObject({ kind: "Weapon", planned: true, icon: null });
     expect(item("bracer")).toMatchObject({ kind: "Accessory", planned: true });
+    expect(item("shoalglass_mail")).toMatchObject({ kind: "Armor", planned: true, icon: null });
   });
 });
 
