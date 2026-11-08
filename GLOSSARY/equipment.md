@@ -45,7 +45,7 @@ The Equipment slot for what the Player wears, chosen in the Equipment Panel from
 _Avoid_: Armour, clothing, outfit
 
 **Defense**:
-How much Health the Player's Armor takes off each hit that lands. A hit always costs at least 5.
+How much Health the Player's Armor takes off each hit that lands. A hit always takes at least 5 Health, however much Defense there is.
 _Avoid_: AC, armor class, resistance, guard
 
 **Armor trait**:
@@ -69,7 +69,7 @@ Planned found Armor of the Low Canopy Jungle, in a pirate stash in Smuggler Inle
 _Avoid_: Pirate coat, Gold coat
 
 **Cinderhide**:
-Planned found Armor of the Underroot, in a vent cave: hide cured hard over Emberroot's vents, giving 4 Defense. Its Armor trait is that touching an enemy's body costs 5 less.
+Planned found Armor of the Underroot, in a vent cave: hide cured hard over Emberroot's vents, giving 4 Defense. Its Armor trait is that touching an enemy's body takes 5 less of Vael's Health.
 _Avoid_: Ember armor, Emberplate, cinder mail
 
 **Courier's Silks**:
@@ -81,7 +81,7 @@ Planned found Armor of the Northern Reaches, on a sunk causeway span in the Nort
 _Avoid_: Glass armor, Glassmire mail, sea-glass mail
 
 **Stormward Mantle**:
-Planned found Armor of Stormwatch Tower, in a weather engine room: Defense 7. Its Armor trait is that Projectile hits cost 5 less.
+Planned found Armor of Stormwatch Tower, in a weather engine room: Defense 7. Its Armor trait is that an enemy Projectile that hits Vael takes 5 less of his Health.
 _Avoid_: Storm cloak, copper mantle
 
 **Mercenary's Brigandine**:
@@ -93,7 +93,7 @@ Planned found Armor of Blackreef Castle, in a sealed chapel off the Doctrine hal
 _Avoid_: Oath plate, warden plate, last stand
 
 **Thornbite**:
-Planned found Weapon of the Low Canopy Jungle, in a Spore Beast's lair: Attack 8. Its Weapon trait is that hits poison an enemy, costing it 2 a second for 3 seconds.
+Planned found Weapon of the Low Canopy Jungle, in a Spore Beast's lair: Attack 8. Its Weapon trait is that each hit poisons the enemy, which then loses 2 Health a second for 3 seconds.
 _Avoid_: Poison blade, thorn sword, Spore blade
 
 **Deepvein Blade**:
@@ -101,11 +101,11 @@ Planned found Weapon of the Underroot, in a collapsed mine seam: Attack 12. Its 
 _Avoid_: Ore blade, vein sword, Experience blade
 
 **Kestrel Blade**:
-Planned found Weapon of the High Canopy, in a Hunter's blind: Attack 14. Its Weapon trait is that hits on flying enemies cost 50% more.
+Planned found Weapon of the High Canopy, in a Hunter's blind: Attack 14. Its Weapon trait is that a hit on a flying enemy takes 50% more of its Health.
 _Avoid_: Hunter's blade, falcon blade, sky blade
 
 **Galecutter**:
-Planned found Weapon of the Northern Reaches, on a Gale-scoured islet: Attack 16. Its Weapon trait is that slashes in the air cost 50% more.
+Planned found Weapon of the Northern Reaches, on a Gale-scoured islet: Attack 16. Its Weapon trait is that a slash that lands while Vael is jumping or falling takes 50% more of the enemy's Health.
 _Avoid_: Wind blade, Gale sword, air blade
 
 **Stormglass Edge**:
@@ -113,9 +113,9 @@ Planned found Weapon of Stormwatch Tower, in the ritual laboratory: Attack 18. I
 _Avoid_: Storm blade, lightning sword, glass sword
 
 **Marshal's Edge**:
-Planned found Weapon of the Blackreef Approach, in the Warden-Marshal's old quarters: Attack 22. Its Weapon trait is that hits on a Boss cost 25% more.
+Planned found Weapon of the Blackreef Approach, in the Warden-Marshal's old quarters: Attack 22. Its Weapon trait is that a hit on a Boss takes 25% more of its Health.
 _Avoid_: Marshal's sword, Boss blade, dueling blade
 
 **Vaultkeeper's Blade**:
-Planned found Weapon of Blackreef Castle, in the Book Vault's outer stacks: Attack 25. Its Weapon trait is that each hit in a row costs 5 more, up to 20 more, until the Player is hit.
+Planned found Weapon of Blackreef Castle, in the Book Vault's outer stacks: Attack 25. Its Weapon trait is that each hit in a row takes 5 more of the enemy's Health than the last, up to 20 more, until Vael is hit.
 _Avoid_: Keeper's sword, streak blade, combo blade

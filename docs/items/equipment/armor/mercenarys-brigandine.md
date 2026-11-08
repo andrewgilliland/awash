@@ -14,7 +14,7 @@ forms:
   - name: Mercenary's Brigandine
     defense: 8
     icon: res://assets/items/mercenarys_brigandine.png
-    in_game: "A hired sword's riveted coat. Defense 8. Defeating foes restores Health."
+    in_game: "A hired sword's riveted coat. Defense 8. Defeating a foe restores 3 Health."
     visual: Dark canvas studded with iron rivets, with a torn company badge on the shoulder (`assets/items/mercenarys_brigandine.aseprite`).
 ---
 

@@ -10,7 +10,7 @@ needs: Nothing new, as knockback is in the game. Not built yet; Scale Mail gives
 forms:
   - name: Scale Mail
     defense: 3
-    in_game: "A drowned warden's scale mail, green with rust. Defense 3. Hits push you back less."
+    in_game: "A drowned warden's scale mail, green with rust. Defense 3. Hits push you back half as far."
     description: A drowned temple warden's scale mail, its plates gone green with rust under the water.
     visual: Overlapping sea-green scales with darker edges over a rust-brown hem (`assets/items/scale_mail.aseprite`).
 ---

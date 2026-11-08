@@ -121,7 +121,7 @@ describe("the Codex's items", () => {
   });
 
   it("reads a planned item's Attack, Defense or effect, and its trait, from its doc", () => {
-    expect(item("galecutter")).toMatchObject({ effect: "Attack +16", trait: "Slashes in the air cost 50% more." });
+    expect(item("galecutter")).toMatchObject({ effect: "Attack +16", trait: "A slash that lands while Vael is jumping or falling takes 50% more of the enemy's Health." });
     expect(item("shoalglass_mail")).toMatchObject({ effect: "Defense +6", trait: "Supplies restore 50% more Health." });
     expect(item("blacktide")?.effect).toBe("Attack +8");
     expect(item("blacktide")?.trait).toContain("quick slashes break a Ward");
@@ -150,7 +150,7 @@ describe("the Codex's items", () => {
   });
 
   it("leaves the trait out of a planned item's words from the docs", () => {
-    expect(item("galecutter")?.lore).not.toContain("cost 50% more");
+    expect(item("galecutter")?.lore).not.toContain("50% more");
   });
 });
 
