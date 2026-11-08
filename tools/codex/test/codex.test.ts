@@ -114,10 +114,10 @@ describe("the Codex's items", () => {
   });
 
   it("lists items only in the docs as planned, one of their kind", () => {
-    expect(item("blacktide")).toMatchObject({ kind: "Weapon", planned: true, icon: null });
-    expect(item("bracer")).toMatchObject({ kind: "Accessory", planned: true });
-    expect(item("shoalglass_mail")).toMatchObject({ kind: "Armor", planned: true, icon: null });
-    expect(item("galecutter")).toMatchObject({ kind: "Weapon", planned: true, icon: null });
+    expect(item("blacktide")).toMatchObject({ kind: "Weapon", planned: true });
+    expect(item("bracer")).toMatchObject({ kind: "Accessory", planned: true, icon: null });
+    expect(item("shoalglass_mail")).toMatchObject({ kind: "Armor", planned: true, icon: "assets/items/shoalglass_mail.png" });
+    expect(item("galecutter")).toMatchObject({ kind: "Weapon", planned: true, icon: "assets/items/galecutter.png" });
   });
 
   it("reads a planned item's Attack, Defense or effect, and its trait, from its doc", () => {
@@ -135,6 +135,22 @@ describe("the Codex's items", () => {
     expect(item("galecutter")?.traitBuilt).toBe(false);
     expect(item("oathblade")?.trait).toBe("Its Sword Beam passes through every enemy in its way.");
     expect(item("meat_pie")?.trait).toBe("");
+  });
+
+  it("names a planned item by its doc's id, with the icon its doc gives", () => {
+    expect(item("corsairs_coat")).toMatchObject({ name: "Corsair's Coat", icon: "assets/items/corsairs_coat.png" });
+    expect(item("corsair_s_coat")).toBeUndefined();
+    expect(item("marshals_edge")?.icon).toBe("assets/items/marshals_edge.png");
+  });
+
+  it("shows each form of an upgraded Weapon with its own icon, the first as the item's", () => {
+    expect(item("blacktide")?.icon).toBe("assets/items/blacktide_recovered.png");
+    expect(item("blacktide")?.forms).toEqual([
+      { name: "Recovered Blacktide", icon: "assets/items/blacktide_recovered.png" },
+      { name: "Reforged Blacktide", icon: "assets/items/blacktide_reforged.png" },
+      { name: "Awakened Blacktide", icon: "assets/items/blacktide_awakened.png" },
+    ]);
+    expect(item("galecutter")?.forms).toEqual([]);
   });
 
   it("leaves the trait out of a planned item's words from the docs", () => {

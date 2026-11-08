@@ -1,5 +1,6 @@
 ---
 name: Courier's Silks
+id: couriers_silks
 type: armor
 category: Equipment
 item_type: Armor
@@ -15,8 +16,9 @@ forms:
     upgrade: 0
     smith: null
     defense: 3
+    icon: res://assets/items/couriers_silks.png
     in_game: "A canopy courier's light silks. Defense 3. Your double jump goes higher."
-    visual: Light green-gold silks with wrapped sleeves and a short sash that trails behind a jump.
+    visual: Light green-gold silks with wrapped sleeves and a short sash that trails behind a jump (`assets/items/couriers_silks.aseprite`).
 ---
 
 Found Armor of the High Canopy: Defense 3, and its Armor trait, the double jump goes higher. Like every found Armor, it gives less plain Defense than the Wayfarer Leathers once a Smith has upgraded them for its part of the game (Reinforced Leathers, 5, until the Ironwake Smith; Runed Leathers, 10, after), and no Smith upgrades it. It lets Vael reach a few ledges early, but never one a Region's own gate holds shut.

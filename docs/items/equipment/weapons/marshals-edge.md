@@ -1,5 +1,6 @@
 ---
 name: Marshal's Edge
+id: marshals_edge
 type: weapon
 category: Equipment
 item_type: Weapons
@@ -18,8 +19,9 @@ forms:
     upgrade: 0
     smith: null
     attack: 20
+    icon: res://assets/items/marshals_edge.png
     in_game: "A castle marshal's dueling blade. Attack 20. Hits on a Boss cost more."
-    visual: A broad straight blade of dark steel with a black-and-gold marshal's knot on the guard.
+    visual: A broad straight blade of dark steel with a black-and-gold marshal's knot on the guard (`assets/items/marshals_edge.aseprite`).
 ---
 
 Found Weapon of the Blackreef Approach: Attack 20, and its Weapon trait, hits on a Boss cost 25% more. Like every found Weapon, it gives less plain Attack than Blacktide once a Smith has upgraded it for its part of the game (Reforged Blacktide, 12, until the Ironwake Smith; Awakened Blacktide, 25, after), and no Smith upgrades it. It swings like every Weapon, with the same reach and timing, and it has its own held sprite and Sword Beam. Only a Boss counts, not the enemies a Boss calls in.

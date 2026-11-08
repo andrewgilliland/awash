@@ -1,5 +1,6 @@
 ---
 name: Shoalglass Mail
+id: shoalglass_mail
 type: armor
 category: Equipment
 item_type: Armor
@@ -15,8 +16,9 @@ forms:
     upgrade: 0
     smith: null
     defense: 4
+    icon: res://assets/items/shoalglass_mail.png
     in_game: "Pale plates of sea-glass. Defense 4. Supplies restore more Health."
-    visual: Pale blue-white translucent plates overlapping on grey padding, catching the light like shallow water.
+    visual: Pale blue-white translucent plates overlapping on grey padding, catching the light like shallow water (`assets/items/shoalglass_mail.aseprite`).
 ---
 
 Found Armor of the Northern Reaches: Defense 4, and its Armor trait, supplies restore 50% more Health. Like every found Armor, it gives less plain Defense than the Wayfarer Leathers once a Smith has upgraded them for its part of the game (Reinforced Leathers, 5, until the Ironwake Smith; Runed Leathers, 10, after), and no Smith upgrades it. A share of a Supply's Health, such as a Glowroe's half, grows by half as well.

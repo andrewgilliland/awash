@@ -1,5 +1,6 @@
 ---
 name: Oathkeeper's Plate
+id: oathkeepers_plate
 type: armor
 category: Equipment
 item_type: Armor
@@ -15,8 +16,9 @@ forms:
     upgrade: 0
     smith: null
     defense: 9
+    icon: res://assets/items/oathkeepers_plate.png
     in_game: "An oathkeeper's whole plate. Defense 9. Once per Rest, you survive a killing hit."
-    visual: White-grey plate traced with gold oath lines, over a faded blue tabard.
+    visual: White-grey plate traced with gold oath lines, over a faded blue tabard (`assets/items/oathkeepers_plate.aseprite`).
 ---
 
 Found Armor of the Blackreef Castle: Defense 9, and its Armor trait, once per Rest, a killing hit leaves 1 Health instead. Like every found Armor, it gives less plain Defense than the Wayfarer Leathers once a Smith has upgraded them for its part of the game (Reinforced Leathers, 5, until the Ironwake Smith; Runed Leathers, 10, after), and no Smith upgrades it. Resting at a Rest point readies it again. It is the Oathblade's kin: the same oathkeepers, the same rune light.
