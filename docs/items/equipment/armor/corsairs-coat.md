@@ -1,5 +1,6 @@
 ---
 name: Corsair's Coat
+id: corsairs_coat
 type: armor
 category: Equipment
 item_type: Armor
@@ -15,8 +16,9 @@ forms:
     upgrade: 0
     smith: null
     defense: 2
+    icon: res://assets/items/corsairs_coat.png
     in_game: "A smuggler's coat lined with coin pockets. Defense 2. Foes give more Gold."
-    visual: A faded crimson long coat with tarnished brass buttons and a row of stitched coin pockets inside the hem.
+    visual: A faded crimson long coat with tarnished brass buttons and a row of stitched coin pockets inside the hem (`assets/items/corsairs_coat.aseprite`).
 ---
 
 Found Armor of the Low Canopy Jungle: Defense 2, and its Armor trait, defeated enemies give 50% more Gold. Like every found Armor, it gives less plain Defense than the Wayfarer Leathers once a Smith has upgraded them for its part of the game (Reinforced Leathers, 5, until the Ironwake Smith; Runed Leathers, 10, after), and no Smith upgrades it. Its Defense sits low on purpose: it is the Armor to swap on for gathering Gold, not for a hard fight.
