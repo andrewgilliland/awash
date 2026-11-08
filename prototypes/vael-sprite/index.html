@@ -1,0 +1,153 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Vael Sprite Prototype</title>
+<!-- PROTOTYPE, throw away. Open this file straight from disk (it reads art/ beside it).
+     Verdict, 2026-11-08: variant A (native 64x64) won. Question: what should Vael look like if we build him from the Mucho Pixels
+     Character Animation pack (64x64 frames, ~30 px tall character)? Three variants of how the template
+     meets Awash's 160x144 screen, switchable via ?variant=A|B|C and the bar at the bottom. -->
+<style>
+:root { --bg:#101010; --panel:#171717; --line:#3a3a3a; --fg:#fff; --muted:#a3a3a3; --accent:#f8e18e; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:13px/1.5 ui-monospace,Menlo,monospace; padding:16px 16px 90px; }
+h1 { font-size:15px; color:var(--accent); margin:0 0 4px; text-transform:uppercase; }
+.lede { color:var(--muted); margin:0 0 14px; max-width:900px; }
+.layout { display:flex; gap:18px; flex-wrap:wrap; align-items:flex-start; }
+canvas { image-rendering:pixelated; display:block; }
+#screen { width:640px; max-width:100%; border:1px solid var(--line); background:#000; }
+.side { flex:1; min-width:280px; max-width:520px; }
+.group { margin:0 0 12px; }
+.group b { display:block; color:var(--accent); font-size:11px; text-transform:uppercase; margin-bottom:4px; }
+button { font:700 11px ui-monospace,Menlo,monospace; color:var(--muted); background:#222; border:1px solid var(--line); padding:4px 8px; margin:0 4px 4px 0; cursor:pointer; text-transform:uppercase; }
+button[aria-pressed="true"] { color:#000; background:var(--accent); border-color:var(--accent); }
+dl { display:grid; grid-template-columns:max-content 1fr; gap:2px 12px; margin:0; }
+dt { color:var(--muted); } dd { margin:0; }
+.note { color:var(--muted); border-left:2px solid var(--accent); padding-left:8px; margin:8px 0 0; }
+#strip { border:1px solid var(--line); background:#0b1622; max-width:100%; }
+.bar { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); display:flex; align-items:center; gap:10px;
+  background:#fff; color:#000; border-radius:999px; padding:6px 10px; box-shadow:0 6px 24px #0008; font-weight:700; z-index:9; }
+.bar button { background:#000; color:#fff; border:0; border-radius:999px; width:30px; height:30px; margin:0; padding:0; font-size:15px; }
+</style>
+<h1>Vael, from the character pack: prototype</h1>
+<p class="lede">The pack's Character 1 (Clothes 3), recoloured as Vael and played on real Awash screens at game scale.
+The ghost on the left is today's 16×16 Vael, for scale. Switch variants with the bar at the bottom or ← →.</p>
+<div class="layout">
+  <div><canvas id="screen"></canvas></div>
+  <div class="side">
+    <div class="group"><b>Animation</b><div id="anims"></div></div>
+    <div class="group"><b>Palette</b><div id="palettes"></div></div>
+    <div class="group"><b>Show</b><div id="toggles"></div></div>
+    <div class="group"><b>State</b><dl id="state"></dl><p class="note" id="note"></p></div>
+    <div class="group"><b>Frames of this animation</b><canvas id="strip"></canvas></div>
+  </div>
+</div>
+<div class="bar"><button id="prev" aria-label="Previous variant">←</button><span id="label"></span><button id="next" aria-label="Next variant">→</button></div>
+<script>
+const DATA = {"strips": {"idle": "art/idle.png", "walk": "art/walk.png", "run": "art/run.png", "jump": "art/jump.png", "fall": "art/fall.png", "land": "art/land.png", "punch": "art/punch.png", "damage": "art/damage.png", "death": "art/death.png"}, "vael": "../../assets/player/player_1.png", "coast": "art/screen_coast.png", "undertow": "art/screen_undertow.png"};
+const ANIMS = { idle:8, walk:10, run:12, jump:6, fall:6, land:8, punch:14, damage:8, death:9 };
+const MOVING = { walk:22, run:44 };   // pixels a second, in world pixels
+// Source colours of the pack's Character 1, Clothes 3, by part.
+const PARTS = { outline:"0e071b", hair1:"8a4836", hair2:"bf6f4a", hair3:"5d2c28", skin:"e69c69",
+  shirt1:"ffffff", shirt2:"c7cfdd", pants1:"391f21", pants2:"1c121c", shoes1:"424c6e", shoes2:"2a2f4e" };
+const PALETTES = {
+  leather: { name:"Salt-worn leather (doc)", map:{ hair1:"3e2c26", hair2:"5a4234", hair3:"2a1c1c",
+    shirt1:"9a7a56", shirt2:"6e5038", pants1:"2e2a34", pants2:"1e1a22", shoes1:"5a3e2a", shoes2:"3a281c" } },
+  green: { name:"Green hood (today's Vael)", map:{ hair1:"3e2c26", hair2:"5a4234", hair3:"2a1c1c",
+    shirt1:"10ad42", shirt2:"0a7a2e", pants1:"2a2a2a", pants2:"141414", shoes1:"3a3a3a", shoes2:"222222" } },
+  pack: { name:"Pack original", map:{} },
+};
+const VARIANTS = {
+  A: { name:"Native 64×64", bg:"coast", view:[160,144], size:1, ground:97, span:[44,118], ghost:14,
+    note:"Vael stands about 30 px tall: two tiles, a fifth of the screen, twice today's height. He keeps every pixel of the pack's detail and its 9 animations, but his Hitbox, Hurtbox and sword reach double; one-tile ledges, gaps and ceilings stop fitting, and 16 px enemies look small beside him." },
+  B: { name:"Halved to 32×32", bg:"coast", view:[160,144], size:0.5, ground:97, span:[44,118], ghost:14,
+    note:"Halved, he is about 15 px tall, today's footprint, so no Room, Hitbox or enemy changes. But halving pixel art keeps only every other pixel: outlines break and the face and hands blur. Each kept frame would need a hand clean-up pass, so the pack becomes a pose reference rather than art." },
+  C: { name:"Native, camera zoomed out", bg:"undertow", view:[320,288], size:1, ground:241, span:[150,300], ghost:132,
+    note:"Native size, with the camera showing 2×2 screens (320×288) instead of one. Vael keeps the pack's detail and the world shrinks around him, but every Room only one screen wide or tall is now smaller than the view (most of the Waking Coast), so Rooms, the Map and the camera all need rebuilding. Shown in undertow_2, a 2×2 Room." },
+};
+const params = new URLSearchParams(location.search);
+let variant = VARIANTS[params.get("variant")] ? params.get("variant") : "A";
+let anim = "run", palette = "leather", showGhost = true, walking = true;
+const img = (src) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.src = src; });
+
+const recoloured = {};
+function recolour(strip, key) {
+  const id = key + "|" + palette;
+  if (recoloured[id]) return recoloured[id];
+  const c = document.createElement("canvas"); c.width = strip.width; c.height = strip.height;
+  const g = c.getContext("2d"); g.drawImage(strip, 0, 0);
+  const map = {};
+  for (const [part, to] of Object.entries(PALETTES[palette].map)) map[PARTS[part]] = to;
+  const d = g.getImageData(0, 0, c.width, c.height);
+  for (let i = 0; i < d.data.length; i += 4) {
+    if (!d.data[i + 3]) continue;
+    const hex = [0, 1, 2].map((k) => d.data[i + k].toString(16).padStart(2, "0")).join("");
+    const to = map[hex];
+    if (to) { d.data[i] = parseInt(to.slice(0, 2), 16); d.data[i + 1] = parseInt(to.slice(2, 4), 16); d.data[i + 2] = parseInt(to.slice(4, 6), 16); }
+  }
+  g.putImageData(d, 0, 0);
+  return (recoloured[id] = c);
+}
+
+function buttons(el, items, current, pick) {
+  el.replaceChildren(...items.map(([key, label]) => {
+    const b = document.createElement("button"); b.textContent = label; b.ariaPressed = String(key === current());
+    b.onclick = () => { pick(key); render(); }; return b;
+  }));
+}
+function render() {
+  buttons(document.getElementById("anims"), Object.keys(ANIMS).map((k) => [k, k]), () => anim, (k) => { anim = k; t0 = performance.now(); });
+  buttons(document.getElementById("palettes"), Object.entries(PALETTES).map(([k, p]) => [k, p.name]), () => palette, (k) => (palette = k));
+  const toggles = document.getElementById("toggles");
+  buttons(toggles, [["ghost", "Today's Vael"], ["walk", "Walk across"]], () => null, (k) => (k === "ghost" ? (showGhost = !showGhost) : (walking = !walking)));
+  toggles.children[0].ariaPressed = String(showGhost); toggles.children[1].ariaPressed = String(walking);
+  const v = VARIANTS[variant];
+  document.getElementById("label").textContent = `${variant} (${v.name})`;
+  document.getElementById("note").textContent = v.note;
+  const tall = Math.round(30 * v.size);
+  document.getElementById("state").innerHTML = [
+    ["Variant", `${variant}: ${v.name}`], ["Palette", PALETTES[palette].name], ["Animation", `${anim}, ${STRIPS[anim].width / 64} frames`],
+    ["Screen", `${v.view[0]}×${v.view[1]} px`], ["Vael's height", `${tall} px = ${(tall / 16).toFixed(1)} tiles = ${Math.round((tall / v.view[1]) * 100)}% of the view`],
+    ["Today's Vael", "16 px = 1 tile = 11% of the screen"],
+  ].map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join("");
+  const url = new URL(location.href); url.searchParams.set("variant", variant); history.replaceState(null, "", url);
+  drawStrip();
+}
+function drawStrip() {
+  const s = recolour(STRIPS[anim], anim), size = VARIANTS[variant].size, n = s.width / 64, cell = 64 * size, zoom = 3;
+  const c = document.getElementById("strip"); c.width = n * cell * zoom; c.height = cell * zoom;
+  const g = c.getContext("2d"); g.imageSmoothingEnabled = false;
+  for (let i = 0; i < n; i++) g.drawImage(s, i * 64, 0, 64, 64, i * cell * zoom, 0, cell * zoom, cell * zoom);
+}
+function cycle(step) { const keys = Object.keys(VARIANTS); variant = keys[(keys.indexOf(variant) + step + keys.length) % keys.length]; t0 = performance.now(); render(); }
+document.getElementById("prev").onclick = () => cycle(-1);
+document.getElementById("next").onclick = () => cycle(1);
+addEventListener("keydown", (e) => { if (e.target.closest("input,textarea,[contenteditable]")) return; if (e.key === "ArrowLeft") cycle(-1); if (e.key === "ArrowRight") cycle(1); });
+
+let STRIPS, BG, VAEL, t0 = performance.now();
+function frame(now) {
+  const v = VARIANTS[variant], c = document.getElementById("screen");
+  if (c.width !== v.view[0]) { c.width = v.view[0]; c.height = v.view[1]; }
+  const g = c.getContext("2d"); g.imageSmoothingEnabled = false;
+  g.drawImage(BG[v.bg], 0, 0);
+  const t = (now - t0) / 1000;
+  if (showGhost) g.drawImage(VAEL, 0, 0, 16, 16, v.ghost, v.ground - 16, 16, 16);
+  const s = recolour(STRIPS[anim], anim), n = s.width / 64, fps = ANIMS[anim];
+  const loops = !["death", "land", "jump"].includes(anim);
+  const i = loops ? Math.floor(t * fps) % n : Math.min(n - 1, Math.floor(t * fps) % (n + 6));
+  const cell = 64 * v.size, [a, b] = v.span;
+  let x = (a + b) / 2, facing = 1;
+  if (walking && MOVING[anim]) {
+    const run = b - a, d = (t * MOVING[anim]) % (2 * run);
+    x = d < run ? a + d : b - (d - run); facing = d < run ? 1 : -1;
+  }
+  const lift = anim === "jump" || anim === "fall" ? 18 * v.size : 0;
+  g.save(); g.translate(Math.round(x), v.ground - 48 * v.size - lift); g.scale(facing, 1);
+  g.drawImage(s, i * 64, 0, 64, 64, -32 * v.size, 0, cell, cell); g.restore();
+  requestAnimationFrame(frame);
+}
+(async () => {
+  STRIPS = {}; for (const [k, src] of Object.entries(DATA.strips)) STRIPS[k] = await img(src);
+  BG = { coast: await img(DATA.coast), undertow: await img(DATA.undertow) };
+  VAEL = await img(DATA.vael);
+  render(); requestAnimationFrame(frame);
+})();
+</script>
