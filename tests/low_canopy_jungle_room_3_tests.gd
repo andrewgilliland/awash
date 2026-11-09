@@ -5,6 +5,9 @@ extends RefCounted
 
 const ROOM_PATH := "res://scenes/rooms/low_canopy_jungle_3.tscn"
 const Checks := preload("res://tests/jungle_room_checks.gd")
+const RoomEnemies := preload("res://tests/room_enemies.gd")
+# Where its Stalker crouches, clear of the Entries.
+const STALKER_PERCH := Vector2(280, 80)
 const ROOM_CELLS := Vector2i(20, 9)
 # On each deck, at the height of the terraces' deck west of it.
 const WEST_ENTRY := Vector2(12, 80)
@@ -25,6 +28,7 @@ func get_tests() -> Array:
 		["The canopy walk's east Entry stands on its deck, to the upper terraces", _test_east],
 		["A rope bridge, broken in its middle, crosses between the decks", _test_bridge],
 		["A fall from the bridge climbs back up to either deck", _test_climbs_back],
+		["A Stalker perches on the east deck, over the bridge's far half", _test_stalker],
 	]
 
 
@@ -86,5 +90,21 @@ func _test_climbs_back() -> bool:
 	if room == null:
 		return false
 	var valid := Checks.reaches(room, FLOOR, WEST_ENTRY) and Checks.reaches(room, FLOOR, EAST_ENTRY)
+	room.free()
+	return valid
+
+
+func _test_stalker() -> bool:
+	var room := Checks.load_room(ROOM_PATH)
+	if room == null:
+		return false
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var stalkers: Array = []
+	if room.has_node("Enemies"):
+		stalkers = room.get_node("Enemies").get_children()
+	var valid := stalkers.size() == 1
+	if valid:
+		var stalker := stalkers[0] as Node2D
+		valid = stalker.position == STALKER_PERCH and RoomEnemies.perches(terrain, stalker)
 	room.free()
 	return valid

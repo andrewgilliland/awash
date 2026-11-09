@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=4]
+[gd_scene load_steps=11 format=4]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_main"]
 
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="5_player"]
 
 [ext_resource type="PackedScene" path="res://scenes/world/cache.tscn" id="cache_scene"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/stalker.tscn" id="stalker_scene"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_edge"]
 size = Vector2(8, 144)
@@ -46,6 +47,11 @@ position = Vector2(16, 32)
 cache_id = &"upper_terraces_chest"
 kind = &"mourning_salt"
 count = 2
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Stalker" parent="Enemies" instance=ExtResource("stalker_scene")]
+position = Vector2(136, 176)
 
 [node name="Bounds" type="StaticBody2D" parent="."]
 collision_mask = 0
