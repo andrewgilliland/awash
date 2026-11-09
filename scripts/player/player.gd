@@ -21,20 +21,15 @@ const BLINK_TIME := 0.08
 const DEFEAT_BLINK_TIME := 0.15
 # Up and away from whatever struck the Player.
 const KNOCKBACK := Vector2(90.0, -120.0)
-# Where the sword hitbox sits for a Player facing right, at its front; it mirrors with facing.
-# Enemies are knocked away from this point, so it stays at the front and the reach runs ahead of
-# it, the shape SWORD_REACH ahead of the origin.
-const SWORD_OFFSET := Vector2(4.0, -14.0)
-const SWORD_REACH := 16.0
-# Where a Charged Attack's Sword Beam sets out from: low, to meet enemies that keep to the ground.
-const BEAM_OFFSET := Vector2(20.0, -8.0)
+# The sword's reach, in front of the Player when facing right.
+const SWORD_OFFSET := Vector2(12.0, -8.0)
 # A Charged Attack's Sword Beam costs this many times a quick slash.
 const CHARGED_MULTIPLIER := 2
 # A full Charge makes the sword blink bright, and the Charged Attack let go from it swings lit.
 const CHARGED_GLOW := Color(2.0, 2.0, 2.0)
 const CHARGED_BLINK_TIME := 0.08
 # Where a Sub Weapon leaves the Player's hand, facing right.
-const THROW_OFFSET := Vector2(10.0, -20.0)
+const THROW_OFFSET := Vector2(6.0, -10.0)
 # Over the Player when it finds a Weapon or Sub Weapon.
 const GOT := "GOT %s"
 const RESTED := "RESTED"
@@ -77,7 +72,6 @@ var _thrown: Node2D
 @onready var _sword_sprite: AnimatedSprite2D = $SwordSprite
 @onready var _hurtbox: Area2D = $Hurtbox
 @onready var _sword_hitbox: Hitbox = $SwordHitbox
-@onready var _sword_reach: CollisionShape2D = $SwordHitbox/Shape
 @onready var _sound_players: Node = $Sounds
 @onready var _level_up: Label = $LevelUp
 
@@ -413,8 +407,6 @@ func _on_hurtbox_hit(hitbox: Area2D) -> void:
 	if not health.hurt(equipment.hit_cost(damage), INVULNERABLE_TIME):
 		return
 	HitFeel.player_hurt(self)
-	if not health.is_defeated():
-		_rig.show_hurt()
 	var away := signf(global_position.x - hitbox.global_position.x)
 	if away == 0.0:
 		away = -controller.facing
@@ -432,14 +424,12 @@ func _on_hurtbox_hit(hitbox: Area2D) -> void:
 
 # Lies the Player down on its side, as when it washes up, or stands it back up.
 func set_lying(lying: bool) -> void:
-	_rig.show_lying(lying, true)
+	_rig.show_lying(lying)
 
 
 func _on_controller_stepped() -> void:
-	var falling := controller.velocity.y > 0.0
-	_rig.show(controller.state, controller.facing, controller.is_moving, falling)
+	_rig.show(controller.state, controller.facing, controller.is_moving)
 	_sword_hitbox.position = Vector2(SWORD_OFFSET.x * controller.facing, SWORD_OFFSET.y)
-	_sword_reach.position.x = SWORD_REACH * controller.facing
 	var attacking := controller.state == PlayerController.State.ATTACK
 	# A Charged Attack's swing is for show: the Sword Beam it looses is the hit.
 	var slashing := attacking and not controller.charged_attack
@@ -479,7 +469,7 @@ func _loose_sword_beam() -> void:
 	var world := get_parent() if get_parent() != null else self
 	world.add_child(beam)
 	beam.global_position = (
-		global_position + Vector2(BEAM_OFFSET.x * controller.facing, BEAM_OFFSET.y)
+		global_position + Vector2(SWORD_OFFSET.x * controller.facing, SWORD_OFFSET.y)
 	)
 
 

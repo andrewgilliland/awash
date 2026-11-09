@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://baijf0mmdj6cy"
-path="res://.godot/imported/vael.png-3fbe39ef9ca6a973207fc805f6fd209b.ctex"
+uid="uid://73kj15umijnt"
+path="res://.godot/imported/player_1.png-8e61b0e96df472cbc335f860e4f6364d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/player/vael.png"
-dest_files=["res://.godot/imported/vael.png-3fbe39ef9ca6a973207fc805f6fd209b.ctex"]
+source_file="res://assets/player/player_1.png"
+dest_files=["res://.godot/imported/player_1.png-8e61b0e96df472cbc335f860e4f6364d.ctex"]
 
 [params]
 

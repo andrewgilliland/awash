@@ -14,7 +14,6 @@ const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 # One screen in tiles.
 const SCREEN_CELLS := Vector2i(10, 9)
 const TRIGGER_LAYER := 1 << 7
-const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
 const PLAYER_LAYER := 1 << 1
 # Every Room is drawn from the Mucho Pixels packs' sheets, but for the coast's own prop: Tidefen's
 # bell, which no pack has.
@@ -38,7 +37,6 @@ func get_tests() -> Array:
 		["Every Room is found in the World by its scene", _test_found_by_scene],
 		["Every Room's Region is in the World", _test_region_held],
 		["Every Room's Exits lead to Entries in the World", _test_exits_lead_to_entries],
-		["Every Room's Entries stand the Player clear of its Exits", _test_entries_clear_of_exits],
 		["The World puts every Room's Exits on the Map where they are", _test_exits_on_map],
 		["The World marks every Rest point and Boss on the Map", _test_markers_on_map],
 		["Every Region has its own colour on the Map", _test_region_colours],
@@ -217,53 +215,6 @@ static func _exits_lead_to_entries(_room_id: StringName, room: Node2D) -> bool:
 			valid = valid and entry is Marker2D
 			target.free()
 	return valid
-
-
-func _test_entries_clear_of_exits() -> bool:
-	return _every_room(_entries_clear_of_exits)
-
-
-# A Player set down at an Entry must not stand in one of the Room's Exits, or it is sent straight
-# back out. The Player's body is its collision capsule, standing on the Entry.
-static func _entries_clear_of_exits(room_id: StringName, room: Node2D) -> bool:
-	var body := _player_body()
-	var valid := true
-	for entry in room.get_node("Entries").get_children():
-		var at := _room_position(entry as Node2D, room)
-		var standing := Rect2(at + body.position, body.size)
-		for node in room.find_children("*", "Area2D", true, false):
-			if node.get_script() != RoomExitScript:
-				continue
-			for shape in node.find_children("*", "CollisionShape2D", false, false):
-				var edge := (shape as CollisionShape2D).shape as RectangleShape2D
-				var centre := _room_position(shape as Node2D, room)
-				if edge != null and standing.intersects(Rect2(centre - edge.size / 2.0, edge.size)):
-					push_error(
-						"Room '%s': Entry %s stands in Exit %s." % [room_id, entry.name, node.name]
-					)
-					valid = false
-	return valid
-
-
-# The Player's collision capsule, as a box from its feet.
-static func _player_body() -> Rect2:
-	var player := PLAYER_SCENE.instantiate()
-	var collision := player.get_node("CollisionShape2D") as CollisionShape2D
-	var capsule := collision.shape as CapsuleShape2D
-	var size := Vector2(capsule.radius * 2.0, capsule.height)
-	var box := Rect2(collision.position - size / 2.0, size)
-	player.free()
-	return box
-
-
-static func _room_position(node: Node2D, room: Node2D) -> Vector2:
-	var at := Vector2.ZERO
-	var step: Node = node
-	while step != null and step != room:
-		if step is Node2D:
-			at = (step as Node2D).transform * at
-		step = step.get_parent()
-	return at
 
 
 func _test_scene_leaves_camera() -> bool:

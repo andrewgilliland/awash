@@ -26,10 +26,6 @@ func get_tests() -> Array:
 	return [
 		["Player has a hurtbox and a sword hitbox", _test_player_boxes],
 		["Sword hitbox is live only during an Attack", _test_sword_live_in_attack],
-		[
-			"The sword's reach runs from the Player's front, knocking what it strikes away",
-			_test_sword_reach_from_front
-		],
 		["A hit costs the Player Health and knocks it away", _test_player_hit],
 		["Health counts in tens: 50 for Vael, a hit costs 10", _test_health_in_tens],
 		["Enemy hits differ: a spear costs 10, an arc 15", _test_enemy_hit_strengths],
@@ -73,27 +69,6 @@ func _test_sword_live_in_attack() -> bool:
 
 	_step(controller, {"attack_finished": true})
 	valid = valid and not sword.active
-	player.free()
-	return valid
-
-
-# Enemies are knocked away from the Hitbox's origin, so that sits at the Player's front and the
-# reach runs out from there: anything struck is ahead of it, and is knocked away from the Player.
-func _test_sword_reach_from_front() -> bool:
-	var player := PLAYER_SCENE.instantiate() as CharacterBody2D
-	_root.add_child(player)
-	var controller := player.get("controller") as PlayerController
-	var sword := player.get_node("SwordHitbox") as Hitbox
-	var shape := sword.get_node("Shape") as CollisionShape2D
-	var box := shape.shape as RectangleShape2D
-	var valid := true
-	for facing: float in [1.0, -1.0]:
-		_step(controller, {"direction": facing})
-		_step(controller, {"melee_held": true, "direction": facing})
-		var near := (shape.position.x - facing * box.size.x / 2.0) * facing
-		var far := (shape.position.x + facing * box.size.x / 2.0) * facing
-		valid = valid and absf(sword.position.x) <= 6.0 and near >= 0.0 and far >= 28.0
-		_step(controller, {"attack_finished": true})
 	player.free()
 	return valid
 
