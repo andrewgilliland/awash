@@ -6,8 +6,9 @@ extends RefCounted
 const World := preload("res://scripts/core/world.gd")
 const CACHE_PATH := "res://scenes/world/cache.tscn"
 # Every Cache in the World: Tidefen's bomb crate, the wreck's chest, the salt cliffs' high crate,
-# the sea cave's crate, the passage's chest, the lake's chest and the upper terraces' high chest.
-const CACHES := 7
+# the sea cave's crate, the passage's chest, the lake's chest, the upper terraces' high chest and
+# the Spore Beast's lair's chest.
+const CACHES := 8
 const RoomCaches := preload("res://tests/room_caches.gd")
 const PICKUPS_PATH := "res://scripts/items/pickups.gd"
 const RoomExitScript := preload("res://scripts/core/room_exit.gd")

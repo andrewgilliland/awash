@@ -71,13 +71,16 @@ describe("the Codex's enemies", () => {
   });
 
   it("lists enemies only in the docs as planned, with no stats", () => {
-    const sporeBeast = enemy("spore_beast");
-    expect(sporeBeast?.planned).toBe(true);
-    expect(sporeBeast?.stats).toBeNull();
-    expect(sporeBeast?.sprite).toBeNull();
+    const pirate = enemy("pirate");
+    expect(pirate?.planned).toBe(true);
+    expect(pirate?.stats).toBeNull();
+    expect(pirate?.sprite).toBeNull();
     // The Stalker is built, perched in the canopy walk and the upper terraces.
     expect(enemy("stalker")?.planned).toBe(false);
     expect(enemy("stalker")?.rooms.map((room) => room.id)).toEqual(["low_canopy_jungle_3", "low_canopy_jungle_4"]);
+    // The Spore Beast is built, in its lair.
+    expect(enemy("spore_beast")?.planned).toBe(false);
+    expect(enemy("spore_beast")?.rooms.map((room) => room.id)).toEqual(["low_canopy_jungle_5"]);
   });
 });
 
@@ -102,7 +105,7 @@ describe("the Codex's items", () => {
     expect(item("brinecap")?.lore).toContain("salt-crusted mushroom");
     expect(item("brinecap")?.lore).not.toContain("assets/");
     const brinecap = item("brinecap")?.droppedBy.map((drop) => drop.enemy);
-    expect(brinecap).toEqual(["scavenger", "silt_crab", "stalker", "storm_wisp"]);
+    expect(brinecap).toEqual(["scavenger", "silt_crab", "spore_beast", "stalker", "storm_wisp"]);
   });
 
   it("reads Sub Weapons, Weapons and Armor", () => {

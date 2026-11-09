@@ -64,6 +64,10 @@ _Avoid_: Dropper, ceiling crab, cave crab
 The Low Canopy Jungle's first enemy: a six-legged jungle cat with bark-plated shoulders, waiting on a high perch. When the Player comes near below it, roots burst under their feet to mark them, and it pounces onto the mark; it recovers where it lands, open to hits, then leaps back to its perch.
 _Avoid_: Cat, panther, jumper, pouncer
 
+**Spore Beast**:
+The Low Canopy Jungle's second enemy: a swollen boar-like beast with fungal shelves on its back, lumbering after the Player in its lair under the lower terraces. It never flinches; every hit vents a cloud of spores around it that hurts a Player inside it, so the Player strikes and steps back, or strikes from afar with a Sword Beam.
+_Avoid_: Boar, mushroom pig, fungus beast
+
 **Boss**:
 An enemy that guards a Region's end, with its own Health bar along the bottom of the screen while it fights. Defeating it opens a Gate, and it stays defeated for the Run, through the Player's own defeat; a new Run brings it back.
 _Avoid_: Miniboss, guardian (as the general term)

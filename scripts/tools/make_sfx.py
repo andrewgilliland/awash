@@ -207,6 +207,12 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     "stalker_hurt": lambda: mix(noise(0.08, 6000, 1500, seed=73), sweep(0.1, 500, 220, duty=0.25)),
     # Defeated: a falling yowl, then stillness.
     "stalker_defeat": lambda: mix(growl(0.55, 260, 70, tremolo_hz=18), noise(0.3, 2500, 300, seed=74)),
+    # The Spore Beast notices the Player: a wet snort.
+    "spore_beast_snort": lambda: mix(noise(0.18, 1500, 300, seed=80), growl(0.18, 90, 70, tremolo_hz=25)),
+    # A hit vents its spores: a long, soft hiss.
+    "spore_beast_hiss": lambda: noise(0.5, 6000, 2500, seed=81),
+    # Defeated: a low groan, sinking.
+    "spore_beast_defeat": lambda: mix(growl(0.7, 110, 45, tremolo_hz=10), noise(0.4, 1200, 200, seed=82)),
     # Nameless Warden: a deep swell as it sets its shield, then the move it makes.
     "warden_windup": lambda: growl(0.6, 70, 140, tremolo_hz=12),
     # The shield bash: a heavy rush.
@@ -268,6 +274,7 @@ HOMES = {
     "lurelight_": "assets/enemies/lurelight",
     "silt_crab_": "assets/enemies/silt_crab",
     "stalker_": "assets/enemies/stalker",
+    "spore_beast_": "assets/enemies/spore_beast",
     "warden_": "assets/enemies/nameless_warden",
     "ui_": "assets/ui",
     "bomb_": "assets/items",

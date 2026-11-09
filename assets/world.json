@@ -31,7 +31,8 @@
 			"colour": "#3d6b21",
 			"floor": [0, 1, 0],
 			"theme": "res://assets/regions/low_canopy_jungle/music/theme.wav",
-			"background": "res://scenes/regions/low_canopy_jungle/background.tscn"
+			"background": "res://scenes/regions/low_canopy_jungle/background.tscn",
+			"backgrounds": {"den": "res://scenes/regions/low_canopy_jungle/den_background.tscn"}
 		},
 		"shrinekeeper_camp": {
 			"note": "The Low Canopy Jungle's Safe spoke, up in the canopy. It keeps the jungle's sheets and Background, with a theme of its own.",
@@ -300,21 +301,17 @@
 			"region": "low_canopy_jungle",
 			"exits": [
 				{"screen": [0, 1], "side": "west"},
-				{"screen": [2, 0], "side": "east"}
-			],
-			"plan": {
-				"exits": [
-					{"screen": [0, 1], "side": "west"},
-					{"screen": [2, 0], "side": "east"},
-					{"screen": [1, 1], "side": "south"}
-				]
-			}
+				{"screen": [2, 0], "side": "east"},
+				{"screen": [1, 1], "side": "south"}
+			]
 		},
 		"low_canopy_jungle_5": {
 			"note": "The Spore Beast's lair, down from the lower terraces: a dead end.",
+			"scene": "res://scenes/rooms/low_canopy_jungle_5.tscn",
 			"cell": [24, 1],
 			"size": [2, 1],
 			"region": "low_canopy_jungle",
+			"background": "den",
 			"exits": [
 				{"screen": [0, 0], "side": "north"}
 			]

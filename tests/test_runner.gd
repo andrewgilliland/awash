@@ -51,6 +51,7 @@ const SUITES: Array[String] = [
 	"res://tests/low_canopy_jungle_room_2_tests.gd",
 	"res://tests/low_canopy_jungle_room_3_tests.gd",
 	"res://tests/low_canopy_jungle_room_4_tests.gd",
+	"res://tests/low_canopy_jungle_room_5_tests.gd",
 	"res://tests/low_canopy_jungle_room_6_tests.gd",
 	"res://tests/shrinekeeper_camp_room_1_tests.gd",
 	"res://tests/room_exit_tests.gd",
@@ -73,6 +74,7 @@ const SUITES: Array[String] = [
 	"res://tests/lurelight_sounds_tests.gd",
 	"res://tests/silt_crab_brain_tests.gd",
 	"res://tests/stalker_brain_tests.gd",
+	"res://tests/spore_beast_brain_tests.gd",
 ]
 
 # Then, once nodes can join the tree, those built with its root.
@@ -101,6 +103,7 @@ const TREE_SUITES: Array[String] = [
 	"res://tests/lurelight_scene_tests.gd",
 	"res://tests/silt_crab_scene_tests.gd",
 	"res://tests/stalker_scene_tests.gd",
+	"res://tests/spore_beast_scene_tests.gd",
 	"res://tests/health_bar_tests.gd",
 	"res://tests/sub_weapon_count_tests.gd",
 	"res://tests/gold_tests.gd",

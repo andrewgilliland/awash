@@ -24,6 +24,7 @@ const StoutAxePlaytests := preload("res://tests/stout_axe_playtests.gd")
 const JunglePlaytests := preload("res://tests/jungle_playtests.gd")
 const StalkerPlaytests := preload("res://tests/stalker_playtests.gd")
 const CampPlaytests := preload("res://tests/camp_playtests.gd")
+const SporeBeastPlaytests := preload("res://tests/spore_beast_playtests.gd")
 
 
 func _init() -> void:
@@ -108,6 +109,9 @@ func _init() -> void:
 		await _run_playtest_async(playtest[0], playtest[1])
 	var camp_playtests := CampPlaytests.new(self)
 	for playtest in camp_playtests.get_playtests():
+		await _run_playtest_async(playtest[0], playtest[1])
+	var spore_beast_playtests := SporeBeastPlaytests.new(self)
+	for playtest in spore_beast_playtests.get_playtests():
 		await _run_playtest_async(playtest[0], playtest[1])
 	await _run_playtest_async(
 		"Sword defeats the Scavenger and earns its Experience and Gold",
