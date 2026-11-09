@@ -53,6 +53,7 @@ const SUITES: Array[String] = [
 	"res://tests/low_canopy_jungle_room_4_tests.gd",
 	"res://tests/low_canopy_jungle_room_5_tests.gd",
 	"res://tests/low_canopy_jungle_room_6_tests.gd",
+	"res://tests/low_canopy_jungle_room_7_tests.gd",
 	"res://tests/shrinekeeper_camp_room_1_tests.gd",
 	"res://tests/room_exit_tests.gd",
 	"res://tests/health_tests.gd",
