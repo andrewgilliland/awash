@@ -1,0 +1,94 @@
+[gd_scene load_steps=10 format=4]
+
+[ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_main"]
+
+[ext_resource type="TileSet" path="res://assets/regions/low_canopy_jungle/tiles/terrain.tres" id="terrain_tiles"]
+[ext_resource type="TileSet" path="res://assets/regions/low_canopy_jungle/tiles/scenery.tres" id="scenery_tiles"]
+
+[ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="4_exit"]
+
+[ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="5_player"]
+
+[ext_resource type="PackedScene" path="res://scenes/world/cache.tscn" id="cache_scene"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_edge"]
+size = Vector2(8, 144)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_west"]
+size = Vector2(8, 288)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_east"]
+size = Vector2(8, 288)
+
+[node name="LowCanopyJungle4" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Trees" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAIAAAAAAAAAAQAAAAJAAAAAAABAAQAAAAIAAEAAAAAAAQAAAAJAAEAAAABAAQAAAAIAAIAAAAAAAQAAAAJAAIAAAABAAQAAAAIAAMAAAAAAAQAAAAJAAMAAAABAAQAAAAIAAQAAAAAAAQAAAAJAAQAAAABAAQAAAAAAAUAAAAAAAQAAAABAAUAAAABAAQAAAAAAAYAAAAAAAQAAAABAAYAAAABAAQAAAAAAAcAAAAAAAQAAAABAAcAAAABAAQAAAAAAAgAAAAAAAQAAAABAAgAAAABAAQAAAAAAAkAAAAAAAUAAAABAAkAAAABAAQAAAAAAAoAAAAAAAQAAAABAAoAAAABAAQAAAAAAAsAAAAAAAQAAAABAAsAAAABAAQAAAAAAAwAAAAAAAQAAAABAAwAAAABAAUAAAAAAA0AAAAAAAQAAAABAA0AAAABAAQAAAAAAA4AAAAAAAQAAAABAA4AAAABAAQAAAA=")
+tile_set = ExtResource("scenery_tiles")
+
+[node name="Canopy" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAAAAAAAAADAAUAAAABAAAAAAAEAAUAAAACAAAAAAAFAAUAAAADAAAAAAADAAUAAAAEAAAAAAAEAAUAAAAFAAAAAAAFAAUAAAAGAAAAAAADAAUAAAAHAAAAAAAEAAUAAAAIAAAAAAAFAAUAAAAJAAAAAAADAAUAAAAAAAEAAAADAAQAAAABAAEAAAAEAAQAAAACAAEAAAAFAAQAAAADAAEAAAADAAQAAAAEAAEAAAAEAAQAAAAFAAEAAAAFAAQAAAAGAAEAAAADAAQAAAAHAAEAAAAEAAQAAAAIAAEAAAAFAAQAAAAJAAEAAAADAAQAAAAFAAIAAAACAAQAAAAFAAMAAAACAAQAAAAFAAQAAAACAAUAAAAEAAoAAAACAAQAAAAEAAsAAAACAAQAAAAEAAwAAAACAAUAAAAIAA4AAAACAAQAAAAIAA8AAAACAAQAAAAIABAAAAACAAUAAAAFABMAAAACAAQAAAAFABQAAAACAAUAAAA=")
+tile_set = ExtResource("scenery_tiles")
+
+[node name="Terrain" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAAAAMAAAAGAAAAAAABAAMAAAAHAAAAAAAAAAQAAAAGAAEAAAABAAQAAAAHAAEAAAAGAAUAAAADAAMAAAAHAAUAAAAEAAMAAAAIAAUAAAAEAAMAAAAJAAUAAAAEAAMAAAADAAcAAAAAAAMAAAAEAAcAAAABAAMAAAAFAAcAAAACAAMAAAADAAkAAAAAAAMAAAAEAAkAAAABAAMAAAAFAAkAAAACAAMAAAAHAAsAAAAFAAAAAAAIAAsAAAAGAAAAAAAJAAsAAAAGAAAAAAAHAAwAAAAFAAEAAAAIAAwAAAAGAAEAAAAJAAwAAAAGAAEAAAAEAA0AAAAAAAMAAAAFAA0AAAABAAMAAAAGAA0AAAACAAMAAAAAAA8AAAABAAMAAAABAA8AAAABAAMAAAACAA8AAAACAAMAAAADABEAAAAAAAMAAAAEABEAAAABAAMAAAAFABEAAAACAAMAAAAHABMAAAAFAAAAAAAIABMAAAABAAAAAAAJABMAAAABAAAAAAAHABQAAAAFAAEAAAAIABQAAAABAAEAAAAJABQAAAABAAEAAAADABUAAAAAAAMAAAAEABUAAAABAAMAAAAFABUAAAACAAMAAAAHABUAAAAFAAEAAAAIABUAAAABAAEAAAAJABUAAAABAAEAAAAHABYAAAAFAAEAAAAIABYAAAABAAEAAAAJABYAAAACAAEAAAAAABcAAAABAAAAAAABABcAAAABAAAAAAACABcAAAADAAAAAAAGABcAAAAFAAAAAAAHABcAAAABAAEAAAAIABcAAAABAAEAAAAJABcAAAABAAEAAAAAABgAAAABAAEAAAABABgAAAABAAEAAAACABgAAAADAAEAAAAGABgAAAAFAAEAAAAHABgAAAABAAEAAAAIABgAAAACAAEAAAAJABgAAAABAAEAAAAAABkAAAABAAEAAAABABkAAAABAAEAAAACABkAAAABAAEAAAADABkAAAABAAAAAAAEABkAAAABAAAAAAAFABkAAAACAAAAAAAGABkAAAABAAEAAAAHABkAAAACAAEAAAAIABkAAAABAAEAAAAJABkAAAACAAEAAAAAABoAAAABAAEAAAABABoAAAABAAEAAAACABoAAAABAAEAAAADABoAAAABAAEAAAAEABoAAAACAAEAAAAFABoAAAACAAEAAAAGABoAAAABAAEAAAAHABoAAAABAAEAAAAIABoAAAABAAEAAAAJABoAAAABAAEAAAA=")
+tile_set = ExtResource("terrain_tiles")
+
+[node name="Props" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAHAAQAAAAHAAQAAAAIAAoAAAAMAAQAAAAJAAoAAAAJAAQAAAAIABIAAAALAAQAAAAJABIAAAAMAAQAAAABABYAAAAIAAQAAAAGABYAAAALAAQAAAAEABgAAAAHAAQAAAA=")
+tile_set = ExtResource("scenery_tiles")
+
+[node name="HighChest" parent="." instance=ExtResource("cache_scene")]
+position = Vector2(16, 32)
+cache_id = &"upper_terraces_chest"
+kind = &"mourning_salt"
+count = 2
+
+[node name="Bounds" type="StaticBody2D" parent="."]
+collision_mask = 0
+
+[node name="West" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(-4, 144)
+shape = SubResource("RectangleShape2D_west")
+
+[node name="East" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(164, 288)
+shape = SubResource("RectangleShape2D_east")
+
+[node name="Exits" type="Node2D" parent="."]
+
+[node name="west" type="Area2D" parent="Exits"]
+position = Vector2(-4, 360)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_exit")
+room_id = &"low_canopy_jungle_3"
+entry_id = &"east"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/west"]
+shape = SubResource("RectangleShape2D_edge")
+
+[node name="east" type="Area2D" parent="Exits"]
+position = Vector2(164, 72)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_exit")
+room_id = &"low_canopy_jungle_6"
+entry_id = &"west"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/east"]
+shape = SubResource("RectangleShape2D_edge")
+
+[node name="Entries" type="Node2D" parent="."]
+
+[node name="west" type="Marker2D" parent="Entries"]
+position = Vector2(12, 368)
+
+[node name="east" type="Marker2D" parent="Entries"]
+position = Vector2(148, 80)
+
+[node name="Player" parent="." instance=ExtResource("5_player")]
+position = Vector2(12, 368)

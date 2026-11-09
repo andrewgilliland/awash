@@ -17,7 +17,7 @@ An Exit the Player falls through into a Room below, with no way back up. A sinkh
 _Avoid_: Pit, sinkhole, chute, hole (as the general term)
 
 **Gate**:
-A place on a route that stays shut until an ability unlock or a defeated Boss opens it, such as the ledge above the salt cliffs that double jump will reach, or the column of rune light across the trail east of the Warden's gate.
+A place on a route that stays shut until an ability unlock or a defeated Boss opens it, such as the ledge above the salt cliffs that double jump will reach, or the chest on its shelf high in the jungle's upper terraces, or the column of rune light across the trail east of the Warden's gate.
 _Avoid_: Lock, barrier, door
 
 **Breakable wall**:

@@ -17,10 +17,12 @@ const BACKGROUND_SHEET := TILES + "low_canopy_jungle_background.png"
 const BACKGROUND := "res://scenes/regions/low_canopy_jungle/background.tscn"
 const WORLD_LAYER := 1
 # The sheet's earth: grass over earth, with its ends and undersides; the terraces' stone walls,
-# their caps mossed over; then one-way ledges, the mossy ledge and the plank deck.
+# their caps mossed over; then one-way ledges, the mossy ledge and the plank deck, and the rope
+# bridge's planks.
 const GRASS_AND_EARTH := Rect2i(0, 0, 5, 3)
 const STONE := Rect2i(5, 0, 4, 2)
 const LEDGES: Array[Vector2i] = [Vector2i(0, 3), Vector2i(3, 3)]
+const BRIDGE := Vector2i(6, 3)
 # The Background's layers, back to front, and how fast each scrolls across with the camera: the sky
 # fixed to the screen, its clouds, the far trunks, then the thicket. None scrolls up or down: up in
 # the trees they hold their height on the screen.
@@ -31,7 +33,7 @@ func get_tests() -> Array:
 	return [
 		["The jungle and its camp have names and colours of their own", _test_regions],
 		["The jungle's tiles come in two sets, cut from its own sheet", _test_tile_sets],
-		["The jungle's earth and stone are solid and its ledges one-way", _test_ground],
+		["The jungle's earth and stone are solid, its ledges and bridges one-way", _test_ground],
 		["The jungle's pools sink underfoot like the coast's shallows", _test_water],
 		["The jungle's Background is sky, far trunks and thicket", _test_background],
 		["The jungle has a looping theme of its own", _test_theme],
@@ -88,7 +90,7 @@ func _test_ground() -> bool:
 	for start in LEDGES:
 		for x in range(start.x, start.x + 3):
 			valid = valid and _one_way(sheet, Vector2i(x, start.y))
-	return valid
+	return valid and _one_way(sheet, BRIDGE)
 
 
 # Drawn with the coast's own water, so a pool is the same shallow the Player knows.
