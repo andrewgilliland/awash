@@ -5,7 +5,7 @@ What the Player wears or wields, one piece in each slot, kept for the whole Run 
 _Avoid_: Gear, outfit, loadout
 
 **Weapon**:
-The Equipment slot for what the Player wields: the sword each Attack swings, drawn in the Player's hand and in its Sword Beam. It is never empty; a new Run holds the Short Sword, and the Equipment Panel takes up any other Weapon owned.
+The Equipment slot for what the Player wields: the sword or axe each Attack swings, drawn in the Player's hand and in what its Charged Attack looses. It is never empty; a new Run holds the Short Sword, and the Equipment Panel takes up any other Weapon owned.
 _Avoid_: Blade, arm, main hand
 
 **Short Sword**:
@@ -16,12 +16,16 @@ _Avoid_: Starting weapon, default weapon
 A ceremonial blade from the oathkeepers the Wraiths once were: a Weapon with Attack 5. A defeated Wraith sometimes leaves it where it fell, until the Player owns it; touching it takes it up at once. It is the Waking Coast's found Weapon. Its planned Weapon trait, not built yet: its Sword Beam passes through every enemy in its way.
 _Avoid_: Wraith sword, ghost blade
 
+**Stout Axe**:
+A shipwright's axe from the Undertow's drowned wrecks: a Weapon with Attack 6, in the pools' chest. Its Weapon trait: its quick slashes chop, breaking a Shortcut's cracked wall, and its Charged Attack looses an Axe Throw in place of a Sword Beam.
+_Avoid_: Hatchet, wood axe
+
 **Blacktide**:
 The planned legendary Weapon, a black sea-metal curved sword recovered from a wreck on the Waking Coast once the Nameless Warden is defeated: Attack 8. Its quick slashes break a Ward. Like every Weapon, it is found as it is and never upgraded.
 _Avoid_: Legendary sword, black blade, Vael's sword
 
 **Found Weapon**:
-A Weapon found rather than started with, one per major Region. Each is in a Cache down a Branch, except the Oathblade, which Wraiths drop. Each gives Attack and a Weapon trait, and each Region's find gives a little more Attack than the last. No Weapon is ever upgraded.
+A Weapon found rather than started with, one per major Region. Each is in a Cache down a Branch, except the Oathblade, which Wraiths drop; the Undertow's is the Stout Axe. Each gives Attack and a Weapon trait, and each Region's find gives a little more Attack than the last. No Weapon is ever upgraded.
 _Avoid_: Loot weapon, rare weapon, side weapon
 
 **Weapon trait**:

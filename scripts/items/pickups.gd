@@ -11,6 +11,7 @@ const SCENES := {
 	&"bomb": preload("res://scenes/items/bomb_pickup.tscn"),
 	&"oathblade": preload("res://scenes/items/oathblade.tscn"),
 	&"scale_mail": preload("res://scenes/items/scale_mail.tscn"),
+	&"stout_axe": preload("res://scenes/items/stout_axe.tscn"),
 }
 
 

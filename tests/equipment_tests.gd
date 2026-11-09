@@ -5,6 +5,7 @@ const TUNIC := &"worn_leather_tunic"
 const SHORT_SWORD := &"short_sword"
 const OATHBLADE := &"oathblade"
 const SCALE_MAIL := &"scale_mail"
+const STOUT_AXE := &"stout_axe"
 
 
 func get_tests() -> Array:
@@ -24,6 +25,7 @@ func get_tests() -> Array:
 		["Every Weapon has an icon and a sheet to be held in hand", _test_every_weapon_has_icon],
 		["The Short Sword adds no Attack; the Oathblade adds 5", _test_attack],
 		["A Weapon is owned once, and only a known one", _test_own_weapon],
+		["The Stout Axe adds 6 Attack, and only it chops", _test_stout_axe],
 		["Scale Mail is Armor that gives 3 Defense", _test_scale_mail],
 		["Armor is owned once, and only a known one", _test_own_armor],
 		["Only an owned Weapon can be held", _test_hold_owned_only],
@@ -148,6 +150,22 @@ func _test_own_armor() -> bool:
 	valid = valid and not equipment.own_armor(&"nothing")
 	# Owning it does not put it on.
 	return valid and equipment.owned == [TUNIC, SCALE_MAIL] and equipment.armor == TUNIC
+
+
+func _test_stout_axe() -> bool:
+	var equipment := Equipment.new()
+	var valid := Equipment.WEAPONS.has(STOUT_AXE) and not equipment.chops()
+	if not valid:
+		return false
+	valid = Equipment.WEAPONS[STOUT_AXE].name == "Stout Axe"
+	valid = valid and equipment.attack_with(STOUT_AXE) == 6
+	for id: StringName in [SHORT_SWORD, OATHBLADE]:
+		equipment.own_weapon(id)
+		equipment.hold(id)
+		valid = valid and not equipment.chops()
+	equipment.own_weapon(STOUT_AXE)
+	equipment.hold(STOUT_AXE)
+	return valid and equipment.chops() and equipment.attack() == 6
 
 
 func _test_own_weapon() -> bool:

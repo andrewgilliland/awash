@@ -27,6 +27,13 @@ const WRECK_PATH := "res://scenes/rooms/undertow_5.tscn"
 const WRECK_ID := &"undertow_5"
 const MAIL_CACHE_ID := &"wreck_mail"
 const SCALE_MAIL := &"scale_mail"
+# The pools' chest: the Stout Axe, east of both shallows.
+const POOLS_PATH := "res://scenes/rooms/undertow_4.tscn"
+const POOLS_ID := &"undertow_4"
+const AXE_CACHE_ID := &"pools_axe"
+const STOUT_AXE := &"stout_axe"
+# East of the second shallow's Lurelight.
+const EAST_OF_SHALLOWS := 264.0
 
 # Needs a root that is already in the tree: a Room reads the Run in _ready.
 var _root: Window
@@ -47,6 +54,9 @@ func get_tests() -> Array:
 		["The wreck's chest holds Scale Mail, under an id of its own", _test_wreck_holds_mail],
 		["Opening the wreck's chest spills Scale Mail, taken as Armor", _test_wreck_opens],
 		["The wreck's chest stays shut for a Player who owns Scale Mail", _test_wreck_owned],
+		["The pools' chest holds the Stout Axe, east of both shallows", _test_pools_hold_axe],
+		["Opening the pools' chest spills the Stout Axe, taken as a Weapon", _test_pools_open],
+		["The pools' chest stays shut for a Player who owns the Stout Axe", _test_pools_owned],
 	]
 
 
@@ -196,6 +206,48 @@ func _test_wreck_owned() -> bool:
 	var cache := room.get_node("Cache")
 	cache.get_node("Interactable").call("use", player)
 	var valid: bool = not cache.call("is_open") and _spilled(room, SCALE_MAIL).is_empty()
+	_close(room)
+	return valid
+
+
+func _test_pools_hold_axe() -> bool:
+	var room := _room(true, POOLS_PATH, POOLS_ID)
+	var cache := room.get_node_or_null("Cache") as Node2D
+	var valid: bool = cache != null and cache.get("cache_id") == AXE_CACHE_ID
+	valid = valid and cache.get("kind") == STOUT_AXE and cache.get("count") == 1
+	valid = valid and cache.position.x > EAST_OF_SHALLOWS
+	_close(room)
+	return valid
+
+
+func _test_pools_open() -> bool:
+	var room := _room(true, POOLS_PATH, POOLS_ID)
+	var player := room.get_node("Player")
+	var cache := room.get_node_or_null("Cache")
+	if cache == null:
+		_close(room)
+		return false
+	cache.get_node("Interactable").call("use", player)
+	var spilled := _spilled(room, STOUT_AXE)
+	var valid: bool = spilled.size() == 1 and cache.call("is_open")
+	valid = valid and spilled[0].get("collect_method") == &"collect_weapon"
+	valid = valid and not player.get("equipment").owns_weapon(STOUT_AXE)
+	_close(room)
+	return valid
+
+
+func _test_pools_owned() -> bool:
+	var run := _root.get_node("RunState")
+	run.call("start_run")
+	var owned: Array[StringName] = [&"short_sword", STOUT_AXE]
+	run.set("player_owned_weapons", owned)
+	var room := _room(false, POOLS_PATH, POOLS_ID)
+	var player := room.get_node("Player")
+	var cache := room.get_node_or_null("Cache")
+	var valid := cache != null
+	if valid:
+		cache.get_node("Interactable").call("use", player)
+		valid = not cache.call("is_open") and _spilled(room, STOUT_AXE).is_empty()
 	_close(room)
 	return valid
 

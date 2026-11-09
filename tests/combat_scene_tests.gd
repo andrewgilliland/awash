@@ -33,6 +33,8 @@ func get_tests() -> Array:
 			"A charged Attack costs 20 and strikes charged; a quick one 10",
 			_test_charged_sword_strength
 		],
+		["Holding the Stout Axe, only its quick slash chops", _test_axe_chops],
+		["Holding the Stout Axe, a Charged Attack looses an Axe Throw", _test_axe_throw],
 		["A full Charge makes the sword blink", _test_full_charge_blinks],
 		[
 			"A Charged Attack's swing glows steady; a quick one's does not",
@@ -205,6 +207,41 @@ func _test_charged_sword_strength() -> bool:
 
 	_step(controller, {"melee_held": true})
 	valid = valid and sword.active and sword.damage == 10 and _beams().is_empty()
+	player.free()
+	return valid
+
+
+func _test_axe_chops() -> bool:
+	var player := PLAYER_SCENE.instantiate() as CharacterBody2D
+	_root.add_child(player)
+	var controller := player.get("controller") as PlayerController
+	var sword := player.get_node("SwordHitbox") as Hitbox
+	_step(controller, {"melee_held": true})
+	var valid: bool = sword.active and not sword.get(&"chops")
+	_step(controller, {"attack_finished": true})
+	player.call("collect_weapon", &"stout_axe")
+	_step(controller, {"melee_held": true})
+	valid = valid and sword.active and sword.get(&"chops") and sword.damage == 16
+	player.free()
+	return valid
+
+
+func _test_axe_throw() -> bool:
+	var player := PLAYER_SCENE.instantiate() as CharacterBody2D
+	_root.add_child(player)
+	var controller := player.get("controller") as PlayerController
+	player.call("collect_weapon", &"stout_axe")
+	_hold_melee(controller)
+	_step(controller, {})
+	var throws := _root.get_tree().get_nodes_in_group(&"axe_throw")
+	var valid := _beams().is_empty() and throws.size() == 1
+	if throws.size() == 1:
+		var hitbox := throws[0].get_node("Hitbox") as Hitbox
+		valid = valid and hitbox.damage == 32 and hitbox.charged
+		valid = valid and throws[0].get("facing") == controller.facing
+	for axe in throws:
+		axe.free()
+	_free_beams()
 	player.free()
 	return valid
 
