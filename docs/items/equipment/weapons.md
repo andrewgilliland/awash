@@ -8,6 +8,7 @@ items:
     weapons/short-sword.md,
     weapons/blacktide.md,
     weapons/oathblade.md,
+    weapons/stout-axe.md,
     weapons/thornbite.md,
     weapons/deepvein-blade.md,
     weapons/kestrel-blade.md,
@@ -21,13 +22,14 @@ items:
 Every Run starts with the [Short Sword](weapons/short-sword.md), Attack 0, from Mara. Every other Weapon is found, and no Weapon is ever upgraded: each is found as it is.
 
 - **Blacktide** is the legendary Weapon, in a wreck on the Waking Coast that opens once the Nameless Warden is defeated. It gives Attack 8, and its quick slashes break a Ward. No other Weapon's quick slashes do.
-- **Found Weapon** is one Weapon for each major Region, in a Cache down a Branch off the Main path. The Oathblade is the exception, since a Wraith drops it. None is sold. Each gives some Attack and one Weapon trait, an upside of its own that takes nothing away.
+- **Found Weapon** is one Weapon for each major Region, in a Cache down a Branch off the Main path. The Oathblade is the exception, since a Wraith drops it, and the Undertow holds one too, the Stout Axe. None is sold. Each gives some Attack and one Weapon trait, an upside of its own that takes nothing away.
 
-Each Region's find gives a little more Attack than the last, and its trait is what keeps an older one worth holding. Every Weapon is a one-handed blade with the same swing, reach and timing, and only its Attack, trait, held sprite and Sword Beam differ. With every Weapon, a Charged Attack's Sword Beam takes twice the Health a quick slash would, and a trait that makes a hit take more Health counts toward it.
+Each Region's find gives a little more Attack than the last, and its trait is what keeps an older one worth holding. Every Weapon has the same swing, reach and timing, and only its Attack, trait, held sprite and what its Charged Attack looses differ: a Sword Beam, or with the Stout Axe an Axe Throw. Either takes twice the Health a quick slash would, and a trait that makes a hit take more Health counts toward it.
 
 | Ch. | Region | Weapon | Attack | Weapon trait | Found |
 | --- | --- | --- | --- | --- | --- |
 | 1 | Waking Coast | [Oathblade](weapons/oathblade.md) | 5 | Its Sword Beam passes through every enemy in its way | Wraiths drop it, 10% (built) |
+| 1 | Undertow | [Stout Axe](weapons/stout-axe.md) | 6 | Its quick slashes break a cracked wall; its Charged Attack throws it in an arc | The pools' chest (built) |
 | 1 | Waking Coast | [Blacktide](weapons/blacktide.md) (legendary) | 8 | Its quick slashes break a Ward | A wreck that opens once the Nameless Warden is defeated |
 | 2 | Low Canopy Jungle | [Thornbite](weapons/thornbite.md) | 8 | Each hit poisons the enemy: 2 Health a second for 3 seconds | A Spore Beast's lair |
 | 3 | Underroot | [Deepvein Blade](weapons/deepvein-blade.md) | 12 | Defeated enemies give 50% more Experience | A collapsed mine seam |

@@ -111,6 +111,8 @@ describe("the Codex's items", () => {
     expect(item("worn_leather_tunic")?.kind).toBe("Armor");
     expect(item("scale_mail")).toMatchObject({ kind: "Armor", effect: "Defense +3", planned: false });
     expect(item("scale_mail")?.caches).toEqual([{ id: "wreck_mail", room: "undertow_5", count: 1 }]);
+    expect(item("stout_axe")).toMatchObject({ kind: "Weapon", effect: "Attack +6", planned: false, traitBuilt: true });
+    expect(item("stout_axe")?.caches).toEqual([{ id: "pools_axe", room: "undertow_4", count: 1 }]);
   });
 
   it("lists items only in the docs as planned, one of their kind", () => {

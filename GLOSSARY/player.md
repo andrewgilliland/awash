@@ -45,12 +45,16 @@ The Player state from a melee press, or from letting go of a full Charge, until 
 _Avoid_: Swing, strike (as state names)
 
 **Charged Attack**:
-An Attack let go after a full Charge, half a second of holding melee from the press. The sword blinks once the Charge is full, and it swings lit; the swing itself strikes nothing, and the Sword Beam it looses is the hit.
+An Attack let go after a full Charge, half a second of holding melee from the press. The sword blinks once the Charge is full, and it swings lit; the swing itself strikes nothing, and the Sword Beam it looses, or the Axe Throw with the Stout Axe, is the hit.
 _Avoid_: Power attack, heavy attack, charge shot
 
 **Sword Beam**:
 What a Charged Attack sends out along the Player's facing: a glowing copy of the blade that strikes the first thing in its way, for twice what a quick slash costs, and breaks a Ward or a Shortcut's cracked wall. It flies a screen and a half, and stops at the first thing it strikes or at the world's terrain.
 _Avoid_: Projectile, wave, shot
+
+**Axe Throw**:
+What a Charged Attack with the Stout Axe looses in place of a Sword Beam: a glowing copy of the axe, spinning, thrown up and out along the Player's facing to fall in an arc. Like a Sword Beam it strikes the first thing in its way for twice what a quick slash costs, charged, and stops there or at the world's terrain.
+_Avoid_: Thrown axe, tomahawk
 
 **Ranged Attack**:
 The button that throws the held Sub Weapon: V, or B / Circle on a gamepad. Each press throws one, along the Player's facing, without stopping them; it does nothing with no Sub Weapon held or none left to throw, while the Player is held still, or while the last one thrown is still out.

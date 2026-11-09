@@ -216,6 +216,8 @@ func collect_sub_weapon(id: StringName) -> bool:
 func has_room_for(kind: StringName) -> bool:
 	if Equipment.ARMOR.has(kind):
 		return not equipment.owns_armor(kind)
+	if Equipment.WEAPONS.has(kind):
+		return not equipment.owns_weapon(kind)
 	if SubWeapons.KINDS.has(kind):
 		return not sub_weapons.owns(kind) or sub_weapons.count(kind) < SubWeapons.CARRY_LIMIT
 	return Supplies.KINDS.has(kind) and supplies.count(kind) < Supplies.CARRY_LIMIT
@@ -435,6 +437,7 @@ func _on_controller_stepped() -> void:
 	var slashing := attacking and not controller.charged_attack
 	if slashing:
 		_sword_hitbox.damage = _quick_cost()
+		_sword_hitbox.chops = equipment.chops()
 	if _sword_hitbox.active != slashing:
 		_sword_hitbox.active = slashing
 	var lit := (
@@ -460,9 +463,14 @@ func _quick_cost() -> int:
 	return Hitbox.DEFAULT_DAMAGE + level.strength() + equipment.attack()
 
 
-# Sends a Sword Beam out from the blade along the Player's facing, into the Room.
+# Sends a Sword Beam out from the blade along the Player's facing, into the Room, or what the
+# Weapon held looses in its place, such as the Stout Axe's Axe Throw.
 func _loose_sword_beam() -> void:
-	var beam := SWORD_BEAM_SCENE.instantiate() as Node2D
+	var scene := SWORD_BEAM_SCENE
+	var charged_scene: String = Equipment.WEAPONS[equipment.weapon].get("charged_scene", "")
+	if charged_scene != "":
+		scene = load(charged_scene) as PackedScene
+	var beam := scene.instantiate() as Node2D
 	beam.set("facing", controller.facing)
 	beam.set("damage", _quick_cost() * CHARGED_MULTIPLIER)
 	beam.set("sheet", load(Equipment.WEAPONS[equipment.weapon].sheet))

@@ -30,6 +30,7 @@ func get_tests() -> Array:
 	return [
 		["A cracked wall shuts the passage's west end, toward the sea cave", _test_cracked_wall],
 		["A quick Attack glances off the wall; a Charged one breaks it", _test_charged_breaks],
+		["A quick slash that chops breaks the wall", _test_chop_breaks],
 		["From the sea cave the Shortcut is a Breakable wall that opens it", _test_rock_side],
 		["With the Shortcut open, both its sides open without the wall", _test_stays_open],
 	]
@@ -64,6 +65,19 @@ func _test_charged_breaks() -> bool:
 	valid = valid and not _shut(wall) and run.call("has_opened_shortcut", SHORTCUT_ID)
 	quick.free()
 	charged.free()
+	_close(room)
+	return valid
+
+
+func _test_chop_breaks() -> bool:
+	var room := _room(PASSAGE_PATH, &"undertow_3", &"east")
+	var run := _root.get_node("RunState")
+	var wall := room.get_node("ShortcutWall") as StaticBody2D
+	var chop := Hitbox.new()
+	chop.set(&"chops", true)
+	wall.get_node("Hurtbox").call("take_hit", chop)
+	var valid: bool = not _shut(wall) and run.call("has_opened_shortcut", SHORTCUT_ID)
+	chop.free()
 	_close(room)
 	return valid
 

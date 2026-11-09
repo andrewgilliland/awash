@@ -1,8 +1,9 @@
 extends StaticBody2D
 
 # One side of a Shortcut's wall. On the Shortcut's near side it is cracked, and a Charged Attack
-# breaks it; a quick one glances off. On the far side it is plain rock with nothing to strike. Once
-# broken the Run remembers, and both sides open without it.
+# or a quick slash that chops breaks it; any other quick one glances off. On the far side it is
+# plain rock with nothing to strike. Once broken the Run remembers, and both sides open without
+# it.
 
 const RunStateScript := preload("res://scripts/core/run_state.gd")
 const Hitbox := preload("res://scripts/combat/hitbox.gd")
@@ -24,8 +25,8 @@ func _ready() -> void:
 
 
 func _on_hurtbox_hit(hitbox: Area2D) -> void:
-	var charged: bool = hitbox.charged if hitbox is Hitbox else false
-	if not charged:
+	var breaks: bool = (hitbox.charged or hitbox.chops) if hitbox is Hitbox else false
+	if not breaks:
 		return
 	var run := get_node_or_null("/root/RunState") as RunStateScript
 	if run != null:

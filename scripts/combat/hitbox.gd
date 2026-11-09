@@ -14,6 +14,8 @@ const DEFAULT_DAMAGE := 10
 var charged: bool = false
 # Whether this hit is a Bomb's blast, which breaks a Breakable wall.
 var blast: bool = false
+# Whether this hit chops, as the Stout Axe's quick slash does, which breaks a cracked wall.
+var chops: bool = false
 
 var active: bool = false:
 	set(value):

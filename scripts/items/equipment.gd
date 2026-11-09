@@ -5,8 +5,11 @@ extends RefCounted
 
 const STARTING_WEAPON := &"short_sword"
 const OATHBLADE := &"oathblade"
+const STOUT_AXE := &"stout_axe"
 # Every Weapon: its name, a description of two lines at most, its Attack (added to each hit it
-# lands), its 8x8 icon, and the sheet it is drawn from in the Player's hand.
+# lands), its 8x8 icon, and the sheet it is drawn from in the Player's hand. One that chops breaks
+# a cracked wall with a quick slash, and one with a charged scene looses it from a Charged Attack
+# in place of a Sword Beam.
 const WEAPONS := {
 	STARTING_WEAPON:
 	{
@@ -23,6 +26,16 @@ const WEAPONS := {
 		attack = 5,
 		icon = "res://assets/items/oathblade.png",
 		sheet = "res://assets/player/oathblade.png",
+	},
+	STOUT_AXE:
+	{
+		name = "Stout Axe",
+		description = "A shipwright's axe. Attack 6. Its slashes chop cracked walls.",
+		attack = 6,
+		icon = "res://assets/items/stout_axe.png",
+		sheet = "res://assets/player/stout_axe.png",
+		chops = true,
+		charged_scene = "res://scenes/player/axe_throw.tscn",
 	},
 }
 const STARTING_ARMOR := &"worn_leather_tunic"
@@ -141,6 +154,11 @@ func attack() -> int:
 
 func attack_with(weapon_id: StringName) -> int:
 	return WEAPONS[weapon_id].attack
+
+
+# Whether the Weapon held breaks a cracked wall with a quick slash.
+func chops() -> bool:
+	return WEAPONS[weapon].get("chops", false)
 
 
 func defense() -> int:
