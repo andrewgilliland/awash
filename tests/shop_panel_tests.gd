@@ -32,6 +32,7 @@ func get_tests() -> Array:
 		["A row the Player can't buy is greyed and says why", _test_cannot_buy],
 		["Back, or cancel, closes the Shop and play goes on", _test_closes],
 		["Talking to the TRADER opens the Shop", _test_trader_opens],
+		["A keeper's Shop lists the stock they keep", _test_keeper_stock],
 		["Tidefen's TRADER stands at the market stall", _test_trader_in_tidefen],
 		["Every Room keeps the Shop panel above its Pause menu", _test_room_has_panel],
 	]
@@ -135,6 +136,25 @@ func _test_trader_opens() -> bool:
 	var valid: bool = panel.call("is_open")
 	valid = valid and (trader.get_node("AnimatedSprite2D") as AnimatedSprite2D).flip_h
 	trader.free()
+	_close(panel, player)
+	return valid
+
+
+# A keeper set to sell the camp's stock opens the Shop on it: a third row, the Mourning Salt.
+func _test_keeper_stock() -> bool:
+	var player := _player(0)
+	var panel := _panel()
+	if panel == null:
+		player.free()
+		return false
+	var keeper := (load(TRADER_PATH) as PackedScene).instantiate() as Node2D
+	keeper.set("stock_name", &"CAMP_STOCK")
+	_root.add_child(keeper)
+	keeper.get_node("Interactable").call("use", player)
+	var rows := _rows(panel)
+	var valid: bool = panel.call("is_open") and rows.size() == 3
+	valid = valid and rows[2].text == "Mourning Salt" and _detail(rows[2]) == "x0  30G"
+	keeper.free()
 	_close(panel, player)
 	return valid
 
