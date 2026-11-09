@@ -163,6 +163,29 @@ SONGS = [
             ("C#5", 4), ("A4", 2), ("-", 2),
         ],
     ),
+    # The Low Canopy Jungle: a climb through the trees, in E minor with a Dorian lift (Em - D - C -
+    # D), and an answer that turns on B major to climb again (Em - D - C - B). The snare keeps the
+    # pace of the climb.
+    Song(
+        name="low_canopy_jungle_theme",
+        bpm=104,
+        chords=[
+            ["E3", "G3", "B3"], ["D3", "F#3", "A3"], ["C3", "E3", "G3"], ["D3", "F#3", "A3"],
+            ["E3", "G3", "B3"], ["D3", "F#3", "A3"], ["C3", "E3", "G3"], ["B2", "D#3", "F#3"],
+        ],
+        bass_roots=["E2", "D2", "C2", "D2", "E2", "D2", "C2", "B1"],
+        melody=[
+            ("E5", 2), ("G5", 1), ("A5", 1), ("B5", 2), ("A5", 1), ("G5", 1),
+            ("F#5", 3), ("E5", 1), ("D5", 2), ("-", 2),
+            ("E5", 1), ("G5", 1), ("C6", 2), ("B5", 2), ("G5", 2),
+            ("A5", 4), ("F#5", 2), ("D5", 2),
+            ("B4", 2), ("E5", 1), ("G5", 1), ("B5", 3), ("A5", 1),
+            ("G5", 2), ("F#5", 1), ("E5", 1), ("D5", 2), ("F#5", 2),
+            ("E5", 2), ("C5", 2), ("E5", 2), ("G5", 2),
+            ("F#5", 4), ("D#5", 2), ("B4", 2),
+        ],
+        snare=True,
+    ),
 ]
 
 
@@ -304,6 +327,7 @@ HOMES = {
     "waking_coast_theme": Path("assets/regions/waking_coast/music/theme.wav"),
     "undertow_theme": Path("assets/regions/undertow/music/theme.wav"),
     "tidefen_theme": Path("assets/regions/tidefen_village/music/theme.wav"),
+    "low_canopy_jungle_theme": Path("assets/regions/low_canopy_jungle/music/theme.wav"),
 }
 
 

@@ -28,13 +28,18 @@
 		"low_canopy_jungle": {
 			"note": "Chapter 2, off Tidefen's harbour: the shrine keepers' medicine garden, swallowed by roots, climbing east to the Shrinekeeper Camp in the canopy.",
 			"name": "Low Canopy Jungle",
-			"colour": "#3d6b21"
+			"colour": "#3d6b21",
+			"floor": [0, 1, 0],
+			"theme": "res://assets/regions/low_canopy_jungle/music/theme.wav",
+			"background": "res://scenes/regions/low_canopy_jungle/background.tscn"
 		},
 		"shrinekeeper_camp": {
 			"note": "The Low Canopy Jungle's Safe spoke, up in the canopy. It keeps the jungle's sheets and Background; its theme comes with its Room.",
 			"name": "Shrinekeeper Camp",
 			"colour": "#7a6a3a",
-			"tiles": "low_canopy_jungle"
+			"tiles": "low_canopy_jungle",
+			"floor": [0, 1, 0],
+			"background": "res://scenes/regions/low_canopy_jungle/background.tscn"
 		}
 	},
 	"rooms": {
