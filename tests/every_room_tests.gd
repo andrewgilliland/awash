@@ -21,6 +21,9 @@ const PACK_DIR := "res://assets/packs/"
 const OWN_PROPS := "res://assets/regions/waking_coast/props/coast_props.png"
 const BELL := Vector2i(0, 0)
 const JUNGLE_SHEETS := "res://assets/regions/low_canopy_jungle/tiles/"
+# The Shrinekeeper Camp's bell, hung in its shrine, on the jungle's sheet.
+const JUNGLE_SHEET := JUNGLE_SHEETS + "low_canopy_jungle.png"
+const SHRINE_BELL := Vector2i(3, 8)
 # The layers drawn in front of the Player: water it wades through.
 const FOREGROUND: Array[StringName] = [&"Surf"]
 
@@ -172,7 +175,11 @@ static func _bell_screens(room_id: StringName, room: Node2D) -> Array[Vector2i]:
 		for cell in layer.get_used_cells():
 			var atlas := layer.tile_set.get_source(layer.get_cell_source_id(cell))
 			var sheet := (atlas as TileSetAtlasSource).texture.resource_path
-			if sheet == OWN_PROPS and layer.get_cell_atlas_coords(cell) == BELL:
+			var coords := layer.get_cell_atlas_coords(cell)
+			if (
+				(sheet == OWN_PROPS and coords == BELL)
+				or (sheet == JUNGLE_SHEET and coords == SHRINE_BELL)
+			):
 				screens.append(_screen_of(room_id, layer.map_to_local(cell)))
 	return screens
 

@@ -77,6 +77,8 @@ func _test_waking_coast_connects() -> bool:
 		and _leads_to(&"low_canopy_jungle_4", &"low_canopy_jungle_3", &"east")
 		and _leads_to(&"low_canopy_jungle_4", &"low_canopy_jungle_6", &"west")
 		and _leads_to(&"low_canopy_jungle_6", &"low_canopy_jungle_4", &"east")
+		and _leads_to(&"low_canopy_jungle_6", &"shrinekeeper_camp_1", &"west")
+		and _leads_to(&"shrinekeeper_camp_1", &"low_canopy_jungle_6", &"east")
 	)
 
 

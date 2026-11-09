@@ -186,6 +186,28 @@ SONGS = [
         ],
         snare=True,
     ),
+    # The Shrinekeeper Camp: a hymn for the restored shrine, slow, in F major (F - C - Bb - F),
+    # and an answer that turns to D minor before it comes home (Dm - Am - Bb - C). No snare: only
+    # the leaves' noise.
+    Song(
+        name="shrinekeeper_camp_theme",
+        bpm=80,
+        chords=[
+            ["F3", "A3", "C4"], ["C3", "E3", "G3"], ["A#2", "D3", "F3"], ["F3", "A3", "C4"],
+            ["D3", "F3", "A3"], ["A2", "C3", "E3"], ["A#2", "D3", "F3"], ["C3", "E3", "G3"],
+        ],
+        bass_roots=["F2", "C2", "A#1", "F2", "D2", "A1", "A#1", "C2"],
+        melody=[
+            ("C5", 4), ("A4", 2), ("F4", 2),
+            ("G4", 3), ("A4", 1), ("G4", 2), ("E4", 2),
+            ("F4", 2), ("D5", 2), ("C5", 2), ("A#4", 2),
+            ("A4", 6), ("-", 2),
+            ("D5", 3), ("C5", 1), ("A4", 2), ("F4", 2),
+            ("E5", 4), ("C5", 2), ("A4", 2),
+            ("A#4", 2), ("D5", 2), ("F5", 2), ("D5", 2),
+            ("E5", 4), ("G4", 2), ("C5", 2),
+        ],
+    ),
 ]
 
 
@@ -328,6 +350,7 @@ HOMES = {
     "undertow_theme": Path("assets/regions/undertow/music/theme.wav"),
     "tidefen_theme": Path("assets/regions/tidefen_village/music/theme.wav"),
     "low_canopy_jungle_theme": Path("assets/regions/low_canopy_jungle/music/theme.wav"),
+    "shrinekeeper_camp_theme": Path("assets/regions/shrinekeeper_camp/music/theme.wav"),
 }
 
 

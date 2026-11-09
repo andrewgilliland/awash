@@ -1,7 +1,8 @@
 extends RefCounted
 
-# The Supply Shop: Tidefen's TRADER sells Meat Pies and Brinecaps for Gold. Buying one spends its
-# price and carries one more, only with the Gold and the room for it.
+# The Supply Shop: Tidefen's TRADER sells Meat Pies and Brinecaps for Gold, and the Shrinekeeper
+# Camp's keeper Mourning Salts too. Buying one spends its price and carries one more, only with the
+# Gold and the room for it.
 
 const SHOP_PATH := "res://scripts/items/shop.gd"
 const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
@@ -18,6 +19,7 @@ func _init(root: Window) -> void:
 func get_tests() -> Array:
 	return [
 		["The Shop sells Meat Pies for 15 Gold and Brinecaps for 8", _test_stock],
+		["The camp's Shop sells Mourning Salts for 30 as well", _test_camp_stock],
 		["Buying spends the price and carries one more, and the Run keeps both", _test_buys],
 		["Nothing is bought without the Gold, or past the carry limit", _test_cannot_buy],
 	]
@@ -29,6 +31,14 @@ func _test_stock() -> bool:
 	var shop: GDScript = load(SHOP_PATH)
 	var stock: Array = shop.get("STOCK")
 	return stock == [[Supplies.MEAT_PIE, 15], [Supplies.BRINECAP, 8]]
+
+
+func _test_camp_stock() -> bool:
+	if not ResourceLoader.exists(SHOP_PATH):
+		return false
+	var shop: GDScript = load(SHOP_PATH)
+	var stock: Array = shop.get("CAMP_STOCK")
+	return stock == [[Supplies.MEAT_PIE, 15], [Supplies.BRINECAP, 8], [Supplies.MOURNING_SALT, 30]]
 
 
 func _test_buys() -> bool:

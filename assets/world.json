@@ -34,11 +34,12 @@
 			"background": "res://scenes/regions/low_canopy_jungle/background.tscn"
 		},
 		"shrinekeeper_camp": {
-			"note": "The Low Canopy Jungle's Safe spoke, up in the canopy. It keeps the jungle's sheets and Background; its theme comes with its Room.",
+			"note": "The Low Canopy Jungle's Safe spoke, up in the canopy. It keeps the jungle's sheets and Background, with a theme of its own.",
 			"name": "Shrinekeeper Camp",
 			"colour": "#7a6a3a",
 			"tiles": "low_canopy_jungle",
 			"floor": [0, 1, 0],
+			"theme": "res://assets/regions/shrinekeeper_camp/music/theme.wav",
 			"background": "res://scenes/regions/low_canopy_jungle/background.tscn"
 		}
 	},
@@ -347,25 +348,26 @@
 			"size": [2, 1],
 			"region": "low_canopy_jungle",
 			"exits": [
+				{"screen": [0, 0], "side": "west"},
+				{"screen": [1, 0], "side": "east"}
+			]
+		},
+		"shrinekeeper_camp_1": {
+			"note": "The Shrinekeeper Camp: shelters and herb racks round a restored shrine, the jungle's Safe spoke.",
+			"scene": "res://scenes/rooms/shrinekeeper_camp_1.tscn",
+			"cell": [31, -3],
+			"size": [2, 1],
+			"region": "shrinekeeper_camp",
+			"exits": [
 				{"screen": [0, 0], "side": "west"}
 			],
+			"markers": {"rest": [0, 0]},
 			"plan": {
 				"exits": [
 					{"screen": [0, 0], "side": "west"},
 					{"screen": [1, 0], "side": "east"}
 				]
 			}
-		},
-		"shrinekeeper_camp_1": {
-			"note": "The Shrinekeeper Camp: shelters and herb racks round a restored shrine, the jungle's Safe spoke.",
-			"cell": [31, -3],
-			"size": [2, 1],
-			"region": "shrinekeeper_camp",
-			"exits": [
-				{"screen": [0, 0], "side": "west"},
-				{"screen": [1, 0], "side": "east"}
-			],
-			"markers": {"rest": [0, 0]}
 		},
 		"low_canopy_jungle_7": {
 			"note": "The root hollow past the camp, down toward Smuggler Inlet, which is planned later.",

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=4]
+[gd_scene load_steps=7 format=4]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_main"]
 
@@ -9,12 +9,7 @@
 
 [ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="5_player"]
 
-[ext_resource type="PackedScene" path="res://scenes/world/sign.tscn" id="sign_scene"]
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_edge"]
-size = Vector2(8, 144)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_east"]
 size = Vector2(8, 144)
 
 [node name="LowCanopyJungle6" type="Node2D"]
@@ -31,7 +26,7 @@ tile_map_data = PackedByteArray("AAAAAAAAAAADAAUAAAABAAAAAAAEAAUAAAACAAAAAAAFAAU
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Gate" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAARAAAAAAANAAUAAAASAAAAAAAOAAUAAAARAAEAAAANAAYAAAASAAEAAAAOAAYAAAARAAIAAAANAAcAAAASAAIAAAAOAAcAAAA=")
+tile_map_data = PackedByteArray("AAARAAAAAAAJAAgAAAARAAEAAAAJAAkAAAARAAIAAAAJAAoAAAA=")
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Terrain" type="TileMapLayer" parent="."]
@@ -41,18 +36,6 @@ tile_set = ExtResource("terrain_tiles")
 [node name="Props" type="TileMapLayer" parent="."]
 tile_map_data = PackedByteArray("AAALAAIAAAAJAAQAAAAPAAIAAAAHAAQAAAAGAAMAAAALAAQAAAAIAAMAAAAMAAQAAAAAAAQAAAAHAAQAAAADAAQAAAAIAAQAAAA=")
 tile_set = ExtResource("scenery_tiles")
-
-[node name="GateSign" parent="." instance=ExtResource("sign_scene")]
-position = Vector2(248, 32)
-speaker = "GATE"
-lines = PackedStringArray("The shrine keepers' camp.", "Its gate is barred from inside.")
-
-[node name="Bounds" type="StaticBody2D" parent="."]
-collision_mask = 0
-
-[node name="East" type="CollisionShape2D" parent="Bounds"]
-position = Vector2(324, 72)
-shape = SubResource("RectangleShape2D_east")
 
 [node name="Exits" type="Node2D" parent="."]
 
@@ -67,10 +50,24 @@ entry_id = &"east"
 [node name="Edge" type="CollisionShape2D" parent="Exits/west"]
 shape = SubResource("RectangleShape2D_edge")
 
+[node name="east" type="Area2D" parent="Exits"]
+position = Vector2(324, 72)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_exit")
+room_id = &"shrinekeeper_camp_1"
+entry_id = &"west"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/east"]
+shape = SubResource("RectangleShape2D_edge")
+
 [node name="Entries" type="Node2D" parent="."]
 
 [node name="west" type="Marker2D" parent="Entries"]
 position = Vector2(12, 80)
+
+[node name="east" type="Marker2D" parent="Entries"]
+position = Vector2(308, 48)
 
 [node name="Player" parent="." instance=ExtResource("5_player")]
 position = Vector2(12, 80)

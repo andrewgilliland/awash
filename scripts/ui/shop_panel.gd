@@ -1,10 +1,10 @@
 extends Control
 
-# The Supply Shop, opened by talking to Tidefen's TRADER: play pauses while it lists the stock,
-# each row the Supply's name on the left and how many the Player carries and its price on the
-# right, with the Player's Gold above and the focused Supply's description below. Choosing a row
-# buys one; a row the Player cannot buy is greyed, and choosing it says why for a while. Back,
-# cancel or pause closes it and play goes on.
+# The Supply Shop, opened by talking to a keeper such as Tidefen's TRADER: play pauses while it
+# lists the keeper's stock, each row the Supply's name on the left and how many the Player carries
+# and its price on the right, with the Player's Gold above and the focused Supply's description
+# below. Choosing a row buys one; a row the Player cannot buy is greyed, and choosing it says why
+# for a while. Back, cancel or pause closes it and play goes on.
 
 const Shop := preload("res://scripts/items/shop.gd")
 const Supplies := preload("res://scripts/items/supplies.gd")
@@ -17,6 +17,8 @@ const GREYED := Color(1, 1, 1, 0.5)
 const NOTE_TIME := 1.2
 const NOTE_COLOR := Color(1, 1, 0.545098)
 
+# The stock of the keeper who opened it.
+var _stock: Array = Shop.STOCK
 var _rows: Array[Button] = []
 var _note := ""
 
@@ -35,9 +37,10 @@ func _ready() -> void:
 		get_viewport().gui_focus_changed.connect(_on_focus_changed)
 
 
-func open() -> void:
+func open(stock: Array = Shop.STOCK) -> void:
 	if _player() == null:
 		return
+	_stock = stock
 	get_tree().paused = true
 	show()
 	_build_rows()
@@ -68,7 +71,7 @@ func _build_rows() -> void:
 		_rows_box.remove_child(row)
 		row.queue_free()
 	_rows.clear()
-	for item: Array in Shop.STOCK:
+	for item: Array in _stock:
 		var row := Button.new()
 		row.text = Supplies.KINDS[item[0]].name
 		row.alignment = HORIZONTAL_ALIGNMENT_LEFT
