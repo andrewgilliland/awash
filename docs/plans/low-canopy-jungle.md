@@ -32,6 +32,6 @@ Each step gets its own grilling and PR.
 1. Built: the Plan, the two Regions, the jungle's sheets, Background and theme, Tidefen's east edge opened, the harbour trail, and the lower terraces with their east end and the lair's floor shut. There are no enemies yet.
 2. Built: the lower terraces opened east, off a deck over the top bed, onto the canopy walk; the canopy walk, its rope bridge broken in the middle over a forest floor; the upper terraces, with a chest on a shelf only the Double Jump reaches (the jungle's `[DJ-1]` gate); and the shrine steps, up to the camp's gate, barred until the camp is built. There are no enemies yet.
 3. Built: the Stalker, the jungle's first enemy (`docs/specs/stalker-spec.md`), perched on the canopy walk's east deck and the upper terraces' third bed.
-4. The Shrinekeeper Camp: its theme, its bell and its Supply Shop.
+4. Built: the Shrinekeeper Camp, through the shrine steps' gate swung open: a restored shrine with its bell, the Rest point; canvas shelters and herb racks, where the SHRINEKEEPER keeps a Supply Shop that sells Mourning Salts too; and a hymn of its own. Its way on to the root hollow stays walled.
 5. The Spore Beast's lair, with the Spore Beast, and the root hollow.
 6. Smuggler Inlet and the Pirate Fort, planned with their own grilling.

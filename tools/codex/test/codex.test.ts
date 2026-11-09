@@ -173,12 +173,13 @@ describe("the Codex's World", () => {
     expect(room("waking_coast_1")).toMatchObject({ region: "waking_coast", cell: [-1, 0], size: [2, 1], planned: false });
     expect(room("undertow_8")).toMatchObject({ region: "undertow", cell: [6, 3], size: [2, 2], planned: true });
     expect(room("undertow_8")?.exits).toEqual([{ screen: [1, 1], side: "east" }]);
-    expect(room("shrinekeeper_camp_1")).toMatchObject({ region: "shrinekeeper_camp", cell: [31, -3], planned: true });
+    expect(room("shrinekeeper_camp_1")).toMatchObject({ region: "shrinekeeper_camp", cell: [31, -3], planned: false });
   });
 
   it("marks what each Room holds: its Caches, Rest point, Shop, Characters, Boss and enemies", () => {
     expect(room("undertow_5")?.marks).toContainEqual({ kind: "cache", id: "scale_mail", label: "Cache wreck_mail: Scale Mail" });
     expect(kinds("tidefen_village_1")).toEqual(expect.arrayContaining(["rest", "shop", "character"]));
+    expect(kinds("shrinekeeper_camp_1")).toEqual(expect.arrayContaining(["rest", "shop"]));
     expect(room("waking_coast_7")?.marks).toContainEqual({ kind: "boss", id: "nameless_warden", label: "Nameless Warden" });
     expect(codex.rooms.flatMap((entry) => entry.marks).some((mark) => mark.kind === "enemy" && mark.id === "scavenger")).toBe(true);
     expect(room("undertow_8")?.marks).toEqual([]);

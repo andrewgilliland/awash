@@ -45,19 +45,19 @@ A stretch of the world with its own theme, Map name and colour, such as the Waki
 _Avoid_: Biome, zone, area, level
 
 **Safe spoke**:
-A small place with no enemies, where people, a Rest point and shops are. It may be a small Region of its own, such as Tidefen Village past the Waking Coast, with its own theme, Map name and colour.
+A small place with no enemies, where people, a Rest point and shops are. It may be a small Region of its own, such as Tidefen Village past the Waking Coast, or the Shrinekeeper Camp up in the Low Canopy Jungle, with its own theme, Map name and colour.
 _Avoid_: Hub, village, town (as a kind of place)
 
 **Villager**:
-Someone who lives in a Safe spoke and talks when the Player uses them with Interact, named in the Dialogue box by the trade they keep, such as Tidefen's netter, knot-weaver, bell-keeper and fisher, and its TRADER, who keeps the Supply Shop. They stand by their part of the village, idling, turn to face the Player, and say the same few lines each time.
+Someone who lives in a Safe spoke and talks when the Player uses them with Interact, named in the Dialogue box by the trade they keep, such as Tidefen's netter, knot-weaver, bell-keeper and fisher, and its TRADER, who keeps the Supply Shop; the Shrinekeeper Camp's SHRINEKEEPER keeps its Shop. They stand by their part of the village, idling, turn to face the Player, and say the same few lines each time.
 _Avoid_: NPC, townsperson, extra
 
 **Rest point**:
-A place in a Safe spoke where the Player recovers, and which a defeat returns them to without ending the Run. Tidefen's is its bell: rung with Interact, it tolls, refills Health and every Sub Weapon owned, shows RESTED, and from then on a defeat wakes the Player at its foot. It can be rung again at any time.
+A place in a Safe spoke where the Player recovers, and which a defeat returns them to without ending the Run. Tidefen's is its bell, and the Shrinekeeper Camp's the bell hung in its restored shrine: rung with Interact, it tolls, refills Health and every Sub Weapon owned, shows RESTED, and from then on a defeat wakes the Player at its foot. It can be rung again at any time.
 _Avoid_: Checkpoint, save point, bonfire
 
 **Supply Shop**:
-Where the Player buys Supplies with Gold. Tidefen's is kept by the TRADER at the market stall, a Villager whom talking to opens it, with play paused: Meat Pies for 15 Gold and Brinecaps for 8. A Supply the Player lacks the Gold or the room for is greyed.
+Where the Player buys Supplies with Gold. Tidefen's is kept by the TRADER at the market stall, a Villager whom talking to opens it, with play paused: Meat Pies for 15 Gold and Brinecaps for 8. A Supply the Player lacks the Gold or the room for is greyed. The Shrinekeeper Camp's keeper sells Mourning Salts for 30 too: each keeper keeps a stock of their own.
 _Avoid_: Store, vendor, merchant (as the place)
 
 **Background**:

@@ -38,6 +38,7 @@ func get_tests() -> Array:
 		["The jungle's Background is sky, far trunks and thicket", _test_background],
 		["The jungle has a looping theme of its own", _test_theme],
 		["The Shrinekeeper Camp keeps the jungle's sheets and Background", _test_camp_shares],
+		["The Shrinekeeper Camp has a calm, looping theme of its own", _test_camp_theme],
 	]
 
 
@@ -167,3 +168,14 @@ static func _one_way(atlas: TileSetAtlasSource, coords: Vector2i) -> bool:
 		return false
 	var data := atlas.get_tile_data(coords, 0)
 	return data.get_collision_polygons_count(0) > 0 and data.is_collision_polygon_one_way(0, 0)
+
+
+# Read through the camp's Room.
+func _test_camp_theme() -> bool:
+	var path := World.theme(CAMP_ROOM)
+	var theme := load(path) as AudioStreamWAV if ResourceLoader.exists(path) else null
+	return (
+		theme != null
+		and theme.loop_mode == AudioStreamWAV.LOOP_FORWARD
+		and path.begins_with("res://assets/regions/shrinekeeper_camp/")
+	)

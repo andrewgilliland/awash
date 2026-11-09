@@ -3,7 +3,7 @@ extends RefCounted
 # The Low Canopy Jungle's walks with real input, played by tests/playtest_runner.gd with its
 # harness: off Tidefen's landing onto the harbour trail, up past its waterfall to the lower
 # terraces, up the terraces' beds to the relief, across the canopy walk's broken bridge, up the
-# upper terraces, and up the shrine steps to the camp's barred gate.
+# upper terraces, and up the shrine steps to the camp's open gate.
 
 const TIDEFEN_PATH := "res://scenes/rooms/tidefen_village_1.tscn"
 const TRAIL_PATH := "res://scenes/rooms/low_canopy_jungle_1.tscn"
@@ -47,10 +47,9 @@ const UPPER_CLIMB := [
 	[1, 92.0, 80.0],
 ]
 const STEPS_TOP_Y := 80.0
-# Up the shrine steps to the gate's Sign, which speaks in the gate's name.
+# Up the shrine steps to the camp's open gate.
 const STEPS_EAST: Array[float] = [120.0, 200.0, 240.0]
 const GATE_Y := 48.0
-const GATE_SPEAKER := "GATE"
 
 # The runner: its input, frame and Room helpers.
 var _harness: SceneTree
@@ -67,7 +66,7 @@ func get_playtests() -> Array:
 		["Player climbs the medicine beds and crosses the deck to the relief", _up_the_terraces],
 		["Player leaps the canopy walk's broken bridge to the upper terraces", _over_the_bridge],
 		["Player climbs the upper terraces to the shrine steps", _up_the_upper_terraces],
-		["Player climbs the shrine steps and reads the camp's barred gate", _to_the_gate],
+		["Player climbs the shrine steps to the camp's open gate", _to_the_gate],
 	]
 
 
@@ -186,11 +185,5 @@ func _to_the_gate() -> bool:
 		return false
 	await _harness.call("_wade_to", player, STEPS_EAST)
 	var valid := absf(player.global_position.y - GATE_Y) < 1.0
-	await _harness.call("_frames", 5)
-	await _harness.call("_tap", &"interact")
-	await _harness.call("_frames", 3)
-	var box: Control = _harness.call("_dialogue_box")
-	valid = valid and box.visible and _harness.call("_speaker") == GATE_SPEAKER
-	valid = valid and await _harness.call("_read_through_dialogue")
 	await _harness.call("_leave_scene")
 	return valid
