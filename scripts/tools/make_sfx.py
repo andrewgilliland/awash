@@ -198,6 +198,15 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     "silt_crab_defeat": lambda: mix(
         noise(0.2, 4000, 500, seed=64), [0.0] * int(RATE * 0.1) + crackle(0.4, 22, seed=65)
     ),
+    # The Stalker marking the Player: roots tearing up through leaves and earth, over the whole
+    # mark, so its pounce can be heard coming.
+    "stalker_rustle": lambda: mix(crackle(0.6, 30, seed=70), noise(0.6, 1800, 600, seed=71)),
+    # It pounces: a snarl rising into the leap.
+    "stalker_pounce": lambda: mix(growl(0.3, 120, 260, tremolo_hz=30), noise(0.15, 5000, 1500, seed=72)),
+    # Struck: bark cracking.
+    "stalker_hurt": lambda: mix(noise(0.08, 6000, 1500, seed=73), sweep(0.1, 500, 220, duty=0.25)),
+    # Defeated: a falling yowl, then stillness.
+    "stalker_defeat": lambda: mix(growl(0.55, 260, 70, tremolo_hz=18), noise(0.3, 2500, 300, seed=74)),
     # Nameless Warden: a deep swell as it sets its shield, then the move it makes.
     "warden_windup": lambda: growl(0.6, 70, 140, tremolo_hz=12),
     # The shield bash: a heavy rush.
@@ -258,6 +267,7 @@ HOMES = {
     "wraith_": "assets/enemies/wraith",
     "lurelight_": "assets/enemies/lurelight",
     "silt_crab_": "assets/enemies/silt_crab",
+    "stalker_": "assets/enemies/stalker",
     "warden_": "assets/enemies/nameless_warden",
     "ui_": "assets/ui",
     "bomb_": "assets/items",

@@ -128,6 +128,7 @@ func _up_the_terraces() -> bool:
 
 
 # Running east along the bridge, a jump at full pace clears its gap; on to the far deck and off it.
+# The walk plays the layout, its Stalker gone; tests/stalker_playtests.gd fights it.
 func _over_the_bridge() -> bool:
 	var player: CharacterBody2D = await _harness.call(
 		"_enter_room", &"low_canopy_jungle_3", &"west", CANOPY_WALK_PATH
@@ -135,6 +136,7 @@ func _over_the_bridge() -> bool:
 	if player == null:
 		await _harness.call("_leave_scene")
 		return false
+	_harness.call("_clear_enemies")
 	_harness.call("_press", &"move_right")
 	var at_leap := func() -> bool: return player.global_position.x >= BRIDGE_LEAP_X
 	var valid: bool = await _harness.call("_frames_until", at_leap, 240)
@@ -159,6 +161,7 @@ func _up_the_upper_terraces() -> bool:
 	if player == null:
 		await _harness.call("_leave_scene")
 		return false
+	_harness.call("_clear_enemies")
 	var valid := true
 	for step: Array in UPPER_CLIMB:
 		await _harness.call("_walk_to_x", player, step[1])

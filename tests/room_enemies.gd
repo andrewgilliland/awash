@@ -13,6 +13,7 @@ const CRAB_FEET := 8.0
 const CRAB_NOTICE := 24.0
 const CRAB_MOST_DROP := 6
 const SILT_CRAB_SCENE := "res://scenes/enemies/silt_crab.tscn"
+const STALKER_SCENE := "res://scenes/enemies/stalker.tscn"
 # How finely a span is walked, in pixels.
 const STEP := 8.0
 
@@ -88,3 +89,14 @@ static func clear_of_entries(room: Node, left: float, right: float) -> bool:
 # Which screen across the Room a point is on.
 static func screen_of(point: Vector2) -> int:
 	return int(point.x / 160.0)
+
+
+# A Stalker perches: its feet, at its origin, stand on a surface, with open air above them.
+static func perches(terrain: TileMapLayer, stalker: Node2D) -> bool:
+	var feet := Vector2i((stalker.position + Vector2(0, -1)) / TILE)
+	return (
+		stalker.scene_file_path == STALKER_SCENE
+		and terrain.get_cell_source_id(feet + Vector2i.DOWN) != -1
+		and terrain.get_cell_source_id(feet) == -1
+		and is_zero_approx(fmod(stalker.position.y, TILE))
+	)

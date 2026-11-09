@@ -1,0 +1,83 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/stalker.gd" id="1_stalker"]
+[ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
+[ext_resource type="Script" uid="uid://dk3355uvj2vwl" path="res://scripts/combat/hitbox.gd" id="3_hit"]
+[ext_resource type="AudioStream" path="res://assets/enemies/stalker/stalker_rustle.wav" id="4_rustle"]
+[ext_resource type="AudioStream" path="res://assets/enemies/stalker/stalker_pounce.wav" id="5_pounce"]
+[ext_resource type="AudioStream" path="res://assets/enemies/stalker/stalker_hurt.wav" id="6_hurt"]
+[ext_resource type="AudioStream" path="res://assets/enemies/stalker/stalker_defeat.wav" id="7_defeat"]
+[ext_resource type="Script" path="res://scripts/combat/hit_flash.gd" id="90_flash"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(14, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hide"]
+size = Vector2(18, 12)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_claws"]
+size = Vector2(16, 10)
+
+[node name="Stalker" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 8
+collision_mask = 1
+script = ExtResource("1_stalker")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -5)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -8)
+
+[node name="Roots" type="AnimatedSprite2D" parent="."]
+top_level = true
+visible = false
+texture_filter = 1
+
+[node name="Hurtbox" type="Area2D" parent="."]
+position = Vector2(0, -6)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("2_hurt")
+
+[node name="Shape" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("RectangleShape2D_hide")
+
+[node name="ClawsHitbox" type="Area2D" parent="."]
+position = Vector2(2, -5)
+collision_layer = 16
+collision_mask = 4
+monitoring = false
+monitorable = false
+script = ExtResource("3_hit")
+
+[node name="Shape" type="CollisionShape2D" parent="ClawsHitbox"]
+shape = SubResource("RectangleShape2D_claws")
+
+[node name="Sounds" type="Node2D" parent="."]
+
+[node name="Rustle" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("4_rustle")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Pounce" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("5_pounce")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Hurt" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("6_hurt")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Defeat" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("7_defeat")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="HitFlash" type="Node" parent="."]
+script = ExtResource("90_flash")
