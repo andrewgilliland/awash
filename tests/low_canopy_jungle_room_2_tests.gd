@@ -1,8 +1,9 @@
 extends RefCounted
 
 # The lower terraces: six screens, three by two, of the shrine keepers' medicine beds, climbing east
-# behind broken stone walls, with a ruined relief of wardens carrying the Book on a terrace above.
-# Its way east to the canopy walk and its way down to the Spore Beast's lair wait for those Rooms.
+# behind broken stone walls, with a ruined relief of wardens carrying the Book on a terrace above,
+# and east off a plank deck over the top bed into the canopy walk. Its way down to the Spore Beast's
+# lair waits for that Room.
 
 const ROOM_ID := &"low_canopy_jungle_2"
 const ROOM_PATH := "res://scenes/rooms/low_canopy_jungle_2.tscn"
@@ -24,6 +25,8 @@ const STONE := Rect2i(5, 0, 4, 2)
 # The relief, two by two, standing on the high terrace.
 const RELIEF := Rect2i(12, 4, 2, 2)
 const RELIEF_TILES := Vector2i(8, 5)
+# Up on the plank deck over the top bed, at the canopy walk's height.
+const EAST_ENTRY := Vector2(468, 80)
 # The floor over the lair: the bottom of the middle screen below.
 const LAIR_FLOOR := Vector2i(10, 19)
 
@@ -34,7 +37,8 @@ func get_tests() -> Array:
 		["The lower terraces' west Entry stands level with the trail's end", _test_west],
 		["The medicine beds climb east behind stone walls, a jump at a time", _test_beds],
 		["A ruined relief of wardens carrying the Book stands on a terrace", _test_relief],
-		["The terraces' east end and the lair's floor stay shut for now", _test_shut],
+		["The terraces open east off the deck, onto the canopy walk", _test_east],
+		["The floor over the lair stays shut for now", _test_shut],
 	]
 
 
@@ -117,24 +121,39 @@ func _test_relief() -> bool:
 	return valid
 
 
-# A wall down the east edge, no Exit east or south, and the floor over the lair whole; the World
-# keeps both as planned.
+# The deck runs over the top bed to the east edge: up onto it from the bed, and off it east.
+func _test_east() -> bool:
+	var room := _room()
+	if room == null:
+		return false
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var entry := room.get_node_or_null("Entries/east") as Marker2D
+	var valid := entry != null and entry.position == EAST_ENTRY
+	valid = valid and room.get_node_or_null("Bounds/East") == null
+	var reached := RoomReach.reachable(terrain, Vector2i(WEST_ENTRY / TILE))
+	valid = valid and RoomReach.span_at(reached, Vector2i(EAST_ENTRY / TILE)) != null
+	var exit := room.get_node_or_null("Exits/east") as Area2D
+	valid = valid and exit != null and exit.position.x > ROOM_SIZE.x
+	valid = valid and int(exit.position.y / World.SCREEN_SIZE.y) == 0
+	valid = valid and exit.get("room_id") == &"low_canopy_jungle_3"
+	valid = valid and exit.get("entry_id") == &"west"
+	room.free()
+	return valid
+
+
+# No Exit south and the floor over the lair whole; the World keeps the way down as planned.
 func _test_shut() -> bool:
 	var room := _room()
 	if room == null:
 		return false
 	var terrain := room.get_node("Terrain") as TileMapLayer
-	var wall := room.get_node_or_null("Bounds/East") as CollisionShape2D
-	var valid := wall != null and wall.position.x > ROOM_SIZE.x
-	valid = valid and (wall.shape as RectangleShape2D).size.y >= ROOM_SIZE.y
-	valid = valid and room.get_node_or_null("Exits/east") == null
-	valid = valid and room.get_node_or_null("Exits/south") == null
+	var valid := room.get_node_or_null("Exits/south") == null
 	for column in range(LAIR_FLOOR.x, LAIR_FLOOR.y + 1):
 		valid = valid and terrain.get_cell_source_id(Vector2i(column, ROOM_SIZE.y / TILE - 1)) != -1
 	var sides: Array = []
 	for exit: Dictionary in World.planned(ROOM_ID).exits:
 		sides.append(exit.side)
-	valid = valid and &"east" in sides and &"south" in sides
+	valid = valid and &"south" in sides
 	room.free()
 	return valid
 
