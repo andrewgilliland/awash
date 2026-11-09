@@ -38,8 +38,8 @@ entry names its pack, author, link and licence.
   (Clothes 3), recoloured to his skin and salt-worn leather and mirrored to face left. Its idle,
   run, jump, fall, land, punch, damage and death frames are kept, cut to 64x48.
 - **Author:** Mucho Pixels (https://www.muchopixels.com)
-- **Link:** still to be recorded, with the licence.
-- **Licence:** still to be confirmed from the licence the pack's Readme links to.
+- **Link:** https://muchopixels.itch.io/character-animation-asset-pack (from the pack's Readme)
+- **Licence:** the pack's licence, which the project owner checked covers Awash (2026-11-08).
 
 ## Waiting on details
 
