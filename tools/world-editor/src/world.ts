@@ -80,6 +80,9 @@ const MARKER = 5;
 // Room around the picture, with space above for the Regions' names.
 const MARGIN = { x: 4, y: 12 };
 const LABEL_RISE = 3;
+// A letter of a Region's name, its baseline at the bottom: how much room a name takes. A name
+// raised clear of another rises a letter and a pixel at a time.
+export const LABEL_LETTER = { w: 4, h: 6 };
 const STEP: Record<Side, Vec> = { north: [0, -1], east: [1, 0], south: [0, 1], west: [-1, 0] };
 
 // A Room as the World's plan lays it out: what it is today, with any plan laid over it.
@@ -112,8 +115,23 @@ export function layoutWorld(world: WorldData, planned: boolean, pad = 0, region?
     Math.max(...cells.map((r) => r.cell[0] + r.size[0])) + pad,
     Math.max(...cells.map((r) => r.cell[1] + r.size[1])) + pad,
   ];
-  const offset = { x: MARGIN.x - corner[0] * CELL.w, y: MARGIN.y - corner[1] * CELL.h };
+  const width = (far[0] - corner[0]) * CELL.w + MARGIN.x * 2;
+  // Each Region's name above its top-left Room, then raised clear; the Rooms make way below it.
   const nameAt = new Map<string, { x: number; y: number }>();
+  for (const room of shown) {
+    const at = { x: MARGIN.x + (room.cell[0] - corner[0]) * CELL.w, y: MARGIN.y + (room.cell[1] - corner[1]) * CELL.h };
+    const name = world.regions[room.region]?.name ?? room.region;
+    const held = nameAt.get(name);
+    if (!held || at.y < held.y || (at.y === held.y && at.x < held.x)) {
+      nameAt.set(name, at);
+    }
+  }
+  const placed = placeLabels(nameAt, width);
+  const headroom = MARGIN.y - LABEL_RISE - LABEL_LETTER.h;
+  const rise = Math.max(0, ...placed.map((label) => headroom - (label.y - LABEL_LETTER.h)));
+  const labels = placed.map((label) => ({ ...label, y: label.y + rise }));
+  const top = MARGIN.y + rise;
+  const offset = { x: MARGIN.x - corner[0] * CELL.w, y: top - corner[1] * CELL.h };
   const rooms = shown.map((room) => {
     const block = {
       x: offset.x + room.cell[0] * CELL.w,
@@ -121,11 +139,6 @@ export function layoutWorld(world: WorldData, planned: boolean, pad = 0, region?
       w: room.size[0] * CELL.w,
       h: room.size[1] * CELL.h,
     };
-    const name = world.regions[room.region]?.name ?? room.region;
-    const held = nameAt.get(name);
-    if (!held || block.y < held.y || (block.y === held.y && block.x < held.x)) {
-      nameAt.set(name, { x: block.x, y: block.y });
-    }
     return {
       id: room.id,
       block,
@@ -145,11 +158,10 @@ export function layoutWorld(world: WorldData, planned: boolean, pad = 0, region?
       }),
     };
   });
-  const labels = [...nameAt].map(([text, at]) => ({ text, x: at.x, y: at.y - LABEL_RISE }));
-  const size = { w: (far[0] - corner[0]) * CELL.w + MARGIN.x * 2, h: (far[1] - corner[1]) * CELL.h + MARGIN.y * 2 };
+  const size = { w: width, h: (far[1] - corner[1]) * CELL.h + MARGIN.y * 2 + rise };
   const screenAt = (x: number, y: number): Vec => [
     corner[0] + Math.floor((x - MARGIN.x) / CELL.w),
-    corner[1] + Math.floor((y - MARGIN.y) / CELL.h),
+    corner[1] + Math.floor((y - top) / CELL.h),
   ];
   const blockAt = (cell: Vec, size: Vec): Rect => ({
     x: offset.x + cell[0] * CELL.w,
@@ -158,6 +170,27 @@ export function layoutWorld(world: WorldData, planned: boolean, pad = 0, region?
     h: size[1] * CELL.h,
   });
   return { rooms, labels, size, screenAt, blockAt };
+}
+
+// The Regions' names, west to east, each just above its top-left Room's corner, slid back inside the
+// picture's width and raised clear of the names before it. Each sits on its baseline.
+function placeLabels(nameAt: Map<string, { x: number; y: number }>, width: number): { text: string; x: number; y: number }[] {
+  const taken: Rect[] = [];
+  return [...nameAt]
+    .sort(([, a], [, b]) => a.x - b.x || a.y - b.y)
+    .map(([text, at]) => {
+      const w = text.length * LABEL_LETTER.w;
+      const box = { x: Math.max(MARGIN.x, Math.min(at.x, width - MARGIN.x - w)), y: at.y - LABEL_RISE - LABEL_LETTER.h, w, h: LABEL_LETTER.h };
+      while (taken.some((other) => overlaps(other, box))) {
+        box.y -= LABEL_LETTER.h + 1;
+      }
+      taken.push(box);
+      return { text, x: box.x, y: box.y + box.h };
+    });
+}
+
+function overlaps(a: Rect, b: Rect): boolean {
+  return a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
 }
 
 function screenRect(block: Rect, screen: Vec): Rect {

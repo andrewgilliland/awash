@@ -25,7 +25,8 @@ func get_tests() -> Array:
 		["Interact away from the Map's button doesn't explore it", _test_interact_needs_map],
 		["Exploring, the directions pan the Map and leave the menu be", _test_directions_pan],
 		["Exploring pans the same Map distance at every zoom", _test_same_speed],
-		["At World zoom, exploring doesn't pan", _test_world_still],
+		["At World zoom, exploring doesn't pan while the whole World fits", _test_world_still],
+		["At World zoom, exploring pans a World too wide, across only", _test_world_too_wide_pans],
 		["A pan stops at the World's edge", _test_pan_clamped],
 		["Zooming, or leaving the Map, keeps the pan", _test_pan_kept],
 		["The menu opened again is centred on the Player, not exploring", _test_reopen_centres],
@@ -79,12 +80,34 @@ func _test_same_speed() -> bool:
 	return valid
 
 
+# A view wide and tall enough for the whole built World.
 func _test_world_still() -> bool:
 	var menu := _map_menu(&"world")
 	var view := _map_view(menu)
+	view.size = Vector2(400, 100)
 	_tap(menu, &"interact")
 	_hold(view, &"move_right", ONE_SCREEN_TIME)
+	_hold(view, &"move_down", ONE_SCREEN_TIME)
 	var valid: bool = view.call("pan") == Vector2.ZERO
+	_close(menu)
+	return valid
+
+
+# A view too narrow for the built World at World zoom's smallest screen, 5 pixels wide; it still
+# fits from top to bottom.
+func _test_world_too_wide_pans() -> bool:
+	var menu := _map_menu(&"world")
+	var view := _map_view(menu)
+	view.size = Vector2(100, view.size.y)
+	_tap(menu, &"interact")
+	# Far longer than the World is wide, to its east edge at the view's.
+	_hold(view, &"move_right", 60.0)
+	var held: Vector2 = view.call("pan")
+	_hold(view, &"move_left", ONE_SCREEN_TIME)
+	_hold(view, &"move_down", ONE_SCREEN_TIME)
+	# The 20 pixels a Close screen spans, across World screens 5 pixels wide; none down.
+	var back: Vector2 = view.call("pan")
+	var valid := held.x > 0.0 and back.is_equal_approx(held - Vector2(4, 0))
 	_close(menu)
 	return valid
 

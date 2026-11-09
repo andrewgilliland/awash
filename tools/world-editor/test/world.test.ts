@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { CELL, layoutWorld, type WorldData } from "../src/world";
+import { CELL, LABEL_LETTER, layoutWorld, type WorldData } from "../src/world";
 
 const REPO = resolve(__dirname, "../../..");
 const world: WorldData = JSON.parse(readFileSync(resolve(REPO, "assets/world.json"), "utf8"));
@@ -65,6 +65,28 @@ describe("the World as planned", () => {
       "Undertow",
       "Waking Coast",
     ]);
+  });
+
+  it("keeps each Region's name inside the picture, clear of the others and of the top", () => {
+    const texts = planned.labels.map((label) => ({
+      x: label.x,
+      y: label.y - LABEL_LETTER.h,
+      w: label.text.length * LABEL_LETTER.w,
+      h: LABEL_LETTER.h,
+    }));
+    texts.forEach((text, i) => {
+      expect(text.x).toBeGreaterThanOrEqual(0);
+      expect(text.y).toBeGreaterThanOrEqual(0);
+      expect(text.x + text.w).toBeLessThanOrEqual(planned.size.w);
+      texts.slice(0, i).forEach((other) => {
+        const apart = other.x + other.w <= text.x || text.x + text.w <= other.x || other.y + other.h <= text.y || text.y + text.h <= other.y;
+        expect(apart).toBe(true);
+      });
+    });
+    // The Rooms make way below the names, and a point in the picture still finds its screen.
+    const beach = planned.rooms.find((room) => room.id === "waking_coast_1")!;
+    expect(planned.screenAt(beach.block.x, beach.block.y)).toEqual(world.rooms.waking_coast_1.cell);
+    expect(planned.blockAt(world.rooms.waking_coast_1.cell, [1, 1]).y).toBe(beach.block.y);
   });
 });
 
