@@ -1,0 +1,85 @@
+[gd_scene load_steps=12 format=4]
+
+[ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_main"]
+
+[ext_resource type="TileSet" path="res://assets/regions/low_canopy_jungle/tiles/terrain.tres" id="terrain_tiles"]
+[ext_resource type="TileSet" path="res://assets/regions/low_canopy_jungle/tiles/scenery.tres" id="scenery_tiles"]
+
+[ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="4_exit"]
+
+[ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="5_player"]
+
+[ext_resource type="PackedScene" path="res://scenes/world/cache.tscn" id="cache_scene"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/spore_beast.tscn" id="spore_beast_scene"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_edge"]
+size = Vector2(8, 144)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_drop"]
+size = Vector2(32, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_west"]
+size = Vector2(8, 144)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_east"]
+size = Vector2(8, 144)
+
+[node name="LowCanopyJungle5" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Roots" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAABAAEAAAACAAQAAAAIAAEAAAACAAUAAAALAAEAAAACAAQAAAAOAAEAAAACAAQAAAARAAEAAAACAAUAAAATAAEAAAACAAQAAAABAAIAAAACAAUAAAALAAIAAAACAAQAAAAOAAIAAAACAAUAAAATAAIAAAACAAQAAAALAAMAAAACAAUAAAATAAMAAAACAAUAAAA=")
+tile_set = ExtResource("scenery_tiles")
+
+[node name="Terrain" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAAAAAAAAACAAAAAAABAAAAAAABAAAAAAACAAAAAAABAAAAAAADAAAAAAADAAAAAAAGAAAAAAAAAAAAAAAHAAAAAAACAAAAAAAIAAAAAAABAAAAAAAJAAAAAAABAAAAAAAKAAAAAAABAAAAAAALAAAAAAABAAAAAAAMAAAAAAABAAAAAAANAAAAAAABAAAAAAAOAAAAAAACAAAAAAAPAAAAAAABAAAAAAAQAAAAAAABAAAAAAARAAAAAAABAAAAAAASAAAAAAABAAAAAAATAAAAAAABAAAAAAADAAMAAAAAAAMAAAAEAAMAAAABAAMAAAAFAAMAAAACAAMAAAAHAAUAAAAAAAMAAAAIAAUAAAABAAMAAAAJAAUAAAACAAMAAAAAAAcAAAACAAAAAAABAAcAAAABAAAAAAACAAcAAAABAAAAAAADAAcAAAACAAAAAAAEAAcAAAABAAAAAAAFAAcAAAABAAAAAAAGAAcAAAABAAAAAAAHAAcAAAABAAAAAAAIAAcAAAABAAAAAAAJAAcAAAABAAAAAAAKAAcAAAABAAAAAAALAAcAAAABAAAAAAAMAAcAAAACAAAAAAANAAcAAAABAAAAAAAOAAcAAAABAAAAAAAPAAcAAAABAAAAAAAQAAcAAAABAAAAAAARAAcAAAABAAAAAAASAAcAAAABAAAAAAATAAcAAAABAAAAAAAAAAgAAAABAAEAAAABAAgAAAABAAEAAAACAAgAAAACAAEAAAADAAgAAAABAAEAAAAEAAgAAAABAAEAAAAFAAgAAAABAAEAAAAGAAgAAAABAAEAAAAHAAgAAAABAAEAAAAIAAgAAAABAAEAAAAJAAgAAAABAAEAAAAKAAgAAAABAAEAAAALAAgAAAACAAEAAAAMAAgAAAABAAEAAAANAAgAAAABAAEAAAAOAAgAAAABAAEAAAAPAAgAAAABAAEAAAAQAAgAAAABAAEAAAARAAgAAAABAAEAAAASAAgAAAABAAEAAAATAAgAAAABAAEAAAA=")
+tile_set = ExtResource("terrain_tiles")
+
+[node name="Props" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAAAAYAAAAHAAQAAAAFAAYAAAAHAAUAAAAMAAYAAAAIAAQAAAAPAAYAAAAHAAQAAAATAAYAAAAIAAQAAAA=")
+tile_set = ExtResource("scenery_tiles")
+
+[node name="DenChest" parent="." instance=ExtResource("cache_scene")]
+position = Vector2(296, 96)
+cache_id = &"lair_chest"
+kind = &"glowroe"
+count = 3
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="SporeBeast" parent="Enemies" instance=ExtResource("spore_beast_scene")]
+position = Vector2(248, 112)
+
+[node name="Bounds" type="StaticBody2D" parent="."]
+collision_mask = 0
+
+[node name="West" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(-4, 72)
+shape = SubResource("RectangleShape2D_west")
+
+[node name="East" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(324, 72)
+shape = SubResource("RectangleShape2D_east")
+
+[node name="Exits" type="Node2D" parent="."]
+
+[node name="north" type="Area2D" parent="Exits"]
+position = Vector2(80, -4)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_exit")
+room_id = &"low_canopy_jungle_2"
+entry_id = &"south"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/north"]
+shape = SubResource("RectangleShape2D_drop")
+
+[node name="Entries" type="Node2D" parent="."]
+
+[node name="north" type="Marker2D" parent="Entries"]
+position = Vector2(80, 24)
+
+[node name="Player" parent="." instance=ExtResource("5_player")]
+position = Vector2(80, 24)

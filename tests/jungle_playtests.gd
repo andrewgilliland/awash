@@ -20,7 +20,11 @@ const LEDGE_END_X := 104.0
 const BANK_Y := 64.0
 const TRAIL_EAST: Array[float] = [200.0, 300.0]
 # Up the terraces: over the broken wall in the low bed, up each bed's wall, to the top bed.
-const BEDS_EAST: Array[float] = [200.0, 300.0, 350.0, 400.0, 450.0]
+# Across the low bed, a running jump over the hole down to the lair, from the plank at its edge.
+const LOW_BED_WEST: Array[float] = [150.0]
+const HOLE_LEAP_X := 216.0
+const LOW_BED_Y := 240.0
+const BEDS_EAST: Array[float] = [300.0, 350.0, 400.0, 450.0]
 const TOP_BED_Y := 112.0
 # From the top bed's west end, across onto the plank deck, then west along it and down onto the
 # terrace the relief stands on.
@@ -114,8 +118,11 @@ func _up_the_terraces() -> bool:
 	if player == null:
 		await _harness.call("_leave_scene")
 		return false
+	await _harness.call("_wade_to", player, LOW_BED_WEST)
+	var valid: bool = await _leap_from(player, HOLE_LEAP_X)
+	valid = valid and absf(player.global_position.y - LOW_BED_Y) < 1.0
 	await _harness.call("_wade_to", player, BEDS_EAST)
-	var valid := absf(player.global_position.y - TOP_BED_Y) < 1.0
+	valid = valid and absf(player.global_position.y - TOP_BED_Y) < 1.0
 	await _harness.call("_walk_to_x", player, TOP_BED_WEST_X)
 	await _harness.call("_jump_toward", player, -1)
 	valid = valid and absf(player.global_position.y - DECK_Y) < 1.0
@@ -136,16 +143,8 @@ func _over_the_bridge() -> bool:
 		await _harness.call("_leave_scene")
 		return false
 	_harness.call("_clear_enemies")
-	_harness.call("_press", &"move_right")
-	var at_leap := func() -> bool: return player.global_position.x >= BRIDGE_LEAP_X
-	var valid: bool = await _harness.call("_frames_until", at_leap, 240)
-	_harness.call("_press", &"jump")
-	await _harness.call("_frames", 4)
-	var landed := func() -> bool: return player.is_on_floor() and player.velocity.y >= 0.0
-	valid = valid and await _harness.call("_frames_until", landed, 120)
-	_harness.call("_release", &"jump")
+	var valid: bool = await _leap_from(player, BRIDGE_LEAP_X)
 	valid = valid and absf(player.global_position.y - BRIDGE_Y) < 1.0
-	_harness.call("_release", &"move_right")
 	valid = (valid and await _harness.call("_walk_until_scene", &"move_right", UPPER_TERRACES_PATH))
 	player = _harness.call("_current_player")
 	valid = valid and player != null and absf(player.global_position.y - 368.0) < 1.0
@@ -186,4 +185,19 @@ func _to_the_gate() -> bool:
 	await _harness.call("_wade_to", player, STEPS_EAST)
 	var valid := absf(player.global_position.y - GATE_Y) < 1.0
 	await _harness.call("_leave_scene")
+	return valid
+
+
+# Running east, a jump at full pace from a point, held until the Player lands.
+func _leap_from(player: CharacterBody2D, x: float) -> bool:
+	_harness.call("_press", &"move_right")
+	var at_leap := func() -> bool: return player.global_position.x >= x
+	var valid: bool = await _harness.call("_frames_until", at_leap, 240)
+	_harness.call("_press", &"jump")
+	await _harness.call("_frames", 4)
+	var landed := func() -> bool: return player.is_on_floor() and player.velocity.y >= 0.0
+	valid = valid and await _harness.call("_frames_until", landed, 120)
+	_harness.call("_release", &"jump")
+	_harness.call("_release", &"move_right")
+	await _harness.call("_frames", 15)
 	return valid
