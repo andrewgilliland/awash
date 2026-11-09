@@ -77,7 +77,7 @@ shape = SubResource("RectangleShape2D_p5551")
 [node name="Entries" type="Node2D" parent="."]
 
 [node name="north" type="Marker2D" parent="Entries"]
-position = Vector2(120, 24)
+position = Vector2(120, 16)
 
 [node name="east" type="Marker2D" parent="Entries"]
 position = Vector2(308, 96)

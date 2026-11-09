@@ -11,13 +11,11 @@ class Rigged:
 	var rig: RefCounted
 
 	func _init() -> void:
-		body.position = Vector2(0, -24)
+		body.position = Vector2(0, -10)
 		rig = PlayerRig.new(body, sword)
 
-	func show(
-		state: int, facing: float = -1.0, is_moving: bool = false, falling: bool = false
-	) -> void:
-		rig.call("show", state, facing, is_moving, falling)
+	func show(state: int, facing: float = -1.0, is_moving: bool = false) -> void:
+		rig.call("show", state, facing, is_moving)
 
 	func free_sprites() -> void:
 		body.free()
@@ -37,12 +35,6 @@ func get_tests() -> Array:
 		["Rig mirrors body and sword by facing", _test_mirrors_by_facing],
 		["Rig places the sword per frame and facing", _test_places_sword_per_frame],
 		["Rig reports attack finished", _test_reports_attack_finished],
-		["Rig shows a jump rising, then falling", _test_shows_jump_rising_then_falling],
-		["Rig lands a jump before standing idle", _test_lands_before_idle],
-		["Rig runs straight on from a jump", _test_runs_on_from_jump],
-		["Rig shows a hurt over any pose until it ends", _test_shows_hurt_until_it_ends],
-		["Rig plays the defeat and holds it", _test_plays_defeat_and_holds],
-		["Rig lies down at once, and stands back up", _test_lies_down_at_once],
 	]
 
 
@@ -68,18 +60,12 @@ func _test_table_gives_offset_per_frame() -> bool:
 func _test_cuts_frames_from_sheet_row() -> bool:
 	var rigged := Rigged.new()
 	var valid := _frames_match(
-		rigged.body.sprite_frames,
-		PlayerRig.BODY_ANIMATIONS,
-		PlayerRig.BODY_SHEET,
-		PlayerRig.BODY_FRAME_SIZE
+		rigged.body.sprite_frames, PlayerRig.BODY_ANIMATIONS, PlayerRig.BODY_SHEET
 	)
 	valid = (
 		valid
 		and _frames_match(
-			rigged.sword.sprite_frames,
-			PlayerRig.SWORD_ANIMATIONS,
-			PlayerRig.SWORD_SHEET,
-			PlayerRig.SWORD_FRAME_SIZE
+			rigged.sword.sprite_frames, PlayerRig.SWORD_ANIMATIONS, PlayerRig.SWORD_SHEET
 		)
 	)
 	rigged.free_sprites()
@@ -91,7 +77,7 @@ func _test_shows_body_animation_per_state() -> bool:
 		PlayerController.State.IDLE: &"idle",
 		PlayerController.State.WALK: &"walk",
 		PlayerController.State.JUMP: &"jump",
-		PlayerController.State.CHARGE: &"charge",
+		PlayerController.State.CHARGE: &"idle",
 		PlayerController.State.ATTACK: &"attack",
 	}
 	var valid := true
@@ -108,7 +94,7 @@ func _test_shows_charge_pose_by_movement() -> bool:
 	rigged.show(PlayerController.State.CHARGE, -1.0, true)
 	var valid := rigged.body.animation == &"walk"
 	rigged.show(PlayerController.State.CHARGE, -1.0, false)
-	valid = valid and rigged.body.animation == &"charge"
+	valid = valid and rigged.body.animation == &"idle"
 	valid = valid and rigged.sword.animation == &"charge"
 	rigged.free_sprites()
 	return valid
@@ -116,21 +102,21 @@ func _test_shows_charge_pose_by_movement() -> bool:
 
 func _test_keeps_held_state_animation() -> bool:
 	var rigged := Rigged.new()
-	rigged.show(PlayerController.State.WALK)
+	rigged.show(PlayerController.State.JUMP)
 	rigged.body.frame = 2
-	rigged.show(PlayerController.State.WALK)
-	var valid := rigged.body.animation == &"walk" and rigged.body.frame == 2
+	rigged.show(PlayerController.State.JUMP)
+	var valid := rigged.body.animation == &"jump" and rigged.body.frame == 2
 	rigged.free_sprites()
 	return valid
 
 
 func _test_restarts_returning_state() -> bool:
 	var rigged := Rigged.new()
-	rigged.show(PlayerController.State.WALK)
+	rigged.show(PlayerController.State.JUMP)
 	rigged.body.frame = 2
 	rigged.show(PlayerController.State.IDLE)
-	rigged.show(PlayerController.State.WALK)
-	var valid := rigged.body.animation == &"walk" and rigged.body.frame == 0
+	rigged.show(PlayerController.State.JUMP)
+	var valid := rigged.body.animation == &"jump" and rigged.body.frame == 0
 	valid = valid and rigged.body.is_playing()
 	rigged.free_sprites()
 	return valid
@@ -201,92 +187,8 @@ func _sword_position(
 	return rigged.body.position + Vector2(offset.x * facing, offset.y)
 
 
-func _test_shows_jump_rising_then_falling() -> bool:
-	var rigged := Rigged.new()
-	rigged.show(PlayerController.State.JUMP, -1.0, false, false)
-	var valid := rigged.body.animation == &"jump"
-	rigged.show(PlayerController.State.JUMP, -1.0, false, true)
-	valid = valid and rigged.body.animation == &"fall" and rigged.body.is_playing()
-	rigged.free_sprites()
-	return valid
-
-
-func _test_lands_before_idle() -> bool:
-	var rigged := Rigged.new()
-	rigged.show(PlayerController.State.JUMP, -1.0, false, true)
-	rigged.show(PlayerController.State.IDLE)
-	var valid := rigged.body.animation == &"land"
-	rigged.show(PlayerController.State.IDLE)
-	valid = valid and rigged.body.animation == &"land"
-	rigged.body.animation_finished.emit()
-	rigged.show(PlayerController.State.IDLE)
-	valid = valid and rigged.body.animation == &"idle" and rigged.body.is_playing()
-	rigged.free_sprites()
-	return valid
-
-
-func _test_runs_on_from_jump() -> bool:
-	var rigged := Rigged.new()
-	rigged.show(PlayerController.State.JUMP, -1.0, true, true)
-	rigged.show(PlayerController.State.WALK, -1.0, true)
-	var valid := rigged.body.animation == &"walk"
-	rigged.free_sprites()
-	return valid
-
-
-func _test_shows_hurt_until_it_ends() -> bool:
-	var rigged := Rigged.new()
-	rigged.show(PlayerController.State.WALK, -1.0, true)
-	rigged.rig.call("show_hurt")
-	var valid := rigged.body.animation == &"hurt" and rigged.body.is_playing()
-	rigged.show(PlayerController.State.WALK, -1.0, true)
-	rigged.show(PlayerController.State.JUMP)
-	valid = valid and rigged.body.animation == &"hurt"
-	rigged.body.animation_finished.emit()
-	rigged.show(PlayerController.State.JUMP, -1.0, false, true)
-	valid = valid and rigged.body.animation == &"fall"
-	rigged.free_sprites()
-	return valid
-
-
-func _test_plays_defeat_and_holds() -> bool:
-	var rigged := Rigged.new()
-	rigged.show(PlayerController.State.IDLE)
-	rigged.rig.call("show_lying", true)
-	var valid := rigged.body.animation == &"defeat" and rigged.body.frame == 0
-	valid = valid and not rigged.body.sprite_frames.get_animation_loop(&"defeat")
-	rigged.body.frame = 3
-	rigged.rig.call("show_lying", true)
-	rigged.show(PlayerController.State.WALK, -1.0, true)
-	valid = valid and rigged.body.animation == &"defeat" and rigged.body.frame == 3
-	valid = valid and is_zero_approx(rigged.body.rotation)
-	# Knocked into the air by the last hit, it lands lying down, not on its feet.
-	var landing := Rigged.new()
-	landing.show(PlayerController.State.JUMP, -1.0, false, true)
-	landing.rig.call("show_lying", true)
-	landing.show(PlayerController.State.IDLE)
-	valid = valid and landing.body.animation == &"defeat"
-	landing.free_sprites()
-	rigged.free_sprites()
-	return valid
-
-
-func _test_lies_down_at_once() -> bool:
-	var rigged := Rigged.new()
-	rigged.rig.call("show_lying", true, true)
-	var last: int = rigged.body.sprite_frames.get_frame_count(&"defeat") - 1
-	var valid := rigged.body.animation == &"defeat" and rigged.body.frame == last
-	rigged.rig.call("show_lying", false)
-	rigged.show(PlayerController.State.IDLE)
-	valid = valid and rigged.body.animation == &"idle" and rigged.body.is_playing()
-	rigged.free_sprites()
-	return valid
-
-
 # Every declared frame is cut from cell `index` of the sheet's single row.
-func _frames_match(
-	sprite_frames: SpriteFrames, animations: Dictionary, sheet: Texture2D, cell: Vector2i
-) -> bool:
+func _frames_match(sprite_frames: SpriteFrames, animations: Dictionary, sheet: Texture2D) -> bool:
 	var valid := sprite_frames.get_animation_names().size() == animations.size()
 	for animation_name in animations:
 		var animation: Dictionary = animations[animation_name]
@@ -295,7 +197,7 @@ func _frames_match(
 		valid = valid and sprite_frames.get_animation_speed(animation_name) == animation.fps
 		for i in animation.frames.size():
 			var texture := sprite_frames.get_frame_texture(animation_name, i) as AtlasTexture
-			var size := Vector2(cell)
+			var size := Vector2(PlayerRig.FRAME_SIZE)
 			var region := Rect2(Vector2(animation.frames[i] * size.x, 0), size)
 			valid = valid and texture != null and texture.atlas == sheet
 			valid = valid and texture.region == region

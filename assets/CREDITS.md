@@ -32,15 +32,6 @@ entry names its pack, author, link and licence.
 - **Licence:** GameDev Market Pro Licence
   (https://www.gamedevmarket.net/terms-conditions/#pro-licence), as for the Tropical Island pack.
 
-## Character Animation Asset Pack
-
-- **Files:** `player/vael.png` and `player/vael.aseprite`, Vael's body: the pack's Male Character 3
-  (Clothes 3), recoloured to his skin and salt-worn leather and mirrored to face left. Its idle,
-  run, jump, fall, land, punch, damage and death frames are kept, cut to 64x48.
-- **Author:** Mucho Pixels (https://www.muchopixels.com)
-- **Link:** https://muchopixels.itch.io/character-animation-asset-pack (from the pack's Readme)
-- **Licence:** the pack's licence, which the project owner checked covers Awash (2026-11-08).
-
 ## Waiting on details
 
 These sheets look like they come from an asset pack; their source and licence are still to be

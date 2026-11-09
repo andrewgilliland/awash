@@ -7,7 +7,7 @@ const PASSAGE_PATH := "res://scenes/rooms/undertow_3.tscn"
 const CRAB_PATH := "Enemies/SiltCrab"
 # Near enough sideways to set it shaking, and far enough to be clear of its drop.
 const UNDER_EDGE := 20.0
-const CLEAR := 40.0
+const CLEAR := 32.0
 # In the sword's reach of it once it lies stunned on the floor.
 const STRIKE_DISTANCE := 14.0
 const DROP_HIT := 15

@@ -9,8 +9,8 @@ const ROOM_SIZE := Vector2i(320, 144)
 const TILE := 16
 const WORLD_LAYER := 1
 # Dropping in from the hole under the salt cliffs' foot, through the opening in the roof.
-const NORTH_ENTRY := Vector2(120, 24)
-const PLAYER_HEIGHT := 28
+const NORTH_ENTRY := Vector2(120, 16)
+const PLAYER_HEIGHT := 20
 const OPENING := Rect2i(6, 0, 5, 2)
 # Up from the floor to the opening: plank landings a jump apart, the higher one under the opening.
 const LANDINGS := [Vector2i(6, 4), Vector2i(8, 2)]

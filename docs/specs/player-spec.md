@@ -105,12 +105,10 @@ This spec defines the minimal player baseline while player behavior is rebuilt.
 
 ## Animation
 
-- The Player rig's table in `scripts/player/player_rig.gd` declares the sheets (`vael.png` in 64x48 cells and each Weapon's sheet, such as `sword_1.png`, in 32x32 cells, each in one row, both facing left), each animation's frames, speed and looping, the per-frame sword offsets, and what each state shows.
-- The body is drawn from the Mucho Pixels character pack's Male Character 3, recoloured as Vael (`assets/CREDITS.md`): idle, walk (the pack's run), jump, fall, land, charge and attack (the pack's punch), hurt (its damage) and defeat (its death).
-- Idle, Walk, Jump, Charge and Attack each show their own body animation. A Jump shows `jump` while rising and `fall` once falling; landing from it into Idle plays `land` before `idle`, and into Walk runs straight on.
-- Attack plays once, and its end finishes the `ATTACK` state.
-- While charging, the body shows `walk` when horizontal input is held, and otherwise holds `charge`, the punch's wind-up, with the sword drawn back.
-- A hit that lands plays `hurt` over whatever the body shows, until it ends. A defeat plays `defeat` and holds its last frame, lying down; washing up on the shore starts already lying there.
+- The Player rig's table in `scripts/player/player_rig.gd` declares the sheets (`player_1.png` and `weapons/sword_1.png`, 16x16 cells in one row), each animation's frames, speed and looping, the per-frame sword offsets, and what each state shows.
+- Idle, Walk, Jump and Attack each show their own body animation.
+- Jump plays once and holds its final frame while airborne; Attack plays once, and its end finishes the `ATTACK` state.
+- While charging, the body shows `walk` when horizontal input is held and `idle` otherwise.
 - The sword shows only during `CHARGE` and `ATTACK`, with its own `charge` and `attack` animations.
 - Each sword frame sits at its declared offset from the body, and the body and sword mirror with facing.
 - A shown animation keeps playing, even across a state change that still shows it (Walk into a moving Charge); a newly shown animation starts from its first frame.

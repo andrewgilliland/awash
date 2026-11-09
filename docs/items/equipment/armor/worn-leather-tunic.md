@@ -9,7 +9,7 @@ forms:
   - name: Worn Leather Tunic
     defense: 0
     description: Vael's starting armor is weathered by the sea but remains light and flexible.
-    visual: A short coat and dark leather wraps are faded by salt, over dark trousers and worn boots.
+    visual: Dark leather wraps and a short hooded coat are faded by salt, with torn seams and dull metal fasteners.
 ---
 
 The Armor every Run starts in. It gives no Defense and has no Armor trait, and it is never upgraded. Every other Armor is found.

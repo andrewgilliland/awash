@@ -23,8 +23,8 @@ func _playtest_defeat_keeps_run() -> bool:
 	await _frames_until(
 		func() -> bool: return player.is_on_floor() and is_zero_approx(player.velocity.x), 90
 	)
-	var body := player.get_node("AnimatedSprite2D") as AnimatedSprite2D
-	var valid: bool = down and body.animation == &"defeat"
+	var body := player.get_node("AnimatedSprite2D") as Node2D
+	var valid: bool = down and not is_zero_approx(body.rotation)
 	var x := player.global_position.x
 	_press(&"move_left")
 	await _frames(12)
