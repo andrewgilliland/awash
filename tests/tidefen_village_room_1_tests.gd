@@ -9,7 +9,6 @@ const World := preload("res://scripts/core/world.gd")
 const ROOM_SIZE := Vector2i(960, 144)
 const CELLS := Rect2i(0, 0, 60, 9)
 const TILE := 16
-const WORLD_LAYER := 1
 # On the sand, at the height of the Warden's gate's floor.
 const WEST_ENTRY := Vector2(12, 112)
 # The walkway is a log deck; the roofs are plank slabs.
@@ -38,6 +37,11 @@ const PIER_DECKS := [
 ]
 const PIER_DECKS_END := Vector2i(11, 2)
 const HARBOUR_WATER := Vector2i(48, 57)
+# Past the pier, a stone landing at the water's level, off which the harbour opens east onto the
+# jungle's trail.
+const LANDING := Vector2i(58, 59)
+const LANDING_ROW := 7
+const EAST_ENTRY := Vector2(948, 112)
 # Landmark cells from assets/regions/tidefen_village/room_layouts/tidefen_village_1.aseprite:
 # layer -> {cell: atlas coords}.
 const LANDMARKS := {
@@ -87,10 +91,10 @@ const LANDMARKS := {
 		# roofs over the houses
 		Vector2i(5, 1): Vector2i(1, 6),
 		Vector2i(15, 1): Vector2i(4, 6),
-		# the stone quay, the pier's first plank, and the stone wall at the east end
+		# the stone quay, the pier's first plank, and the stone landing at the east end
 		Vector2i(40, 7): Vector2i(7, 4),
 		Vector2i(48, 5): Vector2i(6, 2),
-		Vector2i(58, 3): Vector2i(1, 3),
+		Vector2i(58, 7): Vector2i(1, 3),
 	},
 	# the village bell, and the Supply Shop's hanging sign
 	&"Props": {BELL_CELL: BELL, Vector2i(29, 4): Vector2i(2, 4)},
@@ -107,7 +111,7 @@ func get_tests() -> Array:
 		["Tidefen's harbour pier stands over the shallows, a jump up", _test_harbour],
 		["Blue lanterns hang from Tidefen's eaves", _test_lanterns_under_eaves],
 		["An old well in Tidefen's shallows drops into the undertow", _test_well],
-		["Tidefen walls its east edge", _test_walls_east_edge],
+		["Tidefen's harbour opens east onto the jungle, off its landing", _test_opens_east],
 	]
 
 
@@ -269,17 +273,26 @@ func _test_well() -> bool:
 	return valid
 
 
-# Tidefen is the end of the coast; the jungle past it is the next chapter.
-func _test_walls_east_edge() -> bool:
+# Past the pier, the harbour's wall is gone: a landing at the water's level, reached down from the
+# pier, and an Exit off it onto the jungle's harbour trail.
+func _test_opens_east() -> bool:
 	var room := _room()
 	if room == null:
 		return false
-	var bounds := room.get_node_or_null("Bounds") as StaticBody2D
-	var valid := bounds != null and bounds.collision_layer == WORLD_LAYER
-	if valid:
-		var east := bounds.get_node_or_null("East") as CollisionShape2D
-		var boundary := east.shape as WorldBoundaryShape2D if east != null else null
-		valid = boundary != null and boundary.normal == Vector2.LEFT
-		valid = valid and east.position.x == ROOM_SIZE.x
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var valid := room.get_node_or_null("Bounds/East") == null
+	for column in range(LANDING.x, LANDING.y + 1):
+		for row in range(0, CELLS.end.y):
+			var filled := terrain.get_cell_source_id(Vector2i(column, row)) != -1
+			valid = valid and filled == (row >= LANDING_ROW)
+	var reached := RoomReach.reachable(terrain, Vector2i(WEST_ENTRY / TILE))
+	valid = valid and RoomReach.span_at(reached, Vector2i(LANDING.y, LANDING_ROW)) != null
+	var entry := room.get_node_or_null("Entries/east") as Marker2D
+	valid = valid and entry != null and entry.position == EAST_ENTRY
+	valid = valid and Vector2i(EAST_ENTRY / TILE) == Vector2i(LANDING.y, LANDING_ROW)
+	var exit := room.get_node_or_null("Exits/east") as Area2D
+	valid = valid and exit != null and exit.position.x > ROOM_SIZE.x
+	valid = valid and exit.get("room_id") == &"low_canopy_jungle_1"
+	valid = valid and exit.get("entry_id") == &"west"
 	room.free()
 	return valid

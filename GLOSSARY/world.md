@@ -41,7 +41,7 @@ An edge of a Room that leads to an Entry in another Room. Crossing it enters tha
 _Avoid_: Door, portal, transition, warp
 
 **Region**:
-A stretch of the world with its own theme, Map name and colour, such as the Waking Coast. A Region has a Safe spoke or leans on a neighbouring one, as the Waking Coast and the Undertow beneath its cliffs both lean on Tidefen Village.
+A stretch of the world with its own theme, Map name and colour, such as the Waking Coast. A Region has a Safe spoke or leans on a neighbouring one, as the Waking Coast and the Undertow beneath its cliffs both lean on Tidefen Village, and the Low Canopy Jungle east of Tidefen's harbour has the Shrinekeeper Camp up in its canopy.
 _Avoid_: Biome, zone, area, level
 
 **Safe spoke**:

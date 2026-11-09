@@ -15,11 +15,12 @@ const RoomExitScript := preload("res://scripts/core/room_exit.gd")
 const SCREEN_CELLS := Vector2i(10, 9)
 const TRIGGER_LAYER := 1 << 7
 const PLAYER_LAYER := 1 << 1
-# Every Room is drawn from the Mucho Pixels packs' sheets, but for the coast's own prop: Tidefen's
-# bell, which no pack has.
+# Every Room is drawn from the Mucho Pixels packs' sheets, but for art drawn for Awash: the coast's
+# own prop, Tidefen's bell, which no pack has, and the jungle's sheets, cut from its mockup.
 const PACK_DIR := "res://assets/packs/"
 const OWN_PROPS := "res://assets/regions/waking_coast/props/coast_props.png"
 const BELL := Vector2i(0, 0)
+const JUNGLE_SHEETS := "res://assets/regions/low_canopy_jungle/tiles/"
 # The layers drawn in front of the Player: water it wades through.
 const FOREGROUND: Array[StringName] = [&"Surf"]
 
@@ -45,7 +46,7 @@ func get_tests() -> Array:
 		["Every Room draws its layers in order", _test_layer_order],
 		["Every Room keeps its tiles inside its size", _test_tiles_inside],
 		["Every Room draws only from its Region's sheets", _test_region_sheets],
-		["Every Room draws from the Mucho Pixels packs", _test_pack_art],
+		["Every Room draws from the packs, or art drawn for Awash", _test_pack_art],
 		["No Room scene holds its own Background", _test_scene_leaves_background],
 		["Every Room draws its Region's Background behind all else", _test_background],
 		["Every Room's Region has a looping theme", _test_region_theme],
@@ -314,7 +315,7 @@ static func _draws_pack_art(room_id: StringName, room: Node2D) -> bool:
 			var sheet := atlas.texture.resource_path if atlas != null else ""
 			var coords := layer.get_cell_atlas_coords(cell)
 			var drawn := atlas != null and atlas.has_tile(coords)
-			var own := sheet == OWN_PROPS and coords == BELL
+			var own := (sheet == OWN_PROPS and coords == BELL) or sheet.begins_with(JUNGLE_SHEETS)
 			if not drawn or (not sheet.begins_with(PACK_DIR) and not own):
 				push_error("%s/%s %s draws from %s" % [room_id, layer.name, cell, sheet])
 				valid = false
