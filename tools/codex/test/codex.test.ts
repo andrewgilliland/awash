@@ -166,10 +166,11 @@ describe("the Codex's World", () => {
   const kinds = (id: string) => room(id)?.marks.map((mark) => mark.kind);
 
   it("holds every Room in the World, built or planned, with its cell, size and exits", () => {
-    expect(codex.rooms.length).toBe(21);
+    expect(codex.rooms.length).toBe(29);
     expect(room("waking_coast_1")).toMatchObject({ region: "waking_coast", cell: [-1, 0], size: [2, 1], planned: false });
     expect(room("undertow_8")).toMatchObject({ region: "undertow", cell: [6, 3], size: [2, 2], planned: true });
     expect(room("undertow_8")?.exits).toEqual([{ screen: [1, 1], side: "east" }]);
+    expect(room("shrinekeeper_camp_1")).toMatchObject({ region: "shrinekeeper_camp", cell: [31, -3], planned: true });
   });
 
   it("marks what each Room holds: its Caches, Rest point, Shop, Characters, Boss and enemies", () => {

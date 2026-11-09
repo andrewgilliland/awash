@@ -1,7 +1,8 @@
 extends RefCounted
 
-# The World's plan: the layout agreed for the Waking Coast and the Undertow, laid over today's
-# World. Built Rooms that are to move carry where they go; Planned Rooms are all plan.
+# The World's plan: the layout agreed for the Waking Coast, the Undertow and the Low Canopy Jungle,
+# laid over today's World. Built Rooms that are to move carry where they go; Planned Rooms are all
+# plan.
 
 const World := preload("res://scripts/core/world.gd")
 const BEACH := &"waking_coast_1"
@@ -9,6 +10,10 @@ const GRAVEYARD := &"waking_coast_4"
 const SEA_CAVE := &"waking_coast_5"
 const TIDEFEN := &"tidefen_village_1"
 const UNDERTOW := &"undertow"
+const JUNGLE := &"low_canopy_jungle"
+const CAMP := &"shrinekeeper_camp"
+const HARBOUR_TRAIL := &"low_canopy_jungle_1"
+const JUNGLE_ROOMS := 7
 const SIDES := {
 	&"north": Vector2i.UP,
 	&"east": Vector2i.RIGHT,
@@ -27,6 +32,11 @@ func get_tests() -> Array:
 		],
 		["The plan climbs to the graveyard on the cliff tops, then down to Tidefen", _test_climb],
 		["The planned Undertow lies beneath the coast, reached from Tidefen", _test_undertow],
+		[
+			"The planned jungle climbs east from Tidefen's harbour to the Shrinekeeper Camp",
+			_test_jungle_climbs
+		],
+		["The jungle and its camp are reached only from Tidefen, for now", _test_jungle_way_in],
 	]
 
 
@@ -105,3 +115,41 @@ func _test_undertow() -> bool:
 				ways_in[other if plan.region == UNDERTOW else room_id] = true
 	# Compared as a set: sorting ids would order them by where they sit in memory, not by name.
 	return valid and ways_in.size() == 2 and ways_in.has(SEA_CAVE) and ways_in.has(TIDEFEN)
+
+
+# Seven Rooms of jungle east of Tidefen, its harbour trail at sea level, climbing to the camp, the
+# jungle's Safe spoke, on the canopy above.
+func _test_jungle_climbs() -> bool:
+	var tidefen := World.planned(TIDEFEN)
+	var trail := World.planned(HARBOUR_TRAIL)
+	var east_of_tidefen: int = tidefen.cell.x + tidefen.size.x
+	var jungle := 0
+	var camps: Array[StringName] = []
+	var valid: bool = trail.region == JUNGLE and trail.cell == Vector2i(east_of_tidefen, 0)
+	for room_id in _all_ids():
+		var plan := World.planned(room_id)
+		if plan.region == JUNGLE:
+			jungle += 1
+			valid = valid and plan.cell.x >= east_of_tidefen
+		elif plan.region == CAMP:
+			camps.append(room_id)
+	valid = valid and jungle == JUNGLE_ROOMS and camps.size() == 1
+	if valid:
+		var camp := World.planned(camps[0])
+		valid = camp.cell.y < trail.cell.y and camp.markers.has(&"rest")
+	return valid
+
+
+# Its only way in is off Tidefen's harbour; Smuggler Inlet beyond it is planned later.
+func _test_jungle_way_in() -> bool:
+	var owner := _screens()
+	var valid := not owner.is_empty()
+	var ways_in := {}
+	for room_id in _all_ids():
+		var plan := World.planned(room_id)
+		var inside: bool = plan.region in [JUNGLE, CAMP]
+		for exit: Dictionary in plan.exits:
+			var other: StringName = owner.get(plan.cell + exit.screen + SIDES[exit.side], &"")
+			if (World.planned(other).region in [JUNGLE, CAMP]) != inside:
+				ways_in[room_id if not inside else other] = true
+	return valid and ways_in.keys() == [TIDEFEN]
