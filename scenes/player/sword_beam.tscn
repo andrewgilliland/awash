@@ -6,10 +6,10 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_blade"]
 atlas = ExtResource("3_sword")
-region = Rect2(16, 0, 16, 16)
+region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_blade"]
-size = Vector2(16, 6)
+size = Vector2(28, 6)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tip"]
 size = Vector2(4, 4)

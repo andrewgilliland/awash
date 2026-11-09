@@ -10,7 +10,7 @@ const FRAME := 1.0 / 60.0
 const SPEED := 240.0
 const RANGE := 240.0
 # The blade's cell on the sword sheet: held straight out.
-const BLADE_REGION := Rect2(16, 0, 16, 16)
+const BLADE_REGION := Rect2(32, 0, 32, 32)
 
 # Needs a root that is already in the tree: a beam flies in the world.
 var _root: Window
