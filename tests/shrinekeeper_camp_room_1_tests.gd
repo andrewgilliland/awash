@@ -2,8 +2,7 @@ extends RefCounted
 
 # The Shrinekeeper Camp: the Low Canopy Jungle's Safe spoke, up in the canopy past the shrine
 # steps. Down from its gate, a restored shrine with its bell, the Rest point, then mossy canvas
-# shelters and herb racks, where the SHRINEKEEPER keeps the Shop. Its way on to the root hollow
-# waits for that Room.
+# shelters and herb racks, where the SHRINEKEEPER keeps the Shop, and on east into the root hollow.
 
 const ROOM_ID := &"shrinekeeper_camp_1"
 const ROOM_PATH := "res://scenes/rooms/shrinekeeper_camp_1.tscn"
@@ -27,6 +26,8 @@ const SHELTERS: Array[Vector2i] = [Vector2i(11, 4)]
 const SHELTER_TILE := Vector2i(4, 8)
 const RACKS: Array[Vector2i] = [Vector2i(15, 4), Vector2i(17, 4)]
 const RACK_TILE := Vector2i(7, 8)
+# On the floor at the east end.
+const EAST_ENTRY := Vector2(308, 96)
 
 
 func get_tests() -> Array:
@@ -38,7 +39,7 @@ func get_tests() -> Array:
 		["The shrine's bell is the camp's Rest point", _test_rest_point],
 		["Shelters and herb racks stand on the camp's floor", _test_shelters],
 		["The SHRINEKEEPER keeps the camp's Shop among the shelters", _test_keeper],
-		["The camp's east end stays walled until the root hollow is built", _test_shut],
+		["The camp opens east off its floor into the root hollow", _test_east],
 	]
 
 
@@ -162,16 +163,12 @@ func _test_keeper() -> bool:
 	return valid
 
 
-func _test_shut() -> bool:
+func _test_east() -> bool:
 	var room := Checks.load_room(ROOM_PATH)
 	if room == null:
 		return false
-	var wall := room.get_node_or_null("Bounds/East") as CollisionShape2D
-	var valid := wall != null and wall.position.x > ROOM_CELLS.x * TILE
-	valid = valid and room.get_node_or_null("Exits/east") == null
-	var sides: Array = []
-	for exit: Dictionary in World.planned(ROOM_ID).exits:
-		sides.append(exit.side)
-	valid = valid and &"east" in sides
+	var valid := room.get_node_or_null("Bounds/East") == null
+	valid = valid and Checks.entry_leads(room, &"east", EAST_ENTRY, &"low_canopy_jungle_7", &"west")
+	valid = valid and Checks.reaches(room, WEST_ENTRY, EAST_ENTRY)
 	room.free()
 	return valid

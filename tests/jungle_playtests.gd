@@ -3,7 +3,8 @@ extends RefCounted
 # The Low Canopy Jungle's walks with real input, played by tests/playtest_runner.gd with its
 # harness: off Tidefen's landing onto the harbour trail, up past its waterfall to the lower
 # terraces, up the terraces' beds to the relief, across the canopy walk's broken bridge, up the
-# upper terraces, and up the shrine steps to the camp's open gate.
+# upper terraces, up the shrine steps to the camp's open gate, and down the root hollow past the
+# camp.
 
 const TIDEFEN_PATH := "res://scenes/rooms/tidefen_village_1.tscn"
 const TRAIL_PATH := "res://scenes/rooms/low_canopy_jungle_1.tscn"
@@ -54,6 +55,25 @@ const STEPS_TOP_Y := 80.0
 # Up the shrine steps to the camp's open gate.
 const STEPS_EAST: Array[float] = [120.0, 200.0, 240.0]
 const GATE_Y := 48.0
+const CAMP_PATH := "res://scenes/rooms/shrinekeeper_camp_1.tscn"
+const ROOT_HOLLOW_PATH := "res://scenes/rooms/low_canopy_jungle_7.tscn"
+# Down the root hollow, walking off each ledge onto the next below it, side to side, to its foot.
+const HOLLOW_DOWN: Array[float] = [120.0, 24.0, 104.0, 16.0, 136.0, 40.0, 72.0, 24.0, 80.0]
+const HOLLOW_TOP_Y := 96.0
+const HOLLOW_FOOT_Y := 384.0
+# Back up it, a jump at a time: [direction, launch x, height landed on]. Up through the three
+# ledges stacked by the west wall, across onto the shelf, then zigzagging up to the top.
+const HOLLOW_UP := [
+	[0, 24.0, 352.0],
+	[0, 56.0, 320.0],
+	[0, 56.0, 288.0],
+	[1, 56.0, 256.0],
+	[-1, 88.0, 224.0],
+	[1, 56.0, 192.0],
+	[-1, 88.0, 160.0],
+	[1, 78.0, 128.0],
+	[-1, 82.0, 96.0],
+]
 
 # The runner: its input, frame and Room helpers.
 var _harness: SceneTree
@@ -71,6 +91,8 @@ func get_playtests() -> Array:
 		["Player leaps the canopy walk's broken bridge to the upper terraces", _over_the_bridge],
 		["Player climbs the upper terraces to the shrine steps", _up_the_upper_terraces],
 		["Player climbs the shrine steps to the camp's open gate", _to_the_gate],
+		["Player walks off the camp into the root hollow and down to its foot", _down_the_hollow],
+		["Player climbs back up the root hollow into the camp", _up_the_hollow],
 	]
 
 
@@ -200,4 +222,48 @@ func _leap_from(player: CharacterBody2D, x: float) -> bool:
 	_harness.call("_release", &"jump")
 	_harness.call("_release", &"move_right")
 	await _harness.call("_frames", 15)
+	return valid
+
+
+# East along the camp's floor and off its east end into the hollow, its Stalker gone; then down it,
+# a ledge at a time.
+func _down_the_hollow() -> bool:
+	var player: CharacterBody2D = await _harness.call(
+		"_enter_room", &"shrinekeeper_camp_1", &"bell", CAMP_PATH
+	)
+	if player == null:
+		await _harness.call("_leave_scene")
+		return false
+	var valid: bool = await _harness.call("_walk_until_scene", &"move_right", ROOT_HOLLOW_PATH)
+	player = _harness.call("_current_player")
+	valid = valid and player != null and absf(player.global_position.y - HOLLOW_TOP_Y) < 1.0
+	_harness.call("_clear_enemies")
+	for x in HOLLOW_DOWN:
+		await _harness.call("_walk_to_x", player, x)
+		await _harness.call("_frames_until", func() -> bool: return player.is_on_floor(), 60)
+	valid = valid and absf(player.global_position.y - HOLLOW_FOOT_Y) < 1.0
+	await _harness.call("_leave_scene")
+	return valid
+
+
+func _up_the_hollow() -> bool:
+	var player: CharacterBody2D = await _harness.call(
+		"_enter_room", &"low_canopy_jungle_7", &"west", ROOT_HOLLOW_PATH
+	)
+	if player == null:
+		await _harness.call("_leave_scene")
+		return false
+	_harness.call("_clear_enemies")
+	player.global_position = Vector2(80, HOLLOW_FOOT_Y - 4.0)
+	await _harness.call("_frames_until", player.is_on_floor, 60)
+	var valid := true
+	for step: Array in HOLLOW_UP:
+		await _harness.call("_walk_to_x", player, step[1])
+		await _harness.call("_jump_toward", player, step[0])
+		var on := absf(player.global_position.y - step[2]) < 1.0
+		if not on:
+			push_error("Root hollow: from x %s landed at %s" % [step[1], player.global_position])
+		valid = valid and on
+	valid = valid and await _harness.call("_walk_until_scene", &"move_left", CAMP_PATH)
+	await _harness.call("_leave_scene")
 	return valid

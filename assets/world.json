@@ -356,21 +356,18 @@
 			"size": [2, 1],
 			"region": "shrinekeeper_camp",
 			"exits": [
-				{"screen": [0, 0], "side": "west"}
+				{"screen": [0, 0], "side": "west"},
+				{"screen": [1, 0], "side": "east"}
 			],
-			"markers": {"rest": [0, 0]},
-			"plan": {
-				"exits": [
-					{"screen": [0, 0], "side": "west"},
-					{"screen": [1, 0], "side": "east"}
-				]
-			}
+			"markers": {"rest": [0, 0]}
 		},
 		"low_canopy_jungle_7": {
 			"note": "The root hollow past the camp, down toward Smuggler Inlet, which is planned later.",
+			"scene": "res://scenes/rooms/low_canopy_jungle_7.tscn",
 			"cell": [33, -3],
 			"size": [1, 3],
 			"region": "low_canopy_jungle",
+			"background": "den",
 			"exits": [
 				{"screen": [0, 0], "side": "west"}
 			]

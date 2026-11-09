@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=4]
+[gd_scene load_steps=10 format=4]
 
 [ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_main"]
 
@@ -14,9 +14,6 @@
 [ext_resource type="Texture2D" path="res://assets/npcs/shrinekeeper/shrinekeeper.png" id="keeper_sheet"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_edge"]
-size = Vector2(8, 144)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_east"]
 size = Vector2(8, 144)
 
 [node name="ShrinekeeperCamp1" type="Node2D"]
@@ -49,13 +46,6 @@ speaker = "SHRINEKEEPER"
 sheet = ExtResource("keeper_sheet")
 stock_name = &"CAMP_STOCK"
 
-[node name="Bounds" type="StaticBody2D" parent="."]
-collision_mask = 0
-
-[node name="East" type="CollisionShape2D" parent="Bounds"]
-position = Vector2(324, 72)
-shape = SubResource("RectangleShape2D_east")
-
 [node name="Exits" type="Node2D" parent="."]
 
 [node name="west" type="Area2D" parent="Exits"]
@@ -69,6 +59,17 @@ entry_id = &"east"
 [node name="Edge" type="CollisionShape2D" parent="Exits/west"]
 shape = SubResource("RectangleShape2D_edge")
 
+[node name="east" type="Area2D" parent="Exits"]
+position = Vector2(324, 72)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_exit")
+room_id = &"low_canopy_jungle_7"
+entry_id = &"west"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/east"]
+shape = SubResource("RectangleShape2D_edge")
+
 [node name="Entries" type="Node2D" parent="."]
 
 [node name="west" type="Marker2D" parent="Entries"]
@@ -76,6 +77,9 @@ position = Vector2(12, 48)
 
 [node name="bell" type="Marker2D" parent="Entries"]
 position = Vector2(124, 96)
+
+[node name="east" type="Marker2D" parent="Entries"]
+position = Vector2(308, 96)
 
 [node name="Player" parent="." instance=ExtResource("5_player")]
 position = Vector2(12, 48)
