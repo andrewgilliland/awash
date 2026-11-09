@@ -75,9 +75,13 @@ describe("the Codex's enemies", () => {
     expect(pirate?.planned).toBe(true);
     expect(pirate?.stats).toBeNull();
     expect(pirate?.sprite).toBeNull();
-    // The Stalker is built, perched in the canopy walk and the upper terraces.
+    // The Stalker is built, perched in the canopy walk, the upper terraces and the root hollow.
     expect(enemy("stalker")?.planned).toBe(false);
-    expect(enemy("stalker")?.rooms.map((room) => room.id)).toEqual(["low_canopy_jungle_3", "low_canopy_jungle_4"]);
+    expect(enemy("stalker")?.rooms.map((room) => room.id)).toEqual([
+      "low_canopy_jungle_3",
+      "low_canopy_jungle_4",
+      "low_canopy_jungle_7",
+    ]);
     // The Spore Beast is built, in its lair.
     expect(enemy("spore_beast")?.planned).toBe(false);
     expect(enemy("spore_beast")?.rooms.map((room) => room.id)).toEqual(["low_canopy_jungle_5"]);
