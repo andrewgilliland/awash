@@ -34,4 +34,4 @@ Each step gets its own grilling and PR.
 3. Built: the Stalker, the jungle's first enemy (`docs/specs/stalker-spec.md`), perched on the canopy walk's east deck and the upper terraces' third bed.
 4. Built: the Shrinekeeper Camp, through the shrine steps' gate swung open: a restored shrine with its bell, the Rest point; canvas shelters and herb racks, where the SHRINEKEEPER keeps a Supply Shop that sells Mourning Salts too; and a hymn of its own. Its way on to the root hollow stays walled.
 5. Built: the Spore Beast (`docs/specs/spore-beast-spec.md`) in its lair under the lower terraces, dropped into through a hole in their floor, with a chest of three Glowroe at its far end; and the root hollow, off the camp's east end, three screens down a giant hollow root past a perched Stalker, its way east to Smuggler Inlet walled until the Inlet is planned.
-6. Smuggler Inlet and the Pirate Fort, planned with their own grilling.
+6. Smuggler Inlet and the Pirate Fort, planned with their own grilling. Built ahead of them: the Pirate (`docs/specs/pirate-spec.md`), one on guard at the root hollow's foot.

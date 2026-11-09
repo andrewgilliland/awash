@@ -71,10 +71,13 @@ describe("the Codex's enemies", () => {
   });
 
   it("lists enemies only in the docs as planned, with no stats", () => {
-    const pirate = enemy("pirate");
-    expect(pirate?.planned).toBe(true);
-    expect(pirate?.stats).toBeNull();
-    expect(pirate?.sprite).toBeNull();
+    const rusk = enemy("rusk");
+    expect(rusk?.planned).toBe(true);
+    expect(rusk?.stats).toBeNull();
+    expect(rusk?.sprite).toBeNull();
+    // The Pirate is built, on guard at the root hollow's foot.
+    expect(enemy("pirate")?.planned).toBe(false);
+    expect(enemy("pirate")?.rooms.map((room) => room.id)).toEqual(["low_canopy_jungle_7"]);
     // The Stalker is built, perched in the canopy walk, the upper terraces and the root hollow.
     expect(enemy("stalker")?.planned).toBe(false);
     expect(enemy("stalker")?.rooms.map((room) => room.id)).toEqual([
@@ -115,6 +118,7 @@ describe("the Codex's items", () => {
   it("reads Sub Weapons, Weapons and Armor", () => {
     expect(item("bomb")?.kind).toBe("Sub Weapon");
     expect(item("bomb")?.caches).toEqual([{ id: "bomb_crate", room: "tidefen_village_1", count: 5 }]);
+    expect(item("bomb")?.droppedBy).toEqual([{ enemy: "pirate", chance: 0.25 }]);
     expect(item("oathblade")?.kind).toBe("Weapon");
     expect(item("oathblade")?.effect).toBe("Attack +5");
     expect(item("oathblade")?.droppedBy).toEqual([{ enemy: "wraith", chance: 0.1 }]);
