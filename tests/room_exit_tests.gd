@@ -67,6 +67,10 @@ func _test_waking_coast_connects() -> bool:
 		and _leads_to(&"undertow_3", &"undertow_2", &"west")
 		and _leads_to(&"undertow_3", &"waking_coast_5", &"east")
 		and _leads_to(&"waking_coast_5", &"undertow_3", &"west")
+		and _leads_to(&"tidefen_village_1", &"low_canopy_jungle_1", &"west")
+		and _leads_to(&"low_canopy_jungle_1", &"tidefen_village_1", &"east")
+		and _leads_to(&"low_canopy_jungle_1", &"low_canopy_jungle_2", &"west")
+		and _leads_to(&"low_canopy_jungle_2", &"low_canopy_jungle_1", &"east")
 	)
 
 

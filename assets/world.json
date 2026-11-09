@@ -121,23 +121,17 @@
 			"markers": {"boss": [0, 0]}
 		},
 		"tidefen_village_1": {
-			"note": "Tidefen, at the end of the coast past the Warden's gate: its stilt houses, market square and harbour, two screens each.",
+			"note": "Tidefen, at the end of the coast past the Warden's gate: its stilt houses, market square and harbour, two screens each. Its harbour opens east onto the jungle.",
 			"scene": "res://scenes/rooms/tidefen_village_1.tscn",
 			"cell": [15, 0],
 			"size": [6, 1],
 			"region": "tidefen_village",
 			"exits": [
 				{"screen": [0, 0], "side": "west"},
-				{"screen": [0, 0], "side": "south"}
+				{"screen": [0, 0], "side": "south"},
+				{"screen": [5, 0], "side": "east"}
 			],
-			"markers": {"rest": [3, 0]},
-			"plan": {
-				"exits": [
-					{"screen": [0, 0], "side": "west"},
-					{"screen": [0, 0], "side": "south"},
-					{"screen": [5, 0], "side": "east"}
-				]
-			}
+			"markers": {"rest": [3, 0]}
 		},
 		"waking_coast_9": {
 			"note": "Four screens of tunnel under the trail and Tidefen, between the shaft from its well and the temple hall.",
@@ -288,6 +282,7 @@
 		},
 		"low_canopy_jungle_1": {
 			"note": "The harbour trail: off Tidefen's quay, up root steps past a waterfall into the trees.",
+			"scene": "res://scenes/rooms/low_canopy_jungle_1.tscn",
 			"cell": [21, 0],
 			"size": [2, 1],
 			"region": "low_canopy_jungle",
@@ -298,14 +293,20 @@
 		},
 		"low_canopy_jungle_2": {
 			"note": "The lower terraces: the shrine keepers' medicine beds behind broken walls, climbing east, over the Spore Beast's lair.",
+			"scene": "res://scenes/rooms/low_canopy_jungle_2.tscn",
 			"cell": [23, -1],
 			"size": [3, 2],
 			"region": "low_canopy_jungle",
 			"exits": [
-				{"screen": [0, 1], "side": "west"},
-				{"screen": [2, 0], "side": "east"},
-				{"screen": [1, 1], "side": "south"}
-			]
+				{"screen": [0, 1], "side": "west"}
+			],
+			"plan": {
+				"exits": [
+					{"screen": [0, 1], "side": "west"},
+					{"screen": [2, 0], "side": "east"},
+					{"screen": [1, 1], "side": "south"}
+				]
+			}
 		},
 		"low_canopy_jungle_5": {
 			"note": "The Spore Beast's lair, down from the lower terraces: a dead end.",

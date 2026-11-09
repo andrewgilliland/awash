@@ -14,6 +14,7 @@ Awash includes lightweight headless test and deterministic playtest runners. `te
 What the tests and playtests cover, by topic:
 
 - [The World and its Rooms](testing/world.md): the World's data, Plan and Map; what holds for every Room; each Region, its Background and tiles; and each Room's own tests and playtests.
+- [The Low Canopy Jungle](testing/low-canopy-jungle.md): the jungle and its camp as Regions, and the jungle's Rooms, walked with real input.
 - [The Player and combat](testing/player-and-combat.md): the Player's controller, rig and body; Health, Levels, Supplies and Equipment; and each enemy and Boss, their hits and sounds.
 - [The game and its UI](testing/game-and-ui.md): starting the game, the Pause menu, music, dialogue and Interact; the Run; and the end-to-end playtests.
 

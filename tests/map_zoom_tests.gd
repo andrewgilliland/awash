@@ -11,8 +11,9 @@ const MENU_ROOT := "CenterContainer/MenuPanel/MarginContainer/VBoxContainer/"
 const INPUT_SETUP_SCRIPT_PATH := "res://scripts/core/input_setup.gd"
 # The Map Panel's view as the Pause menu lays it out on the game's screen.
 const MAP_VIEW_SIZE := Vector2(142, 73)
-# The smallest a screen may be drawn and still read as a block with its walls.
-const SMALLEST_SCREEN := Vector2(6, 5)
+# The smallest a screen may be drawn and still read as a block with its walls: a pixel of wall
+# round a room of its own.
+const SMALLEST_SCREEN := Vector2(5, 4)
 
 # Needs a root that is already in the tree: the Pause menu pauses through get_tree().
 var _root: Window
