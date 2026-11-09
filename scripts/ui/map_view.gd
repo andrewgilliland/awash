@@ -47,7 +47,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not is_visible_in_tree():
 		return
-	if _exploring and _zoom != &"world":
+	if _exploring:
 		_pan_by(_held_direction() * PAN_SPEED * delta)
 	var was_lit := _dot_lit()
 	_blink_time += delta
@@ -108,12 +108,14 @@ func _held_direction() -> Vector2:
 	)
 
 
-# Pans by Map pixels, as far as the World's edge.
+# Pans by Map pixels, as far as the World's edge; at World zoom, only along a side the whole World
+# doesn't fit.
 func _pan_by(pixels: Vector2) -> void:
 	if pixels == Vector2.ZERO:
 		return
-	var room_id := _room_id()
-	_pan = MapLayout.clamp_pan(_rooms(), room_id, _pan + pixels / MapLayout.cell_for(_zoom))
+	var rooms := _rooms()
+	var step := MapLayout.pan_step(rooms, size, _zoom, pixels)
+	_pan = MapLayout.clamp_pan(rooms, _room_id(), _pan + step, size, _zoom)
 	queue_redraw()
 
 

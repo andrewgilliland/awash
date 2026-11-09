@@ -43,8 +43,13 @@ const ROOMS := {
 	},
 }
 const SCREEN_CENTRE := Vector2(80, 72)
-# The made-up Rooms and one far off past them: 31 screens wide and 4 tall in all.
-const WIDE_SPAN := Vector2i(31, 4)
+# The made-up Rooms, one in the middle and one far off past them: 24 screens wide and 4 tall in
+# all, as wide as fits the view at 6 pixels a screen.
+const WIDE_SPAN := Vector2i(24, 4)
+# Too wide to fit the view even at the smallest screen.
+const TOO_WIDE_SPAN := Vector2i(40, 4)
+# The smallest a screen is drawn at World zoom, and still reads as a block with its walls.
+const SMALLEST_SCREEN := Vector2(5, 4)
 # Where the cove and the cliffs sit on a Map centred on the cove.
 const COVE := Rect2(62, 18, 20, 18)
 const CLIFFS := Rect2(82, 18, 40, 18)
@@ -65,9 +70,15 @@ func get_tests() -> Array:
 		["Near zoom centres the current Room at half the size", _test_near_centres],
 		["A pan moves the Near and Close views by screens", _test_pan_moves_view],
 		["A pan stops with the World's edge at the middle of the view", _test_pan_stops_at_edge],
-		["At World zoom a pan changes nothing", _test_world_ignores_pan],
+		["At World zoom a pan changes nothing while the whole World fits", _test_world_ignores_pan],
+		["At World zoom a screen is never smaller than 5 by 4", _test_world_floor],
+		["At World zoom a World too wide centres on the Player's Room", _test_too_wide_centres],
+		["At World zoom a World too wide stops with its edge at the view's", _test_too_wide_edges],
+		["At World zoom a pan moves a World too wide, edge to edge", _test_too_wide_pans],
+		["A pan steps by the zoom's screens, but not where World zoom fits", _test_pan_step],
 		["The whole World shows every Room, the planned ones in outline", _test_whole_world],
 		["The whole World names each Region above its Rooms", _test_region_names],
+		["The whole World keeps each name inside it, clear of the others", _test_names_apart],
 	]
 
 
@@ -267,18 +278,98 @@ func _test_world_ignores_pan() -> bool:
 	return panned.current == still.current
 
 
-# The made-up Rooms, and a far one off past them, all built.
-static func _wide_rooms() -> Dictionary:
+func _test_world_floor() -> bool:
+	return _world(_wide_rooms(TOO_WIDE_SPAN), &"mid").current.size == SMALLEST_SCREEN
+
+
+# Looked at round the Player's Room across, and still whole and centred from top to bottom.
+func _test_too_wide_centres() -> bool:
+	var layout := _world(_wide_rooms(TOO_WIDE_SPAN), &"mid")
+	var mid: Rect2 = layout.current
+	var valid := absf(mid.get_center().x - VIEW_SIZE.x / 2.0) <= 1.0
+	var top := floorf((VIEW_SIZE.y - TOO_WIDE_SPAN.y * SMALLEST_SCREEN.y) / 2.0)
+	valid = valid and mid.position.y == top
+	return valid and Rect2(Vector2.ZERO, VIEW_SIZE).has_point(layout.dot)
+
+
+# The cove is at the World's west edge and the far Room at its east edge.
+func _test_too_wide_edges() -> bool:
+	var rooms := _wide_rooms(TOO_WIDE_SPAN)
+	var valid: bool = _world(rooms, &"cove").current.position.x == 0.0
+	return valid and _world(rooms, &"far").current.end.x == VIEW_SIZE.x
+
+
+func _test_too_wide_pans() -> bool:
+	var rooms := _wide_rooms(TOO_WIDE_SPAN)
+	var still: Rect2 = _world(rooms, &"mid").current
+	# Looking two screens east, the Room sits two screens west; down changes nothing, as it fits.
+	var panned: Rect2 = _world(rooms, &"mid", Vector2(2, 1)).current
+	var valid := panned.position == still.position - Vector2(2 * SMALLEST_SCREEN.x, 0)
+	# As far as the World's east edge at the view's east edge, and no further. The mid Room's
+	# middle is 20.5 screens across.
+	var far := MapLayout.clamp_pan(rooms, &"mid", Vector2(50, 0), VIEW_SIZE, &"world")
+	var furthest := TOO_WIDE_SPAN.x - VIEW_SIZE.x / 2.0 / SMALLEST_SCREEN.x - 20.5
+	valid = valid and is_equal_approx(far.x, furthest)
+	var beyond: Rect2 = _world(rooms, &"mid", Vector2(50, 0)).current
+	return valid and beyond == _world(rooms, &"mid", far).current
+
+
+func _test_pan_step() -> bool:
+	var pixels := Vector2(20, 18)
+	var valid := MapLayout.pan_step(ROOMS, VIEW_SIZE, &"near", pixels) == Vector2(2, 2)
+	valid = valid and MapLayout.pan_step(ROOMS, VIEW_SIZE, &"close", pixels) == Vector2(1, 1)
+	var too_wide := MapLayout.pan_step(_wide_rooms(TOO_WIDE_SPAN), VIEW_SIZE, &"world", pixels)
+	valid = valid and too_wide == Vector2(4, 0)
+	var fits := MapLayout.pan_step(_wide_rooms(), VIEW_SIZE, &"world", pixels)
+	return valid and fits == Vector2.ZERO
+
+
+# Two Regions crowd the top row's east end, past a shore below: their names, each wider than its
+# Room, would run into each other and off the picture's east edge.
+func _test_names_apart() -> bool:
+	var rooms := {}
+	for room: Array in [
+		[&"shore", Vector2i(0, 1), Vector2i(6, 1), "Waking Coast"],
+		[&"jungle", Vector2i(3, 0), Vector2i(1, 1), "Low Canopy Jungle"],
+		[&"camp", Vector2i(4, 0), Vector2i(2, 1), "Shrinekeeper Camp"],
+	]:
+		rooms[room[0]] = {cell = room[1], size = room[2], region = room[3], colour = COAST}
+	var whole := MapLayout.whole(rooms)
+	var picture := Rect2(Vector2.ZERO, whole.size)
+	var taken: Array[Rect2] = []
+	var valid: bool = whole.labels.size() == 3
+	for label: Dictionary in whole.labels:
+		var letter := MapLayout.LABEL_LETTER
+		var text := Rect2(
+			label.at - Vector2(0, letter.y), Vector2(label.text.length() * letter.x, letter.y)
+		)
+		valid = valid and picture.encloses(text)
+		valid = valid and not taken.any(func(other: Rect2) -> bool: return other.intersects(text))
+		taken.append(text)
+	# Every Room still within the picture, the names taking room of their own above them.
+	for block: Rect2 in _blocks(whole):
+		valid = valid and picture.encloses(block)
+	return valid
+
+
+# The made-up Rooms at World zoom, every one visited, the Player in the one given.
+static func _world(rooms: Dictionary, room_id: StringName, pan := Vector2.ZERO) -> Dictionary:
+	return MapLayout.layout(rooms, room_id, rooms.keys(), SCREEN_CENTRE, VIEW_SIZE, &"world", pan)
+
+
+# The made-up Rooms, one in the middle and a far one off past them, all built, as wide as given.
+static func _wide_rooms(span := WIDE_SPAN) -> Dictionary:
 	var rooms := ROOMS.duplicate(true)
 	rooms[&"reef"].planned = false
-	rooms[&"far"] = {
-		cell = WIDE_SPAN - Vector2i.ONE,
-		size = Vector2i(1, 1),
-		region = "Black Reef",
-		colour = REEF,
-		exits = [],
-		markers = {},
-	}
+	for room_id: StringName in [&"mid", &"far"]:
+		rooms[room_id] = {
+			cell = Vector2i(span.x / 2, 0) if room_id == &"mid" else span - Vector2i.ONE,
+			size = Vector2i(1, 1),
+			region = "Black Reef",
+			colour = REEF,
+			exits = [],
+			markers = {},
+		}
 	return rooms
 
 

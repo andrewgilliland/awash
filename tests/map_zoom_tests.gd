@@ -26,7 +26,7 @@ func _init(root: Window) -> void:
 func get_tests() -> Array:
 	return [
 		["The Map opens on the whole World", _test_opens_on_world],
-		["The whole built World fits the Map Panel at World zoom", _test_world_fits_panel],
+		["At World zoom the Map Panel draws every screen 5 by 4 or more", _test_world_reads],
 		["Jump zooms the Map in and Attack out, a step at a time, to each end", _test_zooms],
 		["The zoom keys work only while the Map's button has focus", _test_zoom_needs_focus],
 		["The Map keeps its zoom when opened again", _test_keeps_zoom],
@@ -44,20 +44,22 @@ func _test_opens_on_world() -> bool:
 	return valid
 
 
-func _test_world_fits_panel() -> bool:
+# Wherever the Player is in the built World, their Room is on the Panel, its screens no smaller
+# than reads; the whole World fits while it can, and past that pans.
+func _test_world_reads() -> bool:
 	var rooms := {}
 	for room_id in World.room_ids():
 		rooms[room_id] = MapView.map_room(room_id)
-	var first: StringName = World.room_ids()[0]
-	var layout := MapLayout.layout(
-		rooms, first, rooms.keys(), World.SCREEN_SIZE / 2.0, MAP_VIEW_SIZE, &"world"
-	)
 	var view := Rect2(Vector2.ZERO, MAP_VIEW_SIZE)
-	var valid: bool = layout.rooms.size() == rooms.size()
-	for room: Dictionary in layout.rooms:
-		valid = valid and view.encloses(room.block)
-	var screen: Vector2 = layout.current.size / Vector2(World.size(first))
-	return valid and screen.x >= SMALLEST_SCREEN.x and screen.y >= SMALLEST_SCREEN.y
+	var valid := true
+	for room_id: StringName in rooms:
+		var layout := MapLayout.layout(
+			rooms, room_id, rooms.keys(), World.SCREEN_SIZE / 2.0, MAP_VIEW_SIZE, &"world"
+		)
+		var screen: Vector2 = layout.current.size / Vector2(World.size(room_id))
+		valid = valid and view.encloses(layout.current) and view.has_point(layout.dot)
+		valid = valid and screen.x >= SMALLEST_SCREEN.x and screen.y >= SMALLEST_SCREEN.y
+	return valid
 
 
 func _test_zooms() -> bool:
