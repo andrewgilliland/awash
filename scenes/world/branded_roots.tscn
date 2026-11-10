@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/branded_roots.gd" id="1_roots"]
+[ext_resource type="Texture2D" path="res://assets/enemies/rusk/branded_roots.png" id="2_sheet"]
+[ext_resource type="AudioStream" path="res://assets/enemies/rusk/rusk_roots_rise.wav" id="3_rise"]
+[ext_resource type="AudioStream" path="res://assets/enemies/rusk/rusk_roots_wither.wav" id="4_wither"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_roots"]
+size = Vector2(8, 112)
+
+[node name="BrandedRoots" type="StaticBody2D"]
+collision_mask = 0
+script = ExtResource("1_roots")
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+position = Vector2(0, -56)
+shape = SubResource("RectangleShape2D_roots")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_sheet")
+centered = false
+offset = Vector2(-4, 0)
+region_enabled = true
+region_rect = Rect2(0, 0, 8, 112)
+
+[node name="Sounds" type="Node2D" parent="."]
+position = Vector2(0, -16)
+
+[node name="Rise" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("3_rise")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Wither" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("4_wither")
+max_distance = 240.0
+bus = &"SFX"

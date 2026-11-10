@@ -1,0 +1,87 @@
+[gd_scene load_steps=12 format=4]
+
+[ext_resource type="Script" uid="uid://di4kxydulaox2" path="res://scripts/core/main.gd" id="1_main"]
+
+[ext_resource type="TileSet" path="res://assets/regions/low_canopy_jungle/tiles/terrain.tres" id="terrain_tiles"]
+[ext_resource type="TileSet" path="res://assets/regions/low_canopy_jungle/tiles/scenery.tres" id="scenery_tiles"]
+
+[ext_resource type="Script" uid="uid://wdgjyp5mh65" path="res://scripts/core/room_exit.gd" id="4_exit"]
+
+[ext_resource type="PackedScene" uid="uid://bsmxp4op6cc6e" path="res://scenes/player/player.tscn" id="5_player"]
+
+[ext_resource type="PackedScene" path="res://scenes/enemies/rusk.tscn" id="rusk_scene"]
+[ext_resource type="Script" path="res://scripts/core/boss_arena.gd" id="arena_script"]
+[ext_resource type="AudioStream" path="res://assets/enemies/rusk/rusk_theme.wav" id="rusk_theme"]
+[ext_resource type="PackedScene" path="res://scenes/world/branded_roots.tscn" id="roots_scene"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_edge"]
+size = Vector2(8, 144)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_east"]
+size = Vector2(8, 144)
+
+[node name="LowCanopyJungle8" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Bark" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAACAAMAAAABAAUAAAAAAAQAAAAAAAQAAAABAAQAAAABAAQAAAAAAAUAAAAAAAQAAAABAAUAAAABAAQAAAA=")
+tile_set = ExtResource("scenery_tiles")
+
+[node name="Roots" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAEAAEAAAACAAQAAAAEAAIAAAACAAUAAAACAAQAAAACAAUAAAA=")
+tile_set = ExtResource("scenery_tiles")
+
+[node name="Terrain" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAAAAAAAAACAAAAAAABAAAAAAABAAAAAAACAAAAAAABAAAAAAADAAAAAAABAAAAAAAEAAAAAAADAAAAAAAAAAEAAAABAAEAAAABAAEAAAABAAEAAAACAAEAAAABAAEAAAADAAEAAAADAAIAAAAAAAIAAAABAAEAAAABAAIAAAABAAEAAAACAAIAAAADAAIAAAAAAAMAAAABAAIAAAABAAMAAAADAAIAAAAAAAYAAAABAAAAAAABAAYAAAABAAAAAAACAAYAAAACAAAAAAADAAYAAAABAAAAAAAEAAYAAAADAAAAAAAAAAcAAAACAAEAAAABAAcAAAABAAEAAAACAAcAAAABAAEAAAADAAcAAAACAAEAAAAEAAcAAAABAAEAAAAFAAcAAAABAAAAAAAGAAcAAAABAAAAAAAHAAcAAAABAAAAAAAIAAcAAAABAAAAAAAJAAcAAAABAAAAAAAKAAcAAAABAAAAAAALAAcAAAABAAAAAAAMAAcAAAACAAAAAAANAAcAAAABAAAAAAAOAAcAAAABAAAAAAAPAAcAAAABAAAAAAAQAAcAAAABAAAAAAARAAcAAAABAAAAAAASAAcAAAABAAAAAAATAAcAAAABAAAAAAAAAAgAAAABAAEAAAABAAgAAAABAAEAAAACAAgAAAACAAEAAAADAAgAAAABAAEAAAAEAAgAAAABAAEAAAAFAAgAAAABAAEAAAAGAAgAAAABAAEAAAAHAAgAAAABAAEAAAAIAAgAAAABAAEAAAAJAAgAAAABAAEAAAAKAAgAAAABAAEAAAALAAgAAAACAAEAAAAMAAgAAAABAAEAAAANAAgAAAABAAEAAAAOAAgAAAABAAEAAAAPAAgAAAABAAEAAAAQAAgAAAABAAEAAAARAAgAAAABAAEAAAASAAgAAAABAAEAAAATAAgAAAABAAEAAAA=")
+tile_set = ExtResource("terrain_tiles")
+
+[node name="Props" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAADAAUAAAAHAAQAAAAGAAYAAAAIAAQAAAAIAAYAAAAHAAUAAAANAAYAAAAHAAQAAAASAAYAAAAHAAUAAAA=")
+tile_set = ExtResource("scenery_tiles")
+
+[node name="Rusk" parent="." instance=ExtResource("rusk_scene")]
+position = Vector2(280, 112)
+
+[node name="Arena" type="Node2D" parent="." node_paths=PackedStringArray("boss")]
+script = ExtResource("arena_script")
+boss = NodePath("../Rusk")
+boss_id = &"rusk_jungle"
+theme = ExtResource("rusk_theme")
+hold_left = 160
+hold_right = 320
+
+[node name="RootsWest" parent="Arena" instance=ExtResource("roots_scene")]
+position = Vector2(164, 112)
+
+[node name="RootsEast" parent="Arena" instance=ExtResource("roots_scene")]
+position = Vector2(316, 112)
+
+[node name="Bounds" type="StaticBody2D" parent="."]
+collision_mask = 0
+
+[node name="East" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(324, 72)
+shape = SubResource("RectangleShape2D_east")
+
+[node name="Exits" type="Node2D" parent="."]
+
+[node name="west" type="Area2D" parent="Exits"]
+position = Vector2(-4, 72)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_exit")
+room_id = &"low_canopy_jungle_7"
+entry_id = &"east"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/west"]
+shape = SubResource("RectangleShape2D_edge")
+
+[node name="Entries" type="Node2D" parent="."]
+
+[node name="west" type="Marker2D" parent="Entries"]
+position = Vector2(12, 96)
+
+[node name="Player" parent="." instance=ExtResource("5_player")]
+position = Vector2(12, 96)

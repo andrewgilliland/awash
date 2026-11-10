@@ -362,15 +362,27 @@
 			"markers": {"rest": [0, 0]}
 		},
 		"low_canopy_jungle_7": {
-			"note": "The root hollow past the camp, down toward Smuggler Inlet, which is planned later.",
+			"note": "The root hollow past the camp, down to its foot, which opens east into the root's mouth.",
 			"scene": "res://scenes/rooms/low_canopy_jungle_7.tscn",
 			"cell": [33, -3],
 			"size": [1, 3],
 			"region": "low_canopy_jungle",
 			"background": "den",
 			"exits": [
-				{"screen": [0, 0], "side": "west"}
+				{"screen": [0, 0], "side": "west"},
+				{"screen": [0, 2], "side": "east"}
 			]
+		},
+		"low_canopy_jungle_8": {
+			"note": "The root's mouth, off the root hollow's foot: a step down out of the root into daylight, then Rusk's arena on a clifftop above Smuggler Inlet, which is planned later.",
+			"scene": "res://scenes/rooms/low_canopy_jungle_8.tscn",
+			"cell": [34, -1],
+			"size": [2, 1],
+			"region": "low_canopy_jungle",
+			"exits": [
+				{"screen": [0, 0], "side": "west"}
+			],
+			"markers": {"boss": [1, 0]}
 		}
 	}
 }

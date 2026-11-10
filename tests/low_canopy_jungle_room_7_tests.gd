@@ -2,7 +2,7 @@ extends RefCounted
 
 # The root hollow: three screens down inside a giant hollow root off the Shrinekeeper Camp's east
 # end, root ledges and earth zigzagging down to its foot, a Stalker perched on a shelf partway and
-# a Pirate on guard at the foot. Its way east to Smuggler Inlet waits for that Region to be planned.
+# a Pirate on guard at the foot, which opens east into the root's mouth.
 
 const ROOM_ID := &"low_canopy_jungle_7"
 const ROOM_PATH := "res://scenes/rooms/low_canopy_jungle_7.tscn"
@@ -17,8 +17,10 @@ const WEST_ENTRY := Vector2(12, 96)
 const FOOT := Vector2(80, 384)
 # Its Stalker's perch, on the shelf partway down.
 const STALKER_PERCH := Vector2(136, 256)
-# Its Pirate's post, on the foot's floor before the walled way east.
-const PIRATE_POST := Vector2(144, 384)
+# Its Pirate's post, on the foot's floor before the way east, clear of the Player coming back.
+const PIRATE_POST := Vector2(136, 384)
+# On the foot's floor, by the way east into the root's mouth.
+const EAST_ENTRY := Vector2(152, 384)
 const PIRATE_SCENE := "res://scenes/enemies/pirate.tscn"
 
 
@@ -26,9 +28,10 @@ func get_tests() -> Array:
 	return [
 		["The root hollow lays out three screens, one above another", _test_three_screens],
 		["The root hollow's west Entry stands level with the camp's floor", _test_west],
+		["The hollow's foot opens east into the root's mouth", _test_east],
 		["Root ledges zigzag down to the hollow's foot, a jump apart back up", _test_climbs],
 		["A Stalker perches on a shelf partway down", _test_stalker],
-		["A Pirate stands guard on the hollow's foot, before its east wall", _test_pirate],
+		["A Pirate stands guard on the hollow's foot, before its way east", _test_pirate],
 		["The hollow is walled where it has no Exit, and dark inside", _test_walls],
 	]
 
@@ -50,6 +53,16 @@ func _test_west() -> bool:
 	if room == null:
 		return false
 	var valid := Checks.entry_leads(room, &"west", WEST_ENTRY, &"shrinekeeper_camp_1", &"east")
+	room.free()
+	return valid
+
+
+func _test_east() -> bool:
+	var room := Checks.load_room(ROOM_PATH)
+	if room == null:
+		return false
+	var valid := Checks.entry_leads(room, &"east", EAST_ENTRY, &"low_canopy_jungle_8", &"west")
+	valid = valid and Checks.reaches(room, WEST_ENTRY, EAST_ENTRY)
 	room.free()
 	return valid
 
@@ -95,8 +108,8 @@ func _test_pirate() -> bool:
 	return valid
 
 
-# The west side walled below the top screen, the east all the way down; no Exit east, and the
-# jungle's dark den behind it.
+# The west side walled below the top screen, the east above the foot; and the jungle's dark den
+# behind it.
 func _test_walls() -> bool:
 	var room := Checks.load_room(ROOM_PATH)
 	if room == null:
@@ -104,13 +117,14 @@ func _test_walls() -> bool:
 	var height := float(ROOM_CELLS.y * TILE)
 	var west := room.get_node_or_null("Bounds/West") as CollisionShape2D
 	var east := room.get_node_or_null("Bounds/East") as CollisionShape2D
-	var valid := west != null and east != null and room.get_node_or_null("Exits/east") == null
+	var valid := west != null and east != null
 	if valid:
 		var west_span := (west.shape as RectangleShape2D).size.y
 		var east_span := (east.shape as RectangleShape2D).size.y
 		valid = west.position.y - west_span / 2.0 >= World.SCREEN_SIZE.y
 		valid = valid and west.position.y + west_span / 2.0 >= height
-		valid = valid and east_span >= height
+		valid = valid and east.position.y - east_span / 2.0 <= 0.0
+		valid = valid and east.position.y + east_span / 2.0 == height - World.SCREEN_SIZE.y
 	valid = valid and World.background(ROOM_ID) == DEN_BACKGROUND
 	room.free()
 	return valid

@@ -36,7 +36,7 @@ The Pirate is the Low Canopy Jungle's corsair (see `docs/enemies/pirate.md`): a 
 
 Each stands clear of every Entry.
 
-- **`low_canopy_jungle_7`:** at the root hollow's foot, at x 144, on guard against the walled way east to Smuggler Inlet. It throws at the Player coming down the last ledges and across the floor; the low ledge at the foot's west end, two rows up, is cover its bombs cannot reach under.
+- **`low_canopy_jungle_7`:** at the root hollow's foot, at x 136, on guard before the way east into the root's mouth, clear of the Player coming back through it. It throws at the Player coming down the last ledges and across the floor; the low ledge at the foot's west end, two rows up, is cover its bombs cannot reach under.
 - More stand in Smuggler Inlet and the Pirate Fort, on guarded ledges, once those are planned.
 
 ## Ownership
