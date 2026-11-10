@@ -68,6 +68,14 @@ _Avoid_: Cat, panther, jumper, pouncer
 The Low Canopy Jungle's second enemy: a swollen boar-like beast with fungal shelves on its back, lumbering after the Player in its lair under the lower terraces. It never flinches; every hit vents a cloud of spores around it that hurts a Player inside it, so the Player strikes and steps back, or strikes from afar with a Sword Beam.
 _Avoid_: Boar, mushroom pig, fungus beast
 
+**Pirate**:
+The Low Canopy Jungle's corsair, from the Pirate Fort: a skirmisher in patched storm leathers and a brass half-mask, holding a post. Close on its level it rushes the Player with its cutlass; farther off, or above or below, it lobs Pirate bombs. It never chases, and stands winded after a rush: the opening.
+_Avoid_: Corsair (as its name), bandit, bomber
+
+**Pirate bomb**:
+A clay bomb a Pirate lobs to land where the Player stands: it sits sputtering, then bursts, hurting only the Player. It is not the Player's Bomb, though it looks and sounds the same; a defeated Pirate may leave one of those.
+_Avoid_: Enemy Bomb, grenade
+
 **Boss**:
 An enemy that guards a Region's end, with its own Health bar along the bottom of the screen while it fights. Defeating it opens a Gate, and it stays defeated for the Run, through the Player's own defeat; a new Run brings it back.
 _Avoid_: Miniboss, guardian (as the general term)

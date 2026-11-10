@@ -213,6 +213,17 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
     "spore_beast_hiss": lambda: noise(0.5, 6000, 2500, seed=81),
     # Defeated: a low groan, sinking.
     "spore_beast_defeat": lambda: mix(growl(0.7, 110, 45, tremolo_hz=10), noise(0.4, 1200, 200, seed=82)),
+    # The Pirate notices the Player: a sharp two-note whistle, calling the crew.
+    "pirate_whistle": lambda: sweep(0.1, 1300, 2100, duty=0.5) + sweep(0.16, 1900, 2500, duty=0.5),
+    # Its cutlass rushes: a long swish through the air.
+    "pirate_swish": lambda: mix(noise(0.18, 7000, 1200, seed=90), sweep(0.12, 700, 1300, duty=0.125)),
+    # Struck: a short grunt.
+    "pirate_grunt": lambda: mix(sweep(0.12, 210, 120, duty=0.5), noise(0.06, 3000, 800, seed=91)),
+    # Defeated: a falling cry.
+    "pirate_defeat": lambda: mix(
+        sweep(0.45, 440, 140, duty=0.5, vibrato_hz=12, vibrato_depth=0.06),
+        noise(0.3, 1500, 200, seed=92),
+    ),
     # Nameless Warden: a deep swell as it sets its shield, then the move it makes.
     "warden_windup": lambda: growl(0.6, 70, 140, tremolo_hz=12),
     # The shield bash: a heavy rush.
@@ -275,6 +286,7 @@ HOMES = {
     "silt_crab_": "assets/enemies/silt_crab",
     "stalker_": "assets/enemies/stalker",
     "spore_beast_": "assets/enemies/spore_beast",
+    "pirate_": "assets/enemies/pirate",
     "warden_": "assets/enemies/nameless_warden",
     "ui_": "assets/ui",
     "bomb_": "assets/items",

@@ -1,8 +1,8 @@
 extends RefCounted
 
 # The root hollow: three screens down inside a giant hollow root off the Shrinekeeper Camp's east
-# end, root ledges and earth zigzagging down to its foot, a Stalker perched on a shelf partway.
-# Its way east to Smuggler Inlet waits for that Region to be planned.
+# end, root ledges and earth zigzagging down to its foot, a Stalker perched on a shelf partway and
+# a Pirate on guard at the foot. Its way east to Smuggler Inlet waits for that Region to be planned.
 
 const ROOM_ID := &"low_canopy_jungle_7"
 const ROOM_PATH := "res://scenes/rooms/low_canopy_jungle_7.tscn"
@@ -17,6 +17,9 @@ const WEST_ENTRY := Vector2(12, 96)
 const FOOT := Vector2(80, 384)
 # Its Stalker's perch, on the shelf partway down.
 const STALKER_PERCH := Vector2(136, 256)
+# Its Pirate's post, on the foot's floor before the walled way east.
+const PIRATE_POST := Vector2(144, 384)
+const PIRATE_SCENE := "res://scenes/enemies/pirate.tscn"
 
 
 func get_tests() -> Array:
@@ -25,6 +28,7 @@ func get_tests() -> Array:
 		["The root hollow's west Entry stands level with the camp's floor", _test_west],
 		["Root ledges zigzag down to the hollow's foot, a jump apart back up", _test_climbs],
 		["A Stalker perches on a shelf partway down", _test_stalker],
+		["A Pirate stands guard on the hollow's foot, before its east wall", _test_pirate],
 		["The hollow is walled where it has no Exit, and dark inside", _test_walls],
 	]
 
@@ -64,14 +68,29 @@ func _test_stalker() -> bool:
 	if room == null:
 		return false
 	var terrain := room.get_node("Terrain") as TileMapLayer
-	var stalkers: Array = []
-	if room.has_node("Enemies"):
-		stalkers = room.get_node("Enemies").get_children()
-	var valid := stalkers.size() == 1
+	var stalker := room.get_node_or_null("Enemies/Stalker") as Node2D
+	var valid := stalker != null
 	if valid:
-		var stalker := stalkers[0] as Node2D
 		valid = stalker.position == STALKER_PERCH and RoomEnemies.perches(terrain, stalker)
 	valid = valid and Checks.reaches(room, WEST_ENTRY, STALKER_PERCH)
+	room.free()
+	return valid
+
+
+# Its feet on the foot's floor, open air above them, reached from the camp.
+func _test_pirate() -> bool:
+	var room := Checks.load_room(ROOM_PATH)
+	if room == null:
+		return false
+	var terrain := room.get_node("Terrain") as TileMapLayer
+	var pirate := room.get_node_or_null("Enemies/Pirate") as Node2D
+	var valid := pirate != null and room.get_node("Enemies").get_child_count() == 2
+	if valid:
+		var feet := Vector2i((pirate.position + Vector2(0, -1)) / TILE)
+		valid = pirate.scene_file_path == PIRATE_SCENE and pirate.position == PIRATE_POST
+		valid = valid and terrain.get_cell_source_id(feet + Vector2i.DOWN) != -1
+		valid = valid and terrain.get_cell_source_id(feet) == -1
+	valid = valid and Checks.reaches(room, WEST_ENTRY, PIRATE_POST)
 	room.free()
 	return valid
 

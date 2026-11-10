@@ -1,0 +1,93 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/pirate.gd" id="1_pirate"]
+[ext_resource type="Script" uid="uid://f2yydf3wt8ik" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
+[ext_resource type="Script" uid="uid://dk3355uvj2vwl" path="res://scripts/combat/hitbox.gd" id="3_hit"]
+[ext_resource type="AudioStream" path="res://assets/enemies/pirate/pirate_whistle.wav" id="4_whistle"]
+[ext_resource type="AudioStream" path="res://assets/enemies/pirate/pirate_swish.wav" id="5_swish"]
+[ext_resource type="AudioStream" path="res://assets/enemies/pirate/pirate_grunt.wav" id="6_grunt"]
+[ext_resource type="AudioStream" path="res://assets/enemies/pirate/pirate_defeat.wav" id="7_defeat"]
+[ext_resource type="Script" path="res://scripts/combat/hit_flash.gd" id="90_flash"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(12, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
+size = Vector2(14, 22)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_touch"]
+size = Vector2(10, 18)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cutlass"]
+size = Vector2(16, 10)
+
+[node name="Pirate" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 8
+collision_mask = 1
+script = ExtResource("1_pirate")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -10)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -12)
+
+[node name="Hurtbox" type="Area2D" parent="."]
+position = Vector2(0, -11)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("2_hurt")
+
+[node name="Shape" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("RectangleShape2D_hurt")
+
+[node name="TouchHitbox" type="Area2D" parent="."]
+position = Vector2(0, -9)
+collision_layer = 16
+collision_mask = 4
+monitoring = false
+monitorable = false
+script = ExtResource("3_hit")
+damage = 6
+
+[node name="Shape" type="CollisionShape2D" parent="TouchHitbox"]
+shape = SubResource("RectangleShape2D_touch")
+
+[node name="CutlassHitbox" type="Area2D" parent="."]
+position = Vector2(14, -12)
+collision_layer = 16
+collision_mask = 4
+monitoring = false
+monitorable = false
+script = ExtResource("3_hit")
+
+[node name="Shape" type="CollisionShape2D" parent="CutlassHitbox"]
+shape = SubResource("RectangleShape2D_cutlass")
+
+[node name="Sounds" type="Node2D" parent="."]
+
+[node name="Whistle" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("4_whistle")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Swish" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("5_swish")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Grunt" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("6_grunt")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Defeat" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("7_defeat")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="HitFlash" type="Node" parent="."]
+script = ExtResource("90_flash")
