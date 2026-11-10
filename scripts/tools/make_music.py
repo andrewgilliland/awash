@@ -7,7 +7,7 @@ surf, a light hi-hat and, where a song asks, a snare. Each song is plain data
 below, so a tune can be edited and regenerated.
 
 Each song is written where the game plays it from: the start screen's beside the UI, each
-Region's theme in that Region's music folder.
+Region's theme in that Region's music folder, and a Boss's own beside its sheet.
 
 Example:
   python scripts/tools/make_music.py
@@ -208,6 +208,29 @@ SONGS = [
             ("E5", 4), ("G4", 2), ("C5", 2),
         ],
     ),
+    # Rusk's fight: a driving march in A minor, faster than the jungle's, its drums heavy. A phrase
+    # that stamps down to E major (Am - Am - F - E), and an answer that lurches through Bb before
+    # the same E major turn drives it round again (Am - Bb - G - E).
+    Song(
+        name="rusk_theme",
+        bpm=136,
+        chords=[
+            ["A2", "C3", "E3"], ["A2", "C3", "E3"], ["F2", "A2", "C3"], ["E2", "G#2", "B2"],
+            ["A2", "C3", "E3"], ["A#2", "D3", "F3"], ["G2", "B2", "D3"], ["E2", "G#2", "B2"],
+        ],
+        bass_roots=["A1", "A1", "F1", "E1", "A1", "A#1", "G1", "E1"],
+        melody=[
+            ("A4", 2), ("A4", 1), ("C5", 1), ("E5", 2), ("D5", 1), ("C5", 1),
+            ("B4", 1), ("C5", 1), ("A4", 2), ("E4", 2), ("A4", 2),
+            ("F5", 2), ("E5", 1), ("D5", 1), ("C5", 2), ("A4", 2),
+            ("G#4", 3), ("B4", 1), ("E5", 2), ("D5", 1), ("B4", 1),
+            ("A5", 2), ("G5", 1), ("E5", 1), ("C5", 2), ("E5", 2),
+            ("F5", 2), ("D5", 1), ("A#4", 1), ("F4", 2), ("A#4", 2),
+            ("G5", 2), ("F5", 1), ("D5", 1), ("B4", 2), ("G4", 2),
+            ("E5", 3), ("D5", 1), ("B4", 2), ("G#4", 2),
+        ],
+        snare=True,
+    ),
 ]
 
 
@@ -351,6 +374,7 @@ HOMES = {
     "tidefen_theme": Path("assets/regions/tidefen_village/music/theme.wav"),
     "low_canopy_jungle_theme": Path("assets/regions/low_canopy_jungle/music/theme.wav"),
     "shrinekeeper_camp_theme": Path("assets/regions/shrinekeeper_camp/music/theme.wav"),
+    "rusk_theme": Path("assets/enemies/rusk/rusk_theme.wav"),
 }
 
 

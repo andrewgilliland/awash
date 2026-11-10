@@ -77,7 +77,7 @@ A clay bomb a Pirate lobs to land where the Player stands: it sits sputtering, t
 _Avoid_: Enemy Bomb, grenade
 
 **Boss**:
-An enemy that guards a Region's end, with its own Health bar along the bottom of the screen while it fights. Defeating it opens a Gate, and it stays defeated for the Run, through the Player's own defeat; a new Run brings it back.
+An enemy that guards a Region's end, with its own Health bar along the bottom of the screen while it fights. Defeating it opens the way on, a Gate or the walls it raised, and it stays defeated for the Run, through the Player's own defeat; a new Run brings it back.
 _Avoid_: Miniboss, guardian (as the general term)
 
 **Nameless Warden**:
@@ -91,3 +91,15 @@ _Avoid_: Shield, barrier, armor
 **Stagger**:
 The moments after a Ward breaks, when the Boss takes any hit and does not harm the Player by touch.
 _Avoid_: Stun, daze
+
+**Rusk**:
+The Low Canopy Jungle's Boss: Ilyr's enforcer, a broad warrior in scarred hide and scavenged plate with an oversized maul etched with an arcane brand. He ambushes the Player at the root's mouth and shuts them in with Branded roots, then charges a Player far off and slams his maul at one close by, the floor quaking under it. Beaten, he retreats rather than falls, to fight again at Stormwatch Tower.
+_Avoid_: Barbarian (as his name), enforcer (alone)
+
+**Branded roots**:
+Roots glowing with Rusk's brand that burst up across his arena's edges as his fight begins, shutting the Player in with him, and wither as he leaps away.
+_Avoid_: Gate, wall, barrier
+
+**Quake**:
+The floor shaking as Rusk's maul lands: it strikes a Player standing anywhere on the arena's floor, and passes under one in the air.
+_Avoid_: Shockwave (the Nameless Warden's), tremor

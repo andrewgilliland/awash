@@ -9,12 +9,12 @@ const STALKER_PATH := "Enemies/Stalker"
 const PirateBrain := preload("res://scripts/enemies/pirate_brain.gd")
 const FOOT_Y := 384.0
 # Too far for its rush, so it throws; and a step away, under the low ledge its bombs cannot reach.
-const BOMB_RANGE_X := 72.0
+const BOMB_RANGE_X := 70.0
 const STEPPED_AWAY_X := 24.0
 # Close enough that it rushes.
-const RUSH_RANGE_X := 88.0
+const RUSH_RANGE_X := 80.0
 # Within a sword's reach of it.
-const CLOSE_X := 126.0
+const CLOSE_X := 118.0
 
 # The runner: its input, frame and Room helpers.
 var _harness: SceneTree

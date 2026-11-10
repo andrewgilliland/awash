@@ -19,7 +19,7 @@ size = Vector2(8, 144)
 size = Vector2(8, 288)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_east"]
-size = Vector2(8, 432)
+size = Vector2(8, 288)
 
 [node name="LowCanopyJungle7" type="Node2D"]
 script = ExtResource("1_main")
@@ -27,7 +27,7 @@ script = ExtResource("1_main")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="Bark" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAAAAAAAAAAAAAQAAAAJAAAAAAABAAQAAAAAAAEAAAAAAAQAAAAJAAEAAAABAAQAAAAAAAIAAAAAAAQAAAAJAAIAAAABAAQAAAAAAAMAAAAAAAQAAAAJAAMAAAABAAQAAAAAAAQAAAAAAAQAAAAJAAQAAAABAAQAAAAAAAUAAAAAAAQAAAAJAAUAAAABAAQAAAAJAAYAAAABAAQAAAAJAAcAAAABAAQAAAAAAAgAAAAAAAQAAAAJAAgAAAABAAQAAAAAAAkAAAAAAAQAAAAJAAkAAAABAAQAAAAAAAoAAAAAAAQAAAAJAAoAAAABAAQAAAAAAAsAAAAAAAUAAAAJAAsAAAABAAQAAAAAAAwAAAAAAAQAAAAJAAwAAAABAAQAAAAAAA0AAAAAAAQAAAAJAA0AAAABAAQAAAAJAA4AAAABAAQAAAAAAA8AAAAAAAQAAAAJAA8AAAABAAQAAAAAABAAAAAAAAQAAAAAABEAAAAAAAQAAAAJABEAAAABAAQAAAAJABIAAAABAAQAAAAAABMAAAAAAAQAAAAJABMAAAABAAQAAAAAABQAAAAAAAQAAAAJABQAAAABAAQAAAAAABUAAAAAAAQAAAAJABUAAAABAAUAAAAJABYAAAABAAQAAAAAABcAAAAAAAQAAAAJABcAAAABAAQAAAA=")
+tile_map_data = PackedByteArray("AAAAAAAAAAAAAAQAAAAJAAAAAAABAAQAAAAAAAEAAAAAAAQAAAAJAAEAAAABAAQAAAAAAAIAAAAAAAQAAAAJAAIAAAABAAQAAAAAAAMAAAAAAAQAAAAJAAMAAAABAAQAAAAAAAQAAAAAAAQAAAAJAAQAAAABAAQAAAAAAAUAAAAAAAQAAAAJAAUAAAABAAQAAAAJAAYAAAABAAQAAAAJAAcAAAABAAQAAAAAAAgAAAAAAAQAAAAJAAgAAAABAAQAAAAAAAkAAAAAAAQAAAAJAAkAAAABAAQAAAAAAAoAAAAAAAQAAAAJAAoAAAABAAQAAAAAAAsAAAAAAAUAAAAJAAsAAAABAAQAAAAAAAwAAAAAAAQAAAAJAAwAAAABAAQAAAAAAA0AAAAAAAQAAAAJAA0AAAABAAQAAAAJAA4AAAABAAQAAAAAAA8AAAAAAAQAAAAJAA8AAAABAAQAAAAAABAAAAAAAAQAAAAAABEAAAAAAAQAAAAJABEAAAABAAQAAAAJABIAAAABAAQAAAAAABMAAAAAAAQAAAAJABMAAAABAAQAAAAAABQAAAAAAAQAAAAJABQAAAABAAUAAAAAABUAAAAAAAQAAAAAABcAAAAAAAQAAAA=")
 tile_set = ExtResource("scenery_tiles")
 
 [node name="Roots" type="TileMapLayer" parent="."]
@@ -48,7 +48,7 @@ tile_set = ExtResource("scenery_tiles")
 position = Vector2(136, 256)
 
 [node name="Pirate" parent="Enemies" instance=ExtResource("pirate_scene")]
-position = Vector2(144, 384)
+position = Vector2(136, 384)
 
 [node name="Bounds" type="StaticBody2D" parent="."]
 collision_mask = 0
@@ -58,7 +58,7 @@ position = Vector2(-4, 288)
 shape = SubResource("RectangleShape2D_west")
 
 [node name="East" type="CollisionShape2D" parent="Bounds"]
-position = Vector2(164, 216)
+position = Vector2(164, 144)
 shape = SubResource("RectangleShape2D_east")
 
 [node name="Exits" type="Node2D" parent="."]
@@ -74,10 +74,24 @@ entry_id = &"east"
 [node name="Edge" type="CollisionShape2D" parent="Exits/west"]
 shape = SubResource("RectangleShape2D_edge")
 
+[node name="east" type="Area2D" parent="Exits"]
+position = Vector2(164, 360)
+collision_layer = 128
+collision_mask = 2
+script = ExtResource("4_exit")
+room_id = &"low_canopy_jungle_8"
+entry_id = &"west"
+
+[node name="Edge" type="CollisionShape2D" parent="Exits/east"]
+shape = SubResource("RectangleShape2D_edge")
+
 [node name="Entries" type="Node2D" parent="."]
 
 [node name="west" type="Marker2D" parent="Entries"]
 position = Vector2(12, 96)
+
+[node name="east" type="Marker2D" parent="Entries"]
+position = Vector2(152, 384)
 
 [node name="Player" parent="." instance=ExtResource("5_player")]
 position = Vector2(12, 96)

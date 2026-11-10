@@ -13,7 +13,7 @@ const UNDERTOW := &"undertow"
 const JUNGLE := &"low_canopy_jungle"
 const CAMP := &"shrinekeeper_camp"
 const HARBOUR_TRAIL := &"low_canopy_jungle_1"
-const JUNGLE_ROOMS := 7
+const JUNGLE_ROOMS := 8
 const SIDES := {
 	&"north": Vector2i.UP,
 	&"east": Vector2i.RIGHT,
@@ -117,8 +117,8 @@ func _test_undertow() -> bool:
 	return valid and ways_in.size() == 2 and ways_in.has(SEA_CAVE) and ways_in.has(TIDEFEN)
 
 
-# Seven Rooms of jungle east of Tidefen, its harbour trail at sea level, climbing to the camp, the
-# jungle's Safe spoke, on the canopy above.
+# Eight Rooms of jungle east of Tidefen, its harbour trail at sea level, climbing to the camp, the
+# jungle's Safe spoke, on the canopy above, and down past it to the root's mouth.
 func _test_jungle_climbs() -> bool:
 	var tidefen := World.planned(TIDEFEN)
 	var trail := World.planned(HARBOUR_TRAIL)

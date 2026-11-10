@@ -224,6 +224,35 @@ EFFECTS: dict[str, Callable[[], List[float]]] = {
         sweep(0.45, 440, 140, duty=0.5, vibrato_hz=12, vibrato_depth=0.06),
         noise(0.3, 1500, 200, seed=92),
     ),
+    # Rusk roars as his roots rise: a rough, throbbing bellow that climbs and falls.
+    "rusk_roar": lambda: mix(
+        growl(0.7, 80, 120, tremolo_hz=18),
+        sweep(0.7, 180, 110, duty=0.5, vibrato_hz=9, vibrato_depth=0.08),
+        noise(0.5, 1800, 300, seed=100),
+    ),
+    # His tell: a heavy stamp.
+    "rusk_stamp": lambda: mix(noise(0.12, 900, 120, seed=101), sweep(0.1, 90, 45, duty=0.5)),
+    # His charge meets a wall: a crash of plate and wood.
+    "rusk_crash": lambda: mix(
+        noise(0.4, 4000, 200, seed=102), sweep(0.3, 140, 40, duty=0.5),
+        sweep(0.1, 1500, 1300, duty=0.125),
+    ),
+    # The maul swung up: a low whoosh.
+    "rusk_whoosh": lambda: mix(noise(0.3, 600, 2500, seed=103), sweep(0.25, 90, 160, duty=0.125)),
+    # The maul lands: a deep boom that shakes the floor.
+    "rusk_boom": lambda: mix(noise(0.5, 1200, 80, seed=104), sweep(0.45, 90, 30, duty=0.5)),
+    # A quick hit off his plate: a dull clang.
+    "rusk_clang": lambda: mix(sweep(0.12, 1300, 1200, duty=0.125), sweep(0.1, 1700, 1650, duty=0.25)),
+    # Struck: a deep grunt.
+    "rusk_grunt": lambda: mix(sweep(0.14, 150, 90, duty=0.5), noise(0.07, 2500, 600, seed=105)),
+    # Leaping away: a rising, angry cry.
+    "rusk_cry": lambda: mix(
+        sweep(0.5, 160, 330, duty=0.5, vibrato_hz=10, vibrato_depth=0.07),
+        noise(0.3, 1500, 3000, seed=106),
+    ),
+    # The branded roots creak up out of the floor, and creak as they wither.
+    "rusk_roots_rise": lambda: mix(crackle(0.4, 40, seed=107), growl(0.4, 50, 90, tremolo_hz=30)),
+    "rusk_roots_wither": lambda: mix(crackle(0.9, 25, seed=108), growl(0.9, 80, 40, tremolo_hz=20)),
     # Nameless Warden: a deep swell as it sets its shield, then the move it makes.
     "warden_windup": lambda: growl(0.6, 70, 140, tremolo_hz=12),
     # The shield bash: a heavy rush.
@@ -287,6 +316,7 @@ HOMES = {
     "stalker_": "assets/enemies/stalker",
     "spore_beast_": "assets/enemies/spore_beast",
     "pirate_": "assets/enemies/pirate",
+    "rusk_": "assets/enemies/rusk",
     "warden_": "assets/enemies/nameless_warden",
     "ui_": "assets/ui",
     "bomb_": "assets/items",

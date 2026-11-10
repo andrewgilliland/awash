@@ -43,6 +43,13 @@ describe("the Codex's enemies", () => {
       { name: "Bash", damage: 15 },
       { name: "Shockwave", damage: 10 },
     ]);
+    expect(enemy("rusk")?.drops).toEqual([]);
+    expect(enemy("rusk")?.hits).toEqual([
+      { name: "Touch", damage: 10 },
+      { name: "Charge", damage: 15 },
+      { name: "Slam", damage: 20 },
+      { name: "Quake", damage: 6 },
+    ]);
   });
 
   it("finds every Room an enemy stands in, with its Region", () => {
@@ -71,10 +78,14 @@ describe("the Codex's enemies", () => {
   });
 
   it("lists enemies only in the docs as planned, with no stats", () => {
-    const rusk = enemy("rusk");
-    expect(rusk?.planned).toBe(true);
-    expect(rusk?.stats).toBeNull();
-    expect(rusk?.sprite).toBeNull();
+    const mercenary = enemy("mercenary");
+    expect(mercenary?.planned).toBe(true);
+    expect(mercenary?.stats).toBeNull();
+    expect(mercenary?.sprite).toBeNull();
+    // Rusk is built, at the root's mouth.
+    expect(enemy("rusk")?.planned).toBe(false);
+    expect(enemy("rusk")?.boss).toBe(true);
+    expect(enemy("rusk")?.rooms.map((room) => room.id)).toEqual(["low_canopy_jungle_8"]);
     // The Pirate is built, on guard at the root hollow's foot.
     expect(enemy("pirate")?.planned).toBe(false);
     expect(enemy("pirate")?.rooms.map((room) => room.id)).toEqual(["low_canopy_jungle_7"]);
@@ -180,7 +191,7 @@ describe("the Codex's World", () => {
   const kinds = (id: string) => room(id)?.marks.map((mark) => mark.kind);
 
   it("holds every Room in the World, built or planned, with its cell, size and exits", () => {
-    expect(codex.rooms.length).toBe(29);
+    expect(codex.rooms.length).toBe(30);
     expect(room("waking_coast_1")).toMatchObject({ region: "waking_coast", cell: [-1, 0], size: [2, 1], planned: false });
     expect(room("undertow_8")).toMatchObject({ region: "undertow", cell: [6, 3], size: [2, 2], planned: true });
     expect(room("undertow_8")?.exits).toEqual([{ screen: [1, 1], side: "east" }]);
@@ -192,6 +203,7 @@ describe("the Codex's World", () => {
     expect(kinds("tidefen_village_1")).toEqual(expect.arrayContaining(["rest", "shop", "character"]));
     expect(kinds("shrinekeeper_camp_1")).toEqual(expect.arrayContaining(["rest", "shop"]));
     expect(room("waking_coast_7")?.marks).toContainEqual({ kind: "boss", id: "nameless_warden", label: "Nameless Warden" });
+    expect(room("low_canopy_jungle_8")?.marks).toContainEqual({ kind: "boss", id: "rusk", label: "Rusk" });
     expect(codex.rooms.flatMap((entry) => entry.marks).some((mark) => mark.kind === "enemy" && mark.id === "scavenger")).toBe(true);
     expect(room("undertow_8")?.marks).toEqual([]);
   });

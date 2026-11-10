@@ -1,0 +1,144 @@
+[gd_scene load_steps=19 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/rusk.gd" id="1_rusk"]
+[ext_resource type="Script" path="res://scripts/combat/hurtbox.gd" id="2_hurt"]
+[ext_resource type="Script" path="res://scripts/combat/hitbox.gd" id="3_hit"]
+[ext_resource type="Texture2D" path="res://assets/enemies/rusk/rusk_1.png" id="4_sheet"]
+[ext_resource type="Script" path="res://scripts/combat/hit_flash.gd" id="5_flash"]
+[ext_resource type="AudioStream" path="res://assets/enemies/rusk/rusk_roar.wav" id="10_roar"]
+[ext_resource type="AudioStream" path="res://assets/enemies/rusk/rusk_stamp.wav" id="11_stamp"]
+[ext_resource type="AudioStream" path="res://assets/enemies/rusk/rusk_crash.wav" id="12_crash"]
+[ext_resource type="AudioStream" path="res://assets/enemies/rusk/rusk_whoosh.wav" id="13_whoosh"]
+[ext_resource type="AudioStream" path="res://assets/enemies/rusk/rusk_boom.wav" id="14_boom"]
+[ext_resource type="AudioStream" path="res://assets/enemies/rusk/rusk_clang.wav" id="15_clang"]
+[ext_resource type="AudioStream" path="res://assets/enemies/rusk/rusk_grunt.wav" id="16_grunt"]
+[ext_resource type="AudioStream" path="res://assets/enemies/rusk/rusk_cry.wav" id="17_cry"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(20, 30)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
+size = Vector2(24, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_touch"]
+size = Vector2(18, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_maul"]
+size = Vector2(32, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_quake"]
+size = Vector2(336, 4)
+
+[node name="Rusk" type="CharacterBody2D" groups=["boss", "enemy"]]
+collision_layer = 8
+script = ExtResource("1_rusk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -15)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -24)
+texture = ExtResource("4_sheet")
+hframes = 10
+vframes = 2
+
+[node name="Brand" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -24)
+texture = ExtResource("4_sheet")
+hframes = 10
+vframes = 2
+frame = 10
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("2_hurt")
+
+[node name="Shape" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -16)
+shape = SubResource("RectangleShape2D_hurt")
+
+[node name="TouchHitbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 4
+monitoring = false
+monitorable = false
+script = ExtResource("3_hit")
+
+[node name="Shape" type="CollisionShape2D" parent="TouchHitbox"]
+position = Vector2(0, -12)
+shape = SubResource("RectangleShape2D_touch")
+
+[node name="MaulHitbox" type="Area2D" parent="."]
+position = Vector2(-28, 0)
+collision_layer = 16
+collision_mask = 4
+monitoring = false
+monitorable = false
+script = ExtResource("3_hit")
+
+[node name="Shape" type="CollisionShape2D" parent="MaulHitbox"]
+position = Vector2(0, -10)
+shape = SubResource("RectangleShape2D_maul")
+
+[node name="QuakeHitbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 4
+monitoring = false
+monitorable = false
+script = ExtResource("3_hit")
+
+[node name="Shape" type="CollisionShape2D" parent="QuakeHitbox"]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_quake")
+
+[node name="Sounds" type="Node2D" parent="."]
+position = Vector2(0, -16)
+
+[node name="Roar" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("10_roar")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Stamp" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("11_stamp")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Crash" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("12_crash")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Whoosh" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("13_whoosh")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Boom" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("14_boom")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Clang" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("15_clang")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Grunt" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("16_grunt")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="Cry" type="AudioStreamPlayer2D" parent="Sounds"]
+stream = ExtResource("17_cry")
+max_distance = 240.0
+bus = &"SFX"
+
+[node name="HitFlash" type="Node" parent="."]
+script = ExtResource("5_flash")
+target = NodePath("../Sprite2D")
